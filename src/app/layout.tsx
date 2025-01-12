@@ -1,22 +1,22 @@
-import React from 'react'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import Link from 'next/link'
-import Image from 'next/image'
-import { FaHome, FaFilm, FaTv, FaBook } from 'react-icons/fa'
+import React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Link from "next/link";
+import Image from "next/image";
+import { FaHome, FaFilm, FaTv, FaBook } from "react-icons/fa";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'DigyNotes',
-  description: 'Film, Dizi ve Kitap Notları',
-}
+  title: "DigyNotes",
+  description: "Film, Dizi ve Kitap Notları",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="tr">
@@ -26,27 +26,35 @@ export default function RootLayout({
             <div className="flex flex-col items-center justify-between">
               {/* Logo */}
               <div className="text-3xl font-bold text-gray-900 mb-6">
-          <Image
-            src="/digy-notes-logo.png"
-            alt="DigyNotes Logo"
-            width={400}
-            height={120}
-            className="object-contain"
-          />
+                <Link href="/">
+                  <Image
+                    src="/digy-notes-logo.png"
+                    alt="DigyNotes Logo"
+                    width={400}
+                    height={120}
+                    className="object-contain"
+                  />
+                </Link>
               </div>
-              
+
               {/* Navigation */}
               <nav className="flex space-x-12">
-                <Link href="/" className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center">
-                  <FaHome className="mr-2" /> Ana Sayfa
-                </Link>
-                <Link href="/categories/movies" className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center">
+                <Link
+                  href="/categories/movies"
+                  className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center"
+                >
                   <FaFilm className="mr-2" /> Filmler
                 </Link>
-                <Link href="/categories/tv-shows" className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center">
+                <Link
+                  href="/categories/tv-shows"
+                  className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center"
+                >
                   <FaTv className="mr-2" /> Diziler
                 </Link>
-                <Link href="/categories/books" className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center">
+                <Link
+                  href="/categories/books"
+                  className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center"
+                >
                   <FaBook className="mr-2" /> Kitaplar
                 </Link>
               </nav>
@@ -58,5 +66,5 @@ export default function RootLayout({
         </main>
       </body>
     </html>
-  )
-} 
+  );
+}
