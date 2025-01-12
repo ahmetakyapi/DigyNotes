@@ -14,7 +14,7 @@ const tvShows = [
       "Vince Gilligan'ın yarattığı bu kült dizi, kanser teşhisi konan bir kimya öğretmeninin, ailesinin geleceğini güvence altına almak için metamfetamin üretmeye başlamasıyla değişen hayatını konu alıyor...",
     slug: "/posts/breaking-bad",
     image:
-      "https://m.media-amazon.com/images/M/MV5BYmQ4YWMxYjUtNjZmYi00MDQ1LWFjMjMtNjk4NzBjZGE1MmIyXkEyXkFqcGdeQXVyMTMzNDExODE5._V1_.jpg",
+      "https://m.media-amazon.com/images/M/MV5BYmQ4YWMxYjUtNjZmYi00MDQ1LWFjMjMtNjA5ZDdiYjdiODU5XkEyXkFqcGdeQXVyMTMzNDExODE5._V1_.jpg",
   },
   {
     title: "Better Call Saul",
