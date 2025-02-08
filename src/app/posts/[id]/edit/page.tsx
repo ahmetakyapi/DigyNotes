@@ -3,26 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import "react-quill/dist/quill.snow.css";
 
 // Dinamik olarak React-Quill'i import ediyoruz
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB4KFYnWmEXIO8IMObzY4RWQCm3P-4qcBc",
-  authDomain: "digynotes.firebaseapp.com",
-  projectId: "digynotes",
-  storageBucket: "digynotes.firebasestorage.app",
-  messagingSenderId: "272131930980",
-  appId: "1:272131930980:web:39cd826baa5c0ba4a65871",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 const categories = [
   { value: "Film", label: "Film" },

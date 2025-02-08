@@ -13,22 +13,8 @@ import {
   FaTrash,
   FaEdit,
 } from "react-icons/fa";
-import { getFirestore, doc, getDoc, deleteDoc } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB4KFYnWmEXIO8IMObzY4RWQCm3P-4qcBc",
-  authDomain: "digynotes.firebaseapp.com",
-  projectId: "digynotes",
-  storageBucket: "digynotes.firebasestorage.app",
-  messagingSenderId: "272131930980",
-  appId: "1:272131930980:web:39cd826baa5c0ba4a65871",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 type Post = {
   id: string;
