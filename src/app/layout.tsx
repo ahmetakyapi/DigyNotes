@@ -46,7 +46,7 @@ export default function RootLayout({
                   <FaFilm className="mr-2" /> Filmler
                 </Link>
                 <Link
-                  href="/categories/tv-shows"
+                  href="/categories/series"
                   className="text-xl text-gray-700 hover:text-gray-900 font-bold flex items-center"
                 >
                   <FaTv className="mr-2" /> Diziler
