@@ -24,9 +24,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const categories = [
-  { value: "Film", label: "Film" },
-  { value: "Dizi", label: "Series" },
-  { value: "Kitap", label: "Books" },
+  { value: "movies", label: "Film" },
+  { value: "series", label: "Dizi" },
+  { value: "books", label: "Kitap" },
 ];
 
 export default function NewPostPage() {
@@ -39,6 +39,19 @@ export default function NewPostPage() {
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseFloat(e.target.value);
+
+    if (isNaN(value)) value = 0;
+    if (value < 0) value = 0;
+    if (value > 5) value = 5;
+
+    // En yakın 0.5'e yuvarlaz
+    value = Math.round(value * 2) / 2;
+
+    setRating(value);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,163 +96,187 @@ export default function NewPostPage() {
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
+    const hasHalfStar = rating % 1 !== 0;
 
     for (let i = 1; i <= 5; i++) {
       if (i <= fullStars) {
-        stars.push(
-          <FaStar
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
-        );
+        stars.push(<FaStar key={i} className="text-yellow-400" size={24} />);
       } else if (i === fullStars + 1 && hasHalfStar) {
         stars.push(
-          <FaStarHalfAlt
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
+          <FaStarHalfAlt key={i} className="text-yellow-400" size={24} />
         );
       } else {
-        stars.push(
-          <FaRegStar
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
-        );
+        stars.push(<FaRegStar key={i} className="text-yellow-400" size={24} />);
       }
     }
     return stars;
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
+      <div className="max-w-4xl mx-auto px-6">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 border-b pb-4">
           Yeni Yazı Oluştur
         </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Başlık */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
               Başlık
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out"
               required
             />
           </div>
 
-          {/* Kategori */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Kategori
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              {categories.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
+          {/* Kategori ve Yazar/Yönetmen Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Kategori */}
+            <div className="form-group">
+              <label className="block text-lg font-semibold text-gray-800 mb-2">
+                Kategori
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                         shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                         transition duration-200 ease-in-out bg-white"
+              >
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Yazar/Yönetmen */}
+            <div className="form-group">
+              <label className="block text-lg font-semibold text-gray-800 mb-2">
+                {category === "books" ? "Yazar" : "Yönetmen/Yaratıcı"}
+              </label>
+              <input
+                type="text"
+                value={creator}
+                onChange={(e) => setCreator(e.target.value)}
+                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                         shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                         transition duration-200 ease-in-out"
+                required
+              />
+            </div>
           </div>
 
-          {/* Yazar/Yönetmen */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              {category === "Kitap" ? "Yazar" : "Yönetmen/Yaratıcı"}
-            </label>
-            <input
-              type="text"
-              value={creator}
-              onChange={(e) => setCreator(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
-          </div>
+          {/* Yıl ve Rating Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Yıl */}
+            <div className="form-group">
+              <label className="block text-lg font-semibold text-gray-800 mb-2">
+                {category === "series" ? "Yayın Yılları" : "Yıl"}
+              </label>
+              <input
+                type="text"
+                value={years}
+                onChange={(e) => setYears(e.target.value)}
+                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                         shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                         transition duration-200 ease-in-out"
+                placeholder={category === "series" ? "2020-2023" : "2023"}
+                required
+              />
+            </div>
 
-          {/* Yıl */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              {category === "Dizi" ? "Yayın Yılları" : "Yıl"}
-            </label>
-            <input
-              type="text"
-              value={years}
-              onChange={(e) => setYears(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder={category === "Dizi" ? "2020-2023" : "2023"}
-              required
-            />
-          </div>
-
-          {/* Rating */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rating
-            </label>
-            <div className="flex gap-1 text-2xl">{renderStars(rating)}</div>
+            {/* Rating */}
+            <div className="form-group">
+              <label className="block text-lg font-semibold text-gray-800 mb-2">
+                Rating (0-5)
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.5"
+                  value={rating === 0 ? "" : rating} // 0 ise boş göster
+                  onChange={handleRatingChange}
+                  onBlur={(e) => {
+                    if (e.target.value === "") setRating(0);
+                  }}
+                  className="w-24 px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                           shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                           transition duration-200 ease-in-out"
+                  placeholder="0-5"
+                />
+                <div className="flex gap-1 bg-white p-2 rounded-lg border-2 border-gray-300">
+                  {renderStars(rating)}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Fotoğraf URL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
               Fotoğraf URL
             </label>
             <input
               type="url"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out"
               required
             />
           </div>
 
           {/* Kısa Özet */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
               Kısa Özet
             </label>
             <textarea
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
-              rows={3}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              rows={4}
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out resize-y"
               required
             />
           </div>
 
           {/* İçerik */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
               İçerik
             </label>
-            <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl">
+            <div className="prose prose-lg max-w-none">
               <ReactQuill
                 theme="snow"
                 value={content}
                 onChange={setContent}
-                className="bg-white min-h-[200px]"
+                className="bg-white rounded-lg min-h-[300px] border-2 border-gray-300"
               />
             </div>
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-6">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="px-8 py-4 text-lg font-semibold text-white bg-blue-600 rounded-lg
+                       hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 
+                       transition duration-200 ease-in-out disabled:opacity-50
+                       disabled:cursor-not-allowed transform hover:-translate-y-0.5"
             >
               {isSubmitting ? "Kaydediliyor..." : "Kaydet"}
             </button>
