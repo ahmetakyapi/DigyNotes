@@ -135,90 +135,88 @@ export default function NewPostPage() {
             />
           </div>
 
-          {/* Kategori ve Yazar/Yönetmen Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Kategori */}
-            <div className="form-group">
-              <label className="block text-lg font-semibold text-gray-800 mb-2">
-                Kategori
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
-                         shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                         transition duration-200 ease-in-out bg-white"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Yazar/Yönetmen */}
-            <div className="form-group">
-              <label className="block text-lg font-semibold text-gray-800 mb-2">
-                {category === "books" ? "Yazar" : "Yönetmen/Yaratıcı"}
-              </label>
-              <input
-                type="text"
-                value={creator}
-                onChange={(e) => setCreator(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
-                         shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                         transition duration-200 ease-in-out"
-                required
-              />
-            </div>
+          {/* Kategori */}
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
+              Kategori
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out bg-white"
+            >
+              {categories.map((cat) => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Yıl ve Rating Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Yıl */}
-            <div className="form-group">
-              <label className="block text-lg font-semibold text-gray-800 mb-2">
-                {category === "series" ? "Yayın Yılları" : "Yıl"}
-              </label>
+          {/* Yazar/Yönetmen */}
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
+              {category === "Kitap" ? "Yazar" : "Yönetmen/Yaratıcı"}
+            </label>
+            <input
+              type="text"
+              value={creator}
+              onChange={(e) => setCreator(e.target.value)}
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out"
+              required
+            />
+          </div>
+
+          {/* Yıl */}
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
+              {category === "Dizi" ? "Yayın Yılları" : "Yıl"}
+            </label>
+            <input
+              type="text"
+              value={years}
+              onChange={(e) => setYears(e.target.value)}
+              className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                       shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                       transition duration-200 ease-in-out"
+              placeholder={category === "Dizi" ? "2020-2023" : "2023"}
+              required
+            />
+          </div>
+
+          {/* Rating */}
+          <div className="form-group">
+            <label className="block text-lg font-semibold text-gray-800 mb-2">
+              Rating (0-5)
+            </label>
+            <div className="flex items-center gap-4">
               <input
-                type="text"
-                value={years}
-                onChange={(e) => setYears(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
+                type="number"
+                min="0"
+                max="5"
+                step="0.5"
+                value={rating === 0 ? "" : rating} // 0 ise boş göster
+                onChange={handleRatingChange}
+                onBlur={(e) => {
+                  if (e.target.value === "") setRating(0);
+                }}
+                className="w-24 px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
                          shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
                          transition duration-200 ease-in-out"
-                placeholder={category === "series" ? "2020-2023" : "2023"}
-                required
+                placeholder="0-5"
               />
-            </div>
-
-            {/* Rating */}
-            <div className="form-group">
-              <label className="block text-lg font-semibold text-gray-800 mb-2">
-                Rating (0-5)
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  type="number"
-                  min="0"
-                  max="5"
-                  step="0.5"
-                  value={rating === 0 ? "" : rating} // 0 ise boş göster
-                  onChange={handleRatingChange}
-                  onBlur={(e) => {
-                    if (e.target.value === "") setRating(0);
-                  }}
-                  className="w-24 px-4 py-3 text-lg rounded-lg border-2 border-gray-300 
-                           shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
-                           transition duration-200 ease-in-out"
-                  placeholder="0-5"
-                />
-                <div className="flex gap-1 bg-white p-2 rounded-lg border-2 border-gray-300">
-                  {renderStars(rating)}
-                </div>
+              <div className="flex gap-1 bg-white p-2 rounded-lg border-2 border-gray-300">
+                {renderStars(rating)}
               </div>
             </div>
+            <span className="text-sm text-gray-500 mt-1 block">
+              0 ile 5 arasında, yarım yıldız için .5 kullanabilirsiniz (Örn:
+              4.5)
+            </span>
           </div>
 
           {/* Fotoğraf URL */}
