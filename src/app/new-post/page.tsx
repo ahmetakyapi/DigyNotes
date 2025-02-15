@@ -5,6 +5,7 @@ import { getFirestore, collection, addDoc } from "firebase/firestore";
 import dynamic from "next/dynamic";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import "react-quill/dist/quill.snow.css";
+import { toast } from 'react-toastify';
 
 // Dinamik olarak React-Quill'i import ediyoruz (SSR sorunlarını önlemek için)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -26,7 +27,7 @@ const db = getFirestore(app);
 const categories = [
   { value: "movies", label: "Film" },
   { value: "series", label: "Dizi" },
-  { value: "books", label: "Kitap" },
+  { value: "books", label: "Kitap2" },
 ];
 
 export default function NewPostPage() {
@@ -84,10 +85,24 @@ export default function NewPostPage() {
       setCreator("");
       setYears("");
 
-      alert("Not başarıyla kaydedildi!");
+      toast.success('Not başarıyla kaydedildi!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } catch (error) {
       console.error("Error adding document: ", error);
-      alert("Not kaydedilirken bir hata oluştu!");
+      toast.error('Not kaydedilirken bir hata oluştu!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
       setIsSubmitting(false);
     }

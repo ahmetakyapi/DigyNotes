@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['m.media-amazon.com', 'images.app.goo.gl'],
+    domains: ['*'], // Be more specific in production
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   typescript: {
     ignoreBuildErrors: true,
@@ -10,8 +16,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   reactStrictMode: true,
-  webpack: (config, { isServer }) => {
-    // Hot Module Replacement ayarları
+  webpack: (config) => {
     config.watchOptions = {
       poll: 1000,
       aggregateTimeout: 300,

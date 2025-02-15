@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaFilm, FaTv, FaBook, FaStickyNote } from "react-icons/fa";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
@@ -32,45 +31,6 @@ type Post = {
   slug?: string;
 };
 
-const posts = [
-  {
-    title: "Inceptio2222n",
-    excerpt:
-      "Christopher Nolan'ın zihin bükücü başyapıtı, rüyaların derinliklerine inen bir ekibin hikayesini anlatıyor. Dom Cobb, zihninin en savunmasız olduğu rüya görme anında, bilinçaltının derinliklerindeki değerli sırları çekip çıkarmak ve onları çalmaktır...",
-    category: "Film",
-    date: "15 Mart 2024",
-    slug: "/posts/inception",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg",
-    creator: "Christopher Nolan",
-    years: "2010",
-  },
-  {
-    title: "Breaking Bad",
-    excerpt:
-      "Vince Gilligan'ın yarattığı bu kült dizi, kanser teşhisi konan bir kimya öğretmeninin, ailesinin geleceğini güvence altına almak için metamfetamin üretmeye başlamasıyla değişen hayatını konu alıyor...",
-    category: "Dizi",
-    date: "14 Mart 2024",
-    slug: "/posts/breaking-bad",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BYmQ4YWMxYjUtNjZmYi00MDQ1LWFjMjMtNjA5ZDdiYjdiODU5XkEyXkFqcGdeQXVyMTMzNDExODE5._V1_.jpg",
-    creator: "Vince Gilligan",
-    years: "2008-2013",
-  },
-  {
-    title: "1984",
-    excerpt:
-      "George Orwell'in distopik başyapıtı, gözetim toplumunun ve totaliter rejimin en çarpıcı tasvirlerinden birini sunuyor. Oceania'da yaşayan Winston Smith'in hikayesi, günümüz dünyasında bile çarpıcı paralellikler taşıyor...",
-    category: "Kitap",
-    date: "13 Mart 2024",
-    slug: "/posts/1984",
-    image:
-      "https://m.media-amazon.com/images/I/71kxa1-0mfL._AC_UF1000,1000_QL80_.jpg",
-    creator: "George Orwell",
-    years: "1949",
-  },
-];
-
 // Custom loader to allow images from any domain
 const customLoader = ({ src }: { src: string }) => {
   return src;
@@ -78,6 +38,17 @@ const customLoader = ({ src }: { src: string }) => {
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = 200;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -104,16 +75,40 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 text-gray-800 flex items-center justify-center">
-          <FaStickyNote className="mr-2" /> Son Notlar
-        </h1>
-        <div className="flex justify-end mb-4">
-          <Link
-            href="/new-post"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Yeni Yazı Ekle
-          </Link>
+        <div className="relative">
+          <div className="flex items-center justify-between mb-8 sm:mb-12">
+            <div className="relative flex-1">
+              <div className="flex items-center">
+                <div
+                  ref={scrollRef}
+                  className="flex items-center space-x-2 overflow-x-auto scrollbar-hide relative"
+                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                >
+                  <div className="flex items-center">
+                    <Link
+                      href="/new-post"
+                      className="flex items-center justify-center w-6 h-2 hover:border-gray-300"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        className="text-gray-600 mt-3"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 9H3v1h6v6h1v-6h6V9h-6V3H9z"
+                        />
+                      </svg>
+                    </Link>
+                    <span className="text-xl font-medium text-gray-900 hover:text-gray-700 ml-5">
+                      Son Notlar
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <hr /> <br />
         <div className="space-y-4 sm:space-y-8">
@@ -142,16 +137,7 @@ export default function Home() {
                         {post.title}
                       </h2>
                       <div className="flex flex-wrap gap-2 sm:items-center">
-                        <span className="text-blue-600 font-medium flex items-center">
-                          {post.category === "Film" && (
-                            <FaFilm className="mr-1" />
-                          )}
-                          {post.category === "Dizi" && (
-                            <FaTv className="mr-1" />
-                          )}
-                          {post.category === "Kitap" && (
-                            <FaBook className="mr-1" />
-                          )}
+                        <span className="text-blue-600 font-medium">
                           {post.category}
                         </span>
                         <span className="hidden sm:inline">•</span>
