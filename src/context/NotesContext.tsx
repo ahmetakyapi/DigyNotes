@@ -1,5 +1,7 @@
 "use client";
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
+import { toast } from "react-hot-toast";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 interface Note {
   id: string;
@@ -10,27 +12,65 @@ interface Note {
 
 interface NotesContextType {
   notes: Note[];
+  categories: string[];
   addNote: (note: Note) => void;
   getNotesByCategory: (categoryId: string) => Note[];
+  deleteCategory: (categoryId: string) => void;
 }
 
 const NotesContext = createContext<NotesContextType>({} as NotesContextType);
 
 export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pendingCategoryDelete, setPendingCategoryDelete] = useState<string | null>(null);
 
   const addNote = (note: Note) => {
     setNotes([...notes, note]);
   };
 
   const getNotesByCategory = (categoryId: string) => {
-    if (categoryId === 'all') return notes;
-    return notes.filter(note => note.categoryId === categoryId);
+    if (categoryId === "all") return notes;
+    return notes.filter((note) => note.categoryId === categoryId);
+  };
+
+  const deleteCategory = (categoryId: string) => {
+    setPendingCategoryDelete(categoryId);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (pendingCategoryDelete) {
+      setNotes((prevNotes) =>
+        prevNotes.filter((note) => note.categoryId !== pendingCategoryDelete)
+      );
+      setCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat !== pendingCategoryDelete)
+      );
+    }
+    setIsModalOpen(false);
+    setPendingCategoryDelete(null);
   };
 
   return (
-    <NotesContext.Provider value={{ notes, addNote, getNotesByCategory }}>
+    <NotesContext.Provider
+      value={{
+        notes,
+        categories,
+        addNote,
+        getNotesByCategory,
+        deleteCategory,
+      }}
+    >
       {children}
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Kategori Sil"
+        message="Kategoriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+      />
     </NotesContext.Provider>
   );
 }
