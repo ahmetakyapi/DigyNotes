@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 type Post = {
   id: string;
@@ -55,6 +56,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -85,20 +87,22 @@ export default function PostPage({ params }: { params: { id: string } }) {
     fetchPost();
   }, [params.id]);
 
-  const handleDelete = async () => {
-    if (!window.confirm("Bu yazıyı silmek istediğinizden emin misiniz?")) {
-      return;
-    }
+  const handleDelete = () => {
+    setIsModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
     setIsDeleting(true);
     try {
       const docRef = doc(db, "posts", params.id);
       await deleteDoc(docRef);
-      router.push("/"); // Ana sayfaya yönlendir
+      router.push("/");
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Yazı silinirken bir hata oluştu!");
+    } finally {
       setIsDeleting(false);
+      setIsModalOpen(false);
     }
   };
 
@@ -194,6 +198,14 @@ export default function PostPage({ params }: { params: { id: string } }) {
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
       </div>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Yazıyı Sil"
+        message="Bu yazıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+      />
     </main>
   );
 }

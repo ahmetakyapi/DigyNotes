@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../firebase/config";
-
-interface Category {
-  id: string;
-  name: string;
-}
+import { addCategory, Category } from "@/services/firebase/categoryService";
+import { toast } from "react-toastify";
 
 interface Props {
   isOpen: boolean;
@@ -17,23 +12,22 @@ interface Props {
 
 const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   const [categoryName, setCategoryName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!categoryName.trim()) return;
+    
+    setIsLoading(true);
     try {
-      const newCategory: Category = {
-        id: Date.now().toString(),
-        name: categoryName,
-      };
-      await addDoc(collection(db, "categories"), {
-        name: categoryName,
-        createdAt: new Date().toISOString(),
-      });
-      setCategoryName("");
+      const newCategory = await addCategory(categoryName.trim());
       onSuccess(newCategory);
-      onClose();
+      setCategoryName("");
     } catch (error) {
       console.error("Error adding category:", error);
+      toast.error("Category eklenirken bir hata oluştu");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,8 +57,9 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isLoading}
             >
-              Ekle
+              {isLoading ? "Ekleniyor..." : "Ekle"}
             </button>
           </div>
         </form>

@@ -9,13 +9,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCategoryModal from "@/components/AddCategoryModal";
 import { NotesProvider } from "@/context/NotesContext";
+import { getCategories } from "@/services/firebase/categoryService";
+import { Category } from "@/services/firebase/categoryService";
 
 const inter = Inter({ subsets: ["latin"] });
-
-interface Category {
-  id: string;
-  name: string;
-}
 
 export default function RootLayout({
   children,
@@ -29,7 +26,21 @@ export default function RootLayout({
   const [categories, setCategories] = useState<Category[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleCategorySuccess = (category: Category) => {
+  // Fetch categories from Firebase on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await getCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategorySuccess = async (category: Category) => {
     setCategories([...categories, category]);
     setIsModalOpen(false);
     router.push(`/category/${category.name}`);
@@ -60,23 +71,23 @@ export default function RootLayout({
         <NotesProvider>
           <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col items-center">
                 {/* Logo */}
-                <div className="text-3xl font-bold text-gray-900">
+                <div className="w-full text-center mb-4">
                   <Link href="/">
                     <Image
                       src="/digy-notes-logo.png"
                       alt="DigyNotes Logo"
                       width={400}
                       height={120}
-                      className="object-contain"
+                      className="object-contain mx-auto"
                     />
                   </Link>
                 </div>
 
                 {/* Navigation */}
-                <div className="relative flex-1 ml-8">
-                  <div className="flex items-center">
+                <div className="w-full">
+                  <div className="flex items-center justify-center">
                     <div
                       ref={scrollRef}
                       className="flex items-center space-x-4 overflow-x-auto scrollbar-hide relative"
