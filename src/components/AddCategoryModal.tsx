@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { addCategory, Category } from "@/services/firebase/categoryService";
@@ -17,7 +17,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!categoryName.trim()) return;
-    
+
     setIsLoading(true);
     try {
       const newCategory = await addCategory(categoryName.trim());

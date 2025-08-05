@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "clean": "rm -rf .next && rm -rf node_modules/.cache"
+    "clean": "rimraf .next && rimraf node_modules/.cache"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
