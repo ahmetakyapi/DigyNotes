@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { toast } from "react-hot-toast";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { db } from "@/lib/firebase";
+import { deleteDoc, doc } from "firebase/firestore";
 
 interface Note {
   id: string;
@@ -24,7 +26,9 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [pendingCategoryDelete, setPendingCategoryDelete] = useState<string | null>(null);
+  const [pendingCategoryDelete, setPendingCategoryDelete] = useState<
+    string | null
+  >(null);
 
   const addNote = (note: Note) => {
     setNotes([...notes, note]);
@@ -40,14 +44,25 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
     setIsModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (pendingCategoryDelete) {
-      setNotes((prevNotes) =>
-        prevNotes.filter((note) => note.categoryId !== pendingCategoryDelete)
-      );
-      setCategories((prevCategories) =>
-        prevCategories.filter((cat) => cat !== pendingCategoryDelete)
-      );
+      try {
+        // Delete from Firebase
+        await deleteDoc(doc(db, "categories", pendingCategoryDelete));
+
+        // Update local state
+        setNotes((prevNotes) =>
+          prevNotes.filter((note) => note.categoryId !== pendingCategoryDelete)
+        );
+        setCategories((prevCategories) =>
+          prevCategories.filter((cat) => cat !== pendingCategoryDelete)
+        );
+
+        toast.success("Kategori başarıyla silindi");
+      } catch (error) {
+        console.error("Error deleting category:", error);
+        toast.error("Kategori silinirken bir hata oluştu");
+      }
     }
     setIsModalOpen(false);
     setPendingCategoryDelete(null);
@@ -68,7 +83,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Kategori Sil"
+        title="Kategori Sil2"
         message="Kategoriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
       />
     </NotesContext.Provider>
