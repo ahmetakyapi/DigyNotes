@@ -3,24 +3,114 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --bg-base: #0c0c0c;
+  --bg-card: #161616;
+  --bg-raised: #1e1e1e;
+  --border: #2a2a2a;
+  --gold: #c9a84c;
+  --gold-light: #e0c068;
+  --text-primary: #f0ede8;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  --danger: #e53e3e;
+}
+
+html {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.quill {
-  border: none !important;
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
 }
 
-.ql-container {
-  border: none !important;
+/* ─── Scrollbar Hide Utility ─── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-.ql-toolbar {
-  border: none !important;
-  border-bottom: 1px solid #e5e7eb !important;
+/* ─── React Quill — Dark Theme ─── */
+.ql-toolbar.ql-snow {
+  background-color: #1e1e1e !important;
+  border: 1px solid #2a2a2a !important;
+  border-bottom: 1px solid #333 !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 8px 12px !important;
+}
+
+.ql-toolbar.ql-snow .ql-stroke {
+  stroke: #888888 !important;
+}
+.ql-toolbar.ql-snow .ql-fill {
+  fill: #888888 !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-stroke,
+.ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: #c9a84c !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-fill,
+.ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: #c9a84c !important;
+}
+.ql-toolbar.ql-snow .ql-picker-label {
+  color: #888888 !important;
+}
+.ql-toolbar.ql-snow .ql-picker-options {
+  background-color: #1e1e1e !important;
+  border: 1px solid #2a2a2a !important;
+}
+
+.ql-container.ql-snow {
+  background-color: #161616 !important;
+  border: 1px solid #2a2a2a !important;
+  border-top: none !important;
+  border-radius: 0 0 8px 8px !important;
+  color: #f0ede8 !important;
+  font-size: 1rem;
+  min-height: 280px;
+}
+
+.ql-editor {
+  color: #f0ede8 !important;
+  min-height: 260px;
+  line-height: 1.75;
+}
+
+.ql-editor.ql-blank::before {
+  color: #555555 !important;
+  font-style: normal !important;
+}
+
+.ql-editor p {
+  color: #f0ede8;
+}
+
+/* ─── Dark Form Select ─── */
+select option {
+  background-color: #1e1e1e;
+  color: #f0ede8;
 }

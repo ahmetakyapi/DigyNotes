@@ -5,12 +5,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 import AddCategoryModal from "@/components/AddCategoryModal";
-import { NotesProvider } from "@/context/NotesContext";
-import { getCategories } from "@/services/firebase/categoryService";
-import { Category } from "@/services/firebase/categoryService";
+import { Category } from "@/types";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,146 +19,140 @@ export default function RootLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("all");
   const [categories, setCategories] = useState<Category[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch categories from Firebase on mount
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const fetchedCategories = await getCategories();
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
+    fetch("/api/categories")
+      .then((r) => r.json())
+      .then(setCategories)
+      .catch(console.error);
   }, []);
 
-  const handleCategorySuccess = async (category: Category) => {
-    setCategories([...categories, category]);
+  const getActiveCategory = () => {
+    if (pathname === "/") return "all";
+    const match = pathname.match(/^\/category\/(.+)/);
+    return match ? decodeURIComponent(match[1]) : "";
+  };
+  const activeCategory = getActiveCategory();
+
+  const handleCategoryAdded = (category: Category) => {
+    setCategories((prev) =>
+      [...prev, category].sort((a, b) => a.name.localeCompare(b.name))
+    );
     setIsModalOpen(false);
-    router.push(`/category/${category.name}`);
+    router.push(`/category/${encodeURIComponent(category.name)}`);
   };
-
-  const handleCategoryClick = (categoryName: string) => {
-    setActiveCategory(categoryName);
-    if (categoryName === 'all') {
-      router.push('/');
-    } else {
-      router.push(`/category/${categoryName}`);
-    }
-  };
-
-  // Update active category based on URL
-  useEffect(() => {
-    const categoryFromPath = pathname.split('/').pop();
-    if (categoryFromPath && categoryFromPath !== '') {
-      setActiveCategory(decodeURIComponent(categoryFromPath));
-    } else {
-      setActiveCategory('all');
-    }
-  }, [pathname]);
 
   return (
     <html lang="tr">
-      <body className={inter.className}>
-        <NotesProvider>
-          <header className="bg-white shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex flex-col items-center">
-                {/* Logo */}
-                <div className="w-full text-center mb-4">
-                  <Link href="/">
-                    <Image
-                      src="/digy-notes-logo.png"
-                      alt="DigyNotes Logo"
-                      width={400}
-                      height={120}
-                      className="object-contain mx-auto"
-                    />
-                  </Link>
-                </div>
-
-                {/* Navigation */}
-                <div className="w-full">
-                  <div className="flex items-center justify-center">
-                    <div
-                      ref={scrollRef}
-                      className="flex items-center space-x-4 overflow-x-auto scrollbar-hide relative"
-                      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                    >
-                      <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          className="text-gray-600"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M12 4a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H5a1 1 0 110-2h6V5a1 1 0 011-1z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleCategoryClick("all")}
-                        className={`whitespace-nowrap px-4 py-2 text-lg font-medium ${
-                          activeCategory === "all"
-                            ? "text-gray-900 border-b-2 border-gray-900"
-                            : "text-gray-500 hover:text-gray-700"
-                        }`}
-                      >
-                        Son Yazılar
-                      </button>
-                      {categories.map((category) => (
-                        <button
-                          key={category.id}
-                          onClick={() => handleCategoryClick(category.name)}
-                          className={`whitespace-nowrap px-4 py-2 text-lg font-medium ${
-                            activeCategory === category.name
-                              ? "text-gray-900 border-b-2 border-gray-900"
-                              : "text-gray-500 hover:text-gray-700"
-                          }`}
-                        >
-                          {category.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <body className={`${inter.className} bg-[#0c0c0c] text-[#f0ede8] min-h-screen`}>
+        {/* ─── HEADER ─── */}
+        <header className="bg-[#0c0c0c] border-b border-[#2a2a2a] sticky top-0 z-40">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            {/* Top row: Logo + New Post button */}
+            <div className="flex items-center justify-between py-4">
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/digy-notes-logo.png"
+                  alt="DigyNotes"
+                  width={150}
+                  height={44}
+                  className="object-contain"
+                  priority
+                />
+              </Link>
+              <Link
+                href="/new-post"
+                className="px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0c0c0c] rounded-md
+                           hover:bg-[#e0c068] transition-colors duration-200"
+              >
+                + Yeni Not
+              </Link>
             </div>
-          </header>
 
-          <AddCategoryModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSuccess={handleCategorySuccess}
-          />
+            {/* Category nav row */}
+            <div
+              ref={scrollRef}
+              className="flex items-center gap-0 pb-0 overflow-x-auto scrollbar-hide"
+            >
+              {/* Add category button */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full
+                           text-[#888888] hover:text-[#c9a84c] hover:bg-[#161616] transition-colors mr-1"
+                aria-label="Kategori ekle"
+                title="Kategori Ekle"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="currentColor"
+                >
+                  <path d="M7 1a1 1 0 011 1v4h4a1 1 0 110 2H8v4a1 1 0 11-2 0V8H2a1 1 0 110-2h4V2a1 1 0 011-1z" />
+                </svg>
+              </button>
 
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {React.cloneElement(children as React.ReactElement, { activeCategory })}
-          </main>
+              {/* Son Yazılar / All */}
+              <button
+                onClick={() => router.push("/")}
+                className={`flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  activeCategory === "all"
+                    ? "border-[#c9a84c] text-[#f0ede8]"
+                    : "border-transparent text-[#888888] hover:text-[#f0ede8]"
+                }`}
+              >
+                Son Yazılar
+              </button>
 
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </NotesProvider>
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() =>
+                    router.push(`/category/${encodeURIComponent(cat.name)}`)
+                  }
+                  className={`flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    activeCategory === cat.name
+                      ? "border-[#c9a84c] text-[#f0ede8]"
+                      : "border-transparent text-[#888888] hover:text-[#f0ede8]"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </header>
+
+        {/* ─── MAIN ─── */}
+        <main>{children}</main>
+
+        {/* ─── MODALS ─── */}
+        <AddCategoryModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handleCategoryAdded}
+        />
+
+        {/* ─── TOAST ─── */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#161616",
+              color: "#f0ede8",
+              border: "1px solid #2a2a2a",
+              fontSize: "14px",
+            },
+            success: {
+              iconTheme: {
+                primary: "#c9a84c",
+                secondary: "#0c0c0c",
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );

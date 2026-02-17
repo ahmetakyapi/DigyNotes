@@ -3,198 +3,156 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-  FaFilm,
-  FaTv,
-  FaBook,
-  FaStar,
-  FaStarHalfAlt,
-  FaRegStar,
-  FaTrash,
-  FaEdit,
-} from "react-icons/fa";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { Post } from "@/types";
+import StarRating from "@/components/StarRating";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import toast from "react-hot-toast";
 
-type Post = {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  content: string;
-  date: string;
-  creator?: string;
-  years?: string;
-  rating?: number;
-};
-
-// Custom loader for images
-const customLoader = ({ src }: { src: string }) => {
-  return src;
-};
-
-const renderStars = (rating: number = 0) => {
-  const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-
-  for (let i = 1; i <= 5; i++) {
-    if (i <= fullStars) {
-      stars.push(<FaStar key={i} className="text-yellow-400" />);
-    } else if (i === fullStars + 1 && hasHalfStar) {
-      stars.push(<FaStarHalfAlt key={i} className="text-yellow-400" />);
-    } else {
-      stars.push(<FaRegStar key={i} className="text-yellow-400" />);
-    }
-  }
-  return stars;
-};
+const customLoader = ({ src }: { src: string }) => src;
 
 export default function PostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const docRef = doc(db, "posts", params.id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setPost({
-            id: docSnap.id,
-            title: data.title || "",
-            category: data.category || "",
-            image: data.image || "",
-            content: data.content || "",
-            date: data.date || "",
-            creator: data.creator,
-            years: data.years,
-            rating: data.rating,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      } finally {
+    fetch(`/api/posts/${params.id}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        setPost(data);
         setLoading(false);
-      }
-    };
-    fetchPost();
+      })
+      .catch(() => setLoading(false));
   }, [params.id]);
-
-  const handleDelete = () => {
-    setIsModalOpen(true);
-  };
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
-    try {
-      const docRef = doc(db, "posts", params.id);
-      await deleteDoc(docRef);
+    const res = await fetch(`/api/posts/${params.id}`, { method: "DELETE" });
+    setIsDeleting(false);
+    setIsModalOpen(false);
+    if (res.ok) {
+      toast.success("Not silindi");
       router.push("/");
-    } catch (error) {
-      console.error("Error deleting post:", error);
-      alert("Yazı silinirken bir hata oluştu!");
-    } finally {
-      setIsDeleting(false);
-      setIsModalOpen(false);
+    } else {
+      toast.error("Silme başarısız");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-2xl text-gray-600">Yükleniyor...</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-[#555555] animate-pulse text-lg">Yükleniyor...</div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-2xl text-red-600">İçerik bulunamadı</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-[#e53e3e] text-lg">İçerik bulunamadı</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[50vh] overflow-hidden group">
+    <main className="min-h-screen bg-[#0c0c0c]">
+      {/* ─── Hero Image ─── */}
+      <div className="relative w-full overflow-hidden" style={{ height: "48vh" }}>
         <Image
           loader={customLoader}
           src={post.image}
           alt={post.title}
           fill
-          className="object-cover object-center group-hover:scale-110 transition-transform duration-300"
+          className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8 text-white">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
+        {/* Gradient: top (transparent) → bottom (full dark) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/50 to-transparent" />
+
+        {/* ── Top controls ── */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-8 pt-4">
+          <Link
+            href={`/category/${encodeURIComponent(post.category)}`}
+            className="text-sm text-[#f0ede8]/60 hover:text-[#c9a84c] transition-colors"
+          >
+            ← {post.category}
+          </Link>
+          <div className="flex gap-2">
             <Link
-              href={`/categories/${
-                post.category === "Film"
-                  ? "movies"
-                  : post.category === "Dizi"
-                  ? "series"
-                  : "books"
-              }`}
-              className="text-sm hover:underline inline-block"
+              href={`/posts/${post.id}/edit`}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#2a2a2a]
+                         bg-[#161616]/80 text-[#f0ede8] rounded-md hover:border-[#c9a84c]/50
+                         backdrop-blur-sm transition-colors"
             >
-              ←{" "}
-              {post.category === "Film"
-                ? "Filmlere"
-                : post.category === "Dizi"
-                ? "Dizilere"
-                : "Kitaplara"}{" "}
-              Dön
+              <FaEdit size={11} /> Düzenle
             </Link>
-            <div className="flex gap-2">
-              <Link
-                href={`/posts/${post.id}/edit`}
-                className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-md hover:bg-blue-700 transition-colors flex items-center"
-              >
-                <FaEdit className="mr-1 sm:mr-2" /> Düzenle
-              </Link>
-              <button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-md hover:bg-red-700 transition-colors flex items-center disabled:opacity-50"
-              >
-                <FaTrash className="mr-1 sm:mr-2" />{" "}
-                {isDeleting ? "Siliniyor..." : "Sil"}
-              </button>
-            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#e53e3e]/40
+                         bg-[#161616]/80 text-[#e53e3e] rounded-md hover:bg-[#e53e3e]/10
+                         backdrop-blur-sm transition-colors disabled:opacity-50"
+            >
+              <FaTrash size={11} /> Sil
+            </button>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
-            {post.title}
-          </h1>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm">
-            <span>{post.years}</span>
-            <span className="hidden sm:inline">•</span>
-            <span>{post.creator}</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="flex items-center">
-              {post.category === "Film" && <FaFilm className="mr-1" />}
-              {post.category === "Dizi" && <FaTv className="mr-1" />}
-              {post.category === "Kitap" && <FaBook className="mr-1" />}
+        </div>
+
+        {/* ── Overlaid title + meta ── */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-8 pb-6 sm:pb-8">
+          <div className="max-w-3xl">
+            <span
+              className="inline-block text-[10px] font-bold uppercase tracking-[0.12em] text-[#c9a84c]
+                         border border-[#c9a84c]/30 px-2 py-0.5 rounded-sm mb-3"
+            >
               {post.category}
             </span>
-            <span className="hidden sm:inline">•</span>
-            <span className="flex items-center space-x-1">
-              {renderStars(post.rating)}
-            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f0ede8] leading-tight mb-3">
+              {post.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-[#888888]">
+              {post.creator && <span>{post.creator}</span>}
+              {post.years && (
+                <>
+                  <span className="text-[#2a2a2a]">•</span>
+                  <span>{post.years}</span>
+                </>
+              )}
+              {post.rating > 0 && (
+                <>
+                  <span className="text-[#2a2a2a]">•</span>
+                  <StarRating rating={post.rating} size={13} />
+                  <span className="text-[#555555] text-xs">({post.rating}/5)</span>
+                </>
+              )}
+              {post.date && (
+                <>
+                  <span className="text-[#2a2a2a]">•</span>
+                  <span className="text-xs">{post.date}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 lg:py-12">
-        <article className="prose prose-sm sm:prose lg:prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-blockquote:text-gray-700 prose-blockquote:border-blue-500">
+      {/* ─── Content ─── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <article
+          className="prose prose-lg max-w-none
+                     prose-headings:text-[#f0ede8] prose-headings:font-bold
+                     prose-p:text-[#c8c4bc] prose-p:leading-[1.85]
+                     prose-a:text-[#c9a84c] prose-a:no-underline hover:prose-a:underline
+                     prose-strong:text-[#f0ede8]
+                     prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[#888888]
+                     prose-code:text-[#c9a84c] prose-code:bg-[#161616] prose-code:px-1 prose-code:rounded
+                     prose-pre:bg-[#161616] prose-pre:border prose-pre:border-[#2a2a2a]
+                     prose-ul:text-[#c8c4bc] prose-ol:text-[#c8c4bc]
+                     prose-li:marker:text-[#c9a84c]"
+        >
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
       </div>

@@ -4,15 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "clean": "rimraf .next && rimraf node_modules/.cache"
+    "clean": "rimraf .next && rimraf node_modules/.cache",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
     "@tailwindcss/typography": "^0.5.16",
-    "firebase": "^10.14.1",
     "gray-matter": "^4.0.3",
     "next": "14.0.4",
+    "pg": "^8.18.0",
+    "prisma": "^7.4.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.5.2",
@@ -24,9 +31,11 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pg": "^8.16.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "autoprefixer": "^10.0.1",
+    "dotenv": "^17.3.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
