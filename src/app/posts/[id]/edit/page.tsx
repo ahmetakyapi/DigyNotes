@@ -2,25 +2,26 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
+import { Post, Category } from "@/types";
+import StarRating from "@/components/StarRating";
+import toast from "react-hot-toast";
 
-// Dinamik olarak React-Quill'i import ediyoruz
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const customLoader = ({ src }: { src: string }) => src;
 
-const categories = [
-  { value: "Film", label: "Film" },
-  { value: "Dizi", label: "Series" },
-  { value: "Kitap", label: "Books" },
-];
+const inputClass =
+  "w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555555] bg-[#161616] border border-[#2a2a2a] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-colors text-sm";
+const labelClass =
+  "block text-[10px] font-bold uppercase tracking-[0.12em] text-[#888888] mb-2";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState(categories[0].value);
+  const [category, setCategory] = useState("");
   const [rating, setRating] = useState(0);
   const [image, setImage] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -30,255 +31,217 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const docRef = doc(db, "posts", params.id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setTitle(data.title || "");
-          setCategory(data.category || categories[0].value);
-          setRating(data.rating || 0);
-          setImage(data.image || "");
-          setExcerpt(data.excerpt || "");
-          setContent(data.content || "");
-          setCreator(data.creator || "");
-          setYears(data.years || "");
-        }
-      } catch (error) {
-        console.error("Error fetching post:", error);
-        alert("İçerik yüklenirken bir hata oluştu!");
-      } finally {
+    Promise.all([
+      fetch(`/api/posts/${params.id}`).then((r) => r.json()),
+      fetch("/api/categories").then((r) => r.json()),
+    ])
+      .then(([post, cats]: [Post, Category[]]) => {
+        setTitle(post.title);
+        setCategory(post.category);
+        setRating(post.rating ?? 0);
+        setImage(post.image);
+        setExcerpt(post.excerpt);
+        setContent(post.content);
+        setCreator(post.creator ?? "");
+        setYears(post.years ?? "");
+        setCategories(cats);
         setLoading(false);
-      }
-    };
-    fetchPost();
+      })
+      .catch(() => {
+        toast.error("İçerik yüklenemedi");
+        setLoading(false);
+      });
   }, [params.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
-      const docRef = doc(db, "posts", params.id);
-      await updateDoc(docRef, {
-        title,
-        category,
-        rating,
-        image,
-        excerpt,
-        content,
-        creator,
-        years,
-        updatedAt: new Date().toLocaleDateString("tr-TR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+      const res = await fetch(`/api/posts/${params.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          category,
+          rating,
+          image,
+          excerpt,
+          content,
+          creator,
+          years,
         }),
       });
-
-      alert("Değişiklikler başarıyla kaydedildi!");
+      if (!res.ok) throw new Error();
+      toast.success("Değişiklikler kaydedildi!");
       router.push(`/posts/${params.id}`);
-    } catch (error) {
-      console.error("Error updating document: ", error);
-      alert("Değişiklikler kaydedilirken bir hata oluştu!");
+    } catch {
+      toast.error("Kaydedilemedi!");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-
-    for (let i = 1; i <= 5; i++) {
-      if (i <= fullStars) {
-        stars.push(
-          <FaStar
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
-        );
-      } else if (i === fullStars + 1 && hasHalfStar) {
-        stars.push(
-          <FaStarHalfAlt
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
-        );
-      } else {
-        stars.push(
-          <FaRegStar
-            key={i}
-            className="text-yellow-400 cursor-pointer"
-            onClick={() => setRating(i)}
-          />
-        );
-      }
-    }
-    return stars;
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-2xl text-gray-600">Yükleniyor...</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-[#555555] animate-pulse">Yükleniyor...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Yazıyı Düzenle
-          </h1>
+    <main className="min-h-screen bg-[#0c0c0c] py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between mb-10 pb-6 border-b border-[#2a2a2a]">
+          <h1 className="text-2xl font-bold text-[#f0ede8]">Yazıyı Düzenle</h1>
           <button
             onClick={() => router.back()}
-            className="text-gray-600 hover:text-gray-900 flex items-center text-sm sm:text-base"
+            className="text-sm text-[#555555] hover:text-[#f0ede8] transition-colors"
           >
-            ← Geri Dön
+            ← Geri
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-          {/* Form fields with responsive styling */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {/* Başlık - Full width */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Başlık
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                required
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className={labelClass}>Başlık</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={inputClass}
+              required
+            />
+          </div>
 
-            {/* Kategori - Half width */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Kategori
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Category */}
+          <div>
+            <label className={labelClass}>Kategori</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className={inputClass}
+            >
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* Yazar/Yönetmen - Half width */}
+          {/* Creator + Years */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {category === "Kitap" ? "Yazar" : "Yönetmen/Yaratıcı"}
+              <label className={labelClass}>
+                {category === "Kitap" ? "Yazar" : "Yönetmen / Yaratıcı"}
               </label>
               <input
                 type="text"
                 value={creator}
                 onChange={(e) => setCreator(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
+                className={inputClass}
                 required
               />
             </div>
-
-            {/* Yıl - Half width */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={labelClass}>
                 {category === "Dizi" ? "Yayın Yılları" : "Yıl"}
               </label>
               <input
                 type="text"
                 value={years}
                 onChange={(e) => setYears(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                placeholder={category === "Dizi" ? "2020-2023" : "2023"}
+                className={inputClass}
                 required
               />
-            </div>
-
-            {/* Rating - Half width */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rating
-              </label>
-              <div className="flex gap-1 text-xl sm:text-2xl">
-                {renderStars(rating)}
-              </div>
-            </div>
-
-            {/* Fotoğraf URL - Full width */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fotoğraf URL
-              </label>
-              <input
-                type="url"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                required
-              />
-            </div>
-
-            {/* Kısa Özet - Full width */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Kısa Özet
-              </label>
-              <textarea
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                rows={3}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
-                required
-              />
-            </div>
-
-            {/* İçerik - Full width */}
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                İçerik
-              </label>
-              <div className="prose prose-sm sm:prose lg:prose-lg xl:prose-xl">
-                <ReactQuill
-                  theme="snow"
-                  value={content}
-                  onChange={setContent}
-                  className="bg-white min-h-[200px] sm:min-h-[300px]"
-                />
-              </div>
             </div>
           </div>
 
-          {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-8">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="w-full sm:w-auto bg-gray-300 text-gray-700 px-4 py-2 text-sm sm:text-base rounded-md hover:bg-gray-400 order-2 sm:order-1"
-            >
-              İptal
-            </button>
+          {/* Rating */}
+          <div>
+            <label className={labelClass}>Puan</label>
+            <div className="flex items-center gap-4">
+              <StarRating
+                rating={rating}
+                interactive
+                onRate={setRating}
+                size={24}
+              />
+              <span className="text-sm text-[#888888]">
+                {rating > 0 ? `${rating} / 5` : "—"}
+              </span>
+              {rating > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRating(0)}
+                  className="text-xs text-[#555555] hover:text-[#e53e3e] transition-colors"
+                >
+                  Sıfırla
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Image URL + preview */}
+          <div>
+            <label className={labelClass}>Kapak Görseli URL</label>
+            <input
+              type="url"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              className={inputClass}
+              required
+            />
+            {image && (
+              <div className="mt-3 relative h-44 w-32 rounded-lg overflow-hidden border border-[#2a2a2a]">
+                <Image
+                  loader={customLoader}
+                  src={image}
+                  alt="Önizleme"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Excerpt */}
+          <div>
+            <label className={labelClass}>Kısa Özet</label>
+            <textarea
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              rows={3}
+              className={inputClass}
+              required
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className={labelClass}>İçerik</label>
+            <ReactQuill theme="snow" value={content} onChange={setContent} />
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-4 pt-4 border-t border-[#2a2a2a]">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 text-sm sm:text-base rounded-md hover:bg-blue-700 disabled:opacity-50 order-1 sm:order-2"
+              className="px-8 py-3 font-semibold bg-[#c9a84c] text-[#0c0c0c] rounded-lg
+                         hover:bg-[#e0c068] transition-colors disabled:opacity-50
+                         disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-6 py-3 text-sm text-[#888888] hover:text-[#f0ede8] transition-colors"
+            >
+              İptal
             </button>
           </div>
         </form>

@@ -9,10 +9,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        gold: {
+          DEFAULT: "#c9a84c",
+          light: "#e0c068",
+          dark: "#a88530",
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 } satisfies Config;

@@ -1,166 +1,111 @@
-"use client";
-import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { initializeApp } from "firebase/app";
+import { Post } from "@/types";
+import StarRating from "@/components/StarRating";
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB4KFYnWmEXIO8IMObzY4RWQCm3P-4qcBc",
-  authDomain: "digynotes.firebaseapp.com",
-  projectId: "digynotes",
-  storageBucket: "digynotes.firebasestorage.app",
-  messagingSenderId: "272131930980",
-  appId: "1:272131930980:web:39cd826baa5c0ba4a65871",
-};
+const customLoader = ({ src }: { src: string }) => src;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+async function getPosts(): Promise<Post[]> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/posts`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
 
-type Post = {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  excerpt: string;
-  date: string;
-  creator?: string;
-  years?: string;
-  slug?: string;
-};
-
-// Custom loader to allow images from any domain
-const customLoader = ({ src }: { src: string }) => {
-  return src;
-};
-
-export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 200;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const querySnapshot = await getDocs(collection(db, "posts"));
-      const postsData = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title || "",
-          category: data.category || "",
-          image: data.image || "",
-          excerpt: data.excerpt || "",
-          date: data.date || "",
-          creator: data.creator,
-          years: data.years,
-          slug: data.slug,
-        };
-      });
-      setPosts(postsData);
-    };
-    fetchPosts();
-  }, []);
+export default async function HomePage() {
+  const posts = await getPosts();
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="relative">
-          <div className="flex items-center justify-between mb-8 sm:mb-12">
-            <div className="relative flex-1">
-              <div className="flex items-center">
-                <div
-                  ref={scrollRef}
-                  className="flex items-center space-x-2 overflow-x-auto scrollbar-hide relative"
-                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                  <div className="flex items-center">
-                    <Link
-                      href="/new-post"
-                      className="flex items-center justify-center w-6 h-2 hover:border-gray-300"
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      {posts.length === 0 && (
+        <div className="text-center py-24">
+          <p className="text-[#555555] text-lg mb-3">Henüz not eklenmemiş.</p>
+          <Link
+            href="/new-post"
+            className="text-[#c9a84c] hover:text-[#e0c068] transition-colors text-sm font-medium"
+          >
+            İlk notu ekle →
+          </Link>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4">
+        {posts.map((post, index) => (
+          <Link key={post.id} href={`/posts/${post.id}`} className="group block">
+            <article
+              className="flex rounded-xl overflow-hidden bg-[#161616] border border-[#2a2a2a]
+                         hover:border-[#c9a84c]/30 transition-all duration-300
+                         hover:shadow-[0_0_24px_rgba(201,168,76,0.06)]"
+            >
+              {/* Cover image */}
+              <div
+                className="relative flex-shrink-0"
+                style={{ width: "38%", minHeight: "220px" }}
+              >
+                <Image
+                  loader={customLoader}
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  sizes="(max-width: 768px) 40vw, 360px"
+                  className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                  priority={index === 0}
+                />
+                {/* Fade into card */}
+                <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#161616] to-transparent" />
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-col justify-between p-5 sm:p-6 flex-1 min-w-0">
+                <div>
+                  {/* Category badge + year */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#c9a84c]
+                                 border border-[#c9a84c]/25 px-2 py-0.5 rounded-sm flex-shrink-0"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="32"
-                        height="32"
-                        className="text-gray-600 mt-3"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M9 9H3v1h6v6h1v-6h6V9h-6V3H9z"
-                        />
-                      </svg>
-                    </Link>
-                    <span className="text-xl font-medium text-gray-900 hover:text-gray-700 ml-5">
-                      Son Notlar
+                      {post.category}
                     </span>
+                    {post.years && (
+                      <span className="text-xs text-[#555555]">{post.years}</span>
+                    )}
                   </div>
+
+                  {/* Title */}
+                  <h2
+                    className="text-lg sm:text-xl font-bold text-[#f0ede8] leading-snug mb-2
+                               group-hover:text-[#c9a84c] transition-colors duration-200 line-clamp-2"
+                  >
+                    {post.title}
+                  </h2>
+
+                  {/* Creator */}
+                  {post.creator && (
+                    <p className="text-sm text-[#888888] mb-3">{post.creator}</p>
+                  )}
+
+                  {/* Excerpt */}
+                  <p className="text-sm text-[#888888] leading-relaxed line-clamp-3">
+                    {post.excerpt}
+                  </p>
+                </div>
+
+                {/* Bottom: rating + date */}
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#2a2a2a]">
+                  <StarRating rating={post.rating} size={13} />
+                  <span className="text-xs text-[#555555]">{post.date}</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <hr /> <br />
-        <div className="space-y-4 sm:space-y-8">
-          {posts.map((post, index) => (
-            <Link
-              key={index}
-              href={`/posts/${post.id}`}
-              className="block group"
-            >
-              <article className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
-                <div className="flex flex-col md:flex-row">
-                  <div className="w-full md:w-1/3 relative h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      priority={index === 0}
-                      loader={customLoader}
-                    />
-                  </div>
-                  <div className="w-full md:w-2/3 p-4 sm:p-6 md:p-8 flex flex-col">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500 mb-4">
-                      <h2 className="text-xl sm:text-2xl font-bold group-hover:text-blue-600 transition-colors mb-2 sm:mb-0">
-                        {post.title}
-                      </h2>
-                      <div className="flex flex-wrap gap-2 sm:items-center">
-                        <span className="text-blue-600 font-medium">
-                          {post.category}
-                        </span>
-                        <span className="hidden sm:inline">•</span>
-                        <span>{post.creator}</span>
-                        <span className="hidden sm:inline">•</span>
-                        <span>{post.years}</span>
-                        <span className="hidden sm:inline">•</span>
-                        <span>{post.date}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 leading-relaxed line-clamp-4 sm:line-clamp-6">
-                      {post.excerpt}
-                    </p>
-                    <div className="mt-4 text-blue-600 font-medium group-hover:underline">
-                      Devamını Oku →
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </Link>
-          ))}
-        </div>
+            </article>
+          </Link>
+        ))}
       </div>
-    </main>
+    </div>
   );
 }
