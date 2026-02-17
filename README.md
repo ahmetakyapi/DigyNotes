@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DigyNotes
 
-## Getting Started
+Film, dizi ve kitap notlarını takip etmek için kişisel dijital not defteri. Her içerik için puan, yönetmen/yazar, yıl, kapak görseli ve zengin metin incelemesi kaydedebilirsin.
 
-First, run the development server:
+---
+
+## Tech Stack
+
+| Katman | Teknoloji |
+| --- | --- |
+| Framework | Next.js 14 (App Router) |
+| Dil | TypeScript |
+| Stil | Tailwind CSS |
+| Veritabanı | PostgreSQL |
+| ORM | Prisma v7 |
+| DB Driver | `@prisma/adapter-pg` |
+| Rich Text | React Quill |
+| Toast | react-hot-toast |
+
+---
+
+## Özellikler
+
+- **Not Oluştur** — Başlık, kategori, yönetmen/yazar, yıl, kapak görseli, kısa özet ve zengin metin içeriği
+- **Puan Sistemi** — 0–5 arası, 0.5 hassasiyetinde yıldız puanı
+- **Dinamik Kategoriler** — Kategori ekle, filtrele ve sil
+- **Not Düzenle / Sil** — Tam CRUD desteği
+- **Dark Premium UI** — Letterboxd/IMDb ilhamıyla koyu tema, amber gold aksan
+
+---
+
+## Kurulum
+
+### Gereksinimler
+
+- Node.js 18+
+- PostgreSQL 14+ (lokal veya uzak)
+
+### 1. Bağımlılıkları kur
+
+```bash
+npm install
+```
+
+### 2. Ortam değişkenlerini ayarla
+
+`.env.local` dosyası oluştur:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/digynotes"
+```
+
+### 3. Veritabanını hazırla
+
+```bash
+# PostgreSQL üzerinde veritabanı ve kullanıcı oluştur
+psql postgres -c "CREATE USER digynotes WITH PASSWORD 'sifre';"
+psql postgres -c "CREATE DATABASE digynotes OWNER digynotes;"
+psql postgres -c "ALTER USER digynotes CREATEDB;"
+
+# Tabloları oluştur
+npm run db:migrate
+```
+
+### 4. Geliştirme sunucusunu başlat
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) adresinden erişebilirsin.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Docker ile PostgreSQL (Opsiyonel)
 
-## Learn More
+Projenin kökünde `docker-compose.yml` mevcuttur. Docker kuruluysa:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+docker compose up -d
+npm run db:migrate
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Kullanışlı Komutlar
 
-## Deploy on Vercel
+```bash
+npm run dev          # Geliştirme sunucusu
+npm run build        # Production build (prisma generate dahil)
+npm run db:migrate   # Yeni migration oluştur ve uygula
+npm run db:studio    # Prisma Studio (veritabanı arayüzü)
+npm run db:generate  # Prisma client yeniden oluştur
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Proje Yapısı
+
+```text
+src/
+├── app/
+│   ├── api/
+│   │   ├── posts/          # GET, POST /api/posts
+│   │   │   └── [id]/       # GET, PUT, DELETE /api/posts/:id
+│   │   └── categories/     # GET, POST /api/categories
+│   │       └── [id]/       # DELETE /api/categories/:id
+│   ├── category/[id]/      # Kategoriye göre filtrelenmiş notlar
+│   ├── posts/[id]/         # Not detay sayfası
+│   │   └── edit/           # Not düzenleme formu
+│   ├── new-post/           # Yeni not oluşturma formu
+│   └── page.tsx            # Ana sayfa (tüm notlar)
+├── components/
+│   ├── StarRating.tsx      # İnteraktif yıldız puanı (0.5 hassasiyet)
+│   ├── AddCategoryModal.tsx
+│   └── ConfirmModal.tsx
+├── lib/
+│   └── prisma.ts           # PrismaClient singleton
+└── types/
+    └── index.ts            # Post, Category arayüzleri
+```
+
+---
+
+## Production Deployment
+
+Vercel veya benzeri bir platforma deploy ederken:
+
+1. `DATABASE_URL` ortam değişkenini platforma ekle (Supabase, Railway veya Neon önerilir)
+2. Build komutu otomatik olarak `prisma generate && next build` çalıştırır
