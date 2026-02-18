@@ -45,9 +45,7 @@ export default function CategoryPage() {
 
   const handleConfirmDelete = async () => {
     if (!category) return;
-    const res = await fetch(`/api/categories/${category.id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(`/api/categories/${category.id}`, { method: "DELETE" });
     setIsDeleteModalOpen(false);
     if (res.ok) {
       toast.success("Kategori silindi");
@@ -60,7 +58,7 @@ export default function CategoryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-[#555555] animate-pulse">Yükleniyor...</div>
+        <div className="text-[#4a5568] animate-pulse">Yükleniyor...</div>
       </div>
     );
   }
@@ -72,12 +70,12 @@ export default function CategoryPage() {
         <div>
           <Link
             href="/"
-            className="text-xs text-[#555555] hover:text-[#c9a84c] transition-colors mb-2 block"
+            className="text-xs text-[#4a5568] hover:text-[#c9a84c] transition-colors mb-2 block"
           >
             ← Tüm Notlar
           </Link>
-          <h1 className="text-2xl font-bold text-[#f0ede8]">{categoryName}</h1>
-          <p className="text-sm text-[#555555] mt-1">{posts.length} not</p>
+          <h1 className="text-2xl font-bold text-[#e8eaf6]">{categoryName}</h1>
+          <p className="text-sm text-[#4a5568] mt-1">{posts.length} not</p>
         </div>
         {category && (
           <button
@@ -92,7 +90,7 @@ export default function CategoryPage() {
 
       {/* Posts list */}
       {posts.length === 0 ? (
-        <div className="text-center text-[#555555] py-16">
+        <div className="text-center text-[#4a5568] py-16">
           Bu kategoride henüz not yok.
         </div>
       ) : (
@@ -100,9 +98,9 @@ export default function CategoryPage() {
           {posts.map((post, index) => (
             <Link key={post.id} href={`/posts/${post.id}`} className="group block">
               <article
-                className="flex rounded-xl overflow-hidden bg-[#161616] border border-[#2a2a2a]
-                           hover:border-[#c9a84c]/30 transition-all duration-300
-                           hover:shadow-[0_0_24px_rgba(201,168,76,0.06)]"
+                className="flex rounded-xl overflow-hidden bg-[#151b2d] border border-[#252d40]
+                           hover:border-[#c9a84c]/40 transition-all duration-300
+                           hover:shadow-[0_4px_32px_rgba(201,168,76,0.08)]"
               >
                 <div
                   className="relative flex-shrink-0"
@@ -117,30 +115,30 @@ export default function CategoryPage() {
                     className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
                     priority={index === 0}
                   />
-                  <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#161616] to-transparent" />
+                  <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#151b2d] to-transparent" />
                 </div>
 
                 <div className="flex flex-col justify-between p-5 flex-1 min-w-0">
                   <div>
                     {post.years && (
-                      <p className="text-xs text-[#555555] mb-2">{post.years}</p>
+                      <p className="text-xs text-[#4a5568] mb-2">{post.years}</p>
                     )}
                     <h2
-                      className="text-lg font-bold text-[#f0ede8] leading-snug mb-2
+                      className="text-lg font-bold text-[#e8eaf6] leading-snug mb-2
                                  group-hover:text-[#c9a84c] transition-colors line-clamp-2"
                     >
                       {post.title}
                     </h2>
                     {post.creator && (
-                      <p className="text-sm text-[#888888] mb-2">{post.creator}</p>
+                      <p className="text-sm text-[#8892b0] mb-2">{post.creator}</p>
                     )}
-                    <p className="text-sm text-[#888888] line-clamp-3 leading-relaxed">
+                    <p className="text-sm text-[#8892b0] line-clamp-3 leading-relaxed">
                       {post.excerpt}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#2a2a2a]">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#252d40]">
                     <StarRating rating={post.rating} size={13} />
-                    <span className="text-xs text-[#555555]">{post.date}</span>
+                    <span className="text-xs text-[#4a5568]">{post.date}</span>
                   </div>
                 </div>
               </article>

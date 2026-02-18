@@ -41,7 +41,7 @@ export default function StarRating({
               ) : starNum === fullStars + 1 && hasHalf ? (
                 <FaStarHalfAlt className="text-[#c9a84c]" />
               ) : (
-                <FaRegStar className="text-[#555555]" />
+                <FaRegStar className="text-[#4a5568]" />
               )}
             </span>
           );
@@ -69,7 +69,7 @@ export default function StarRating({
         ) : (
           <FaRegStar
             key={starNum}
-            className="text-[#555555]"
+            className="text-[#4a5568]"
             style={{ fontSize: size }}
           />
         );

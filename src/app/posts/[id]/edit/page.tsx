@@ -12,9 +12,9 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
 const inputClass =
-  "w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555555] bg-[#161616] border border-[#2a2a2a] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-colors text-sm";
+  "w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568] bg-[#151b2d] border border-[#252d40] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-colors text-sm";
 const labelClass =
-  "block text-[10px] font-bold uppercase tracking-[0.12em] text-[#888888] mb-2";
+  "block text-[10px] font-bold uppercase tracking-[0.12em] text-[#8892b0] mb-2";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -84,19 +84,19 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-[#555555] animate-pulse">Yükleniyor...</div>
+        <div className="text-[#4a5568] animate-pulse">Yükleniyor...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0c0c] py-10">
+    <main className="min-h-screen bg-[#0f1117] py-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between mb-10 pb-6 border-b border-[#2a2a2a]">
-          <h1 className="text-2xl font-bold text-[#f0ede8]">Yazıyı Düzenle</h1>
+        <div className="flex items-center justify-between mb-10 pb-6 border-b border-[#252d40]">
+          <h1 className="text-2xl font-bold text-[#e8eaf6]">Yazıyı Düzenle</h1>
           <button
             onClick={() => router.back()}
-            className="text-sm text-[#555555] hover:text-[#f0ede8] transition-colors"
+            className="text-sm text-[#4a5568] hover:text-[#e8eaf6] transition-colors"
           >
             ← Geri
           </button>
@@ -169,14 +169,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 onRate={setRating}
                 size={24}
               />
-              <span className="text-sm text-[#888888]">
+              <span className="text-sm text-[#8892b0]">
                 {rating > 0 ? `${rating} / 5` : "—"}
               </span>
               {rating > 0 && (
                 <button
                   type="button"
                   onClick={() => setRating(0)}
-                  className="text-xs text-[#555555] hover:text-[#e53e3e] transition-colors"
+                  className="text-xs text-[#4a5568] hover:text-[#e53e3e] transition-colors"
                 >
                   Sıfırla
                 </button>
@@ -195,7 +195,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               required
             />
             {image && (
-              <div className="mt-3 relative h-44 w-32 rounded-lg overflow-hidden border border-[#2a2a2a]">
+              <div className="mt-3 relative h-44 w-32 rounded-lg overflow-hidden border border-[#252d40]">
                 <Image
                   loader={customLoader}
                   src={image}
@@ -226,11 +226,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4 pt-4 border-t border-[#2a2a2a]">
+          <div className="flex items-center gap-4 pt-4 border-t border-[#252d40]">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-3 font-semibold bg-[#c9a84c] text-[#0c0c0c] rounded-lg
+              className="px-8 py-3 font-semibold bg-[#c9a84c] text-[#0f1117] rounded-lg
                          hover:bg-[#e0c068] transition-colors disabled:opacity-50
                          disabled:cursor-not-allowed"
             >
@@ -239,7 +239,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 text-sm text-[#888888] hover:text-[#f0ede8] transition-colors"
+              className="px-6 py-3 text-sm text-[#8892b0] hover:text-[#e8eaf6] transition-colors"
             >
               İptal
             </button>

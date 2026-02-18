@@ -44,7 +44,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-[#555555] animate-pulse text-lg">Yükleniyor...</div>
+        <div className="text-[#4a5568] animate-pulse text-lg">Yükleniyor...</div>
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0c0c]">
+    <main className="min-h-screen bg-[#0f1117]">
       {/* ─── Hero Image ─── */}
       <div className="relative w-full overflow-hidden" style={{ height: "48vh" }}>
         <Image
@@ -70,21 +70,21 @@ export default function PostPage({ params }: { params: { id: string } }) {
           priority
         />
         {/* Gradient: top (transparent) → bottom (full dark) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1117] via-[#0f1117]/50 to-transparent" />
 
         {/* ── Top controls ── */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-8 pt-4">
           <Link
             href={`/category/${encodeURIComponent(post.category)}`}
-            className="text-sm text-[#f0ede8]/60 hover:text-[#c9a84c] transition-colors"
+            className="text-sm text-[#e8eaf6]/60 hover:text-[#c9a84c] transition-colors"
           >
             ← {post.category}
           </Link>
           <div className="flex gap-2">
             <Link
               href={`/posts/${post.id}/edit`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#2a2a2a]
-                         bg-[#161616]/80 text-[#f0ede8] rounded-md hover:border-[#c9a84c]/50
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#252d40]
+                         bg-[#151b2d]/80 text-[#e8eaf6] rounded-md hover:border-[#c9a84c]/50
                          backdrop-blur-sm transition-colors"
             >
               <FaEdit size={11} /> Düzenle
@@ -93,7 +93,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
               onClick={() => setIsModalOpen(true)}
               disabled={isDeleting}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-[#e53e3e]/40
-                         bg-[#161616]/80 text-[#e53e3e] rounded-md hover:bg-[#e53e3e]/10
+                         bg-[#151b2d]/80 text-[#e53e3e] rounded-md hover:bg-[#e53e3e]/10
                          backdrop-blur-sm transition-colors disabled:opacity-50"
             >
               <FaTrash size={11} /> Sil
@@ -110,27 +110,27 @@ export default function PostPage({ params }: { params: { id: string } }) {
             >
               {post.category}
             </span>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f0ede8] leading-tight mb-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#e8eaf6] leading-tight mb-3">
               {post.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-[#888888]">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-[#8892b0]">
               {post.creator && <span>{post.creator}</span>}
               {post.years && (
                 <>
-                  <span className="text-[#2a2a2a]">•</span>
+                  <span className="text-[#252d40]">•</span>
                   <span>{post.years}</span>
                 </>
               )}
               {post.rating > 0 && (
                 <>
-                  <span className="text-[#2a2a2a]">•</span>
+                  <span className="text-[#252d40]">•</span>
                   <StarRating rating={post.rating} size={13} />
-                  <span className="text-[#555555] text-xs">({post.rating}/5)</span>
+                  <span className="text-[#4a5568] text-xs">({post.rating}/5)</span>
                 </>
               )}
               {post.date && (
                 <>
-                  <span className="text-[#2a2a2a]">•</span>
+                  <span className="text-[#252d40]">•</span>
                   <span className="text-xs">{post.date}</span>
                 </>
               )}
@@ -143,14 +143,14 @@ export default function PostPage({ params }: { params: { id: string } }) {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
         <article
           className="prose prose-lg max-w-none
-                     prose-headings:text-[#f0ede8] prose-headings:font-bold
-                     prose-p:text-[#c8c4bc] prose-p:leading-[1.85]
+                     prose-headings:text-[#e8eaf6] prose-headings:font-bold
+                     prose-p:text-[#c5cae9] prose-p:leading-[1.85]
                      prose-a:text-[#c9a84c] prose-a:no-underline hover:prose-a:underline
-                     prose-strong:text-[#f0ede8]
-                     prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[#888888]
-                     prose-code:text-[#c9a84c] prose-code:bg-[#161616] prose-code:px-1 prose-code:rounded
-                     prose-pre:bg-[#161616] prose-pre:border prose-pre:border-[#2a2a2a]
-                     prose-ul:text-[#c8c4bc] prose-ol:text-[#c8c4bc]
+                     prose-strong:text-[#e8eaf6]
+                     prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[#8892b0]
+                     prose-code:text-[#c9a84c] prose-code:bg-[#151b2d] prose-code:px-1 prose-code:rounded
+                     prose-pre:bg-[#151b2d] prose-pre:border prose-pre:border-[#252d40]
+                     prose-ul:text-[#c5cae9] prose-ol:text-[#c5cae9]
                      prose-li:marker:text-[#c9a84c]"
         >
           <div dangerouslySetInnerHTML={{ __html: post.content }} />

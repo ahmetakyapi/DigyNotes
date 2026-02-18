@@ -25,7 +25,7 @@ export default async function HomePage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       {posts.length === 0 && (
         <div className="text-center py-24">
-          <p className="text-[#555555] text-lg mb-3">Henüz not eklenmemiş.</p>
+          <p className="text-[#4a5568] text-lg mb-3">Henüz not eklenmemiş.</p>
           <Link
             href="/new-post"
             className="text-[#c9a84c] hover:text-[#e0c068] transition-colors text-sm font-medium"
@@ -39,9 +39,9 @@ export default async function HomePage() {
         {posts.map((post, index) => (
           <Link key={post.id} href={`/posts/${post.id}`} className="group block">
             <article
-              className="flex rounded-xl overflow-hidden bg-[#161616] border border-[#2a2a2a]
-                         hover:border-[#c9a84c]/30 transition-all duration-300
-                         hover:shadow-[0_0_24px_rgba(201,168,76,0.06)]"
+              className="flex rounded-xl overflow-hidden bg-[#151b2d] border border-[#252d40]
+                         hover:border-[#c9a84c]/40 transition-all duration-300
+                         hover:shadow-[0_4px_32px_rgba(201,168,76,0.08)]"
             >
               {/* Cover image */}
               <div
@@ -58,7 +58,7 @@ export default async function HomePage() {
                   priority={index === 0}
                 />
                 {/* Fade into card */}
-                <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#161616] to-transparent" />
+                <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#151b2d] to-transparent" />
               </div>
 
               {/* Content */}
@@ -68,18 +68,18 @@ export default async function HomePage() {
                   <div className="flex items-center gap-2 mb-3">
                     <span
                       className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#c9a84c]
-                                 border border-[#c9a84c]/25 px-2 py-0.5 rounded-sm flex-shrink-0"
+                                 border border-[#c9a84c]/30 bg-[#c9a84c]/8 px-2 py-0.5 rounded-sm flex-shrink-0"
                     >
                       {post.category}
                     </span>
                     {post.years && (
-                      <span className="text-xs text-[#555555]">{post.years}</span>
+                      <span className="text-xs text-[#4a5568]">{post.years}</span>
                     )}
                   </div>
 
                   {/* Title */}
                   <h2
-                    className="text-lg sm:text-xl font-bold text-[#f0ede8] leading-snug mb-2
+                    className="text-lg sm:text-xl font-bold text-[#e8eaf6] leading-snug mb-2
                                group-hover:text-[#c9a84c] transition-colors duration-200 line-clamp-2"
                   >
                     {post.title}
@@ -87,19 +87,19 @@ export default async function HomePage() {
 
                   {/* Creator */}
                   {post.creator && (
-                    <p className="text-sm text-[#888888] mb-3">{post.creator}</p>
+                    <p className="text-sm text-[#8892b0] mb-3">{post.creator}</p>
                   )}
 
                   {/* Excerpt */}
-                  <p className="text-sm text-[#888888] leading-relaxed line-clamp-3">
+                  <p className="text-sm text-[#8892b0] leading-relaxed line-clamp-3">
                     {post.excerpt}
                   </p>
                 </div>
 
                 {/* Bottom: rating + date */}
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#2a2a2a]">
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#252d40]">
                   <StarRating rating={post.rating} size={13} />
-                  <span className="text-xs text-[#555555]">{post.date}</span>
+                  <span className="text-xs text-[#4a5568]">{post.date}</span>
                 </div>
               </div>
             </article>
