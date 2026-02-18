@@ -3,15 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --bg-base: #0c0c0c;
-  --bg-card: #161616;
-  --bg-raised: #1e1e1e;
-  --border: #2a2a2a;
+  --bg-base: #0f1117;
+  --bg-card: #151b2d;
+  --bg-raised: #1e2639;
+  --border: #252d40;
+  --border-subtle: #1c2333;
   --gold: #c9a84c;
   --gold-light: #e0c068;
-  --text-primary: #f0ede8;
-  --text-secondary: #888888;
-  --text-muted: #555555;
+  --text-primary: #e8eaf6;
+  --text-secondary: #8892b0;
+  --text-muted: #4a5568;
   --danger: #e53e3e;
 }
 
@@ -53,20 +54,20 @@ body {
   display: none;
 }
 
-/* ─── React Quill — Dark Theme ─── */
+/* ─── React Quill — Slate Dark Theme ─── */
 .ql-toolbar.ql-snow {
-  background-color: #1e1e1e !important;
-  border: 1px solid #2a2a2a !important;
-  border-bottom: 1px solid #333 !important;
+  background-color: #1e2639 !important;
+  border: 1px solid #252d40 !important;
+  border-bottom: 1px solid #2d3748 !important;
   border-radius: 8px 8px 0 0 !important;
   padding: 8px 12px !important;
 }
 
 .ql-toolbar.ql-snow .ql-stroke {
-  stroke: #888888 !important;
+  stroke: #8892b0 !important;
 }
 .ql-toolbar.ql-snow .ql-fill {
-  fill: #888888 !important;
+  fill: #8892b0 !important;
 }
 .ql-toolbar.ql-snow button:hover .ql-stroke,
 .ql-toolbar.ql-snow button.ql-active .ql-stroke {
@@ -77,40 +78,40 @@ body {
   fill: #c9a84c !important;
 }
 .ql-toolbar.ql-snow .ql-picker-label {
-  color: #888888 !important;
+  color: #8892b0 !important;
 }
 .ql-toolbar.ql-snow .ql-picker-options {
-  background-color: #1e1e1e !important;
-  border: 1px solid #2a2a2a !important;
+  background-color: #1e2639 !important;
+  border: 1px solid #252d40 !important;
 }
 
 .ql-container.ql-snow {
-  background-color: #161616 !important;
-  border: 1px solid #2a2a2a !important;
+  background-color: #151b2d !important;
+  border: 1px solid #252d40 !important;
   border-top: none !important;
   border-radius: 0 0 8px 8px !important;
-  color: #f0ede8 !important;
+  color: #e8eaf6 !important;
   font-size: 1rem;
   min-height: 280px;
 }
 
 .ql-editor {
-  color: #f0ede8 !important;
+  color: #e8eaf6 !important;
   min-height: 260px;
   line-height: 1.75;
 }
 
 .ql-editor.ql-blank::before {
-  color: #555555 !important;
+  color: #4a5568 !important;
   font-style: normal !important;
 }
 
 .ql-editor p {
-  color: #f0ede8;
+  color: #e8eaf6;
 }
 
 /* ─── Dark Form Select ─── */
 select option {
-  background-color: #1e1e1e;
-  color: #f0ede8;
+  background-color: #1e2639;
+  color: #e8eaf6;
 }

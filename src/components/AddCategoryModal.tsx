@@ -47,8 +47,8 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-6 w-[360px] shadow-2xl">
-        <h2 className="text-base font-bold text-[#f0ede8] mb-5">
+      <div className="bg-[#151b2d] border border-[#252d40] rounded-xl p-6 w-[360px] shadow-2xl">
+        <h2 className="text-base font-bold text-[#e8eaf6] mb-5">
           Yeni Kategori
         </h2>
         <form onSubmit={handleSubmit}>
@@ -56,8 +56,8 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555555]
-                       bg-[#0c0c0c] border border-[#2a2a2a]
+            className="w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568]
+                       bg-[#0f1117] border border-[#252d40]
                        focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20
                        transition-colors text-sm mb-4"
             placeholder="Kategori adı (örn: Film, Kitap…)"
@@ -68,14 +68,14 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-[#888888] hover:text-[#f0ede8] transition-colors"
+              className="px-4 py-2 text-sm text-[#8892b0] hover:text-[#e8eaf6] transition-colors"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0c0c0c]
+              className="px-5 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117]
                          rounded-md hover:bg-[#e0c068] transition-colors disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}

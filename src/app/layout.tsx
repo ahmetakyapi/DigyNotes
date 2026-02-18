@@ -46,9 +46,9 @@ export default function RootLayout({
 
   return (
     <html lang="tr">
-      <body className={`${inter.className} bg-[#0c0c0c] text-[#f0ede8] min-h-screen`}>
+      <body className={`${inter.className} bg-[#0f1117] text-[#e8eaf6] min-h-screen`}>
         {/* ─── HEADER ─── */}
-        <header className="bg-[#0c0c0c] border-b border-[#2a2a2a] sticky top-0 z-40">
+        <header className="bg-[#0f1117]/95 backdrop-blur-sm border-b border-[#252d40] sticky top-0 z-40">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             {/* Top row: Logo + New Post button */}
             <div className="flex items-center justify-between py-4">
@@ -64,8 +64,8 @@ export default function RootLayout({
               </Link>
               <Link
                 href="/new-post"
-                className="px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0c0c0c] rounded-md
-                           hover:bg-[#e0c068] transition-colors duration-200"
+                className="px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
+                           hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20"
               >
                 + Yeni Not
               </Link>
@@ -80,16 +80,11 @@ export default function RootLayout({
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full
-                           text-[#888888] hover:text-[#c9a84c] hover:bg-[#161616] transition-colors mr-1"
+                           text-[#8892b0] hover:text-[#c9a84c] hover:bg-[#151b2d] transition-colors mr-1"
                 aria-label="Kategori ekle"
                 title="Kategori Ekle"
               >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="currentColor"
-                >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
                   <path d="M7 1a1 1 0 011 1v4h4a1 1 0 110 2H8v4a1 1 0 11-2 0V8H2a1 1 0 110-2h4V2a1 1 0 011-1z" />
                 </svg>
               </button>
@@ -99,8 +94,8 @@ export default function RootLayout({
                 onClick={() => router.push("/")}
                 className={`flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   activeCategory === "all"
-                    ? "border-[#c9a84c] text-[#f0ede8]"
-                    : "border-transparent text-[#888888] hover:text-[#f0ede8]"
+                    ? "border-[#c9a84c] text-[#e8eaf6]"
+                    : "border-transparent text-[#8892b0] hover:text-[#e8eaf6]"
                 }`}
               >
                 Son Yazılar
@@ -114,8 +109,8 @@ export default function RootLayout({
                   }
                   className={`flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                     activeCategory === cat.name
-                      ? "border-[#c9a84c] text-[#f0ede8]"
-                      : "border-transparent text-[#888888] hover:text-[#f0ede8]"
+                      ? "border-[#c9a84c] text-[#e8eaf6]"
+                      : "border-transparent text-[#8892b0] hover:text-[#e8eaf6]"
                   }`}
                 >
                   {cat.name}
@@ -140,15 +135,15 @@ export default function RootLayout({
           position="top-right"
           toastOptions={{
             style: {
-              background: "#161616",
-              color: "#f0ede8",
-              border: "1px solid #2a2a2a",
+              background: "#151b2d",
+              color: "#e8eaf6",
+              border: "1px solid #252d40",
               fontSize: "14px",
             },
             success: {
               iconTheme: {
                 primary: "#c9a84c",
-                secondary: "#0c0c0c",
+                secondary: "#0f1117",
               },
             },
           }}
