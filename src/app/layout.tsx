@@ -52,19 +52,19 @@ export default function RootLayout({
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             {/* Top row: Logo + New Post button */}
             <div className="flex items-center justify-between py-4">
-              <Link href="/" className="flex items-center">
+              <Link href="/" className="flex items-center leading-[0]">
                 <Image
                   src="/digy-notes-logo.png"
                   alt="DigyNotes"
-                  width={150}
-                  height={44}
-                  className="object-contain"
+                  width={190}
+                  height={56}
+                  className="object-contain block"
                   priority
                 />
               </Link>
               <Link
                 href="/new-post"
-                className="px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
+                className="self-center px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
                            hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20"
               >
                 + Yeni Not
