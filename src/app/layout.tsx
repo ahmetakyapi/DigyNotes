@@ -7,7 +7,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
 import AddCategoryModal from "@/components/AddCategoryModal";
+import { SearchBar } from "@/components/SearchBar";
 import { Category } from "@/types";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -62,13 +64,18 @@ export default function RootLayout({
                   priority
                 />
               </Link>
-              <Link
-                href="/new-post"
-                className="self-center px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
-                           hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20"
-              >
-                + Yeni Not
-              </Link>
+              <div className="flex items-center gap-2">
+                <Suspense>
+                  <SearchBar />
+                </Suspense>
+                <Link
+                  href="/new-post"
+                  className="self-center px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
+                             hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20"
+                >
+                  + Yeni Not
+                </Link>
+              </div>
             </div>
 
             {/* Category nav row */}
