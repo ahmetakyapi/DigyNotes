@@ -33,44 +33,35 @@ const RATING_OPTIONS = [
 
 export function SortFilterBar({ value, onChange, totalCount, filteredCount }: SortFilterBarProps) {
   const selectClass =
-    "bg-[#161616] border border-[#2a2a2a] text-[#c5cae9] text-xs rounded-md px-2.5 py-1.5 outline-none hover:border-[#3a3a3a] focus:border-[#c9a84c]/40 transition-colors cursor-pointer";
+    "bg-[#111111] border border-[#1e1e1e] text-[#888888] text-[11px] rounded-md px-2 py-1.5 outline-none hover:border-[#2a2a2a] focus:border-[#c9a84c]/30 transition-colors cursor-pointer";
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-      <p className="text-xs text-[#555555]">
-        {filteredCount < totalCount ? (
-          <>
-            <span className="text-[#888888]">{filteredCount}</span>
-            <span className="text-[#444]"> / {totalCount} not</span>
-          </>
-        ) : (
-          <span className="text-[#888888]">{totalCount} not</span>
-        )}
-      </p>
-      <div className="flex items-center gap-2">
-        <select
-          value={value.minRating}
-          onChange={(e) => onChange({ ...value, minRating: Number(e.target.value) })}
-          className={selectClass}
-        >
-          {RATING_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={value.sort}
-          onChange={(e) => onChange({ ...value, sort: e.target.value as SortOption })}
-          className={selectClass}
-        >
-          {SORT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="flex items-center gap-2">
+      {filteredCount < totalCount && (
+        <span className="text-[11px] text-[#444] mr-1">{filteredCount}/{totalCount}</span>
+      )}
+      <select
+        value={value.minRating}
+        onChange={(e) => onChange({ ...value, minRating: Number(e.target.value) })}
+        className={selectClass}
+      >
+        {RATING_OPTIONS.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <select
+        value={value.sort}
+        onChange={(e) => onChange({ ...value, sort: e.target.value as SortOption })}
+        className={selectClass}
+      >
+        {SORT_OPTIONS.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
