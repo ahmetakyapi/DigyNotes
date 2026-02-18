@@ -6,6 +6,7 @@ import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
 import { Post, Category } from "@/types";
 import StarRating from "@/components/StarRating";
+import { getStatusOptions } from "@/components/StatusBadge";
 import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -23,6 +24,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [rating, setRating] = useState(0);
+  const [status, setStatus] = useState("");
   const [image, setImage] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -39,6 +41,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setTitle(post.title);
         setCategory(post.category);
         setRating(post.rating ?? 0);
+        setStatus(post.status ?? getStatusOptions(post.category)[0]);
         setImage(post.image);
         setExcerpt(post.excerpt);
         setContent(post.content);
@@ -53,6 +56,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       });
   }, [params.id]);
 
+  const handleCategoryChange = (cat: string) => {
+    setCategory(cat);
+    const opts = getStatusOptions(cat);
+    setStatus(opts[0]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -64,6 +73,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           title,
           category,
           rating,
+          status,
           image,
           excerpt,
           content,
@@ -120,7 +130,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <label className={labelClass}>Kategori</label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className={inputClass}
             >
               {categories.map((cat) => (
@@ -182,6 +192,20 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className={labelClass}>Durum</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className={inputClass}
+            >
+              {getStatusOptions(category).map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
           </div>
 
           {/* Image URL + preview */}

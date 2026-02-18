@@ -6,6 +6,7 @@ import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
 import { Category } from "@/types";
 import StarRating from "@/components/StarRating";
+import { getStatusOptions } from "@/components/StatusBadge";
 import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -27,6 +28,7 @@ export default function NewPostPage() {
   const [content, setContent] = useState("");
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
+  const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -34,10 +36,21 @@ export default function NewPostPage() {
       .then((r) => r.json())
       .then((cats: Category[]) => {
         setCategories(cats);
-        if (cats.length > 0) setCategory(cats[0].name);
+        if (cats.length > 0) {
+          setCategory(cats[0].name);
+          const opts = getStatusOptions(cats[0].name);
+          setStatus(opts[0]);
+        }
       })
       .catch(console.error);
   }, []);
+
+  // Status seçeneklerini kategori değişince güncelle
+  const handleCategoryChange = (cat: string) => {
+    setCategory(cat);
+    const opts = getStatusOptions(cat);
+    setStatus(opts[0]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +63,7 @@ export default function NewPostPage() {
           title,
           category,
           rating,
+          status,
           image,
           excerpt,
           content,
@@ -97,7 +111,7 @@ export default function NewPostPage() {
             <label className={labelClass}>Kategori</label>
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className={inputClass}
             >
               {categories.length === 0 && (
@@ -163,6 +177,20 @@ export default function NewPostPage() {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className={labelClass}>Durum</label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className={inputClass}
+            >
+              {getStatusOptions(category).map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
           </div>
 
           {/* Image URL + preview */}

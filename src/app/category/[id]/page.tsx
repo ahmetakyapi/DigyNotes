@@ -1,12 +1,15 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Post, Category } from "@/types";
 import StarRating from "@/components/StarRating";
+import { StatusBadge } from "@/components/StatusBadge";
+import { SortFilterBar, SortFilterState, applySortFilter } from "@/components/SortFilterBar";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import toast from "react-hot-toast";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -19,6 +22,8 @@ export default function CategoryPage() {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortFilter, setSortFilter] = useState<SortFilterState>({ sort: "newest", minRating: 0 });
 
   useEffect(() => {
     const load = async () => {
@@ -42,6 +47,18 @@ export default function CategoryPage() {
     };
     load();
   }, [categoryName]);
+
+  const filtered = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    const searched = q
+      ? posts.filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            (p.creator?.toLowerCase().includes(q) ?? false)
+        )
+      : posts;
+    return applySortFilter(searched, sortFilter);
+  }, [posts, searchQuery, sortFilter]);
 
   const handleConfirmDelete = async () => {
     if (!category) return;
@@ -68,10 +85,7 @@ export default function CategoryPage() {
       {/* Category header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <Link
-            href="/"
-            className="text-xs text-[#4a5568] hover:text-[#c9a84c] transition-colors mb-2 block"
-          >
+          <Link href="/" className="text-xs text-[#4a5568] hover:text-[#c9a84c] transition-colors mb-2 block">
             ← Tüm Notlar
           </Link>
           <h1 className="text-2xl font-bold text-[#e8eaf6]">{categoryName}</h1>
@@ -88,24 +102,52 @@ export default function CategoryPage() {
         )}
       </div>
 
+      {/* Search input */}
+      <div className="relative mb-4">
+        <FaSearch size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555]" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Bu kategoride ara..."
+          className="w-full pl-8 pr-8 py-2 bg-[#161616] border border-[#2a2a2a] rounded-lg text-sm
+                     text-[#f0ede8] placeholder-[#555555] outline-none focus:border-[#c9a84c]/40 transition-colors"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555] hover:text-[#888]"
+          >
+            <FaTimes size={11} />
+          </button>
+        )}
+      </div>
+
+      {/* Sort/Filter bar */}
+      <SortFilterBar
+        value={sortFilter}
+        onChange={setSortFilter}
+        totalCount={posts.length}
+        filteredCount={filtered.length}
+      />
+
       {/* Posts list */}
-      {posts.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="text-center text-[#4a5568] py-16">
-          Bu kategoride henüz not yok.
+          {searchQuery || sortFilter.minRating > 0
+            ? "Sonuç bulunamadı."
+            : "Bu kategoride henüz not yok."}
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {posts.map((post, index) => (
+          {filtered.map((post, index) => (
             <Link key={post.id} href={`/posts/${post.id}`} className="group block">
               <article
                 className="flex rounded-xl overflow-hidden bg-[#151b2d] border border-[#252d40]
                            hover:border-[#c9a84c]/40 transition-all duration-300
                            hover:shadow-[0_4px_32px_rgba(201,168,76,0.08)]"
               >
-                <div
-                  className="relative flex-shrink-0"
-                  style={{ width: "38%", minHeight: "200px" }}
-                >
+                <div className="relative flex-shrink-0" style={{ width: "38%", minHeight: "200px" }}>
                   <Image
                     loader={customLoader}
                     src={post.image}
@@ -120,13 +162,13 @@ export default function CategoryPage() {
 
                 <div className="flex flex-col justify-between p-5 flex-1 min-w-0">
                   <div>
-                    {post.years && (
-                      <p className="text-xs text-[#4a5568] mb-2">{post.years}</p>
-                    )}
-                    <h2
-                      className="text-lg font-bold text-[#e8eaf6] leading-snug mb-2
-                                 group-hover:text-[#c9a84c] transition-colors line-clamp-2"
-                    >
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      {post.years && (
+                        <p className="text-xs text-[#4a5568]">{post.years}</p>
+                      )}
+                      {post.status && <StatusBadge status={post.status} />}
+                    </div>
+                    <h2 className="text-lg font-bold text-[#e8eaf6] leading-snug mb-2 group-hover:text-[#c9a84c] transition-colors line-clamp-2">
                       {post.title}
                     </h2>
                     {post.creator && (

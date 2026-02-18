@@ -17,11 +17,11 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const body = await request.json();
-  const { title, category, image, excerpt, content, creator, years, rating } = body;
+  const { title, category, image, excerpt, content, creator, years, rating, status } = body;
 
   const post = await prisma.post.update({
     where: { id: params.id },
-    data: { title, category, image, excerpt, content, creator, years, rating },
+    data: { title, category, image, excerpt, content, creator, years, rating, status: status || null },
   });
 
   return NextResponse.json(post);

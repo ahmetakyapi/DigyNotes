@@ -8,6 +8,7 @@ export interface Post {
   creator: string | null;
   years: string | null;
   rating: number;
+  status: string | null;
   date: string;
   createdAt: string;
   updatedAt: string;

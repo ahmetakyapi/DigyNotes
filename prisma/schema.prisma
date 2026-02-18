@@ -24,6 +24,7 @@ model Post {
   creator   String?
   years     String?
   rating    Float    @default(0)
+  status    String?
   date      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
