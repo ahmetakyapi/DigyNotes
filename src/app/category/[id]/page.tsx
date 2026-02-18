@@ -75,112 +75,124 @@ export default function CategoryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-[#4a5568] animate-pulse">Yükleniyor...</div>
+        <div className="text-[#444] animate-pulse text-sm">Yükleniyor...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      {/* Category header */}
-      <div className="flex items-start justify-between mb-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/" className="text-xs text-[#4a5568] hover:text-[#c9a84c] transition-colors mb-2 block">
+          <Link href="/" className="text-[11px] text-[#444] hover:text-[#c9a84c] transition-colors mb-2 block">
             ← Tüm Notlar
           </Link>
-          <h1 className="text-2xl font-bold text-[#e8eaf6]">{categoryName}</h1>
-          <p className="text-sm text-[#4a5568] mt-1">{posts.length} not</p>
+          <h1 className="text-xl font-bold text-[#f0ede8]">{categoryName}</h1>
+          <div className="flex items-center gap-3 mt-1">
+            <div className="h-0.5 w-8 bg-gradient-to-r from-[#c9a84c] to-transparent rounded-full" />
+            <span className="text-xs text-[#555555]">{posts.length} not</span>
+          </div>
         </div>
-        {category && (
-          <button
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="px-3 py-1.5 text-sm border border-[#e53e3e]/40 text-[#e53e3e]
-                       rounded-md hover:bg-[#e53e3e]/10 transition-colors mt-6"
-          >
-            Kategoriyi Sil
-          </button>
-        )}
+
+        <div className="flex items-center gap-2">
+          {category && (
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="px-3 py-1.5 text-xs border border-[#e53e3e]/30 text-[#e53e3e]
+                         rounded-md hover:bg-[#e53e3e]/10 transition-colors"
+            >
+              Sil
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Search input */}
-      <div className="relative mb-4">
-        <FaSearch size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555]" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Bu kategoride ara..."
-          className="w-full pl-8 pr-8 py-2 bg-[#161616] border border-[#2a2a2a] rounded-lg text-sm
-                     text-[#f0ede8] placeholder-[#555555] outline-none focus:border-[#c9a84c]/40 transition-colors"
+      {/* ── Arama + Sıralama satırı ── */}
+      <div className="flex items-center gap-2 mb-6">
+        <div className="relative flex-1 max-w-xs">
+          <FaSearch size={11} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Ara..."
+            className="w-full pl-8 pr-7 py-1.5 bg-[#111111] border border-[#1e1e1e] rounded-lg text-xs
+                       text-[#f0ede8] placeholder-[#444] outline-none focus:border-[#c9a84c]/30 transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#444] hover:text-[#888]"
+            >
+              <FaTimes size={10} />
+            </button>
+          )}
+        </div>
+        <SortFilterBar
+          value={sortFilter}
+          onChange={setSortFilter}
+          totalCount={posts.length}
+          filteredCount={filtered.length}
         />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555] hover:text-[#888]"
-          >
-            <FaTimes size={11} />
-          </button>
-        )}
       </div>
 
-      {/* Sort/Filter bar */}
-      <SortFilterBar
-        value={sortFilter}
-        onChange={setSortFilter}
-        totalCount={posts.length}
-        filteredCount={filtered.length}
-      />
-
-      {/* Posts list */}
+      {/* ── İçerik ── */}
       {filtered.length === 0 ? (
-        <div className="text-center text-[#4a5568] py-16">
-          {searchQuery || sortFilter.minRating > 0
-            ? "Sonuç bulunamadı."
-            : "Bu kategoride henüz not yok."}
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="w-12 h-12 rounded-full bg-[#111111] border border-[#1e1e1e] flex items-center justify-center mb-4">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="1.5">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" strokeLinecap="round" />
+            </svg>
+          </div>
+          <p className="text-[#555555] text-sm">
+            {searchQuery || sortFilter.minRating > 0 ? "Sonuç bulunamadı." : "Bu kategoride henüz not yok."}
+          </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {filtered.map((post, index) => (
             <Link key={post.id} href={`/posts/${post.id}`} className="group block">
               <article
-                className="flex rounded-xl overflow-hidden bg-[#151b2d] border border-[#252d40]
-                           hover:border-[#c9a84c]/40 transition-all duration-300
-                           hover:shadow-[0_4px_32px_rgba(201,168,76,0.08)]"
+                className="flex h-full rounded-xl overflow-hidden bg-[#111111] border border-[#1e1e1e]
+                           hover:border-[#c9a84c]/30 transition-all duration-300
+                           hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]"
               >
-                <div className="relative flex-shrink-0" style={{ width: "38%", minHeight: "200px" }}>
+                <div className="relative flex-shrink-0" style={{ width: "36%", minHeight: "160px" }}>
                   <Image
                     loader={customLoader}
                     src={post.image}
                     alt={post.title}
                     fill
-                    sizes="(max-width: 768px) 40vw, 300px"
-                    className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                    sizes="(max-width: 768px) 36vw, 200px"
+                    className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
                     priority={index === 0}
                   />
-                  <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#151b2d] to-transparent" />
+                  <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#111111] to-transparent" />
                 </div>
 
-                <div className="flex flex-col justify-between p-5 flex-1 min-w-0">
+                <div className="flex flex-col justify-between p-4 flex-1 min-w-0">
                   <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-1.5 mb-2">
                       {post.years && (
-                        <p className="text-xs text-[#4a5568]">{post.years}</p>
+                        <span className="text-[11px] text-[#444]">{post.years}</span>
                       )}
                       {post.status && <StatusBadge status={post.status} />}
                     </div>
-                    <h2 className="text-lg font-bold text-[#e8eaf6] leading-snug mb-2 group-hover:text-[#c9a84c] transition-colors line-clamp-2">
+                    <h2 className="text-sm sm:text-base font-bold text-[#e8eaf6] leading-snug mb-1 group-hover:text-[#c9a84c] transition-colors line-clamp-2">
                       {post.title}
                     </h2>
                     {post.creator && (
-                      <p className="text-sm text-[#8892b0] mb-2">{post.creator}</p>
+                      <p className="text-xs text-[#555555] mb-1.5">{post.creator}</p>
                     )}
-                    <p className="text-sm text-[#8892b0] line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-[#444] line-clamp-2 leading-relaxed">
                       {post.excerpt}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#252d40]">
-                    <StarRating rating={post.rating} size={13} />
-                    <span className="text-xs text-[#4a5568]">{post.date}</span>
+                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#1e1e1e]">
+                    <StarRating rating={post.rating} size={11} />
+                    <span className="text-[10px] text-[#444]">{post.date}</span>
                   </div>
                 </div>
               </article>
