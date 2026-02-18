@@ -75,7 +75,7 @@ export function SortFilterBar({ value, onChange, totalCount, filteredCount }: So
   );
 }
 
-export function applySortFilter(posts: { rating: number; title: string; createdAt: string }[], state: SortFilterState) {
+export function applySortFilter<T extends { rating: number; title: string; createdAt: string }>(posts: T[], state: SortFilterState): T[] {
   let filtered = posts.filter((p) => p.rating >= state.minRating);
 
   switch (state.sort) {
