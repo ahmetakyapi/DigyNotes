@@ -48,6 +48,19 @@ export default function RootLayout({
 
   return (
     <html lang="tr">
+      <head>
+        <title>DigyNotes</title>
+        <meta name="description" content="Film, Dizi ve Kitap Notları" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#0f1117" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="DigyNotes" />
+      </head>
       <body className={`${inter.className} bg-[#0f1117] text-[#e8eaf6] min-h-screen`}>
         {/* ─── HEADER ─── */}
         <header className="bg-[#0f1117]/95 backdrop-blur-sm border-b border-[#252d40] sticky top-0 z-40">
