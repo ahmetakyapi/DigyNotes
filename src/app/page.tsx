@@ -2,15 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
+import { prisma } from "@/lib/prisma";
 
 async function getPosts(): Promise<Post[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/posts`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    return res.json();
+    const posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+    return posts.map((p) => ({
+      ...p,
+      createdAt: p.createdAt.toISOString(),
+      updatedAt: p.updatedAt.toISOString(),
+    }));
   } catch {
     return [];
   }
