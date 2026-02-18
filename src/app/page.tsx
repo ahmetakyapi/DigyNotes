@@ -3,8 +3,6 @@ import Image from "next/image";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 
-const customLoader = ({ src }: { src: string }) => src;
-
 async function getPosts(): Promise<Post[]> {
   try {
     const res = await fetch(
@@ -65,7 +63,7 @@ export default async function HomePage() {
           >
             {/* Full-bleed image */}
             <Image
-              loader={customLoader}
+              unoptimized
               src={featured.image}
               alt={featured.title}
               fill
@@ -145,7 +143,7 @@ export default async function HomePage() {
                 style={{ width: "33%", minHeight: "180px" }}
               >
                 <Image
-                  loader={customLoader}
+                  unoptimized
                   src={post.image}
                   alt={post.title}
                   fill
