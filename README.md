@@ -11,9 +11,10 @@ Film, dizi ve kitap notlarını takip etmek için kişisel dijital not defteri. 
 | Framework | Next.js 14 (App Router) |
 | Dil | TypeScript |
 | Stil | Tailwind CSS |
-| Veritabanı | PostgreSQL |
+| Veritabanı | PostgreSQL (Neon — serverless) |
 | ORM | Prisma v7 |
 | DB Driver | `@prisma/adapter-pg` |
+| Auth | NextAuth v4 (Credentials + JWT) |
 | Rich Text | React Quill |
 | Toast | react-hot-toast |
 
@@ -21,20 +22,24 @@ Film, dizi ve kitap notlarını takip etmek için kişisel dijital not defteri. 
 
 ## Özellikler
 
-- **Not Oluştur** — Başlık, kategori, yönetmen/yazar, yıl, kapak görseli, kısa özet ve zengin metin içeriği
+- **Kullanıcı Hesabı** — Kayıt ol, giriş yap; her kullanıcı yalnızca kendi notlarını görür
+- **Not Oluştur** — Başlık, kategori, yönetmen/yazar, yıl, kapak görseli, izleme durumu, kısa özet ve zengin metin içeriği
 - **Puan Sistemi** — 0–5 arası, 0.5 hassasiyetinde yıldız puanı
-- **Dinamik Kategoriler** — Kategori ekle, filtrele ve sil
+- **Dinamik Kategoriler** — Kategori ekle, filtrele ve sil (kullanıcıya özel)
+- **Durum Etiketi** — İzlendi / İzleniyor / İzlenecek gibi durum takibi
+- **Arama & Sıralama** — Notlarda arama ve sıralama
 - **Not Düzenle / Sil** — Tam CRUD desteği
-- **Dark Premium UI** — Letterboxd/IMDb ilhamıyla koyu tema, amber gold aksan
+- **Dark Premium UI** — Letterboxd/IMDb ilhamıyla koyu tema, gold aksan
+- **Landing Page** — Giriş yapmamış kullanıcılar için tanıtım sayfası
 
 ---
 
-## Kurulum
+## Kurulum (Lokal)
 
 ### Gereksinimler
 
 - Node.js 18+
-- PostgreSQL 14+ (lokal veya uzak)
+- Neon hesabı (veya herhangi bir PostgreSQL instance)
 
 ### 1. Bağımlılıkları kur
 
@@ -47,18 +52,16 @@ npm install
 `.env.local` dosyası oluştur:
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/digynotes"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST/DBNAME?sslmode=require"
+NEXTAUTH_SECRET="güçlü-bir-secret-üret"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-### 3. Veritabanını hazırla
+> `NEXTAUTH_SECRET` için: `openssl rand -base64 32`
+
+### 3. Prisma migration'ı uygula
 
 ```bash
-# PostgreSQL üzerinde veritabanı ve kullanıcı oluştur
-psql postgres -c "CREATE USER digynotes WITH PASSWORD 'sifre';"
-psql postgres -c "CREATE DATABASE digynotes OWNER digynotes;"
-psql postgres -c "ALTER USER digynotes CREATEDB;"
-
-# Tabloları oluştur
 npm run db:migrate
 ```
 
@@ -72,15 +75,12 @@ npm run dev
 
 ---
 
-## Docker ile PostgreSQL (Opsiyonel)
+## Neon DB Kurulumu
 
-Projenin kökünde `docker-compose.yml` mevcuttur. Docker kuruluysa:
-
-```bash
-docker compose up -d
-npm run db:migrate
-npm run dev
-```
+1. [neon.tech](https://neon.tech) üzerinde ücretsiz hesap aç
+2. Yeni proje oluştur
+3. **Connection Details** → **Connection string**'i kopyala
+4. `.env.local` dosyasındaki `DATABASE_URL`'e yapıştır
 
 ---
 
@@ -102,30 +102,52 @@ npm run db:generate  # Prisma client yeniden oluştur
 src/
 ├── app/
 │   ├── api/
-│   │   ├── posts/          # GET, POST /api/posts
-│   │   │   └── [id]/       # GET, PUT, DELETE /api/posts/:id
-│   │   └── categories/     # GET, POST /api/categories
-│   │       └── [id]/       # DELETE /api/categories/:id
-│   ├── category/[id]/      # Kategoriye göre filtrelenmiş notlar
-│   ├── posts/[id]/         # Not detay sayfası
-│   │   └── edit/           # Not düzenleme formu
-│   ├── new-post/           # Yeni not oluşturma formu
-│   └── page.tsx            # Ana sayfa (tüm notlar)
+│   │   ├── auth/
+│   │   │   ├── [...nextauth]/  # NextAuth handler
+│   │   │   └── register/       # Kayıt endpoint'i
+│   │   ├── posts/              # GET, POST /api/posts
+│   │   │   └── [id]/           # GET, PUT, DELETE /api/posts/:id
+│   │   └── categories/         # GET, POST /api/categories
+│   │       └── [id]/           # DELETE /api/categories/:id
+│   ├── category/[id]/          # Kategoriye göre filtrelenmiş notlar
+│   ├── login/                  # Giriş sayfası
+│   ├── register/               # Kayıt sayfası
+│   ├── notes/                  # Ana uygulama sayfası (korumalı)
+│   ├── posts/[id]/             # Not detay sayfası
+│   │   └── edit/               # Not düzenleme formu
+│   ├── new-post/               # Yeni not oluşturma formu
+│   └── page.tsx                # Landing page (herkese açık)
 ├── components/
-│   ├── StarRating.tsx      # İnteraktif yıldız puanı (0.5 hassasiyet)
+│   ├── AppShell.tsx            # Navigasyon + layout
+│   ├── ConditionalAppShell.tsx # Landing/auth sayfalarında AppShell'i gizler
+│   ├── SessionProviderWrapper.tsx
+│   ├── StarRating.tsx          # İnteraktif yıldız puanı (0.5 hassasiyet)
+│   ├── StatusBadge.tsx         # İzleme durumu etiketi
+│   ├── PostsList.tsx
+│   ├── SortFilterBar.tsx
+│   ├── SearchBar.tsx
 │   ├── AddCategoryModal.tsx
 │   └── ConfirmModal.tsx
 ├── lib/
-│   └── prisma.ts           # PrismaClient singleton
+│   ├── prisma.ts               # PrismaClient singleton (PrismaPg adapter)
+│   └── auth.ts                 # NextAuth konfigürasyonu
+├── middleware.ts               # Korumalı rotalar
 └── types/
-    └── index.ts            # Post, Category arayüzleri
+    ├── index.ts                # Post, Category arayüzleri
+    └── next-auth.d.ts          # Session tip genişletmesi
 ```
 
 ---
 
-## Production Deployment
+## Production Deployment (Vercel)
 
-Vercel veya benzeri bir platforma deploy ederken:
+1. Projeyi Vercel'e deploy et
+1. **Settings → Environment Variables** bölümüne şunları ekle:
 
-1. `DATABASE_URL` ortam değişkenini platforma ekle (Supabase, Railway veya Neon önerilir)
-2. Build komutu otomatik olarak `prisma generate && next build` çalıştırır
+| Key | Değer |
+| --- | --- |
+| `DATABASE_URL` | Neon connection string |
+| `NEXTAUTH_SECRET` | Güçlü bir secret (lokal ile aynı olabilir) |
+| `NEXTAUTH_URL` | `https://SENIN-ADRESIN.vercel.app` |
+
+1. **Deployments → Redeploy** ile yeniden deploy et
