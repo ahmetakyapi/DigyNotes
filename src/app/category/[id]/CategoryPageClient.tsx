@@ -65,7 +65,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     setIsDeleteModalOpen(false);
     if (res.ok) {
       toast.success("Kategori silindi");
-      router.push("/");
+      router.push("/notes");
     } else {
       toast.error("Silme başarısız");
     }
@@ -85,7 +85,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       {/* ── Header ── */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/" className="text-[11px] text-[#444] hover:text-[#c9a84c] transition-colors mb-2 block">
+          <Link href="/notes" className="text-[11px] text-[#444] hover:text-[#c9a84c] transition-colors mb-2 block">
             ← Tüm Notlar
           </Link>
           <h1 className="text-xl font-bold text-[#f0ede8]">{categoryName}</h1>
