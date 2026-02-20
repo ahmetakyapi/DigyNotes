@@ -18,16 +18,16 @@ export function SearchBar() {
     e.preventDefault();
     const q = query.trim();
     if (q) {
-      router.push(`/?q=${encodeURIComponent(q)}`);
+      router.push(`/notes?q=${encodeURIComponent(q)}`);
     } else {
-      router.push("/");
+      router.push("/notes");
     }
     setOpen(false);
   };
 
   const clear = () => {
     setQuery("");
-    router.push("/");
+    router.push("/notes");
     setOpen(false);
   };
 

@@ -73,7 +73,7 @@ export default function NewPostPage() {
       });
       if (!res.ok) throw new Error("Server error");
       toast.success("Not başarıyla kaydedildi!");
-      router.push("/");
+      router.push("/notes");
     } catch {
       toast.error("Not kaydedilirken bir hata oluştu!");
     } finally {
