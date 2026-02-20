@@ -49,9 +49,9 @@ export default function LoginPage() {
       {/* Card */}
       <div className="relative w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
+        <div className="flex flex-col items-center mb-10">
           <Link href="/">
-            <Image src="/digy-notes-logo.png" alt="DigyNotes" width={160} height={48} className="object-contain" />
+            <Image src="/digy-notes-logo.png" alt="DigyNotes" width={240} height={74} className="object-contain" />
           </Link>
         </div>
 
