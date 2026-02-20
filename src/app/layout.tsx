@@ -1,13 +1,14 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import ConditionalAppShell from "@/components/ConditionalAppShell";
 
 export const viewport: Viewport = {
   themeColor: "#0f1117",
 };
-import AppShell from "@/components/AppShell";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin", "latin-ext"] });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -69,7 +70,9 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${inter.className} bg-[#0f1117] text-[#e8eaf6] min-h-screen`}>
-        <AppShell>{children}</AppShell>
+        <SessionProviderWrapper>
+          <ConditionalAppShell>{children}</ConditionalAppShell>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
