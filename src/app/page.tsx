@@ -1,4 +1,14 @@
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Son Yazılar",
+  description: "En son eklenen film, dizi ve kitap notları.",
+  openGraph: {
+    title: "Son Yazılar | DigyNotes",
+    description: "En son eklenen film, dizi ve kitap notları.",
+  },
+};
 import { Suspense } from "react";
 import { Post } from "@/types";
 import { prisma } from "@/lib/prisma";
