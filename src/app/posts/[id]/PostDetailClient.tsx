@@ -36,7 +36,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     setIsModalOpen(false);
     if (res.ok) {
       toast.success("Not silindi");
-      router.push("/");
+      router.push("/notes");
     } else {
       toast.error("Silme başarısız");
     }
