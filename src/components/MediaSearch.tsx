@@ -8,6 +8,7 @@ interface MediaResult {
   years: string;
   image: string;
   excerpt: string;
+  _tab?: SearchTab;
 }
 
 interface TMDBRawResult {
@@ -193,7 +194,7 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
         creator = await fetchTMDBCredits(item._tmdbId, item._mediaType);
       }
 
-      onSelect({ ...item, creator });
+      onSelect({ ...item, creator, _tab: activeTab });
       setIsSelecting(false);
     },
     [onSelect]
