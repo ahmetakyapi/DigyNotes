@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -13,10 +13,27 @@ import toast from "react-hot-toast";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
-const inputClass =
-  "w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568] bg-[#151b2d] border border-[#252d40] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-colors text-sm";
+const inputBase =
+  "w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568] bg-[#0d0f1a] border border-[#1e2235] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
 const labelClass =
-  "block text-[10px] font-bold uppercase tracking-[0.12em] text-[#8892b0] mb-2";
+  "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#6272a4] mb-2";
+const sectionClass =
+  "rounded-xl bg-[#0d0f1a] border border-[#1a1e2e] p-5";
+
+function flashClass(flashed: boolean) {
+  return flashed ? "ring-2 ring-[#c9a84c]/60 border-[#c9a84c]" : "";
+}
+
+// Görsel aspect ratio'ya göre en iyi pozisyonu otomatik belirle
+function detectImagePosition(url: string, cb: (pos: string) => void) {
+  const img = new window.Image();
+  img.onload = () => {
+    const ratio = img.naturalWidth / img.naturalHeight;
+    cb(ratio > 1.35 ? "center 25%" : "center");
+  };
+  img.onerror = () => cb("center");
+  img.src = url;
+}
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -30,8 +47,14 @@ export default function NewPostPage() {
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
   const [status, setStatus] = useState("");
+  const [imagePosition, setImagePosition] = useState("center");
+  const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [flashFields, setFlashFields] = useState<Set<string>>(new Set());
+  const [autofillDone, setAutofillDone] = useState(false);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const imgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetch("/api/categories")
@@ -40,27 +63,33 @@ export default function NewPostPage() {
         setCategories(cats);
         if (cats.length > 0) {
           setCategory(cats[0].name);
-          const opts = getStatusOptions(cats[0].name);
-          setStatus(opts[0]);
+          setStatus(getStatusOptions(cats[0].name)[0]);
         }
       })
       .catch(console.error);
   }, []);
 
-  // Status seçeneklerini kategori değişince güncelle
+  // Görsel URL değişince otomatik pozisyon tespit et
+  useEffect(() => {
+    if (!image) { setIsLandscape(false); return; }
+    if (imgTimerRef.current) clearTimeout(imgTimerRef.current);
+    imgTimerRef.current = setTimeout(() => {
+      detectImagePosition(image, (pos) => {
+        setImagePosition(pos);
+        setIsLandscape(pos !== "center");
+      });
+    }, 600);
+    return () => { if (imgTimerRef.current) clearTimeout(imgTimerRef.current); };
+  }, [image]);
+
   const handleCategoryChange = (cat: string) => {
     setCategory(cat);
-    const opts = getStatusOptions(cat);
-    setStatus(opts[0]);
+    setStatus(getStatusOptions(cat)[0]);
   };
 
   const handleMediaSelect = (result: {
-    title: string;
-    creator: string;
-    years: string;
-    image: string;
-    excerpt: string;
-    _tab?: string;
+    title: string; creator: string; years: string;
+    image: string; excerpt: string; _tab?: string;
   }) => {
     setTitle(result.title);
     setCreator(result.creator);
@@ -69,33 +98,32 @@ export default function NewPostPage() {
     setExcerpt(result.excerpt);
     if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
     if (result._tab) {
-      const catName =
-        result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
+      const catName = result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
       const matched = categories.find((c) => c.name === catName);
       if (matched) handleCategoryChange(matched.name);
     }
+    const filled = new Set<string>(["title", "creator", "years", "excerpt"]);
+    if (result.image) filled.add("image");
+    if (result._tab) filled.add("category");
+    setFlashFields(filled);
+    setAutofillDone(true);
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = setTimeout(() => setFlashFields(new Set()), 2000);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSubmit = async () => {
+    if (!title || !category || !image || !excerpt || !content || !creator || !years) {
+      toast.error("Lütfen tüm alanları doldurun.");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          category,
-          rating,
-          status,
-          image,
-          excerpt,
-          content,
-          creator,
-          years,
-        }),
+        body: JSON.stringify({ title, category, rating, status, image, excerpt, content, creator, years, imagePosition }),
       });
-      if (!res.ok) throw new Error("Server error");
+      if (!res.ok) throw new Error();
       toast.success("Not başarıyla kaydedildi!");
       router.push("/notes");
     } catch {
@@ -105,156 +133,170 @@ export default function NewPostPage() {
     }
   };
 
+  const inputClass = (field: string) => `${inputBase} ${flashClass(flashFields.has(field))}`;
+
   return (
-    <main className="min-h-screen bg-[#0f1117] py-10">
+    <main className="min-h-screen bg-[#0c0e16] py-8 pb-28">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
+
         {/* Page header */}
-        <div className="mb-10 pb-6 border-b border-[#252d40]">
-          <h1 className="text-2xl font-bold text-[#e8eaf6]">Yeni Not</h1>
-          <p className="text-sm text-[#4a5568] mt-1">
-            Film, dizi veya kitap notu ekle
-          </p>
+        <div className="mb-8 pb-5 border-b border-[#1a1e2e]">
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-xl font-bold text-[#e8eaf6]">Yeni Not</h1>
+            {autofillDone && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#c9a84c]/10 border border-[#c9a84c]/30 text-[#c9a84c]">
+                <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"/>
+                </svg>
+                Otomatik dolduruldu
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-[#4a5568]">Film, dizi veya kitap notu ekle</p>
         </div>
 
         {/* İçerik Ara */}
-        <div className="mb-8 rounded-xl bg-[#161616] border border-[#2a2a2a]">
+        <div className="mb-6 rounded-xl bg-[#0d0f1a] border border-[#1a1e2e] overflow-hidden">
           <button
             type="button"
             onClick={() => setIsSearchOpen((v) => !v)}
-            className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#1a1a1a] transition-colors"
+            className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-[#10121e] transition-colors"
           >
             <div className="flex items-center gap-2.5">
-              <svg className="h-3.5 w-3.5 text-[#c9a84c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
-              </svg>
-              <span className="text-xs font-semibold text-[#c9a84c]">Film, Dizi veya Kitap Ara</span>
-              <span className="hidden sm:inline text-[10px] text-[#555555]">— Bilgileri Otomatik Doldur</span>
+              <div className="w-6 h-6 rounded-md bg-[#c9a84c]/15 flex items-center justify-center flex-shrink-0">
+                <svg className="h-3 w-3 text-[#c9a84c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                </svg>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-[#c9a84c]">Film, Dizi veya Kitap Ara</span>
+                <span className="hidden sm:inline text-[10px] text-[#3a3a4a] ml-2">— Bilgileri otomatik doldur</span>
+              </div>
             </div>
             <svg
-              className={`h-4 w-4 text-[#555555] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
+              className={`h-4 w-4 text-[#3a3a5a] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
           {isSearchOpen && (
-            <div className="px-5 pb-5 pt-4 border-t border-[#2a2a2a]">
+            <div className="px-5 pb-5 pt-4 border-t border-[#1a1e2e]">
               <MediaSearch category={category} onSelect={handleMediaSelect} />
             </div>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className={labelClass}>Başlık</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className={inputClass}
-              placeholder="Film, dizi veya kitap adı"
-              required
-            />
-          </div>
+        <div className="space-y-4">
 
-          {/* Category */}
-          <div>
-            <label className={labelClass}>Kategori</label>
-            <select
-              value={category}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              className={inputClass}
-            >
-              {categories.length === 0 && (
-                <option value="">Önce bir kategori oluştur</option>
-              )}
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Creator + Years */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>
-                {category === "Kitap" ? "Yazar" : "Yönetmen / Yaratıcı"}
-              </label>
-              <input
-                type="text"
-                value={creator}
-                onChange={(e) => setCreator(e.target.value)}
-                className={inputClass}
-                required
-              />
-            </div>
-            <div>
-              <label className={labelClass}>
-                {category === "Dizi" ? "Yayın Yılları" : "Yıl"}
-              </label>
-              <input
-                type="text"
-                value={years}
-                onChange={(e) => setYears(e.target.value)}
-                className={inputClass}
-                placeholder={category === "Dizi" ? "2020–2023" : "2024"}
-                required
-              />
+          {/* Başlık + Kategori */}
+          <div className={sectionClass}>
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Başlık</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className={inputClass("title")}
+                  placeholder="Film, dizi veya kitap adı"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Kategori</label>
+                <select
+                  value={category}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  className={inputClass("category")}
+                >
+                  {categories.length === 0 && (
+                    <option value="">Önce bir kategori oluştur</option>
+                  )}
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* Rating */}
-          <div>
+          {/* Creator + Years + Status */}
+          <div className={sectionClass}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className={labelClass}>
+                  {category === "Kitap" ? "Yazar" : "Yönetmen / Yaratıcı"}
+                </label>
+                <input
+                  type="text"
+                  value={creator}
+                  onChange={(e) => setCreator(e.target.value)}
+                  className={inputClass("creator")}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>
+                  {category === "Dizi" ? "Yayın Yılları" : "Yıl"}
+                </label>
+                <input
+                  type="text"
+                  value={years}
+                  onChange={(e) => setYears(e.target.value)}
+                  className={inputClass("years")}
+                  placeholder={category === "Dizi" ? "2020–2023" : "2024"}
+                />
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Durum</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className={inputClass("status")}
+              >
+                {getStatusOptions(category).map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Puan */}
+          <div className={sectionClass}>
             <label className={labelClass}>Puan</label>
-            <div className="flex items-center gap-4">
-              <StarRating
-                rating={rating}
-                interactive
-                onRate={setRating}
-                size={24}
-              />
-              <span className="text-sm text-[#8892b0]">
-                {rating > 0 ? `${rating} / 5` : "—"}
+            <div className="flex items-center gap-4 mt-1">
+              <StarRating rating={rating} interactive onRate={setRating} size={26} />
+              <span className="text-sm text-[#6272a4]">
+                {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
               </span>
               {rating > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setRating(0)}
-                  className="text-xs text-[#4a5568] hover:text-[#e53e3e] transition-colors"
-                >
+                <button type="button" onClick={() => setRating(0)}
+                  className="text-xs text-[#4a5568] hover:text-[#e53e3e] transition-colors">
                   Sıfırla
                 </button>
               )}
             </div>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className={labelClass}>Durum</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className={inputClass}
-            >
-              {getStatusOptions(category).map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Image URL + preview */}
-          <div>
-            <label className={labelClass}>Kapak Görseli URL</label>
+          {/* Görsel */}
+          <div className={sectionClass}>
+            <div className="flex items-center justify-between mb-2">
+              <label className={labelClass + " mb-0"}>Kapak Görseli URL</label>
+              {isLandscape && (
+                <span className="text-[10px] text-[#6272a4] flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                  Yatay görsel — otomatik ayarlandı
+                </span>
+              )}
+            </div>
             <input
               type="url"
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              className={inputClass}
+              className={inputClass("image")}
               placeholder="https://..."
-              required
             />
             {image && (
               <div className="mt-3 relative h-32 w-24 sm:h-44 sm:w-32 rounded-lg overflow-hidden border border-[#252d40]">
@@ -264,54 +306,78 @@ export default function NewPostPage() {
                   alt="Önizleme"
                   fill
                   className="object-cover"
+                  style={{ objectPosition: imagePosition }}
                 />
               </div>
             )}
           </div>
 
-          {/* Excerpt */}
-          <div>
-            <label className={labelClass}>Kısa Özet</label>
-            <textarea
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              rows={3}
-              className={inputClass}
-              placeholder="Kısa bir özet veya ilk izlenim..."
-              required
-            />
+          {/* Özet + İçerik */}
+          <div className={sectionClass}>
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <label className={labelClass + " mb-0"}>Kısa Özet</label>
+                <span className="text-[10px] text-[#3a3a5a]">{excerpt.length} karakter</span>
+              </div>
+              <textarea
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+                rows={3}
+                className={inputClass("excerpt")}
+                placeholder="Kısa bir özet veya ilk izlenim..."
+              />
+            </div>
+            <div>
+              <label className={labelClass}>İçerik</label>
+              <div className="rounded-lg overflow-hidden border border-[#1e2235]">
+                <ReactQuill theme="snow" value={content} onChange={setContent} />
+              </div>
+            </div>
           </div>
 
-          {/* Content */}
-          <div>
-            <label className={labelClass}>İçerik</label>
-            <ReactQuill
-              theme="snow"
-              value={content}
-              onChange={setContent}
-            />
-          </div>
+        </div>
+      </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4 pt-4 border-t border-[#252d40]">
-            <button
-              type="submit"
-              disabled={isSubmitting || categories.length === 0}
-              className="px-8 py-3 font-semibold bg-[#c9a84c] text-[#0f1117] rounded-lg
-                         hover:bg-[#e0c068] transition-colors disabled:opacity-50
-                         disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Kaydediliyor..." : "Kaydet"}
-            </button>
+      {/* ─── Sticky Save Bar ─── */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] bg-[#0c0e16]/95 backdrop-blur-xl">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#3a3a5a]">Yeni Not</p>
+            {title ? (
+              <p className="text-sm text-[#8892b0] truncate max-w-[200px] sm:max-w-xs">{title}</p>
+            ) : (
+              <p className="text-sm text-[#3a3a5a] italic">Başlık girilmedi</p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 text-sm text-[#8892b0] hover:text-[#e8eaf6] transition-colors"
+              className="px-4 py-2 text-sm text-[#4a5568] hover:text-[#e8eaf6] transition-colors rounded-lg hover:bg-[#1a1e2e]"
             >
               İptal
             </button>
+            <button
+              type="button"
+              onClick={doSubmit}
+              disabled={isSubmitting || categories.length === 0}
+              className="flex items-center gap-2 px-6 py-2.5 font-semibold rounded-lg text-sm text-[#0c0e16]
+                         bg-[#c9a84c] hover:bg-[#e0c068] transition-all
+                         disabled:opacity-40 disabled:cursor-not-allowed
+                         shadow-[0_4px_20px_rgba(201,168,76,0.3)] hover:shadow-[0_4px_24px_rgba(201,168,76,0.45)]"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Kaydediliyor...
+                </>
+              ) : "Kaydet"}
+            </button>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   );

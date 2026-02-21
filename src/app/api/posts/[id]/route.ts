@@ -36,14 +36,14 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { title, category, image, excerpt, content, creator, years, rating, status } = body;
+  const { title, category, image, excerpt, content, creator, years, rating, status, imagePosition } = body;
 
-  const existing = await prisma.post.findFirst({
-    where: { id: params.id, userId },
-    select: { id: true },
+  const existing = await prisma.post.findUnique({
+    where: { id: params.id },
+    select: { id: true, userId: true },
   });
 
-  if (!existing) {
+  if (!existing || (existing.userId !== null && existing.userId !== userId)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -51,7 +51,7 @@ export async function PUT(
 
   const post = await prisma.post.update({
     where: { id: params.id },
-    data: { title, category, image, excerpt, content: sanitizedContent, creator, years, rating, status: status || null },
+    data: { title, category, image, excerpt, content: sanitizedContent, creator, years, rating, status: status || null, imagePosition: imagePosition || "center" },
   });
 
   return NextResponse.json(post);
