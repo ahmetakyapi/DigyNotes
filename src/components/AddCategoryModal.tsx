@@ -42,12 +42,12 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-[#151b2d] border border-[#252d40] rounded-xl p-6 w-[360px] shadow-2xl">
+      <div className="bg-[#151b2d] border border-[#252d40] rounded-xl p-6 w-full max-w-sm shadow-2xl">
         <h2 className="text-base font-bold text-[#e8eaf6] mb-5">
           Yeni Kategori
         </h2>
