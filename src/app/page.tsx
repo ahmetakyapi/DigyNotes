@@ -17,8 +17,8 @@ export default function LandingPage() {
       ══════════════════════════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-12 py-3 sm:py-4
                       bg-[#070709]/85 backdrop-blur-xl border-b border-white/[0.04]">
-        <Image src="/digy-notes-logo.png" alt="DigyNotes" width={200} height={58}
-               className="object-contain w-[140px] sm:w-[200px]" priority />
+        <Image src="/app-logo.png" alt="DigyNotes" width={200} height={58}
+               className="object-contain w-[140px] sm:w-[200px]" priority unoptimized />
         <div className="flex items-center gap-1 sm:gap-2">
           <Link href="/login"
             className="hidden sm:block px-5 py-2 text-sm font-medium text-[#666] hover:text-[#f0ede8] transition-colors duration-200">

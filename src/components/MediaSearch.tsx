@@ -197,7 +197,7 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
       onSelect({ ...item, creator, _tab: activeTab });
       setIsSelecting(false);
     },
-    [onSelect]
+    [onSelect, activeTab]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
