@@ -67,20 +67,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 alt="DigyNotes"
                 width={190}
                 height={56}
-                className="object-contain block"
+                className="object-contain block w-[120px] sm:w-[190px] h-auto"
                 priority
               />
             </Link>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <Suspense>
                 <SearchBar />
               </Suspense>
               <Link
                 href="/new-post"
-                className="self-center px-4 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
-                           hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20"
+                className="flex-shrink-0 self-center px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm
+                           font-semibold bg-[#c9a84c] text-[#0f1117] rounded-md
+                           hover:bg-[#e0c068] transition-colors duration-200 shadow-md shadow-[#c9a84c]/20
+                           whitespace-nowrap"
               >
-                + Yeni Not
+                <span className="sm:hidden" aria-hidden="true">+</span>
+                <span className="hidden sm:inline">+ Yeni Not</span>
               </Link>
 
               {/* User menu */}
