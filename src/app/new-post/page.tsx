@@ -60,12 +60,20 @@ export default function NewPostPage() {
     years: string;
     image: string;
     excerpt: string;
+    _tab?: string;
   }) => {
     setTitle(result.title);
     setCreator(result.creator);
     setYears(result.years);
     if (result.image) setImage(result.image);
     setExcerpt(result.excerpt);
+    if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
+    if (result._tab) {
+      const catName =
+        result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
+      const matched = categories.find((c) => c.name === catName);
+      if (matched) handleCategoryChange(matched.name);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,7 +128,7 @@ export default function NewPostPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
               </svg>
               <span className="text-xs font-semibold text-[#c9a84c]">Film, Dizi veya Kitap Ara</span>
-              <span className="text-[10px] text-[#555555]">— bilgileri otomatik doldur</span>
+              <span className="text-[10px] text-[#555555]">— Bilgileri Otomatik Doldur</span>
             </div>
             <svg
               className={`h-4 w-4 text-[#555555] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
@@ -130,7 +138,7 @@ export default function NewPostPage() {
             </svg>
           </button>
           {isSearchOpen && (
-            <div className="px-4 pb-4 pt-1 border-t border-[#2a2a2a]">
+            <div className="px-5 pb-5 pt-4 border-t border-[#2a2a2a]">
               <MediaSearch category={category} onSelect={handleMediaSelect} />
             </div>
           )}
