@@ -7,6 +7,7 @@ import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SortFilterBar, SortFilterState, applySortFilter } from "@/components/SortFilterBar";
+import { StatsPanel } from "@/components/StatsPanel";
 
 interface PostsListProps {
   allPosts: Post[];
@@ -21,6 +22,7 @@ export function PostsList({ allPosts }: PostsListProps) {
     minRating: 0,
   });
   const [localQuery, setLocalQuery] = useState(urlQuery);
+  const [activeTab, setActiveTab] = useState<"notlar" | "istatistikler">("notlar");
 
   useEffect(() => {
     setLocalQuery(urlQuery);
@@ -59,33 +61,60 @@ export function PostsList({ allPosts }: PostsListProps) {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
-      {/* ── Page header + stats inline ── */}
+      {/* ── Page header + tab switcher ── */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-[#e8eaf6] tracking-tight">
-            {localQuery ? `"${localQuery}" sonuçları` : "Notlarım"}
-          </h2>
-          <div className="flex items-center gap-3 mt-1">
-            <div className="h-0.5 w-8 bg-gradient-to-r from-[#c9a84c] to-transparent rounded-full" />
-            <span className="text-xs text-[#555555]">
-              {stats.total} not
-              {stats.avgRating > 0 && (
-                <> · <span className="text-[#c9a84c]">★ {stats.avgRating.toFixed(1)}</span> ort.</>
-              )}
-            </span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab("notlar")}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                activeTab === "notlar"
+                  ? "bg-[#c9a84c] text-[#0f1117]"
+                  : "text-[#888888] hover:text-[#f0ede8]"
+              }`}
+            >
+              Notlar
+            </button>
+            <button
+              onClick={() => setActiveTab("istatistikler")}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                activeTab === "istatistikler"
+                  ? "bg-[#c9a84c] text-[#0f1117]"
+                  : "text-[#888888] hover:text-[#f0ede8]"
+              }`}
+            >
+              İstatistikler
+            </button>
           </div>
+
+          {activeTab === "notlar" && (
+            <div className="flex items-center gap-3">
+              <div className="h-0.5 w-8 bg-gradient-to-r from-[#c9a84c] to-transparent rounded-full" />
+              <span className="text-xs text-[#555555]">
+                {stats.total} not
+                {stats.avgRating > 0 && (
+                  <> · <span className="text-[#c9a84c]">★ {stats.avgRating.toFixed(1)}</span> ort.</>
+                )}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Sort/Filter — sağ tarafta kompakt */}
-        <SortFilterBar
-          value={sortFilter}
-          onChange={setSortFilter}
-          totalCount={allPosts.length}
-          filteredCount={filtered.length}
-        />
+        {/* Sort/Filter — sadece Notlar tabında */}
+        {activeTab === "notlar" && (
+          <SortFilterBar
+            value={sortFilter}
+            onChange={setSortFilter}
+            totalCount={allPosts.length}
+            filteredCount={filtered.length}
+          />
+        )}
       </div>
 
-      {filtered.length === 0 ? (
+      {/* ── İstatistikler sekmesi ── */}
+      {activeTab === "istatistikler" && <StatsPanel posts={allPosts} />}
+
+      {activeTab === "notlar" && (filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="w-12 h-12 rounded-full bg-[#161616] border border-[#2a2a2a] flex items-center justify-center mb-4">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5">
@@ -227,7 +256,7 @@ export function PostsList({ allPosts }: PostsListProps) {
             ))}
           </div>
         </>
-      )}
+      ))}
     </div>
   );
 }

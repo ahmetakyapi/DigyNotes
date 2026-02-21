@@ -102,7 +102,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               className="px-3 py-1.5 text-xs border border-[#e53e3e]/30 text-[#e53e3e]
                          rounded-md hover:bg-[#e53e3e]/10 transition-colors"
             >
-              Sil
+              Kategoriyi Sil
             </button>
           )}
         </div>
@@ -158,20 +158,20 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                            hover:border-[#c9a84c]/30 transition-all duration-300
                            hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]"
               >
-                <div className="relative flex-shrink-0" style={{ width: "36%", minHeight: "160px" }}>
+                <div className="relative flex-shrink-0" style={{ width: "32%", minHeight: "220px" }}>
                   <Image
                     loader={customLoader}
                     src={post.image}
                     alt={post.title}
                     fill
-                    sizes="(max-width: 768px) 36vw, 200px"
+                    sizes="(max-width: 768px) 32vw, 200px"
                     className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
                     priority={index === 0}
                   />
                   <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#111111] to-transparent" />
                 </div>
 
-                <div className="flex flex-col justify-between p-4 flex-1 min-w-0">
+                <div className="flex flex-col justify-between p-5 flex-1 min-w-0">
                   <div>
                     <div className="flex flex-wrap items-center gap-1.5 mb-2">
                       {post.years && (
@@ -179,18 +179,18 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       )}
                       {post.status && <StatusBadge status={post.status} />}
                     </div>
-                    <h2 className="text-sm sm:text-base font-bold text-[#e8eaf6] leading-snug mb-1 group-hover:text-[#c9a84c] transition-colors line-clamp-2">
+                    <h2 className="text-sm sm:text-base font-bold text-[#e8eaf6] leading-snug mb-1.5 group-hover:text-[#c9a84c] transition-colors line-clamp-2">
                       {post.title}
                     </h2>
                     {post.creator && (
-                      <p className="text-xs text-[#555555] mb-1.5">{post.creator}</p>
+                      <p className="text-xs text-[#555555] mb-2">{post.creator}</p>
                     )}
-                    <p className="text-xs text-[#444] line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-[#888] line-clamp-4 leading-relaxed">
                       {post.excerpt}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#1e1e1e]">
-                    <StarRating rating={post.rating} size={11} />
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#1e1e1e]">
+                    <StarRating rating={post.rating} size={12} />
                     <span className="text-[10px] text-[#444]">{post.date}</span>
                   </div>
                 </div>
