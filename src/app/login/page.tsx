@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,11 +25,11 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    setLoading(false);
-
     if (result?.error) {
+      setLoading(false);
       setError("E-posta veya şifre hatalı.");
     } else {
+      setRedirecting(true);
       router.push("/notes");
       router.refresh();
     }
@@ -36,6 +37,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      {/* Redirect overlay */}
+      {redirecting && (
+        <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex flex-col items-center justify-center gap-4">
+          <svg className="animate-spin w-8 h-8 text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2" />
+            <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#555]">Yönlendiriliyor</p>
+        </div>
+      )}
       {/* Background effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full
@@ -51,7 +62,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-10">
           <Link href="/">
-            <Image src="/digy-notes-logo.png" alt="DigyNotes" width={240} height={74} className="object-contain" />
+            <Image src="/app-logo.png" alt="DigyNotes" width={240} height={74} className="object-contain" unoptimized />
           </Link>
         </div>
 

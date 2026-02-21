@@ -37,9 +37,10 @@ model Post {
   content   String   @db.Text
   creator   String?
   years     String?
-  rating    Float    @default(0)
-  status    String?
-  date      String
+  rating        Float   @default(0)
+  status        String?
+  imagePosition String? @default("center")
+  date          String
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
