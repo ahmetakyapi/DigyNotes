@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import sanitizeHtml from "sanitize-html";
+
+const sanitizeConfig: sanitizeHtml.IOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    img: ["src", "alt", "width", "height"],
+    "*": ["class"],
+  },
+};
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -37,13 +47,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
+  const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
+
   const post = await prisma.post.create({
     data: {
       title,
       category,
       image,
       excerpt,
-      content,
+      content: sanitizedContent,
       creator: creator || null,
       years: years || null,
       rating: rating ?? 0,

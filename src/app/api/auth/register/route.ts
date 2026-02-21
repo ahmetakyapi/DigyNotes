@@ -27,5 +27,13 @@ export async function POST(request: NextRequest) {
     data: { name: name.trim(), email: email.toLowerCase(), password: hashed },
   });
 
+  await prisma.category.createMany({
+    data: [
+      { name: "Film", userId: user.id },
+      { name: "Dizi", userId: user.id },
+      { name: "Kitap", userId: user.id },
+    ],
+  });
+
   return NextResponse.json({ id: user.id, name: user.name, email: user.email }, { status: 201 });
 }

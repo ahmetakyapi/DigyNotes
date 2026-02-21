@@ -7,6 +7,7 @@ import "react-quill/dist/quill.snow.css";
 import { Post, Category } from "@/types";
 import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
+import { MediaSearch } from "@/components/MediaSearch";
 import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -31,6 +32,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -60,6 +62,20 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setCategory(cat);
     const opts = getStatusOptions(cat);
     setStatus(opts[0]);
+  };
+
+  const handleMediaSelect = (result: {
+    title: string;
+    creator: string;
+    years: string;
+    image: string;
+    excerpt: string;
+  }) => {
+    setTitle(result.title);
+    setCreator(result.creator);
+    setYears(result.years);
+    if (result.image) setImage(result.image);
+    setExcerpt(result.excerpt);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -110,6 +126,34 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           >
             ← Geri
           </button>
+        </div>
+
+        {/* İçerik Ara */}
+        <div className="mb-8 rounded-xl bg-[#161616] border border-[#2a2a2a]">
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen((v) => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-[#1a1a1a] transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <svg className="h-3.5 w-3.5 text-[#c9a84c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+              </svg>
+              <span className="text-xs font-semibold text-[#c9a84c]">Film, Dizi veya Kitap Ara</span>
+              <span className="text-[10px] text-[#555555]">— mevcut alanların üzerine yazar</span>
+            </div>
+            <svg
+              className={`h-4 w-4 text-[#555555] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {isSearchOpen && (
+            <div className="px-4 pb-4 pt-1 border-t border-[#2a2a2a]">
+              <MediaSearch category={category} onSelect={handleMediaSelect} />
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
