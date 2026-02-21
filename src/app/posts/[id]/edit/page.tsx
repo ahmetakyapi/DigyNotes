@@ -70,12 +70,20 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     years: string;
     image: string;
     excerpt: string;
+    _tab?: string;
   }) => {
     setTitle(result.title);
     setCreator(result.creator);
     setYears(result.years);
     if (result.image) setImage(result.image);
     setExcerpt(result.excerpt);
+    if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
+    if (result._tab) {
+      const catName =
+        result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
+      const matched = categories.find((c) => c.name === catName);
+      if (matched) handleCategoryChange(matched.name);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -150,7 +158,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </svg>
           </button>
           {isSearchOpen && (
-            <div className="px-4 pb-4 pt-1 border-t border-[#2a2a2a]">
+            <div className="px-5 pb-5 pt-4 border-t border-[#2a2a2a]">
               <MediaSearch category={category} onSelect={handleMediaSelect} />
             </div>
           )}
