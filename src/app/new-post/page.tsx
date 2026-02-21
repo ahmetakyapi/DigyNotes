@@ -128,7 +128,7 @@ export default function NewPostPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
               </svg>
               <span className="text-xs font-semibold text-[#c9a84c]">Film, Dizi veya Kitap Ara</span>
-              <span className="text-[10px] text-[#555555]">— Bilgileri Otomatik Doldur</span>
+              <span className="hidden sm:inline text-[10px] text-[#555555]">— Bilgileri Otomatik Doldur</span>
             </div>
             <svg
               className={`h-4 w-4 text-[#555555] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
@@ -178,7 +178,7 @@ export default function NewPostPage() {
           </div>
 
           {/* Creator + Years */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>
                 {category === "Kitap" ? "Yazar" : "Yönetmen / Yaratıcı"}
@@ -257,7 +257,7 @@ export default function NewPostPage() {
               required
             />
             {image && (
-              <div className="mt-3 relative h-44 w-32 rounded-lg overflow-hidden border border-[#252d40]">
+              <div className="mt-3 relative h-32 w-24 sm:h-44 sm:w-32 rounded-lg overflow-hidden border border-[#252d40]">
                 <Image
                   loader={customLoader}
                   src={image}

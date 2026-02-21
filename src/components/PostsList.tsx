@@ -62,12 +62,12 @@ export function PostsList({ allPosts }: PostsListProps) {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
       {/* ── Page header + tab switcher ── */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-1 bg-[#161616] border border-[#2a2a2a] rounded-lg p-1">
             <button
               onClick={() => setActiveTab("notlar")}
-              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2.5 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 activeTab === "notlar"
                   ? "bg-[#c9a84c] text-[#0f1117]"
                   : "text-[#888888] hover:text-[#f0ede8]"
@@ -77,7 +77,7 @@ export function PostsList({ allPosts }: PostsListProps) {
             </button>
             <button
               onClick={() => setActiveTab("istatistikler")}
-              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2.5 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 activeTab === "istatistikler"
                   ? "bg-[#c9a84c] text-[#0f1117]"
                   : "text-[#888888] hover:text-[#f0ede8]"
@@ -88,7 +88,7 @@ export function PostsList({ allPosts }: PostsListProps) {
           </div>
 
           {activeTab === "notlar" && (
-            <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3">
               <div className="h-0.5 w-8 bg-gradient-to-r from-[#c9a84c] to-transparent rounded-full" />
               <span className="text-xs text-[#555555]">
                 {stats.total} not
@@ -137,8 +137,8 @@ export function PostsList({ allPosts }: PostsListProps) {
               <article
                 className="relative rounded-2xl overflow-hidden border border-[#1e1e1e]
                            hover:border-[#c9a84c]/40 transition-all duration-500
-                           hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)]"
-                style={{ height: "420px" }}
+                           hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)]
+                           h-[240px] sm:h-[340px] lg:h-[420px]"
               >
                 <Image
                   unoptimized
@@ -162,7 +162,7 @@ export function PostsList({ allPosts }: PostsListProps) {
                 </div>
 
                 {/* Alt içerik */}
-                <div className="absolute bottom-0 left-0 right-0 p-7 sm:p-9">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
                   <div className="flex items-center gap-2.5 mb-3">
                     <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0c0c0c] bg-[#c9a84c] px-2.5 py-1 rounded-sm">
                       {featured.category}
