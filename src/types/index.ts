@@ -9,6 +9,7 @@ export interface Post {
   years: string | null;
   rating: number;
   status: string | null;
+  imagePosition: string | null;
   date: string;
   createdAt: string;
   updatedAt: string;

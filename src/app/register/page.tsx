@@ -80,7 +80,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-10">
           <Link href="/">
-            <Image src="/digy-notes-logo.png" alt="DigyNotes" width={240} height={74} className="object-contain" />
+            <Image src="/app-logo.png" alt="DigyNotes" width={240} height={74} className="object-contain" unoptimized />
           </Link>
         </div>
 

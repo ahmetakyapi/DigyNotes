@@ -63,12 +63,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between py-4">
             <Link href="/notes" className="flex items-center leading-[0]">
               <Image
-                src="/digy-notes-logo.png"
+                src="/app-logo.png"
                 alt="DigyNotes"
                 width={190}
                 height={56}
                 className="object-contain block w-[120px] sm:w-[190px] h-auto"
                 priority
+                unoptimized
               />
             </Link>
             <div className="flex items-center gap-1.5 sm:gap-2">
