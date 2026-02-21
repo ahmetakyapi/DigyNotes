@@ -55,7 +55,7 @@ export function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Başlık veya yazar ara..."
-        className="bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none w-44"
+        className="bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none w-20 sm:w-44"
         onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
       />
       {query && (
