@@ -20,10 +20,7 @@ function transformPostTags(
   return { ...rest, tags: tags.map((pt) => pt.tag) };
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const post = await prisma.post.findUnique({
     where: { id: params.id },
     include: { tags: { include: { tag: true } } },
@@ -34,10 +31,7 @@ export async function GET(
   return NextResponse.json(transformPostTags(post));
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
 
@@ -46,7 +40,19 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { title, category, image, excerpt, content, creator, years, rating, status, imagePosition, tags } = body;
+  const {
+    title,
+    category,
+    image,
+    excerpt,
+    content,
+    creator,
+    years,
+    rating,
+    status,
+    imagePosition,
+    tags,
+  } = body;
 
   const existing = await prisma.post.findUnique({
     where: { id: params.id },
@@ -60,13 +66,14 @@ export async function PUT(
   const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
 
   const tagNames: string[] = Array.isArray(tags)
-    ? tags.map((t: string) => t.toLowerCase().trim()).filter(Boolean).slice(0, 10)
+    ? tags
+        .map((t: string) => t.toLowerCase().trim())
+        .filter(Boolean)
+        .slice(0, 10)
     : [];
 
   const upsertedTags = await Promise.all(
-    tagNames.map((name) =>
-      prisma.tag.upsert({ where: { name }, create: { name }, update: {} })
-    )
+    tagNames.map((name) => prisma.tag.upsert({ where: { name }, create: { name }, update: {} }))
   );
 
   // Replace all existing tags
@@ -95,10 +102,7 @@ export async function PUT(
   return NextResponse.json(transformPostTags(post));
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
 

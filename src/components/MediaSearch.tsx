@@ -115,21 +115,21 @@ async function searchMedia(
     title: item.title ?? "",
     creator: item.author_name?.[0] ?? "",
     years: item.first_publish_year ? String(item.first_publish_year) : "",
-    image: item.cover_i
-      ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg`
-      : "",
+    image: item.cover_i ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg` : "",
     excerpt: Array.isArray(item.first_sentence)
-      ? item.first_sentence[0]?.slice(0, 400) ?? ""
+      ? (item.first_sentence[0]?.slice(0, 400) ?? "")
       : typeof item.first_sentence === "string"
-      ? item.first_sentence.slice(0, 400)
-      : "",
+        ? item.first_sentence.slice(0, 400)
+        : "",
   }));
 }
 
 export function MediaSearch({ category, onSelect }: MediaSearchProps) {
   const [activeTab, setActiveTab] = useState<SearchTab>(() => getInitialTab(category));
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<(MediaResult & { _tmdbId?: number; _mediaType?: "movie" | "tv" })[]>([]);
+  const [results, setResults] = useState<
+    (MediaResult & { _tmdbId?: number; _mediaType?: "movie" | "tv" })[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
@@ -221,22 +221,22 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
     activeTab === "film"
       ? "Film adı ara..."
       : activeTab === "dizi"
-      ? "Dizi adı ara..."
-      : "Kitap adı ara...";
+        ? "Dizi adı ara..."
+        : "Kitap adı ara...";
 
   return (
     <div ref={containerRef}>
       {/* Tab bar */}
-      <div className="flex items-center gap-1 mb-3">
+      <div className="mb-3 flex items-center gap-1">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => handleTabChange(tab.key)}
-            className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+            className={`rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
               activeTab === tab.key
                 ? "bg-[#c9a84c] text-[#0f1117]"
-                : "text-[#555555] hover:text-[#f0ede8] hover:bg-[#1e1e1e]"
+                : "text-[#555555] hover:bg-[#1e1e1e] hover:text-[#f0ede8]"
             }`}
           >
             {tab.label}
@@ -254,31 +254,43 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-4 py-2.5 pr-10 text-sm text-[#f0ede8] placeholder-[#555555] focus:outline-none focus:border-[#c9a84c] transition-colors"
+          className="w-full rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-2.5 pr-10 text-sm text-[#f0ede8] placeholder-[#555555] transition-colors focus:border-[#c9a84c] focus:outline-none"
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555]">
           {isLoading || isSelecting ? (
-            <svg className="animate-spin h-4 w-4 text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <svg className="h-4 w-4 animate-spin text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           ) : (
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
+              />
             </svg>
           )}
         </div>
 
         {/* Dropdown */}
         {isOpen && results.length > 0 && (
-          <div className="absolute z-50 w-full mt-1 bg-[#161616] border border-[#2a2a2a] rounded-xl shadow-2xl overflow-hidden">
+          <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#161616] shadow-2xl">
             {results.map((item, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleSelect(item)}
                 onMouseEnter={() => setHighlighted(i)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${
+                className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${
                   highlighted === i ? "bg-[#1e1e1e]" : "hover:bg-[#1a1a1a]"
                 }`}
               >
@@ -287,18 +299,16 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-8 h-12 object-cover rounded flex-shrink-0 bg-[#2a2a2a]"
+                    className="h-12 w-8 flex-shrink-0 rounded bg-[#2a2a2a] object-cover"
                   />
                 ) : (
-                  <div className="w-8 h-12 rounded flex-shrink-0 bg-[#2a2a2a] flex items-center justify-center">
-                    <span className="text-[#555555] text-xs">?</span>
+                  <div className="flex h-12 w-8 flex-shrink-0 items-center justify-center rounded bg-[#2a2a2a]">
+                    <span className="text-xs text-[#555555]">?</span>
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#f0ede8] truncate">{item.title}</p>
-                  {item.years && (
-                    <p className="text-xs text-[#555555]">{item.years}</p>
-                  )}
+                  <p className="truncate text-sm font-medium text-[#f0ede8]">{item.title}</p>
+                  {item.years && <p className="text-xs text-[#555555]">{item.years}</p>}
                 </div>
               </button>
             ))}

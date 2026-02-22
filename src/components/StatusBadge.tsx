@@ -28,10 +28,10 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-semibold uppercase tracking-[0.1em] rounded-full border ${textSize} ${padding}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-[0.1em] ${textSize} ${padding}`}
       style={{ color, borderColor: `${color}40`, backgroundColor: `${color}12` }}
     >
-      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: color }} />
       {status}
     </span>
   );

@@ -38,7 +38,9 @@ export function SortFilterBar({ value, onChange, totalCount, filteredCount }: So
   return (
     <div className="flex items-center gap-2">
       {filteredCount < totalCount && (
-        <span className="text-[11px] text-[#444] mr-1">{filteredCount}/{totalCount}</span>
+        <span className="mr-1 text-[11px] text-[#444]">
+          {filteredCount}/{totalCount}
+        </span>
       )}
       <select
         value={value.minRating}
@@ -66,7 +68,10 @@ export function SortFilterBar({ value, onChange, totalCount, filteredCount }: So
   );
 }
 
-export function applySortFilter<T extends { rating: number; title: string; createdAt: string }>(posts: T[], state: SortFilterState): T[] {
+export function applySortFilter<T extends { rating: number; title: string; createdAt: string }>(
+  posts: T[],
+  state: SortFilterState
+): T[] {
   let filtered = posts.filter((p) => p.rating >= state.minRating);
 
   switch (state.sort) {

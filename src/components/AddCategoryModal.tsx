@@ -42,24 +42,19 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-[#151b2d] border border-[#252d40] rounded-xl p-6 w-full max-w-sm shadow-2xl">
-        <h2 className="text-base font-bold text-[#e8eaf6] mb-5">
-          Yeni Kategori
-        </h2>
+      <div className="w-full max-w-sm rounded-xl border border-[#252d40] bg-[#151b2d] p-6 shadow-2xl">
+        <h2 className="mb-5 text-base font-bold text-[#e8eaf6]">Yeni Kategori</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568]
-                       bg-[#0f1117] border border-[#252d40]
-                       focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20
-                       transition-colors text-sm mb-4"
+            className="mb-4 w-full rounded-lg border border-[#252d40] bg-[#0f1117] px-4 py-3 text-sm text-[#e8eaf6] placeholder-[#4a5568] transition-colors focus:border-[#c9a84c] focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/20"
             placeholder="Kategori adı (örn: Film, Kitap…)"
             autoFocus
             required
@@ -68,15 +63,14 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-[#8892b0] hover:text-[#e8eaf6] transition-colors"
+              className="px-4 py-2 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2 text-sm font-semibold bg-[#c9a84c] text-[#0f1117]
-                         rounded-md hover:bg-[#e0c068] transition-colors disabled:opacity-50"
+              className="rounded-md bg-[#c9a84c] px-5 py-2 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}
             </button>

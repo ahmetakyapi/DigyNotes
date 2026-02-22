@@ -23,19 +23,22 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchSuggestions = useCallback(async (q: string) => {
-    if (!q.trim()) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const res = await fetch(`/api/tags?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      setSuggestions(data.filter((t: TagSuggestion) => !value.includes(t.name)));
-    } catch {
-      setSuggestions([]);
-    }
-  }, [value]);
+  const fetchSuggestions = useCallback(
+    async (q: string) => {
+      if (!q.trim()) {
+        setSuggestions([]);
+        return;
+      }
+      try {
+        const res = await fetch(`/api/tags?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        setSuggestions(data.filter((t: TagSuggestion) => !value.includes(t.name)));
+      } catch {
+        setSuggestions([]);
+      }
+    },
+    [value]
+  );
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -86,7 +89,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   return (
     <div className="space-y-2">
       <div
-        className="flex flex-wrap gap-1.5 min-h-[42px] p-2 rounded-lg border border-[#2a2a2a] bg-[#0c0c0c] cursor-text focus-within:border-[#c9a84c]/50 transition-colors"
+        className="flex min-h-[42px] cursor-text flex-wrap gap-1.5 rounded-lg border border-[#2a2a2a] bg-[#0c0c0c] p-2 transition-colors focus-within:border-[#c9a84c]/50"
         onClick={() => inputRef.current?.focus()}
       >
         {value.map((name) => (
@@ -97,7 +100,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
           />
         ))}
         {!disabled && value.length < 10 && (
-          <div className="relative flex-1 min-w-[120px]">
+          <div className="relative min-w-[120px] flex-1">
             <input
               ref={inputRef}
               type="text"
@@ -111,17 +114,17 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               placeholder={value.length === 0 ? "Etiket ekle (örn: sci-fi, drama)..." : ""}
-              className="w-full bg-transparent text-[#f0ede8] text-sm outline-none placeholder:text-[#555555] py-0.5"
+              className="w-full bg-transparent py-0.5 text-sm text-[#f0ede8] outline-none placeholder:text-[#555555]"
               maxLength={30}
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-[#161616] border border-[#2a2a2a] rounded-lg shadow-xl z-50 overflow-hidden">
+              <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#161616] shadow-xl">
                 {suggestions.map((sug, i) => (
                   <button
                     key={sug.id}
                     type="button"
                     onMouseDown={() => addTag(sug.name)}
-                    className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors ${
+                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm transition-colors ${
                       i === activeIndex
                         ? "bg-[#c9a84c]/10 text-[#c9a84c]"
                         : "text-[#888888] hover:bg-[#1e1e1e] hover:text-[#f0ede8]"
@@ -131,7 +134,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
                       <span className="text-[#c9a84c]/60">#</span>
                       {sug.name}
                     </span>
-                    <span className="text-[#555555] text-xs">{sug.count}</span>
+                    <span className="text-xs text-[#555555]">{sug.count}</span>
                   </button>
                 ))}
               </div>

@@ -19,7 +19,14 @@ export const metadata: Metadata = {
     template: "%s | DigyNotes",
   },
   description: "Film, dizi ve kitap notlarını tut, derecelendir ve kategorilere ayır.",
-  keywords: ["film notları", "dizi notları", "kitap notları", "izleme listesi", "okuma listesi", "DigyNotes"],
+  keywords: [
+    "film notları",
+    "dizi notları",
+    "kitap notları",
+    "izleme listesi",
+    "okuma listesi",
+    "DigyNotes",
+  ],
   authors: [{ name: "DigyNotes" }],
   creator: "DigyNotes",
   openGraph: {
@@ -66,14 +73,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} bg-[#0c0c0c] text-[#e8eaf6] min-h-screen`}>
+      <body className={`${inter.className} min-h-screen bg-[#0c0c0c] text-[#e8eaf6]`}>
         <SessionProviderWrapper>
           <ConditionalAppShell>{children}</ConditionalAppShell>
         </SessionProviderWrapper>

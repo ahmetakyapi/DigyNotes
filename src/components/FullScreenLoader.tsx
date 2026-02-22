@@ -34,22 +34,19 @@ export function FullScreenLoader({ show }: Props) {
       }}
     >
       {/* ── Spinning ring + D monogram ── */}
-      <div className="relative w-24 h-24 mb-7">
+      <div className="relative mb-7 h-24 w-24">
         <svg
           viewBox="0 0 80 80"
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 h-full w-full"
           style={{ animation: "dg-spin 1.2s linear infinite" }}
         >
           {/* Track ring */}
-          <circle
-            cx="40" cy="40" r={r}
-            fill="none"
-            stroke="#1c1c1c"
-            strokeWidth="2.5"
-          />
+          <circle cx="40" cy="40" r={r} fill="none" stroke="#1c1c1c" strokeWidth="2.5" />
           {/* Glowing arc */}
           <circle
-            cx="40" cy="40" r={r}
+            cx="40"
+            cy="40"
+            r={r}
             fill="none"
             stroke="#c9a84c"
             strokeWidth="2.5"
@@ -60,7 +57,8 @@ export function FullScreenLoader({ show }: Props) {
           />
           {/* Bright leading dot */}
           <circle
-            cx="40" cy="4"
+            cx="40"
+            cy="4"
             r="3"
             fill="#e0c068"
             style={{ filter: "drop-shadow(0 0 4px rgba(224,192,104,0.9))" }}

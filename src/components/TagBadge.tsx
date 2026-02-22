@@ -12,12 +12,12 @@ interface TagBadgeProps {
 export default function TagBadge({ tag, onClick, onRemove, active }: TagBadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-colors ${
+      className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ${
         onClick ? "cursor-pointer" : ""
       } ${
         active
-          ? "bg-[#c9a84c]/20 text-[#c9a84c] border border-[#c9a84c]/50"
-          : "bg-[#1e1e1e] text-[#888888] border border-[#2a2a2a] hover:border-[#c9a84c]/40 hover:text-[#c9a84c]"
+          ? "border border-[#c9a84c]/50 bg-[#c9a84c]/20 text-[#c9a84c]"
+          : "border border-[#2a2a2a] bg-[#1e1e1e] text-[#888888] hover:border-[#c9a84c]/40 hover:text-[#c9a84c]"
       }`}
       onClick={() => onClick?.(tag.name)}
     >
@@ -30,7 +30,7 @@ export default function TagBadge({ tag, onClick, onRemove, active }: TagBadgePro
             e.stopPropagation();
             onRemove(tag.name);
           }}
-          className="ml-0.5 text-[#555555] hover:text-[#e53e3e] transition-colors leading-none"
+          className="ml-0.5 leading-none text-[#555555] transition-colors hover:text-[#e53e3e]"
           aria-label={`${tag.name} etiketini kaldır`}
         >
           ×
