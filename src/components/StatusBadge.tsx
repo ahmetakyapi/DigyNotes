@@ -5,12 +5,14 @@ export function getStatusOptions(category: string): string[] {
   if (lower === "film") return ["İzlendi", "İzleniyor", "İzlenecek"];
   if (lower === "dizi") return ["İzlendi", "İzleniyor", "İzlenecek"];
   if (lower === "kitap") return ["Okundu", "Okunuyor", "Okunacak"];
+  if (lower === "oyun") return ["Tamamlandı", "Oynanıyor", "Oynanacak"];
+  if (lower === "gezi") return ["Gidildi", "Planlandı"];
   return ["Tamamlandı", "Devam Ediyor", "Planlandı"];
 }
 
 function getStatusColor(status: string): string {
-  const completed = ["İzlendi", "Okundu", "Tamamlandı"];
-  const ongoing = ["İzleniyor", "Okunuyor", "Devam Ediyor"];
+  const completed = ["İzlendi", "Okundu", "Tamamlandı", "Gidildi"];
+  const ongoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"];
   if (completed.includes(status)) return "#22c55e";
   if (ongoing.includes(status)) return "#c9a84c";
   return "#6b7280";

@@ -60,20 +60,20 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0c0c] py-10">
+      <div className="min-h-screen bg-[#0c0e16] py-10">
         <div className="mx-auto max-w-4xl space-y-6 px-4">
           <div className="flex items-center gap-4">
-            <div className="h-20 w-20 animate-pulse rounded-full bg-[#161616]" />
+            <div className="h-20 w-20 animate-pulse rounded-full bg-[#0d0f1a]" />
             <div className="space-y-2">
-              <div className="h-5 w-40 animate-pulse rounded bg-[#161616]" />
-              <div className="h-3 w-24 animate-pulse rounded bg-[#161616]" />
+              <div className="h-5 w-40 animate-pulse rounded bg-[#0d0f1a]" />
+              <div className="h-3 w-24 animate-pulse rounded bg-[#0d0f1a]" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-40 animate-pulse rounded-xl border border-[#2a2a2a] bg-[#161616]"
+                className="h-40 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]"
               />
             ))}
           </div>
@@ -84,9 +84,9 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
   if (notFound || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0c0c0c]">
+      <div className="flex min-h-screen items-center justify-center bg-[#0c0e16]">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#2a2a2a] bg-[#161616]">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
             <svg
               className="h-7 w-7 text-[#555555]"
               fill="none"
@@ -114,13 +114,13 @@ export default function ProfilePageClient({ username }: { username: string }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0c0c]">
+    <main className="min-h-screen bg-[#0c0e16]">
       {/* Profile Header */}
-      <div className="border-b border-[#2a2a2a] bg-[#0c0c0c]">
+      <div className="border-b border-[#1a1e2e] bg-[#0c0e16]">
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
             {/* Avatar */}
-            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#2a2a2a] bg-[#161616]">
+            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
               {user.avatarUrl ? (
                 <Image
                   loader={customLoader}
@@ -196,7 +196,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {posts.map((post) => (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full overflow-hidden rounded-xl border border-[#1e1e1e] bg-[#111111] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
+                <article className="flex h-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
                   {/* Cover */}
                   <div
                     className="relative flex-shrink-0"
@@ -211,7 +211,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       unoptimized
                     />
-                    <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#111111] to-transparent" />
+                    <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0d0f1a] to-transparent" />
                   </div>
 
                   {/* Content */}
@@ -242,7 +242,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                         </div>
                       )}
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-[#1e1e1e] pt-2.5">
+                    <div className="mt-3 flex items-center justify-between border-t border-[#1a1e2e] pt-2.5">
                       <StarRating rating={post.rating} size={11} />
                       <span className="text-[10px] text-[#444]">{post.date}</span>
                     </div>

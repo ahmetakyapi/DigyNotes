@@ -73,7 +73,7 @@ export function PostsList({ allPosts }: PostsListProps) {
       {/* ── Page header + tab switcher ── */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="flex items-center gap-1 rounded-lg border border-[#2a2a2a] bg-[#161616] p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-[#252d40] bg-[#0d0f1a] p-1">
             <button
               onClick={() => setActiveTab("notlar")}
               className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
@@ -145,7 +145,7 @@ export function PostsList({ allPosts }: PostsListProps) {
       {activeTab === "notlar" &&
         (filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#2a2a2a] bg-[#161616]">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
               <svg
                 width="20"
                 height="20"
@@ -186,8 +186,8 @@ export function PostsList({ allPosts }: PostsListProps) {
                     priority
                   />
                   {/* Sürükleyici gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-[#0c0c0c]/60 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0c0e16]/40 to-transparent" />
 
                   {/* Üst rozetler */}
                   <div className="absolute left-5 top-5 flex items-center gap-2">
@@ -229,7 +229,7 @@ export function PostsList({ allPosts }: PostsListProps) {
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
               {(hasSearch ? filtered : rest).map((post, index) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className="flex h-full overflow-hidden rounded-xl border border-[#1e1e1e] bg-[#111111] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
+                  <article className="flex h-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
                     {/* Sıra numarası — sadece arama yokken */}
                     {!hasSearch && (
                       <div className="flex w-9 flex-shrink-0 items-center justify-center border-r border-[#1e1e1e]">
@@ -252,7 +252,7 @@ export function PostsList({ allPosts }: PostsListProps) {
                         sizes="(max-width: 768px) 36vw, 200px"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       />
-                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#111111] to-transparent" />
+                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0d0f1a] to-transparent" />
                     </div>
 
                     {/* İçerik */}
@@ -302,7 +302,7 @@ export function PostsList({ allPosts }: PostsListProps) {
                         </p>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-between border-t border-[#1e1e1e] pt-2.5">
+                      <div className="mt-3 flex items-center justify-between border-t border-[#1a1e2e] pt-2.5">
                         <StarRating rating={post.rating} size={11} />
                         <span className="text-[10px] text-[#444]">{post.date}</span>
                       </div>

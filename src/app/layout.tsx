@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} min-h-screen bg-[#0c0c0c] text-[#e8eaf6]`}>
+      <body className={`${inter.className} min-h-screen bg-[#0c0e16] text-[#e8eaf6]`}>
         <SessionProviderWrapper>
           <ConditionalAppShell>{children}</ConditionalAppShell>
         </SessionProviderWrapper>

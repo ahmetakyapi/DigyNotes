@@ -37,12 +37,12 @@ export default function FeedPage() {
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl bg-[#161616]" />
+            <div key={i} className="h-32 animate-pulse rounded-2xl bg-[#0d0f1a]" />
           ))}
         </div>
       ) : empty ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#2a2a2a] bg-[#161616]">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
             <svg className="h-7 w-7 text-[#555555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -69,10 +69,10 @@ export default function FeedPage() {
 
 function FeedCard({ post }: { post: Post }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#2a2a2a] bg-[#161616] transition-all hover:border-[#3a3a3a]">
+    <div className="overflow-hidden rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all hover:border-[#2a3050]">
       {/* User header */}
       {post.user && (
-        <div className="flex items-center gap-3 border-b border-[#2a2a2a] px-4 py-3">
+        <div className="flex items-center gap-3 border-b border-[#1a1e2e] px-4 py-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9a84c]/20 text-xs font-bold text-[#c9a84c]">
             {post.user.avatarUrl ? (
               <Image

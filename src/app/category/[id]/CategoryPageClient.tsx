@@ -3,11 +3,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Post, Category } from "@/types";
+import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SortFilterBar, SortFilterState, applySortFilter } from "@/components/SortFilterBar";
-import { ConfirmModal } from "@/components/ConfirmModal";
 import toast from "react-hot-toast";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
@@ -18,9 +17,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   const categoryName = decodeURIComponent(params.id);
 
   const [posts, setPosts] = useState<Post[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<SortFilterState>({ sort: "newest", minRating: 0 });
 
@@ -28,16 +25,9 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     const load = async () => {
       setLoading(true);
       try {
-        const [postsRes, catsRes] = await Promise.all([
-          fetch(`/api/posts?category=${encodeURIComponent(categoryName)}`),
-          fetch("/api/categories"),
-        ]);
-        const [postsData, catsData]: [Post[], Category[]] = await Promise.all([
-          postsRes.json(),
-          catsRes.json(),
-        ]);
+        const res = await fetch(`/api/posts?category=${encodeURIComponent(categoryName)}`);
+        const postsData: Post[] = await res.json();
         setPosts(postsData);
-        setCategory(catsData.find((c) => c.name === categoryName) ?? null);
       } catch {
         toast.error("Veriler yüklenemedi");
       } finally {
@@ -57,18 +47,6 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       : posts;
     return applySortFilter(searched, sortFilter);
   }, [posts, searchQuery, sortFilter]);
-
-  const handleConfirmDelete = async () => {
-    if (!category) return;
-    const res = await fetch(`/api/categories/${category.id}`, { method: "DELETE" });
-    setIsDeleteModalOpen(false);
-    if (res.ok) {
-      toast.success("Kategori silindi");
-      router.push("/notes");
-    } else {
-      toast.error("Silme başarısız");
-    }
-  };
 
   if (loading) {
     return (
@@ -106,34 +84,14 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           <span className="font-medium text-[#6272a4]">{categoryName}</span>
         </nav>
 
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="mb-2 text-2xl font-bold text-[#f0ede8]">{categoryName}</h1>
-            <div className="flex items-center gap-3">
-              <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c9a84c] to-transparent" />
-              <span className="inline-flex items-center rounded-full border border-[#252d40] bg-[#1a1e2e] px-2 py-0.5 text-[11px] font-medium text-[#6272a4]">
-                {posts.length} not
-              </span>
-            </div>
+        <div>
+          <h1 className="mb-2 text-2xl font-bold text-[#f0ede8]">{categoryName}</h1>
+          <div className="flex items-center gap-3">
+            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c9a84c] to-transparent" />
+            <span className="inline-flex items-center rounded-full border border-[#252d40] bg-[#1a1e2e] px-2 py-0.5 text-[11px] font-medium text-[#6272a4]">
+              {posts.length} not
+            </span>
           </div>
-
-          {category && (
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="hover:bg-[#e53e3e]/8 flex flex-shrink-0 items-center gap-1.5 rounded-md border border-[#e53e3e]/20 px-3 py-1.5 text-xs text-[#e53e3e]/60 transition-all hover:border-[#e53e3e]/40 hover:text-[#e53e3e]"
-              title="Kategoriyi sil"
-            >
-              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-              <span className="hidden sm:inline">Kategoriyi Sil</span>
-            </button>
-          )}
         </div>
       </div>
 
@@ -243,13 +201,6 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         </div>
       )}
 
-      <ConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        title="Kategoriyi Sil"
-        message={`"${categoryName}" kategorisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
-      />
     </div>
   );
 }

@@ -5,30 +5,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
 import { useSession, signOut } from "next-auth/react";
-import AddCategoryModal from "@/components/AddCategoryModal";
 import { SearchBar } from "@/components/SearchBar";
-import { Category } from "@/types";
+import { FIXED_CATEGORIES } from "@/lib/categories";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setCategories(Array.isArray(data) ? data : []))
-      .catch(() => {});
+    // Önce cache'ten hemen yükle
+    const cached = localStorage.getItem("dn_username");
+    if (cached) setUserUsername(cached);
+
+    // Sonra API'dan doğrula/güncelle
     fetch("/api/users/me")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.username) setUserUsername(data.username);
+        if (data?.username) {
+          setUserUsername(data.username);
+          localStorage.setItem("dn_username", data.username);
+        }
       })
       .catch(() => {});
   }, []);
@@ -52,18 +53,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const isDiscover = pathname === "/discover";
   const isFeed = pathname === "/feed";
   const isRecommended = pathname === "/recommended";
+  const isNotes =
+    pathname === "/notes" ||
+    pathname.startsWith("/category/") ||
+    pathname.startsWith("/posts/") ||
+    pathname === "/new-post";
+  const isProfile = pathname.startsWith("/profile");
   const userInitial = session?.user?.name?.charAt(0)?.toUpperCase() ?? "?";
-
-  const handleCategoryAdded = (category: Category) => {
-    setCategories((prev) => [...prev, category].sort((a, b) => a.name.localeCompare(b.name)));
-    setIsModalOpen(false);
-    router.push(`/category/${encodeURIComponent(category.name)}`);
-  };
 
   return (
     <>
       {/* ─── HEADER ─── */}
-      <header className="sticky top-0 z-40 border-b border-[#1a1a1a] bg-[#0c0c0c]">
+      <header className="sticky top-0 z-40 border-b border-[#1a1e2e] bg-[#0c0e16]">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
           {/* ══ TOP ROW ══ */}
           <div className="flex h-[60px] items-center justify-between">
@@ -113,8 +114,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     title={session.user?.name ?? ""}
                     className={`flex h-9 w-9 flex-shrink-0 select-none items-center justify-center rounded-full text-[13px] font-bold text-[#c9a84c] transition-all duration-150 ${
                       showUserMenu
-                        ? "bg-[#c9a84c]/20 shadow-[0_0_0_2px_#c9a84c]"
-                        : "bg-[#c9a84c]/10 shadow-[0_0_0_1px_rgba(201,168,76,0.2)] hover:bg-[#c9a84c]/15 hover:shadow-[0_0_0_1px_rgba(201,168,76,0.5)]"
+                        ? "bg-[#1e2d4a] shadow-[0_0_0_2px_#3a5999]"
+                        : "bg-[#141925] shadow-[0_0_0_1px_rgba(42,62,120,0.5)] hover:bg-[#1a2133] hover:shadow-[0_0_0_1px_rgba(58,90,170,0.6)]"
                     }`}
                   >
                     {userInitial}
@@ -122,9 +123,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
                   {/* ── Dropdown menu ── */}
                   {showUserMenu && (
-                    <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[#222222] bg-[#111111] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.8)]">
+                    <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[#1e2235] bg-[#0d0f1a] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.8)]">
                       {/* User info */}
-                      <div className="flex items-center gap-3 border-b border-[#1e1e1e] px-3.5 py-3">
+                      <div className="flex items-center gap-3 border-b border-[#1a1e2e] px-3.5 py-3">
                         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#c9a84c]/20 bg-[#c9a84c]/10">
                           <span className="text-xs font-bold text-[#c9a84c]">{userInitial}</span>
                         </div>
@@ -144,7 +145,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           <Link
                             href={`/profile/${userUsername}`}
                             onClick={() => setShowUserMenu(false)}
-                            className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#1c1c1c] hover:text-[#f0ede8]"
+                            className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
                           >
                             <svg
                               width="14"
@@ -164,7 +165,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         <Link
                           href="/profile/settings"
                           onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#1c1c1c] hover:text-[#f0ede8]"
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
                         >
                           <svg
                             width="14"
@@ -182,11 +183,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         </Link>
                       </div>
 
-                      <div className="border-t border-[#1e1e1e]" />
+                      <div className="border-t border-[#1a1e2e]" />
 
                       <div className="py-1">
                         <button
-                          onClick={() => signOut({ callbackUrl: "/" })}
+                          onClick={() => {
+                            localStorage.removeItem("dn_username");
+                            signOut({ callbackUrl: "/" });
+                          }}
                           className="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[13px] text-[#666] transition-colors duration-100 hover:bg-[#e53e3e]/5 hover:text-[#e53e3e]"
                         >
                           <svg
@@ -212,131 +216,173 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* ══ CATEGORY STRIP ══
-               Left:  personal category filter tabs
-               Right: Keşfet (global discovery — visually separated)           */}
-          <div ref={scrollRef} className="scrollbar-hide flex items-center overflow-x-auto">
-            {/* Son Yazılar */}
-            <NavTab active={activeCategory === "all"} onClick={() => router.push("/notes")}>
-              Son Yazılar
-            </NavTab>
+          {/* ══ CATEGORY STRIP ══ */}
 
-            {/* User categories */}
-            {categories.map((cat) => (
+          {/* ── Mobile: yatay kaydırmalı kategori şeridi (yalnızca notlar/kategori sayfaları) ── */}
+          {(pathname === "/notes" || pathname.startsWith("/category/")) && (
+            <div className="scrollbar-hide flex items-center gap-1.5 overflow-x-auto pb-2.5 pt-1 sm:hidden">
+              {FIXED_CATEGORIES.map((cat) => {
+                const isActive = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
+                    className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
+                      isActive
+                        ? "bg-[#c9a84c] text-[#0c0c0c] shadow-[0_2px_10px_rgba(201,168,76,0.35)]"
+                        : "bg-[#0f1320] text-[#6878a8] active:bg-[#182035] active:text-[#99aacc]"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+
+          {/* ── Desktop: scrollable single row ── */}
+          <div ref={scrollRef} className="scrollbar-hide hidden items-center overflow-x-auto sm:flex">
+            {FIXED_CATEGORIES.map((cat) => (
               <NavTab
-                key={cat.id}
-                active={activeCategory === cat.name}
-                onClick={() => router.push(`/category/${encodeURIComponent(cat.name)}`)}
+                key={cat}
+                active={activeCategory === cat}
+                onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
               >
-                {cat.name}
+                {cat}
               </NavTab>
             ))}
 
-            {/* + Add category — after last category */}
-            <button
-              onClick={() => setIsModalOpen(true)}
-              aria-label="Kategori ekle"
-              title="Kategori Ekle"
-              className="mb-[2px] ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-[#383838] transition-colors duration-150 hover:bg-[#181818] hover:text-[#c9a84c]"
-            >
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
-                <path d="M6.75 1.25a.75.75 0 0 0-1.5 0V5.25H1.25a.75.75 0 0 0 0 1.5H5.25v4a.75.75 0 0 0 1.5 0V6.75h4a.75.75 0 0 0 0-1.5H6.75V1.25Z" />
-              </svg>
-            </button>
-
-            {/* ── Spacer pushes Keşfet to the right ── */}
+            {/* spacer + ayraç + global nav */}
             <div className="min-w-[24px] flex-1" />
-
-            {/* Thin divider */}
-            <div className="mx-2 h-3.5 w-px flex-shrink-0 bg-[#282828]" />
-
-            {/* Akış */}
-            <Link
-              href="/feed"
-              className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${
-                isFeed
-                  ? "border-[#c9a84c] text-[#c9a84c]"
-                  : "border-transparent text-[#555] hover:text-[#aaa]"
-              }`}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className="mx-2 flex flex-shrink-0 items-center self-stretch">
+              <div className="h-4 w-px bg-[#2a2a3e]" />
+            </div>
+            <div className="flex flex-shrink-0 items-center gap-0.5 px-1">
+              <Link
+                href="/feed"
+                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+                  isFeed
+                    ? "border-[#c9a84c] text-[#f0ede8]"
+                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                }`}
               >
-                <path d="M3 11l19-9-9 19-2-8-8-2z" />
-              </svg>
-              Akış
-            </Link>
-
-            {/* Öneriler */}
-            <Link
-              href="/recommended"
-              className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${
-                isRecommended
-                  ? "border-[#c9a84c] text-[#c9a84c]"
-                  : "border-transparent text-[#555] hover:text-[#aaa]"
-              }`}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 11l19-9-9 19-2-8-8-2z" />
+                </svg>
+                Akış
+              </Link>
+              <Link
+                href="/recommended"
+                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+                  isRecommended
+                    ? "border-[#c9a84c] text-[#f0ede8]"
+                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                }`}
               >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-              Öneriler
-            </Link>
-
-            {/* Topluluk */}
-            <Link
-              href="/discover"
-              className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${
-                isDiscover
-                  ? "border-[#c9a84c] text-[#c9a84c]"
-                  : "border-transparent text-[#555] hover:text-[#aaa]"
-              }`}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                Öneriler
+              </Link>
+              <Link
+                href="/discover"
+                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+                  isDiscover
+                    ? "border-[#c9a84c] text-[#f0ede8]"
+                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                }`}
               >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-              Topluluk
-            </Link>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                Keşfet
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
       {/* ─── MAIN ─── */}
-      <main>{children}</main>
+      <main className="pb-16 sm:pb-0">{children}</main>
 
-      {/* ─── MODALS ─── */}
-      <AddCategoryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handleCategoryAdded}
-      />
+      {/* ─── MOBILE BOTTOM TAB BAR ─── */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#1a1e2e] bg-[#0c0e16] sm:hidden">
+        <div className="flex items-center" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+          <Link
+            href="/notes"
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
+              isNotes ? "text-[#c9a84c]" : "text-[#444]"
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="9" y1="13" x2="15" y2="13" />
+              <line x1="9" y1="17" x2="13" y2="17" />
+            </svg>
+            <span className="text-[10px] font-medium">Notlarım</span>
+          </Link>
+          <Link
+            href="/feed"
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
+              isFeed ? "text-[#c9a84c]" : "text-[#444]"
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 11l19-9-9 19-2-8-8-2z" />
+            </svg>
+            <span className="text-[10px] font-medium">Akış</span>
+          </Link>
+          <Link
+            href="/recommended"
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
+              isRecommended ? "text-[#c9a84c]" : "text-[#444]"
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span className="text-[10px] font-medium">Öneriler</span>
+          </Link>
+          <Link
+            href="/discover"
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
+              isDiscover ? "text-[#c9a84c]" : "text-[#444]"
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span className="text-[10px] font-medium">Keşfet</span>
+          </Link>
+          <button
+            onClick={() =>
+              router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
+            }
+            className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
+              isProfile ? "text-[#c9a84c]" : "text-[#444]"
+            }`}
+          >
+            <div
+              className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
+                isProfile
+                  ? "bg-[#c9a84c]/20 text-[#c9a84c] ring-1 ring-[#c9a84c]/50"
+                  : "bg-[#1a1e2e] text-[#555] ring-1 ring-[#2a2e4e]"
+              }`}
+            >
+              {userInitial}
+            </div>
+            <span className="text-[10px] font-medium">Profil</span>
+          </button>
+        </div>
+      </nav>
 
       {/* ─── TOAST ─── */}
       <Toaster
@@ -369,10 +415,10 @@ function NavTab({
   return (
     <button
       onClick={onClick}
-      className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[12px] font-medium transition-all duration-150 ${
+      className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
         active
           ? "border-[#c9a84c] text-[#f0ede8]"
-          : "border-transparent text-[#555] hover:text-[#c0c0c0]"
+          : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
       }`}
     >
       {children}
