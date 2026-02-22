@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#070709] text-[#f0ede8] flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-[#0c0c0c] text-[#f0ede8] flex flex-col overflow-x-hidden">
 
       {/* ══════════════════════════════════════
           NAV
       ══════════════════════════════════════ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-12 py-3 sm:py-4
-                      bg-[#070709]/85 backdrop-blur-xl border-b border-white/[0.04]">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-12 py-3 sm:py-4"
+           style={{ background: 'linear-gradient(to bottom, #0c0c0c 55%, transparent)' }}>
         <Image src="/app-logo.png" alt="DigyNotes" width={200} height={58}
                className="object-contain w-[140px] sm:w-[200px]" priority unoptimized />
         <div className="flex items-center gap-1 sm:gap-2">
@@ -254,7 +254,7 @@ export default function LandingPage() {
 
           {/* Altta solma efekti */}
           <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-               style={{ background: 'linear-gradient(to top, #070709, transparent)' }} />
+               style={{ background: 'linear-gradient(to top, #0c0c0c, transparent)' }} />
         </div>
       </section>
 
@@ -397,7 +397,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           FOOTER
       ══════════════════════════════════════ */}
-      <footer className="border-t border-white/[0.04] px-6 py-6 flex items-center justify-center">
+      <footer className="border-t border-[#1a1a1a] px-6 py-6 flex items-center justify-center">
         <p className="text-xs" style={{ color: 'rgba(255,255,255,0.15)' }}>
           © {new Date().getFullYear()} DigyNotes · Kişisel kullanım için.
         </p>

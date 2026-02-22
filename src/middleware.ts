@@ -14,5 +14,7 @@ export const config = {
     "/category/:path*",
     "/api/posts/:path*",
     "/api/categories/:path*",
+    "/profile/settings/:path*",
+    "/profile/settings",
   ],
 };

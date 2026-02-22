@@ -8,6 +8,7 @@ import { Post, Category } from "@/types";
 import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { MediaSearch } from "@/components/MediaSearch";
+import TagInput from "@/components/TagInput";
 import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -39,6 +40,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [content, setContent] = useState("");
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [imagePosition, setImagePosition] = useState("center");
   const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +67,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setCreator(post.creator ?? "");
         setYears(post.years ?? "");
         setImagePosition(post.imagePosition ?? "center");
+        setTags((post.tags ?? []).map((t) => t.name));
         setCategories(cats);
         setLoading(false);
       })
@@ -172,6 +175,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           creator,
           years,
           imagePosition,
+          tags,
         }),
       });
       if (!res.ok) throw new Error();
@@ -342,6 +346,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Etiketler */}
+          <div className={sectionClass}>
+            <label className={labelClass}>Etiketler</label>
+            <TagInput value={tags} onChange={(t) => { setTags(t); markDirty(); }} />
           </div>
 
           {/* Puan */}

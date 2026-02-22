@@ -17,12 +17,17 @@ async function getPosts(userId: string): Promise<Post[]> {
     const posts = await prisma.post.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+      include: { tags: { include: { tag: true } } },
     });
-    return posts.map((p) => ({
-      ...p,
-      createdAt: p.createdAt.toISOString(),
-      updatedAt: p.updatedAt.toISOString(),
-    }));
+    return posts.map((p) => {
+      const { tags, ...rest } = p;
+      return {
+        ...rest,
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString(),
+        tags: tags.map((pt) => pt.tag),
+      };
+    });
   } catch {
     return [];
   }

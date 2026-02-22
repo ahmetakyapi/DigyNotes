@@ -13,15 +13,25 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
   },
 };
 
+function transformPostTags(
+  post: { tags: { tag: { id: string; name: string } }[] } & Record<string, unknown>
+) {
+  const { tags, ...rest } = post;
+  return { ...rest, tags: tags.map((pt) => pt.tag) };
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const post = await prisma.post.findUnique({ where: { id: params.id } });
+  const post = await prisma.post.findUnique({
+    where: { id: params.id },
+    include: { tags: { include: { tag: true } } },
+  });
   if (!post) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
-  return NextResponse.json(post);
+  return NextResponse.json(transformPostTags(post));
 }
 
 export async function PUT(
@@ -36,7 +46,7 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { title, category, image, excerpt, content, creator, years, rating, status, imagePosition } = body;
+  const { title, category, image, excerpt, content, creator, years, rating, status, imagePosition, tags } = body;
 
   const existing = await prisma.post.findUnique({
     where: { id: params.id },
@@ -49,12 +59,40 @@ export async function PUT(
 
   const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
 
+  const tagNames: string[] = Array.isArray(tags)
+    ? tags.map((t: string) => t.toLowerCase().trim()).filter(Boolean).slice(0, 10)
+    : [];
+
+  const upsertedTags = await Promise.all(
+    tagNames.map((name) =>
+      prisma.tag.upsert({ where: { name }, create: { name }, update: {} })
+    )
+  );
+
+  // Replace all existing tags
+  await prisma.postTag.deleteMany({ where: { postId: params.id } });
+
   const post = await prisma.post.update({
     where: { id: params.id },
-    data: { title, category, image, excerpt, content: sanitizedContent, creator, years, rating, status: status || null, imagePosition: imagePosition || "center" },
+    data: {
+      title,
+      category,
+      image,
+      excerpt,
+      content: sanitizedContent,
+      creator,
+      years,
+      rating,
+      status: status || null,
+      imagePosition: imagePosition || "center",
+      tags: {
+        create: upsertedTags.map((tag) => ({ tagId: tag.id })),
+      },
+    },
+    include: { tags: { include: { tag: true } } },
   });
 
-  return NextResponse.json(post);
+  return NextResponse.json(transformPostTags(post));
 }
 
 export async function DELETE(
