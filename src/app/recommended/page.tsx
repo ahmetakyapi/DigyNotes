@@ -35,12 +35,12 @@ export default function RecommendedPage() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-64 animate-pulse rounded-2xl bg-[#161616]" />
+            <div key={i} className="h-64 animate-pulse rounded-2xl bg-[#0d0f1a]" />
           ))}
         </div>
       ) : posts.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#2a2a2a] bg-[#161616]">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
             <svg
               className="h-7 w-7 text-[#555555]"
               fill="none"
@@ -79,7 +79,7 @@ export default function RecommendedPage() {
 
 function RecommendedCard({ post }: { post: Post }) {
   return (
-    <div className="group overflow-hidden rounded-2xl border border-[#2a2a2a] bg-[#161616] transition-all hover:border-[#3a3a3a]">
+    <div className="group overflow-hidden rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all hover:border-[#2a3050]">
       {/* Image */}
       <div className="relative h-40 w-full overflow-hidden">
         <Image
@@ -90,7 +90,7 @@ function RecommendedCard({ post }: { post: Post }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           style={{ objectPosition: post.imagePosition ?? "center" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#161616] via-[#161616]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f1a] via-[#0d0f1a]/20 to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
           <span className="rounded-sm border border-[#c9a84c]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
             {post.category}
@@ -120,7 +120,7 @@ function RecommendedCard({ post }: { post: Post }) {
 
         {/* User */}
         {post.user && (
-          <div className="flex items-center gap-2 border-t border-[#2a2a2a] pt-3">
+          <div className="flex items-center gap-2 border-t border-[#1a1e2e] pt-3">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9a84c]/20 text-[9px] font-bold text-[#c9a84c]">
               {post.user.avatarUrl ? (
                 <Image

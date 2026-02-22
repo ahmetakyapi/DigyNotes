@@ -5,9 +5,9 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555555] bg-[#0c0c0c] border border-[#2a2a2a] focus:outline-none focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#555555] mb-2";
-const sectionClass = "rounded-xl bg-[#161616] border border-[#2a2a2a] p-5";
+  "w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555] bg-[#0d0f1a] border border-[#1a1e2e] focus:outline-none focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
+const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#555] mb-2";
+const sectionClass = "rounded-xl bg-[#0d0f1a] border border-[#1a1e2e] p-5";
 const customLoader = ({ src }: { src: string }) => src;
 
 interface UserProfile {
@@ -123,12 +123,12 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0c0c] py-10">
+      <div className="min-h-screen bg-[#0c0e16] py-10">
         <div className="mx-auto max-w-2xl space-y-4 px-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-xl border border-[#2a2a2a] bg-[#161616] p-5"
+              className="h-24 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-5"
             />
           ))}
         </div>
@@ -145,9 +145,9 @@ export default function ProfileSettingsPage() {
   }[usernameStatus];
 
   return (
-    <main className="min-h-screen bg-[#0c0c0c] py-8 pb-24">
+    <main className="min-h-screen bg-[#0c0e16] py-8 pb-24">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <div className="mb-8 border-b border-[#2a2a2a] pb-5">
+        <div className="mb-8 border-b border-[#1a1e2e] pb-5">
           <h1 className="text-xl font-bold text-[#f0ede8]">Profil Ayarları</h1>
           <p className="mt-1 text-xs text-[#555555]">
             Profilini düzenle ve herkese açık hale getir
@@ -159,7 +159,7 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <label className={labelClass}>Profil Görseli URL</label>
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#2a2a2a] bg-[#1e1e1e]">
+              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
                 {avatarUrl ? (
                   <Image
                     loader={customLoader}
@@ -236,7 +236,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => setIsPublic((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-[#c9a84c]" : "bg-[#2a2a2a]"
+                  isPublic ? "bg-[#c9a84c]" : "bg-[#1a1e2e]"
                 }`}
               >
                 <span
@@ -251,7 +251,7 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#2a2a2a] bg-[#0c0c0c]/95 backdrop-blur-xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] bg-[#0c0e16]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <p className="text-xs text-[#555555]">
             {isPublic ? "Profilin herkese açık" : "Profilin gizli"}
@@ -260,7 +260,7 @@ export default function ProfileSettingsPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[#555555] transition-colors hover:bg-[#161616] hover:text-[#f0ede8]"
+              className="rounded-lg px-4 py-2 text-sm text-[#555] transition-colors hover:bg-[#0d0f1a] hover:text-[#f0ede8]"
             >
               İptal
             </button>
