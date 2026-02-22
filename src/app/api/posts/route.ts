@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
     status,
     imagePosition,
     tags,
+    externalRating,
   } = body;
 
   if (!title || !category || !image || !excerpt || !content) {
@@ -100,6 +101,7 @@ export async function POST(request: NextRequest) {
       creator: creator || null,
       years: years || null,
       rating: rating ?? 0,
+      externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
       imagePosition: imagePosition || "center",
       date: new Date().toLocaleDateString("tr-TR", {

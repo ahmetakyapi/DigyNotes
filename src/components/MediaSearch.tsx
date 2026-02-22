@@ -8,6 +8,7 @@ interface MediaResult {
   years: string;
   image: string;
   excerpt: string;
+  externalRating?: number | null;
   _tab?: SearchTab;
 }
 
@@ -19,6 +20,7 @@ interface TMDBRawResult {
   first_air_date?: string;
   poster_path: string | null;
   overview: string;
+  vote_average?: number;
 }
 
 interface OpenLibraryRawResult {
@@ -85,6 +87,10 @@ async function searchMedia(
       years: item.release_date?.slice(0, 4) ?? "",
       image: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
       excerpt: item.overview,
+      externalRating:
+        typeof item.vote_average === "number" && item.vote_average > 0
+          ? Math.round(item.vote_average * 10) / 10
+          : null,
       _tmdbId: item.id,
       _mediaType: "movie" as const,
     }));
@@ -101,6 +107,10 @@ async function searchMedia(
       years: item.first_air_date?.slice(0, 4) ?? "",
       image: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
       excerpt: item.overview,
+      externalRating:
+        typeof item.vote_average === "number" && item.vote_average > 0
+          ? Math.round(item.vote_average * 10) / 10
+          : null,
       _tmdbId: item.id,
       _mediaType: "tv" as const,
     }));

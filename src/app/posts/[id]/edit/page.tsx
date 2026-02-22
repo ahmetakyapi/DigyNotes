@@ -39,6 +39,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [externalRating, setExternalRating] = useState<number | null>(null);
   const [imagePosition, setImagePosition] = useState("center");
   const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +67,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setYears(post.years ?? "");
         setImagePosition(post.imagePosition ?? "center");
         setTags((post.tags ?? []).map((t) => t.name));
+        setExternalRating(post.externalRating ?? null);
         setCategories(cats);
         setLoading(false);
       })
@@ -128,6 +130,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     years: string;
     image: string;
     excerpt: string;
+    externalRating?: number | null;
     _tab?: string;
   }) => {
     setTitle(result.title);
@@ -136,6 +139,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     if (result.image) setImage(result.image);
     setExcerpt(result.excerpt);
     if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
+    setExternalRating(result.externalRating ?? null);
     if (result._tab) {
       const catName = result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
       const matched = categories.find((c) => c.name === catName);
@@ -173,6 +177,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           years,
           imagePosition,
           tags,
+          externalRating,
         }),
       });
       if (!res.ok) throw new Error();

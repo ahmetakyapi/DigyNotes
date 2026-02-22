@@ -2,10 +2,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Post, Tag } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
+import FollowButton from "@/components/FollowButton";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -19,10 +21,16 @@ interface PublicUser {
   createdAt: string;
   postCount: number;
   avgRating: number;
+  followerCount: number;
+  followingCount: number;
+  isFollowing: boolean;
 }
 
 export default function ProfilePageClient({ username }: { username: string }) {
+  const { data: session } = useSession();
+  const currentUser = session?.user as { id?: string; name?: string } | undefined;
   const [user, setUser] = useState<PublicUser | null>(null);
+  const [followerCount, setFollowerCount] = useState(0);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -40,6 +48,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
       .then((data) => {
         if (!data) return;
         setUser(data.user);
+        setFollowerCount(data.user.followerCount);
         setPosts(data.posts);
         setLoading(false);
       })
@@ -131,8 +140,22 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
             {/* Info */}
             <div className="min-w-0 flex-1">
-              <h1 className="text-2xl font-bold text-[#f0ede8]">{user.name}</h1>
-              <p className="mb-2 text-sm text-[#555555]">@{user.username}</p>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h1 className="text-2xl font-bold text-[#f0ede8]">{user.name}</h1>
+                  <p className="mb-2 text-sm text-[#555555]">@{user.username}</p>
+                </div>
+                {/* Follow button — sadece başka kullanıcıysa ve giriş yapılmışsa */}
+                {currentUser?.id && currentUser.id !== user.id && (
+                  <FollowButton
+                    username={user.username}
+                    initialIsFollowing={user.isFollowing}
+                    onFollowChange={(following) =>
+                      setFollowerCount((c) => c + (following ? 1 : -1))
+                    }
+                  />
+                )}
+              </div>
               {user.bio && (
                 <p className="max-w-lg text-sm leading-relaxed text-[#888888]">{user.bio}</p>
               )}
@@ -143,18 +166,20 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   <p className="text-lg font-bold text-[#f0ede8]">{user.postCount}</p>
                   <p className="text-xs text-[#555555]">Not</p>
                 </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-[#f0ede8]">{followerCount}</p>
+                  <p className="text-xs text-[#555555]">Takipçi</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-[#f0ede8]">{user.followingCount}</p>
+                  <p className="text-xs text-[#555555]">Takip</p>
+                </div>
                 {user.avgRating > 0 && (
                   <div className="text-center">
                     <p className="text-lg font-bold text-[#c9a84c]">★ {user.avgRating}</p>
                     <p className="text-xs text-[#555555]">Ort. Puan</p>
                   </div>
                 )}
-                <div className="text-center">
-                  <p className="text-lg font-bold text-[#f0ede8]">
-                    {new Date(user.createdAt).getFullYear()}
-                  </p>
-                  <p className="text-xs text-[#555555]">Üye Yılı</p>
-                </div>
               </div>
             </div>
           </div>

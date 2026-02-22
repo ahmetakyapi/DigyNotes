@@ -16,5 +16,12 @@ export const config = {
     "/api/categories/:path*",
     "/profile/settings/:path*",
     "/profile/settings",
+    "/feed",
+    "/feed/:path*",
+    "/recommended",
+    "/recommended/:path*",
+    "/api/follows/:path*",
+    "/api/feed/:path*",
+    "/api/recommendations/:path*",
   ],
 };

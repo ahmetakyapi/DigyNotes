@@ -50,6 +50,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   };
   const activeCategory = getActiveCategory();
   const isDiscover = pathname === "/discover";
+  const isFeed = pathname === "/feed";
+  const isRecommended = pathname === "/recommended";
   const userInitial = session?.user?.name?.charAt(0)?.toUpperCase() ?? "?";
 
   const handleCategoryAdded = (category: Category) => {
@@ -248,7 +250,55 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {/* Thin divider */}
             <div className="mx-2 h-3.5 w-px flex-shrink-0 bg-[#282828]" />
 
-            {/* Topluluk — global user discovery, right-aligned */}
+            {/* Akış */}
+            <Link
+              href="/feed"
+              className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${
+                isFeed
+                  ? "border-[#c9a84c] text-[#c9a84c]"
+                  : "border-transparent text-[#555] hover:text-[#aaa]"
+              }`}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 11l19-9-9 19-2-8-8-2z" />
+              </svg>
+              Akış
+            </Link>
+
+            {/* Öneriler */}
+            <Link
+              href="/recommended"
+              className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${
+                isRecommended
+                  ? "border-[#c9a84c] text-[#c9a84c]"
+                  : "border-transparent text-[#555] hover:text-[#aaa]"
+              }`}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              Öneriler
+            </Link>
+
+            {/* Topluluk */}
             <Link
               href="/discover"
               className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 pb-[11px] pt-[10px] text-[13px] font-medium transition-all duration-150 ${

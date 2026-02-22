@@ -52,6 +52,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     status,
     imagePosition,
     tags,
+    externalRating,
   } = body;
 
   const existing = await prisma.post.findUnique({
@@ -90,6 +91,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       creator,
       years,
       rating,
+      externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
       imagePosition: imagePosition || "center",
       tags: {
