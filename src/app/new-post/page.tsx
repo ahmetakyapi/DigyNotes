@@ -47,6 +47,7 @@ export default function NewPostPage() {
   const [years, setYears] = useState("");
   const [status, setStatus] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [externalRating, setExternalRating] = useState<number | null>(null);
   const [imagePosition, setImagePosition] = useState("center");
   const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,6 +99,7 @@ export default function NewPostPage() {
     years: string;
     image: string;
     excerpt: string;
+    externalRating?: number | null;
     _tab?: string;
   }) => {
     setTitle(result.title);
@@ -106,6 +108,7 @@ export default function NewPostPage() {
     if (result.image) setImage(result.image);
     setExcerpt(result.excerpt);
     if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
+    setExternalRating(result.externalRating ?? null);
     if (result._tab) {
       const catName = result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
       const matched = categories.find((c) => c.name === catName);
@@ -142,6 +145,7 @@ export default function NewPostPage() {
           years,
           imagePosition,
           tags,
+          externalRating,
         }),
       });
       if (!res.ok) throw new Error();

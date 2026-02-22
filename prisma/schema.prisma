@@ -18,8 +18,21 @@ model User {
   createdAt  DateTime   @default(now())
   posts      Post[]
   categories Category[]
+  followers  Follow[]   @relation("Following")
+  following  Follow[]   @relation("Follower")
 
   @@map("users")
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("follows")
 }
 
 model Category {
@@ -42,6 +55,7 @@ model Post {
   creator       String?
   years         String?
   rating        Float     @default(0)
+  externalRating Float?
   status        String?
   imagePosition String?   @default("center")
   date          String
