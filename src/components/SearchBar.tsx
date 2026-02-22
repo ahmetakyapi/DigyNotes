@@ -35,7 +35,7 @@ export function SearchBar() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center justify-center w-8 h-8 rounded-md text-[#8892b0] hover:text-[#c9a84c] transition-colors"
+        className="flex h-8 w-8 items-center justify-center rounded-md text-[#8892b0] transition-colors hover:text-[#c9a84c]"
         title="Ara"
       >
         <FaSearch size={14} />
@@ -46,20 +46,24 @@ export function SearchBar() {
   return (
     <form
       onSubmit={submit}
-      className="flex items-center gap-2 bg-[#161616] border border-[#2a2a2a] rounded-lg px-3 py-1.5"
+      className="flex items-center gap-2 rounded-lg border border-[#2a2a2a] bg-[#161616] px-3 py-1.5"
     >
-      <FaSearch size={12} className="text-[#555555] flex-shrink-0" />
+      <FaSearch size={12} className="flex-shrink-0 text-[#555555]" />
       <input
         ref={inputRef}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Başlık veya yazar ara..."
-        className="bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none w-20 sm:w-44"
+        className="w-20 bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none sm:w-44"
         onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
       />
       {query && (
-        <button type="button" onClick={clear} className="text-[#555555] hover:text-[#888] transition-colors">
+        <button
+          type="button"
+          onClick={clear}
+          className="text-[#555555] transition-colors hover:text-[#888]"
+        >
           <FaTimes size={11} />
         </button>
       )}

@@ -2,11 +2,7 @@ import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import PostDetailClient from "./PostDetailClient";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
     const post = await prisma.post.findUnique({ where: { id: params.id } });
     if (!post) return { title: "Not Bulunamadı" };
@@ -18,9 +14,7 @@ export async function generateMetadata({
         title: post.title,
         description: post.excerpt || undefined,
         type: "article",
-        images: post.image
-          ? [{ url: post.image, alt: post.title }]
-          : undefined,
+        images: post.image ? [{ url: post.image, alt: post.title }] : undefined,
       },
     };
   } catch {

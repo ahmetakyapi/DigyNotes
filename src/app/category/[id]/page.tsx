@@ -1,11 +1,7 @@
 import { Metadata } from "next";
 import CategoryPageClient from "./CategoryPageClient";
 
-export function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Metadata {
+export function generateMetadata({ params }: { params: { id: string } }): Metadata {
   const categoryName = decodeURIComponent(params.id);
   return {
     title: categoryName,

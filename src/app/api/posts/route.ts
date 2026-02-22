@@ -27,7 +27,12 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
   const tagsParam = searchParams.get("tags");
-  const tagNames = tagsParam ? tagsParam.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean) : [];
+  const tagNames = tagsParam
+    ? tagsParam
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean)
+    : [];
 
   const where: Record<string, unknown> = {};
   if (userId) where.userId = userId;
@@ -54,7 +59,19 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { title, category, image, excerpt, content, creator, years, rating, status, imagePosition, tags } = body;
+  const {
+    title,
+    category,
+    image,
+    excerpt,
+    content,
+    creator,
+    years,
+    rating,
+    status,
+    imagePosition,
+    tags,
+  } = body;
 
   if (!title || !category || !image || !excerpt || !content) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -63,13 +80,14 @@ export async function POST(request: NextRequest) {
   const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
 
   const tagNames: string[] = Array.isArray(tags)
-    ? tags.map((t: string) => t.toLowerCase().trim()).filter(Boolean).slice(0, 10)
+    ? tags
+        .map((t: string) => t.toLowerCase().trim())
+        .filter(Boolean)
+        .slice(0, 10)
     : [];
 
   const upsertedTags = await Promise.all(
-    tagNames.map((name) =>
-      prisma.tag.upsert({ where: { name }, create: { name }, update: {} })
-    )
+    tagNames.map((name) => prisma.tag.upsert({ where: { name }, create: { name }, update: {} }))
   );
 
   const post = await prisma.post.create({

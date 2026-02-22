@@ -60,10 +60,7 @@ export async function PUT(request: NextRequest) {
     });
 
     if (existing) {
-      return NextResponse.json(
-        { error: "Bu kullanıcı adı zaten kullanılıyor" },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "Bu kullanıcı adı zaten kullanılıyor" }, { status: 409 });
     }
   }
 

@@ -29,11 +29,11 @@ export default function StarRating({
               style={{ fontSize: size, lineHeight: 1 }}
             >
               <span
-                className="absolute left-0 top-0 w-1/2 h-full z-10"
+                className="absolute left-0 top-0 z-10 h-full w-1/2"
                 onClick={() => onRate?.(starNum - 0.5)}
               />
               <span
-                className="absolute right-0 top-0 w-1/2 h-full z-10"
+                className="absolute right-0 top-0 z-10 h-full w-1/2"
                 onClick={() => onRate?.(starNum)}
               />
               {starNum <= fullStars ? (
@@ -55,23 +55,11 @@ export default function StarRating({
       {Array.from({ length: 5 }, (_, i) => {
         const starNum = i + 1;
         return starNum <= fullStars ? (
-          <FaStar
-            key={starNum}
-            className="text-[#c9a84c]"
-            style={{ fontSize: size }}
-          />
+          <FaStar key={starNum} className="text-[#c9a84c]" style={{ fontSize: size }} />
         ) : starNum === fullStars + 1 && hasHalf ? (
-          <FaStarHalfAlt
-            key={starNum}
-            className="text-[#c9a84c]"
-            style={{ fontSize: size }}
-          />
+          <FaStarHalfAlt key={starNum} className="text-[#c9a84c]" style={{ fontSize: size }} />
         ) : (
-          <FaRegStar
-            key={starNum}
-            className="text-[#4a5568]"
-            style={{ fontSize: size }}
-          />
+          <FaRegStar key={starNum} className="text-[#4a5568]" style={{ fontSize: size }} />
         );
       })}
     </span>

@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { username: string } }
-) {
+export async function GET(_req: NextRequest, { params }: { params: { username: string } }) {
   const user = await prisma.user.findUnique({
     where: { username: params.username },
     select: {
@@ -34,10 +31,7 @@ export async function GET(
   }));
 
   const ratings = posts.filter((p) => p.rating > 0).map((p) => p.rating);
-  const avgRating =
-    ratings.length > 0
-      ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-      : 0;
+  const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
   return NextResponse.json({
     user: {

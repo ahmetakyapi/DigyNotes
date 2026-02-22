@@ -14,7 +14,5 @@ export async function GET(request: NextRequest) {
     take: 20,
   });
 
-  return NextResponse.json(
-    tags.map((t) => ({ id: t.id, name: t.name, count: t._count.posts }))
-  );
+  return NextResponse.json(tags.map((t) => ({ id: t.id, name: t.name, count: t._count.posts })));
 }
