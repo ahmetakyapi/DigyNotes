@@ -8,8 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { PostsList } from "@/components/PostsList";
 
 export const metadata: Metadata = {
-  title: "Son Yazılar",
-  description: "En son eklenen film, dizi ve kitap notları.",
+  title: "Notlarım",
+  description: "Film, dizi, kitap ve daha fazlası hakkındaki notlarım.",
 };
 
 async function getPosts(userId: string): Promise<Post[]> {
@@ -41,7 +41,7 @@ export default async function NotesPage() {
   if (posts.length === 0) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#252d40] bg-[#151b2d]">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
           <svg
             width="28"
             height="28"

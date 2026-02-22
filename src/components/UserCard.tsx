@@ -18,10 +18,10 @@ export default function UserCard({ user }: UserCardProps) {
   return (
     <Link
       href={href}
-      className="group block rounded-xl border border-[#2a2a2a] bg-[#161616] p-4 transition-all hover:border-[#c9a84c]/40"
+      className="group block rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-4 transition-all hover:border-[#c9a84c]/40"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#2a2a2a] bg-[#1e1e1e]">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#111828]">
           {user.avatarUrl ? (
             <Image
               src={user.avatarUrl}
@@ -45,7 +45,7 @@ export default function UserCard({ user }: UserCardProps) {
           {user.bio && <p className="mt-1 line-clamp-2 text-xs text-[#888888]">{user.bio}</p>}
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-1.5 border-t border-[#2a2a2a] pt-3">
+      <div className="mt-3 flex items-center gap-1.5 border-t border-[#1a1e2e] pt-3">
         <span className="text-xs font-medium text-[#c9a84c]">{user.postCount}</span>
         <span className="text-xs text-[#555555]">not</span>
       </div>

@@ -3,6 +3,19 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import TagBadge from "./TagBadge";
 
+const TR_MAP: Record<string, string> = {
+  ğ: "g", ü: "u", ş: "s", ı: "i", ö: "o", ç: "c",
+  Ğ: "g", Ü: "u", Ş: "s", İ: "i", Ö: "o", Ç: "c",
+};
+
+function normalizeTag(raw: string): string {
+  return raw
+    .replace(/[ğüşıöçĞÜŞİÖÇ]/g, (c) => TR_MAP[c] ?? c)
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
 interface TagInputProps {
   value: string[];
   onChange: (tags: string[]) => void;
@@ -49,7 +62,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   }, [input, fetchSuggestions]);
 
   const addTag = (name: string) => {
-    const normalized = name.toLowerCase().trim().replace(/\s+/g, "-");
+    const normalized = normalizeTag(name);
     if (!normalized || value.includes(normalized) || value.length >= 10) return;
     if (!/^[a-z0-9\-]{1,30}$/.test(normalized)) return;
     onChange([...value, normalized]);
