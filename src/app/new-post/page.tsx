@@ -8,6 +8,7 @@ import { Category } from "@/types";
 import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { MediaSearch } from "@/components/MediaSearch";
+import TagInput from "@/components/TagInput";
 import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -47,6 +48,7 @@ export default function NewPostPage() {
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
   const [status, setStatus] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [imagePosition, setImagePosition] = useState("center");
   const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,7 +123,7 @@ export default function NewPostPage() {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, category, rating, status, image, excerpt, content, creator, years, imagePosition }),
+        body: JSON.stringify({ title, category, rating, status, image, excerpt, content, creator, years, imagePosition, tags }),
       });
       if (!res.ok) throw new Error();
       toast.success("Not başarıyla kaydedildi!");
@@ -259,6 +261,12 @@ export default function NewPostPage() {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Etiketler */}
+          <div className={sectionClass}>
+            <label className={labelClass}>Etiketler</label>
+            <TagInput value={tags} onChange={setTags} />
           </div>
 
           {/* Puan */}

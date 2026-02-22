@@ -8,6 +8,7 @@ import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import TagBadge from "@/components/TagBadge";
 import toast from "react-hot-toast";
 
 const customLoader = ({ src }: { src: string }) => src;
@@ -188,6 +189,15 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
       {/* ─── Content ─── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        {/* Etiketler */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-8">
+            {post.tags.map((tag) => (
+              <TagBadge key={tag.id} tag={tag} />
+            ))}
+          </div>
+        )}
+
         <article
           className="prose prose-lg max-w-none
                      prose-headings:text-[#e8eaf6] prose-headings:font-bold

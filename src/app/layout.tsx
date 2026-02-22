@@ -73,7 +73,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} bg-[#0f1117] text-[#e8eaf6] min-h-screen`}>
+      <body className={`${inter.className} bg-[#0c0c0c] text-[#e8eaf6] min-h-screen`}>
         <SessionProviderWrapper>
           <ConditionalAppShell>{children}</ConditionalAppShell>
         </SessionProviderWrapper>
