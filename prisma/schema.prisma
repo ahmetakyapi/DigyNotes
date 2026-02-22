@@ -11,6 +11,10 @@ model User {
   email      String     @unique
   name       String
   password   String
+  username   String?    @unique
+  bio        String?    @db.Text
+  avatarUrl  String?
+  isPublic   Boolean    @default(false)
   createdAt  DateTime   @default(now())
   posts      Post[]
   categories Category[]
@@ -29,22 +33,41 @@ model Category {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  title     String
-  category  String
-  image     String
-  excerpt   String   @db.Text
-  content   String   @db.Text
-  creator   String?
-  years     String?
-  rating        Float   @default(0)
+  id            String    @id @default(cuid())
+  title         String
+  category      String
+  image         String
+  excerpt       String    @db.Text
+  content       String    @db.Text
+  creator       String?
+  years         String?
+  rating        Float     @default(0)
   status        String?
-  imagePosition String? @default("center")
+  imagePosition String?   @default("center")
   date          String
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags          PostTag[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@map("posts")
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique
+  posts PostTag[]
+
+  @@map("tags")
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
 }

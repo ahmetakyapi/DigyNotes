@@ -8,6 +8,7 @@ import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SortFilterBar, SortFilterState, applySortFilter } from "@/components/SortFilterBar";
 import { StatsPanel } from "@/components/StatsPanel";
+import TagBadge from "@/components/TagBadge";
 
 interface PostsListProps {
   allPosts: Post[];
@@ -22,7 +23,14 @@ export function PostsList({ allPosts }: PostsListProps) {
     minRating: 0,
   });
   const [localQuery, setLocalQuery] = useState(urlQuery);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"notlar" | "istatistikler">("notlar");
+
+  const toggleTag = (name: string) => {
+    setActiveTags((prev) =>
+      prev.includes(name) ? prev.filter((t) => t !== name) : [...prev, name]
+    );
+  };
 
   useEffect(() => {
     setLocalQuery(urlQuery);
@@ -30,15 +38,20 @@ export function PostsList({ allPosts }: PostsListProps) {
 
   const filtered = useMemo(() => {
     const q = localQuery.toLowerCase().trim();
-    const searched = q
+    let result = q
       ? allPosts.filter(
           (p) =>
             p.title.toLowerCase().includes(q) ||
             (p.creator?.toLowerCase().includes(q) ?? false)
         )
       : allPosts;
-    return applySortFilter(searched, sortFilter);
-  }, [allPosts, localQuery, sortFilter]);
+    if (activeTags.length > 0) {
+      result = result.filter((p) =>
+        activeTags.some((at) => (p.tags ?? []).some((t) => t.name === at))
+      );
+    }
+    return applySortFilter(result, sortFilter);
+  }, [allPosts, localQuery, activeTags, sortFilter]);
 
   const stats = useMemo(() => {
     const total = allPosts.length;
@@ -54,7 +67,8 @@ export function PostsList({ allPosts }: PostsListProps) {
   const hasSearch =
     localQuery.trim() !== "" ||
     sortFilter.minRating > 0 ||
-    sortFilter.sort !== "newest";
+    sortFilter.sort !== "newest" ||
+    activeTags.length > 0;
 
   if (allPosts.length === 0) return null;
 
@@ -111,6 +125,24 @@ export function PostsList({ allPosts }: PostsListProps) {
         )}
       </div>
 
+      {/* ── Aktif tag filtreleri ── */}
+      {activeTab === "notlar" && activeTags.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <span className="text-xs text-[#555555]">Etiket:</span>
+          {activeTags.map((name) => (
+            <TagBadge
+              key={name}
+              tag={{ id: name, name }}
+              active
+              onRemove={toggleTag}
+            />
+          ))}
+          <button onClick={() => setActiveTags([])} className="text-xs text-[#555555] hover:text-[#e53e3e] transition-colors">
+            Temizle
+          </button>
+        </div>
+      )}
+
       {/* ── İstatistikler sekmesi ── */}
       {activeTab === "istatistikler" && <StatsPanel posts={allPosts} />}
 
@@ -123,7 +155,7 @@ export function PostsList({ allPosts }: PostsListProps) {
           </div>
           <p className="text-[#555555] text-sm mb-3">Sonuç bulunamadı.</p>
           <button
-            onClick={() => { setLocalQuery(""); setSortFilter({ sort: "newest", minRating: 0 }); }}
+            onClick={() => { setLocalQuery(""); setSortFilter({ sort: "newest", minRating: 0 }); setActiveTags([]); }}
             className="text-xs text-[#c9a84c] hover:underline"
           >
             Filtreleri temizle
@@ -239,6 +271,22 @@ export function PostsList({ allPosts }: PostsListProps) {
 
                       {post.creator && (
                         <p className="text-xs text-[#555555] mb-1.5">{post.creator}</p>
+                      )}
+
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-1.5" onClick={(e) => e.preventDefault()}>
+                          {post.tags.slice(0, 3).map((tag) => (
+                            <TagBadge
+                              key={tag.id}
+                              tag={tag}
+                              active={activeTags.includes(tag.name)}
+                              onClick={toggleTag}
+                            />
+                          ))}
+                          {post.tags.length > 3 && (
+                            <span className="text-[10px] text-[#555555] self-center">+{post.tags.length - 3}</span>
+                          )}
+                        </div>
                       )}
 
                       <p className="text-xs text-[#444] leading-relaxed line-clamp-2">
