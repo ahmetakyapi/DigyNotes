@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
-import { Post, Category } from "@/types";
+import { Post } from "@/types";
+import { FIXED_CATEGORIES } from "@/lib/categories";
 import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { MediaSearch } from "@/components/MediaSearch";
@@ -25,7 +26,6 @@ function flashClass(flashed: boolean) {
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [originalCategory, setOriginalCategory] = useState("");
 
@@ -50,11 +50,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const positionDetectedRef = useRef(false);
 
   useEffect(() => {
-    Promise.all([
-      fetch(`/api/posts/${params.id}`).then((r) => r.json()),
-      fetch("/api/categories").then((r) => r.json()),
-    ])
-      .then(([post, cats]: [Post, Category[]]) => {
+    fetch(`/api/posts/${params.id}`)
+      .then((r) => r.json())
+      .then((post: Post) => {
         setTitle(post.title);
         setCategory(post.category);
         setOriginalCategory(post.category);
@@ -68,7 +66,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setImagePosition(post.imagePosition ?? "center");
         setTags((post.tags ?? []).map((t) => t.name));
         setExternalRating(post.externalRating ?? null);
-        setCategories(cats);
         setLoading(false);
       })
       .catch(() => {
@@ -142,8 +139,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setExternalRating(result.externalRating ?? null);
     if (result._tab) {
       const catName = result._tab === "dizi" ? "Dizi" : result._tab === "kitap" ? "Kitap" : "Film";
-      const matched = categories.find((c) => c.name === catName);
-      if (matched) handleCategoryChange(matched.name);
+      handleCategoryChange(catName);
     }
     markDirty();
 
@@ -317,9 +313,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   onChange={(e) => handleCategoryChange(e.target.value)}
                   className={inputClass("category")}
                 >
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
+                  {FIXED_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
                     </option>
                   ))}
                 </select>
