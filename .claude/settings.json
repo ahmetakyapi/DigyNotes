@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npx prisma db push*)",
+      "Bash(npx prisma generate)",
+      "Bash(npx prisma studio)",
+      "Bash(npx prisma migrate*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add src/*)",
+      "Bash(git add prisma/*)",
+      "Bash(git add .claude/*)",
+      "Bash(brew services start postgresql@16)",
+      "Bash(brew services stop postgresql@16)",
+      "Bash(brew services status postgresql@16)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.local)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  }
+}
