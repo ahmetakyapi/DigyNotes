@@ -54,7 +54,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="relative flex h-[100svh] flex-col items-center px-5 pt-16 sm:min-h-screen sm:justify-center sm:px-4 sm:pt-24">
+      <section className="relative flex flex-col items-center px-5 pb-1 pt-[4.4rem] sm:min-h-screen sm:justify-center sm:px-4 sm:pt-24">
         {/* ── Arka plan aura katmanları ── */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
@@ -68,6 +68,14 @@ export default function LandingPage() {
           <div
             className="absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px] sm:h-[500px] sm:w-[900px]"
             style={{ background: "radial-gradient(circle, #c9a84c 0%, #8a6820 60%, transparent 70%)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-[0.016] sm:hidden"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+              backgroundSize: "78px 78px",
+            }}
           />
           <div
             className="absolute inset-0 hidden opacity-[0.018] sm:block"
@@ -84,11 +92,9 @@ export default function LandingPage() {
         </div>
 
         {/* ── Tüm içerik — badge + başlık+açıklama + butonlar, 3 öğe justify-between ── */}
-        <div className="flex w-full flex-1 flex-col items-center justify-between py-5 sm:flex-none sm:py-0 sm:contents">
-
-          {/* 1. Rozet */}
+        <div className="relative z-10 flex w-full max-w-[430px] flex-col items-center gap-4 pb-0 pt-0.5 sm:flex-none sm:max-w-none sm:justify-between sm:gap-0 sm:py-0 sm:contents">
           <div
-            className="relative flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-8 sm:gap-3 sm:px-5 sm:py-2"
+            className="relative mb-3 mt-5 flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-8 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2"
             style={{
               background: "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(129,140,248,0.06), rgba(255,107,53,0.06))",
             }}
@@ -98,7 +104,7 @@ export default function LandingPage() {
               style={{ background: "radial-gradient(circle, #fbbf24, #c9a84c)" }}
             />
             <span
-              className="text-[10px] font-bold uppercase tracking-[0.18em] sm:text-xs"
+              className="text-[9px] font-bold uppercase tracking-[0.2em] sm:text-xs"
               style={{
                 background: "linear-gradient(90deg, #c9a84c, #e0c068)",
                 WebkitBackgroundClip: "text",
@@ -111,9 +117,9 @@ export default function LandingPage() {
 
           {/* 2. Başlık + Açıklama grubu */}
           <div className="flex flex-col items-center sm:contents">
-            <h1 className="mb-3 w-full text-center text-[2rem] font-black leading-[1.05] sm:mb-4 sm:text-[clamp(2.4rem,6vw,5rem)] sm:leading-[1.1]">
+            <h1 className="mb-3 w-full px-1 pb-1 pt-1 text-center text-[clamp(2.08rem,9.7vw,3.05rem)] font-black leading-[1.14] sm:mb-4 sm:px-0 sm:pb-0 sm:pt-0 sm:text-[clamp(2.4rem,6vw,5rem)] sm:leading-[1.1]">
               <span
-                className="block sm:mb-1"
+                className="mb-0.5 block sm:mb-1"
                 style={{
                   background: "linear-gradient(135deg, #7890c0 0%, #3858a8 45%, #1c3878 100%)",
                   WebkitBackgroundClip: "text",
@@ -124,7 +130,7 @@ export default function LandingPage() {
                 İzlediklerin
               </span>
               <span
-                className="block sm:mb-1"
+                className="mb-0.5 block sm:mb-1"
                 style={{
                   background: "linear-gradient(135deg, #c0a0e0 0%, #9068c8 45%, #6840a8 100%)",
                   WebkitBackgroundClip: "text",
@@ -135,7 +141,7 @@ export default function LandingPage() {
                 Oynadıkların
               </span>
               <span
-                className="block sm:mb-1"
+                className="mb-0.5 block sm:mb-1"
                 style={{
                   background: "linear-gradient(135deg, #dab888 0%, #c09060 45%, #a87040 100%)",
                   WebkitBackgroundClip: "text",
@@ -159,23 +165,23 @@ export default function LandingPage() {
             </h1>
 
             <p
-              className="mx-auto max-w-[270px] text-center text-[0.83rem] leading-snug sm:mb-8 sm:max-w-xl sm:text-[1.05rem] sm:leading-relaxed lg:text-[1.1rem]"
-              style={{ color: "rgba(240,237,232,0.5)" }}
+              className="mx-auto max-w-[322px] px-2 py-2 text-center text-[0.94rem] leading-[1.65] [text-wrap:balance] sm:mb-8 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.05rem] sm:leading-relaxed lg:text-[1.1rem]"
+              style={{ color: "rgba(240,237,232,0.66)" }}
             >
-              <span className="block">
+              <span className="block [text-wrap:balance]">
                 Film, dizi, oyun ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla.
               </span>
-              <span className="mt-1.5 block sm:mt-2" style={{ color: "rgba(240,237,232,0.65)" }}>
+              <span className="mt-2.5 block [text-wrap:balance] sm:mt-2" style={{ color: "rgba(240,237,232,0.66)" }}>
                 Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
               </span>
             </p>
           </div>
 
           {/* 3. CTA Butonlar */}
-          <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-4">
+          <div className="mb-8 mt-3 flex w-full flex-col gap-5 px-1.5 pb-1 sm:mb-0 sm:w-auto sm:flex-row sm:gap-4 sm:px-0 sm:pb-0">
             <Link
               href="/register"
-              className="group relative w-full overflow-hidden rounded-2xl py-[15px] text-center text-[15px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_36px_rgba(201,168,76,0.45)] sm:w-auto sm:px-10 sm:py-4"
+              className="group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[#1a0e00] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px]"
               style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
             >
               <span className="relative z-10">Hemen Başla →</span>
@@ -186,8 +192,11 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="w-full rounded-2xl border border-white/10 py-[15px] text-center text-[15px] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] sm:w-auto sm:px-10 sm:py-4"
-              style={{ color: "rgba(240,237,232,0.6)" }}
+              className="w-[86%] self-center rounded-[1.6rem] border border-white/20 py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.04] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px]"
+              style={{
+                color: "rgba(240,237,232,0.68)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
+              }}
             >
               Giriş Yap
             </Link>
