@@ -8,6 +8,7 @@ import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
 import FollowButton from "@/components/FollowButton";
+import FollowListModal from "@/components/FollowListModal";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -34,6 +35,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
 
   useEffect(() => {
     fetch(`/api/users/${username}`)
@@ -166,14 +168,22 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   <p className="text-lg font-bold text-[#f0ede8]">{user.postCount}</p>
                   <p className="text-xs text-[#555555]">Not</p>
                 </div>
-                <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setFollowModal("followers")}
+                  className="text-center transition-opacity hover:opacity-70"
+                >
                   <p className="text-lg font-bold text-[#f0ede8]">{followerCount}</p>
                   <p className="text-xs text-[#555555]">Takipçi</p>
-                </div>
-                <div className="text-center">
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFollowModal("following")}
+                  className="text-center transition-opacity hover:opacity-70"
+                >
                   <p className="text-lg font-bold text-[#f0ede8]">{user.followingCount}</p>
                   <p className="text-xs text-[#555555]">Takip</p>
-                </div>
+                </button>
                 {user.avgRating > 0 && (
                   <div className="text-center">
                     <p className="text-lg font-bold text-[#c9a84c]">★ {user.avgRating}</p>
@@ -185,6 +195,15 @@ export default function ProfilePageClient({ username }: { username: string }) {
           </div>
         </div>
       </div>
+
+      {/* Followers / Following modal */}
+      {followModal && (
+        <FollowListModal
+          username={username}
+          type={followModal}
+          onClose={() => setFollowModal(null)}
+        />
+      )}
 
       {/* Posts */}
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
