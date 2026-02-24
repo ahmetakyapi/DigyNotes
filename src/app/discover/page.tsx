@@ -252,7 +252,10 @@ export default function DiscoverPage() {
 
 function TopPostCard({ post }: { post: Post }) {
   return (
-    <div className="group overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all hover:border-[#2a3050]">
+    <Link
+      href={`/posts/${post.id}`}
+      className="group block overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all hover:border-[#2a3050]"
+    >
       <div className="relative h-28 overflow-hidden">
         <Image
           loader={customLoader}
@@ -276,14 +279,27 @@ function TopPostCard({ post }: { post: Post }) {
         {post.creator && <p className="mb-1 text-[10px] text-[#555555]">{post.creator}</p>}
         {post.rating > 0 && <StarRating rating={post.rating} size={10} />}
         {post.user?.username && (
-          <Link
-            href={`/profile/${post.user.username}`}
-            className="mt-1.5 block text-[10px] text-[#555555] transition-colors hover:text-[#c9a84c]"
+          <span
+            role="link"
+            tabIndex={0}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/profile/${post.user!.username}`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/profile/${post.user!.username}`;
+              }
+            }}
+            className="relative z-10 mt-1.5 block cursor-pointer text-[10px] text-[#555555] transition-colors hover:text-[#c9a84c]"
           >
             @{post.user.username}
-          </Link>
+          </span>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
