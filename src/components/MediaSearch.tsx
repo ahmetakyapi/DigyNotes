@@ -212,6 +212,7 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const skipNextSearchRef = useRef(false);
 
   const handleTabChange = (tab: SearchTab) => {
     setActiveTab(tab);
@@ -226,6 +227,11 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
     if (!query.trim() || query.length < 2) {
       setResults([]);
       setIsOpen(false);
+      return;
+    }
+
+    if (skipNextSearchRef.current) {
+      skipNextSearchRef.current = false;
       return;
     }
 
@@ -263,6 +269,8 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
     ) => {
       setIsSelecting(true);
       setIsOpen(false);
+      setResults([]);
+      skipNextSearchRef.current = true;
       setQuery(item.title);
 
       let creator = item.creator;
