@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { LuFilm, LuTv, LuBookOpen, LuStar, LuPenLine, LuSearch } from "react-icons/lu";
+import { LuFilm, LuTv, LuBookOpen, LuGamepad2, LuStar, LuSearch, LuTag, LuUsers } from "react-icons/lu";
 
 export const metadata: Metadata = {
-  title: "DigyNotes — Film, Dizi ve Kitap Notları",
-  description: "Film, dizi ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla.",
+  title: "DigyNotes — Film, Dizi, Oyun ve Kitap Notları",
+  description:
+    "Film, dizi, oyun ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla. Puan ver, etiketle, keşfet.",
 };
 
 export default function LandingPage() {
@@ -53,154 +54,152 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="relative flex min-h-screen flex-1 flex-col items-center justify-center px-4 pb-16 pt-32">
+      <section className="relative flex h-[100svh] flex-col items-center px-5 pt-16 sm:min-h-screen sm:justify-center sm:px-4 sm:pt-24">
         {/* ── Arka plan aura katmanları ── */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          {/* Sol üst — sıcak bronz tonu */}
           <div
-            className="absolute -left-20 -top-20 h-[700px] w-[700px] rounded-full opacity-[0.07] blur-[140px]"
-            style={{
-              background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)",
-            }}
+            className="absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full opacity-[0.07] blur-[140px] sm:h-[700px] sm:w-[700px]"
+            style={{ background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)" }}
           />
-          {/* Sağ üst — soğuk çelik tonu */}
           <div
-            className="absolute -right-20 -top-10 h-[600px] w-[600px] rounded-full opacity-[0.05] blur-[140px]"
-            style={{
-              background: "radial-gradient(circle, #6878a0 0%, #3a4a6a 50%, transparent 70%)",
-            }}
+            className="absolute -right-20 -top-10 h-[350px] w-[350px] rounded-full opacity-[0.05] blur-[140px] sm:h-[600px] sm:w-[600px]"
+            style={{ background: "radial-gradient(circle, #6878a0 0%, #3a4a6a 50%, transparent 70%)" }}
           />
-          {/* Merkez alt — altın parıltı */}
           <div
-            className="absolute bottom-0 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px]"
-            style={{
-              background: "radial-gradient(circle, #c9a84c 0%, #8a6820 60%, transparent 70%)",
-            }}
+            className="absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px] sm:h-[500px] sm:w-[900px]"
+            style={{ background: "radial-gradient(circle, #c9a84c 0%, #8a6820 60%, transparent 70%)" }}
           />
-
-          {/* İnce grid dokusu */}
           <div
-            className="absolute inset-0 opacity-[0.018]"
+            className="absolute inset-0 hidden opacity-[0.018] sm:block"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
               backgroundSize: "80px 80px",
             }}
           />
-
-          {/* Merkez parlama — başlığın arkası */}
           <div
-            className="absolute left-1/2 top-1/2 h-[250px] w-[500px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] blur-[90px]"
+            className="absolute left-1/2 top-1/2 h-[150px] w-[300px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] blur-[90px] sm:h-[250px] sm:w-[500px]"
             style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
           />
         </div>
 
-        {/* ── Rozet ── */}
-        <div
-          className="relative mb-10 flex items-center gap-3 rounded-full border border-white/10 px-5 py-2.5 backdrop-blur-sm"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(129,140,248,0.06), rgba(255,107,53,0.06))",
-          }}
-        >
-          <span
-            className="h-2 w-2 rounded-full shadow-[0_0_8px_#c9a84c]"
-            style={{ background: "radial-gradient(circle, #fbbf24, #c9a84c)" }}
-          />
-          <span
-            className="text-xs font-bold uppercase tracking-[0.18em]"
+        {/* ── Tüm içerik — badge + başlık+açıklama + butonlar, 3 öğe justify-between ── */}
+        <div className="flex w-full flex-1 flex-col items-center justify-between py-5 sm:flex-none sm:py-0 sm:contents">
+
+          {/* 1. Rozet */}
+          <div
+            className="relative flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-8 sm:gap-3 sm:px-5 sm:py-2"
             style={{
-              background: "linear-gradient(90deg, #c9a84c, #e0c068)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              background: "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(129,140,248,0.06), rgba(255,107,53,0.06))",
             }}
           >
-            Kişisel Not Defteri
-          </span>
-        </div>
-
-        {/* ── Başlık ── */}
-        <h1
-          className="relative mb-8 max-w-4xl text-center font-black leading-[1.2]"
-          style={{ fontSize: "clamp(3rem, 8vw, 6rem)", paddingTop: "0.35em" }}
-        >
-          {/* Satır 1 — Koyu lacivert / sinematik */}
-          <span
-            className="mb-1 block"
-            style={{
-              background: "linear-gradient(135deg, #7890c0 0%, #3858a8 45%, #1c3878 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 28px rgba(48, 80, 160, 0.25))",
-            }}
-          >
-            İzlediklerin
-          </span>
-
-          {/* Satır 2 — Bej / edebi */}
-          <span
-            className="mb-1 block"
-            style={{
-              background: "linear-gradient(135deg, #e8dcc8 0%, #c8b090 45%, #a88c68 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 28px rgba(200, 176, 144, 0.18))",
-            }}
-          >
-            Okudukların
-          </span>
-
-          {/* Satır 3 — Altın / vurgulu */}
-          <span
-            className="block"
-            style={{
-              background:
-                "linear-gradient(135deg, #fceea0 0%, #e8c84a 25%, #c9a030 55%, #e0b840 85%, #fceea0 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 48px rgba(220, 180, 60, 0.45))",
-            }}
-          >
-            Sana Kalanlar
-          </span>
-        </h1>
-
-        {/* ── Alt metin ── */}
-        <p
-          className="relative mb-12 max-w-2xl text-center text-[0.95rem] leading-[1.85] sm:text-[1.05rem] lg:text-[1.15rem]"
-          style={{ color: "rgba(240,237,232,0.5)" }}
-        >
-          Film, dizi ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla.
-          <br className="hidden sm:block" />
-          <span style={{ color: "rgba(240,237,232,0.65)" }}>
-            Puanla, kategorize et ve yıllar sonra bile aynı duyguyla geri dön.
-          </span>
-        </p>
-
-        {/* ── CTA Butonlar ── */}
-        <div className="relative mb-20 flex w-full max-w-xs flex-col gap-3 sm:mb-24 sm:w-auto sm:max-w-none sm:flex-row sm:gap-4">
-          <Link
-            href="/register"
-            className="group relative w-full overflow-hidden rounded-2xl px-8 py-4 text-center text-[15px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_36px_rgba(201,168,76,0.45)] sm:w-auto sm:px-10"
-            style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
-          >
-            <span className="relative z-10">Hemen Başla →</span>
-            <div
-              className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              style={{ background: "linear-gradient(135deg, #e0b84c, #d4a030, #c89020, #dab040)" }}
+            <span
+              className="h-1.5 w-1.5 rounded-full shadow-[0_0_8px_#c9a84c] sm:h-2 sm:w-2"
+              style={{ background: "radial-gradient(circle, #fbbf24, #c9a84c)" }}
             />
-          </Link>
-          <Link
-            href="/login"
-            className="w-full rounded-2xl border border-white/10 px-8 py-4 text-center text-[15px] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] sm:w-auto sm:px-10"
-            style={{ color: "rgba(240,237,232,0.6)" }}
-          >
-            Giriş Yap
-          </Link>
-        </div>
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.18em] sm:text-xs"
+              style={{
+                background: "linear-gradient(90deg, #c9a84c, #e0c068)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Kişisel Not Defteri
+            </span>
+          </div>
 
-        {/* ── App Önizleme ── */}
-        <div className="relative w-full max-w-4xl">
+          {/* 2. Başlık + Açıklama grubu */}
+          <div className="flex flex-col items-center sm:contents">
+            <h1 className="mb-3 w-full text-center text-[2rem] font-black leading-[1.05] sm:mb-4 sm:text-[clamp(2.4rem,6vw,5rem)] sm:leading-[1.1]">
+              <span
+                className="block sm:mb-1"
+                style={{
+                  background: "linear-gradient(135deg, #7890c0 0%, #3858a8 45%, #1c3878 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 28px rgba(48, 80, 160, 0.28))",
+                }}
+              >
+                İzlediklerin
+              </span>
+              <span
+                className="block sm:mb-1"
+                style={{
+                  background: "linear-gradient(135deg, #c0a0e0 0%, #9068c8 45%, #6840a8 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 28px rgba(128, 72, 192, 0.24))",
+                }}
+              >
+                Oynadıkların
+              </span>
+              <span
+                className="block sm:mb-1"
+                style={{
+                  background: "linear-gradient(135deg, #dab888 0%, #c09060 45%, #a87040 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 28px rgba(192, 144, 80, 0.22))",
+                }}
+              >
+                Okudukların
+              </span>
+              <span
+                className="block"
+                style={{
+                  background: "linear-gradient(135deg, #fceea0 0%, #e8c84a 25%, #c9a030 55%, #e0b840 85%, #fceea0 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 48px rgba(220, 180, 60, 0.45))",
+                }}
+              >
+                Sana Kalanlar
+              </span>
+            </h1>
+
+            <p
+              className="mx-auto max-w-[270px] text-center text-[0.83rem] leading-snug sm:mb-8 sm:max-w-xl sm:text-[1.05rem] sm:leading-relaxed lg:text-[1.1rem]"
+              style={{ color: "rgba(240,237,232,0.5)" }}
+            >
+              <span className="block">
+                Film, dizi, oyun ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla.
+              </span>
+              <span className="mt-1.5 block sm:mt-2" style={{ color: "rgba(240,237,232,0.65)" }}>
+                Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
+              </span>
+            </p>
+          </div>
+
+          {/* 3. CTA Butonlar */}
+          <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:gap-4">
+            <Link
+              href="/register"
+              className="group relative w-full overflow-hidden rounded-2xl py-[15px] text-center text-[15px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_36px_rgba(201,168,76,0.45)] sm:w-auto sm:px-10 sm:py-4"
+              style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
+            >
+              <span className="relative z-10">Hemen Başla →</span>
+              <div
+                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{ background: "linear-gradient(135deg, #e0b84c, #d4a030, #c89020, #dab040)" }}
+              />
+            </Link>
+            <Link
+              href="/login"
+              className="w-full rounded-2xl border border-white/10 py-[15px] text-center text-[15px] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04] sm:w-auto sm:px-10 sm:py-4"
+              style={{ color: "rgba(240,237,232,0.6)" }}
+            >
+              Giriş Yap
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          APP ÖNİZLEME
+      ══════════════════════════════════════ */}
+      <section className="relative px-4 pb-16">
+        <div className="relative mx-auto w-full max-w-4xl">
           {/* Üstten gelen glow halkası */}
           <div
             className="absolute -top-px left-1/2 h-px w-3/4 -translate-x-1/2"
@@ -230,14 +229,14 @@ export default function LandingPage() {
             </div>
 
             {/* Uygulama önizleme içeriği */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Sahte header */}
-              <div className="mb-5 flex items-center justify-between">
-                <div className="h-7 w-36 rounded-lg bg-[#1a1a1a]" />
+              <div className="mb-4 flex items-center justify-between sm:mb-5">
+                <div className="h-6 w-24 rounded-lg bg-[#1a1a1a] sm:h-7 sm:w-36" />
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#1e1e1e]" />
+                  <div className="h-7 w-7 rounded-full bg-[#1e1e1e] sm:h-8 sm:w-8" />
                   <div
-                    className="h-8 w-24 rounded-lg border"
+                    className="hidden h-8 w-24 rounded-lg border sm:block"
                     style={{
                       background: "rgba(201,168,76,0.12)",
                       borderColor: "rgba(201,168,76,0.2)",
@@ -247,11 +246,11 @@ export default function LandingPage() {
               </div>
 
               {/* Sahte sekmeler */}
-              <div className="mb-5 flex gap-1.5 border-b border-white/[0.05] pb-3">
-                {["Son Yazılar", "Film", "Dizi", "Kitap"].map((cat, i) => (
+              <div className="mb-4 flex gap-1 overflow-x-auto border-b border-white/[0.05] pb-3 sm:mb-5 sm:gap-1.5">
+                {["Son Yazılar", "Film", "Dizi", "Oyun", "Kitap"].map((cat, i) => (
                   <div
                     key={cat}
-                    className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                    className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
                       i === 0 ? "text-[#c9a84c]" : "text-[#2a2a2a]"
                     }`}
                     style={
@@ -270,7 +269,7 @@ export default function LandingPage() {
 
               {/* Sahte öne çıkan kart */}
               <div
-                className="relative mb-4 flex h-44 items-end overflow-hidden rounded-2xl p-5"
+                className="relative mb-3 flex h-32 items-end overflow-hidden rounded-xl p-4 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
                 style={{ background: "linear-gradient(135deg, #1a1020, #0f1a2e, #151515)" }}
               >
                 <div
@@ -280,26 +279,26 @@ export default function LandingPage() {
                       "linear-gradient(135deg, rgba(255,107,53,0.15), rgba(201,168,76,0.08), rgba(129,140,248,0.1))",
                   }}
                 />
-                <div className="absolute inset-0 rounded-2xl border border-white/[0.06]" />
+                <div className="absolute inset-0 rounded-xl border border-white/[0.06] sm:rounded-2xl" />
                 <div className="relative z-10 w-full">
-                  <div className="mb-2.5 flex gap-2">
+                  <div className="mb-2 flex gap-2 sm:mb-2.5">
                     <div
-                      className="h-5 w-14 rounded-sm"
+                      className="h-4 w-12 rounded-sm sm:h-5 sm:w-14"
                       style={{
                         background:
                           "linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.3))",
                       }}
                     />
-                    <div className="h-5 w-20 rounded-sm bg-white/10" />
+                    <div className="h-4 w-16 rounded-sm bg-white/10 sm:h-5 sm:w-20" />
                   </div>
-                  <div className="mb-1.5 h-6 w-56 rounded-md bg-white/25" />
-                  <div className="bg-white/12 mb-3 h-4 w-36 rounded-md" />
+                  <div className="mb-1 h-5 w-40 rounded-md bg-white/25 sm:mb-1.5 sm:h-6 sm:w-56" />
+                  <div className="bg-white/12 mb-2 h-3 w-28 rounded-md sm:mb-3 sm:h-4 sm:w-36" />
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <svg
                         key={s}
                         viewBox="0 0 24 24"
-                        className="h-3 w-3"
+                        className="h-2.5 w-2.5 sm:h-3 sm:w-3"
                         fill={s <= 4 ? "#c9a84c" : "#1e1e1e"}
                       >
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -310,7 +309,7 @@ export default function LandingPage() {
               </div>
 
               {/* Sahte kart grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {[
                   { color: "rgba(255,107,53,0.12)", border: "rgba(255,107,53,0.15)" },
                   { color: "rgba(129,140,248,0.12)", border: "rgba(129,140,248,0.15)" },
@@ -319,26 +318,26 @@ export default function LandingPage() {
                 ].map((c, i) => (
                   <div
                     key={i}
-                    className="flex h-24 overflow-hidden rounded-xl"
+                    className="flex h-20 overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
                     style={{ background: "#111", border: `1px solid ${c.border}` }}
                   >
                     <div
-                      className="w-16 flex-shrink-0 rounded-l-lg"
+                      className="w-12 flex-shrink-0 rounded-l-lg sm:w-16"
                       style={{
                         background: `linear-gradient(135deg, ${c.color.replace("0.12", "0.25")}, rgba(30,30,30,0.8))`,
                       }}
                     />
-                    <div className="flex flex-1 flex-col justify-between p-3">
+                    <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3">
                       <div>
-                        <div className="mb-1.5 h-2.5 w-16 rounded-full bg-white/15" />
-                        <div className="bg-white/8 h-2 w-full rounded-full" />
+                        <div className="mb-1 h-2 w-12 rounded-full bg-white/15 sm:mb-1.5 sm:h-2.5 sm:w-16" />
+                        <div className="bg-white/8 h-1.5 w-full rounded-full sm:h-2" />
                       </div>
                       <div className="mt-auto flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((s) => (
                           <svg
                             key={s}
                             viewBox="0 0 24 24"
-                            className="h-2.5 w-2.5"
+                            className="h-2 w-2 sm:h-2.5 sm:w-2.5"
                             fill={s <= 4 ? "#c9a84c" : "#222"}
                           >
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -364,8 +363,8 @@ export default function LandingPage() {
           FEATURES
       ══════════════════════════════════════ */}
       <section className="relative mx-auto w-full max-w-5xl px-4 pb-24 sm:px-6">
-        <div className="mb-14 text-center">
-          <h2 className="mb-4 text-3xl font-black text-[#f0ede8] sm:text-4xl">
+        <div className="mb-10 text-center sm:mb-14">
+          <h2 className="mb-3 text-2xl font-black text-[#f0ede8] sm:mb-4 sm:text-4xl">
             Her şey{" "}
             <span
               style={{
@@ -378,16 +377,19 @@ export default function LandingPage() {
             </span>
           </h2>
           <p
-            className="mx-auto max-w-md text-base leading-relaxed"
+            className="mx-auto max-w-sm text-base leading-relaxed"
             style={{ color: "rgba(240,237,232,0.38)" }}
           >
-            Film izle, not al. Kitap oku, düşüncelerini kaydet.
-            <br />
-            Yıldızla, durumunu işaretle.
+            <span className="block text-balance">
+              Film izle, dizi takip et, oyun oyna, kitap oku — not al.
+            </span>
+            <span className="block text-balance">
+              Yıldızla, etiketle, sosyal akışta keşfet.
+            </span>
           </p>
         </div>
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {(
             [
               {
@@ -411,6 +413,16 @@ export default function LandingPage() {
                 iconBorder: "rgba(200,176,144,0.2)",
               },
               {
+                Icon: LuGamepad2,
+                title: "Oyun",
+                desc: "Oynadığın ya da oynamak istediğin oyunları RAWG veritabanıyla kaydet.",
+                border: "rgba(129,140,248,0.16)",
+                gradientFrom: "rgba(99,102,241,0.07)",
+                iconColor: "#818cf8",
+                iconBg: "rgba(129,140,248,0.1)",
+                iconBorder: "rgba(129,140,248,0.2)",
+              },
+              {
                 Icon: LuBookOpen,
                 title: "Kitap",
                 desc: "Okuduğun ya da okumak istediğin kitapları listele, notlar al.",
@@ -424,22 +436,22 @@ export default function LandingPage() {
           ).map((f) => (
             <div
               key={f.title}
-              className="group relative overflow-hidden rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
+              className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 sm:p-7"
               style={{
                 background: `linear-gradient(145deg, ${f.gradientFrom}, rgba(14,14,14,1))`,
                 border: `1px solid ${f.border}`,
               }}
             >
               <div
-                className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl"
+                className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg sm:mb-5 sm:h-11 sm:w-11 sm:rounded-xl"
                 style={{ background: f.iconBg, border: `1px solid ${f.iconBorder}` }}
               >
-                <f.Icon size={20} style={{ color: f.iconColor }} />
+                <f.Icon className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: f.iconColor }} />
               </div>
-              <h3 className="mb-2 text-lg font-bold" style={{ color: "rgba(240,237,232,0.9)" }}>
+              <h3 className="mb-1 text-base font-bold sm:mb-2 sm:text-lg" style={{ color: "rgba(240,237,232,0.9)" }}>
                 {f.title}
               </h3>
-              <p className="text-sm leading-relaxed" style={{ color: "rgba(240,237,232,0.42)" }}>
+              <p className="text-xs leading-relaxed sm:text-sm" style={{ color: "rgba(240,237,232,0.42)" }}>
                 {f.desc}
               </p>
             </div>
@@ -447,12 +459,13 @@ export default function LandingPage() {
         </div>
 
         {/* Özellik satırı */}
-        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-4">
           {(
             [
               { label: "Yıldızlı Puanlama", Icon: LuStar, color: "#c9a84c" },
-              { label: "Zengin Metin Editörü", Icon: LuPenLine, color: "#8898b8" },
-              { label: "Akıllı Arama & Filtre", Icon: LuSearch, color: "#a09080" },
+              { label: "Otomatik Medya Arama", Icon: LuSearch, color: "#8898b8" },
+              { label: "Tag & Kategori Sistemi", Icon: LuTag, color: "#a09080" },
+              { label: "Sosyal Akış & Keşfet", Icon: LuUsers, color: "#818cf8" },
             ] as const
           ).map((s) => (
             <div
@@ -487,7 +500,7 @@ export default function LandingPage() {
           style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
         />
 
-        <h2 className="relative mb-5 mt-14 text-3xl font-black sm:text-4xl">
+        <h2 className="relative mb-4 mt-10 text-2xl font-black sm:mb-5 sm:mt-14 sm:text-4xl">
           <span
             style={{
               background: "linear-gradient(135deg, #f0ede8 0%, rgba(240,237,232,0.7) 100%)",
@@ -508,7 +521,7 @@ export default function LandingPage() {
           </span>
         </h2>
         <p
-          className="mb-10 max-w-sm text-sm leading-relaxed"
+          className="mb-8 max-w-sm text-[13px] leading-relaxed sm:mb-10 sm:text-sm"
           style={{ color: "rgba(240,237,232,0.42)" }}
         >
           Kayıt ol, kategorilerini oluştur ve ilk notunu ekle.
@@ -517,7 +530,7 @@ export default function LandingPage() {
         </p>
         <Link
           href="/register"
-          className="group relative w-full max-w-xs overflow-hidden rounded-2xl px-8 py-4 text-[15px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:px-12"
+          className="group relative w-full max-w-[260px] overflow-hidden rounded-2xl px-6 py-3.5 text-[14px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:max-w-none sm:px-12 sm:py-4 sm:text-[15px]"
           style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
         >
           <span className="relative z-10">Hesap Oluştur →</span>
