@@ -201,6 +201,35 @@ src/
 
 ---
 
+## Claude Code Yapısı
+
+Proje, Claude Code ile AI destekli geliştirme için yapılandırılmıştır.
+
+```text
+.claude/
+├── settings.json          # İzin verilen / engellenen komutlar
+├── commands/              # Özel slash komutları
+│   ├── new-api.md         # /new-api    → Yeni API route şablonu
+│   ├── new-component.md   # /new-component → Yeni component şablonu
+│   ├── db-change.md       # /db-change  → Schema değişiklik rehberi
+│   ├── debug.md           # /debug      → ERRORS.md öncelikli debug akışı
+│   ├── new-feature.md     # /new-feature → Uçtan uca feature rehberi
+│   └── review.md          # /review     → Convention kontrol listesi
+└── rules/                 # Dosya bazlı otomatik yüklenen kurallar
+    ├── api-routes.md      # src/app/api/** açıldığında yüklenir
+    ├── components.md      # .tsx dosyaları için
+    ├── ui-design.md       # UI/UX kuralları (vibe coding standartları)
+    ├── prisma-schema.md   # prisma/ dosyaları için
+    └── security.md        # Her zaman aktif
+```
+
+Ayrıca proje kökünde:
+
+- **`CLAUDE.md`** — Claude'un her oturumda okuduğu proje kuralları
+- **`ERRORS.md`** — Bilinen hataların çözümleri; debug sırasında buraya bakılır, yeni hata çözülünce buraya eklenir
+
+---
+
 ## Production Deployment (Vercel)
 
 1. Projeyi Vercel'e deploy et
