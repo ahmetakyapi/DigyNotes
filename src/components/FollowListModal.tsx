@@ -66,7 +66,7 @@ export default function FollowListModal({ username, type, onClose }: FollowListM
           <button
             type="button"
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-[#555555] transition-colors hover:bg-[#1a1e2e] hover:text-[#f0ede8]"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[#555555] transition-colors hover:bg-[#1a1e2e] hover:text-[#f0ede8]"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -101,7 +101,7 @@ export default function FollowListModal({ username, type, onClose }: FollowListM
                   <Link
                     href={u.username ? `/profile/${u.username}` : "#"}
                     onClick={onClose}
-                    className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-[#0c0e16]"
+                    className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-[#0c0e16]"
                   >
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#111828]">
                       {u.avatarUrl ? (

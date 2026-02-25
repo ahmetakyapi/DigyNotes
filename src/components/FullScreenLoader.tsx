@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 
 interface Props {
   show: boolean;
+  message?: string;
 }
 
-export function FullScreenLoader({ show }: Props) {
+export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }: Props) {
   const [mounted, setMounted] = useState(show);
 
   useEffect(() => {
@@ -116,7 +117,7 @@ export function FullScreenLoader({ show }: Props) {
           animationDelay: "0.7s",
         }}
       >
-        Notlarınız yükleniyor
+        {message}
       </p>
 
       {/* ── Bottom shimmer bar ── */}

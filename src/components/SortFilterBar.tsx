@@ -33,7 +33,7 @@ const RATING_OPTIONS = [
 
 export function SortFilterBar({ value, onChange, totalCount, filteredCount }: SortFilterBarProps) {
   const selectClass =
-    "bg-[#111111] border border-[#1e1e1e] text-[#888888] text-[11px] rounded-md px-2 py-1.5 outline-none hover:border-[#2a2a2a] focus:border-[#c9a84c]/30 transition-colors cursor-pointer";
+    "bg-[#111111] border border-[#1e1e1e] text-[#888888] text-[11px] rounded-md px-2 py-2.5 outline-none hover:border-[#2a2a2a] focus:border-[#c9a84c]/30 transition-colors cursor-pointer";
 
   return (
     <div className="flex items-center gap-2">

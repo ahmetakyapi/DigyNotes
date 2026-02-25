@@ -25,13 +25,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
+            className="rounded-lg px-4 py-3 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
           >
             Vazgeç
           </button>
           <button
             onClick={onConfirm}
-            className="rounded-md bg-[#e53e3e] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500"
+            className="rounded-md bg-[#e53e3e] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500"
           >
             Sil
           </button>

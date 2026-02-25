@@ -226,7 +226,7 @@ export function PostsList({ allPosts }: PostsListProps) {
             )}
 
             {/* ── Post listesi ── */}
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {(hasSearch ? filtered : rest).map((post, index) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
                   <article className="flex h-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">

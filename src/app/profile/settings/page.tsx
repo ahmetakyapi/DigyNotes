@@ -145,7 +145,7 @@ export default function ProfileSettingsPage() {
   }[usernameStatus];
 
   return (
-    <main className="min-h-screen bg-[#0c0e16] py-8 pb-24">
+    <main className="min-h-screen bg-[#0c0e16] py-8 pb-36 sm:pb-24">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
         <div className="mb-8 border-b border-[#1a1e2e] pb-5">
           <h1 className="text-xl font-bold text-[#f0ede8]">Profil Ayarları</h1>
@@ -279,6 +279,8 @@ export default function ProfileSettingsPage() {
             </button>
           </div>
         </div>
+        {/* iOS safe-area spacer */}
+        <div className="sm:hidden" style={{ height: "env(safe-area-inset-bottom, 0px)" }} />
       </div>
     </main>
   );

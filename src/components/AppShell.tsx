@@ -112,7 +112,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     title={session.user?.name ?? ""}
-                    className={`flex h-9 w-9 flex-shrink-0 select-none items-center justify-center rounded-full text-[13px] font-bold text-[#c9a84c] transition-all duration-150 ${
+                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[13px] font-bold text-[#c9a84c] transition-all duration-150 ${
                       showUserMenu
                         ? "bg-[#1e2d4a] shadow-[0_0_0_2px_#3a5999]"
                         : "bg-[#141925] shadow-[0_0_0_1px_rgba(42,62,120,0.5)] hover:bg-[#1a2133] hover:shadow-[0_0_0_1px_rgba(58,90,170,0.6)]"
@@ -145,7 +145,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           <Link
                             href={`/profile/${userUsername}`}
                             onClick={() => setShowUserMenu(false)}
-                            className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
+                            className="flex items-center gap-2.5 px-3.5 py-3 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
                           >
                             <svg
                               width="14"
@@ -191,7 +191,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             localStorage.removeItem("dn_username");
                             signOut({ callbackUrl: "/" });
                           }}
-                          className="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[13px] text-[#666] transition-colors duration-100 hover:bg-[#e53e3e]/5 hover:text-[#e53e3e]"
+                          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[#666] transition-colors duration-100 hover:bg-[#e53e3e]/5 hover:text-[#e53e3e]"
                         >
                           <svg
                             width="14"
@@ -220,14 +220,25 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* ── Mobile: yatay kaydırmalı kategori şeridi (yalnızca notlar/kategori sayfaları) ── */}
           {(pathname === "/notes" || pathname.startsWith("/category/")) && (
-            <div className="flex items-center justify-between gap-1 pb-3 pt-2 sm:hidden">
+            <div className="scrollbar-hide -mx-0 flex items-center gap-1.5 overflow-x-auto pb-3 pt-2 sm:hidden">
+              {/* Tümü butonu */}
+              <button
+                onClick={() => router.push("/notes")}
+                className={`flex flex-shrink-0 items-center justify-center rounded-lg px-3.5 py-2.5 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
+                  activeCategory === "all"
+                    ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.35)]"
+                    : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235] active:bg-[#141828] active:text-[#9aabcc]"
+                }`}
+              >
+                Tümü
+              </button>
               {FIXED_CATEGORIES.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
                     key={cat}
                     onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                    className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
+                    className={`flex flex-shrink-0 items-center justify-center rounded-lg px-3.5 py-2.5 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
                       isActive
                         ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.35)]"
                         : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235] active:bg-[#141828] active:text-[#9aabcc]"
