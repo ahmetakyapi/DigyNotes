@@ -321,7 +321,7 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
             key={tab.key}
             type="button"
             onClick={() => handleTabChange(tab.key)}
-            className={`rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors ${
+            className={`rounded-md px-3 py-2.5 text-[13px] font-semibold transition-colors ${
               activeTab === tab.key
                 ? "bg-[#c9a84c] text-[#0f1117]"
                 : "text-[#6070a0] hover:bg-[#1a1e2e] hover:text-[#c0c8e8]"
@@ -371,14 +371,14 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
 
         {/* Dropdown */}
         {isOpen && results.length > 0 && (
-          <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          <div className="absolute z-50 mt-1 w-full overflow-y-auto rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] shadow-[0_8px_32px_rgba(0,0,0,0.6)]" style={{ maxHeight: "min(320px, 40vh)" }}>
             {results.map((item, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleSelect(item)}
                 onMouseEnter={() => setHighlighted(i)}
-                className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${
+                className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors ${
                   highlighted === i ? "bg-[#131828]" : "hover:bg-[#111525]"
                 }`}
               >

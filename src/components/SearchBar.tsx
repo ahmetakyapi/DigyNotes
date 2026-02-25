@@ -35,7 +35,7 @@ export function SearchBar() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex h-8 w-8 items-center justify-center rounded-md text-[#8892b0] transition-colors hover:text-[#c9a84c]"
+        className="flex h-10 w-10 items-center justify-center rounded-md text-[#8892b0] transition-colors hover:text-[#c9a84c]"
         title="Ara"
       >
         <FaSearch size={14} />
@@ -62,7 +62,7 @@ export function SearchBar() {
         <button
           type="button"
           onClick={clear}
-          className="text-[#555555] transition-colors hover:text-[#888]"
+          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[#555555] transition-colors hover:text-[#888]"
         >
           <FaTimes size={11} />
         </button>

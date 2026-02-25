@@ -165,7 +165,7 @@ export default function NewPostPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
           >
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2" strokeLinecap="round">
               <path d="M19 12H5M12 5l-7 7 7 7" />
