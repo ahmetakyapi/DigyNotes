@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { FullScreenLoader } from "@/components/FullScreenLoader";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,30 +38,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a0a] px-4">
-      {/* Redirect overlay */}
-      {redirecting && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#0a0a0a]">
-          <svg className="h-8 w-8 animate-spin text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeOpacity="0.2"
-            />
-            <path
-              d="M12 2a10 10 0 0110 10"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#555]">
-            Yönlendiriliyor
-          </p>
-        </div>
-      )}
+      <FullScreenLoader show={redirecting} message="Giriş yapılıyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="bg-gradient-radial from-[#c9a84c]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />

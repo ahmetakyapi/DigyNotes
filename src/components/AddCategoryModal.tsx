@@ -63,14 +63,14 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
+              className="rounded-lg px-4 py-3 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-md bg-[#c9a84c] px-5 py-2 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
+              className="rounded-md bg-[#c9a84c] px-5 py-3 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}
             </button>
