@@ -1,12 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { LuFilm, LuTv, LuBookOpen, LuGamepad2, LuStar, LuSearch, LuTag, LuUsers } from "react-icons/lu";
+import { LuFilm, LuTv, LuBookOpen, LuGamepad2, LuMapPin, LuStar, LuSearch, LuTag, LuUsers } from "react-icons/lu";
 
 export const metadata: Metadata = {
-  title: "DigyNotes — Film, Dizi, Oyun ve Kitap Notları",
+  title: "DigyNotes — Film, Dizi, Oyun, Kitap ve Gezi Notları",
   description:
-    "Film, dizi, oyun ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla. Puan ver, etiketle, keşfet.",
+    "Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla. Puan ver, etiketle, keşfet.",
 };
 
 export default function LandingPage() {
@@ -58,15 +58,15 @@ export default function LandingPage() {
         {/* ── Arka plan aura katmanları ── */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
-            className="absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full opacity-[0.07] blur-[140px] sm:h-[700px] sm:w-[700px]"
+            className="dn-aurora-float-1 absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full opacity-[0.07] blur-[140px] sm:h-[700px] sm:w-[700px]"
             style={{ background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)" }}
           />
           <div
-            className="absolute -right-20 -top-10 h-[350px] w-[350px] rounded-full opacity-[0.05] blur-[140px] sm:h-[600px] sm:w-[600px]"
+            className="dn-aurora-float-2 absolute -right-20 -top-10 h-[350px] w-[350px] rounded-full opacity-[0.05] blur-[140px] sm:h-[600px] sm:w-[600px]"
             style={{ background: "radial-gradient(circle, #6878a0 0%, #3a4a6a 50%, transparent 70%)" }}
           />
           <div
-            className="absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px] sm:h-[500px] sm:w-[900px]"
+            className="dn-aurora-float-3 absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px] sm:h-[500px] sm:w-[900px]"
             style={{ background: "radial-gradient(circle, #c9a84c 0%, #8a6820 60%, transparent 70%)" }}
           />
           <div
@@ -86,7 +86,7 @@ export default function LandingPage() {
             }}
           />
           <div
-            className="absolute left-1/2 top-1/2 h-[150px] w-[300px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] blur-[90px] sm:h-[250px] sm:w-[500px]"
+            className="dn-aurora-core absolute left-1/2 top-1/2 h-[150px] w-[300px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] blur-[90px] sm:h-[250px] sm:w-[500px]"
             style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
           />
         </div>
@@ -94,13 +94,13 @@ export default function LandingPage() {
         {/* ── Tüm içerik — badge + başlık+açıklama + butonlar, 3 öğe justify-between ── */}
         <div className="relative z-10 flex w-full max-w-[430px] flex-col items-center gap-4 pb-0 pt-0.5 sm:flex-none sm:max-w-none sm:justify-between sm:gap-0 sm:py-0 sm:contents">
           <div
-            className="relative mb-3 mt-5 flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-8 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2"
+            className="dn-badge-sheen dn-reveal dn-delay-1 relative mb-3 mt-5 flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-4 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2 2xl:mb-5 2xl:px-6 2xl:py-2.5"
             style={{
               background: "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(129,140,248,0.06), rgba(255,107,53,0.06))",
             }}
           >
             <span
-              className="h-1.5 w-1.5 rounded-full shadow-[0_0_8px_#c9a84c] sm:h-2 sm:w-2"
+              className="dn-dot-pulse h-1.5 w-1.5 rounded-full shadow-[0_0_8px_#c9a84c] sm:h-2 sm:w-2"
               style={{ background: "radial-gradient(circle, #fbbf24, #c9a84c)" }}
             />
             <span
@@ -117,47 +117,59 @@ export default function LandingPage() {
 
           {/* 2. Başlık + Açıklama grubu */}
           <div className="flex flex-col items-center sm:contents">
-            <h1 className="mb-3 w-full px-1 pb-1 pt-1 text-center text-[clamp(2.08rem,9.7vw,3.05rem)] font-black leading-[1.14] sm:mb-4 sm:px-0 sm:pb-0 sm:pt-0 sm:text-[clamp(2.4rem,6vw,5rem)] sm:leading-[1.1]">
+            <h1 className="mb-3 w-full overflow-visible px-1 pb-[0.12em] pt-[0.28em] text-center text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.16] sm:mb-3 sm:px-0 sm:pb-[0.12em] sm:pt-[0.52em] sm:text-[clamp(2.6rem,6.5vw,5.4rem)] sm:leading-[1.2] lg:text-[clamp(2.2rem,4.6vw,4.2rem)] lg:leading-[1.18] 2xl:text-[clamp(2.8rem,3.8vw,5.6rem)] 2xl:leading-[1.1]">
               <span
-                className="mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-1 mb-0.5 block sm:mb-1"
                 style={{
-                  background: "linear-gradient(135deg, #7890c0 0%, #3858a8 45%, #1c3878 100%)",
+                  background: "linear-gradient(135deg, #90aadc 0%, #5070c8 45%, #2848a0 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 28px rgba(48, 80, 160, 0.28))",
+                  filter: "drop-shadow(0 0 36px rgba(60, 100, 200, 0.42))",
                 }}
               >
                 İzlediklerin
               </span>
               <span
-                className="mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-2 mb-0.5 block sm:mb-1"
                 style={{
-                  background: "linear-gradient(135deg, #c0a0e0 0%, #9068c8 45%, #6840a8 100%)",
+                  background: "linear-gradient(135deg, #d4b4f4 0%, #a878e0 45%, #7848c0 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 28px rgba(128, 72, 192, 0.24))",
+                  filter: "drop-shadow(0 0 36px rgba(160, 90, 224, 0.38))",
                 }}
               >
                 Oynadıkların
               </span>
               <span
-                className="mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-3 mb-0.5 block sm:mb-1"
                 style={{
-                  background: "linear-gradient(135deg, #dab888 0%, #c09060 45%, #a87040 100%)",
+                  background: "linear-gradient(135deg, #f0cc98 0%, #d4a060 45%, #b87838 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 28px rgba(192, 144, 80, 0.22))",
+                  filter: "drop-shadow(0 0 36px rgba(212, 152, 72, 0.36))",
                 }}
               >
                 Okudukların
               </span>
               <span
-                className="block"
+                className="dn-line-reveal dn-line-4 mb-0.5 block sm:mb-1"
                 style={{
-                  background: "linear-gradient(135deg, #fceea0 0%, #e8c84a 25%, #c9a030 55%, #e0b840 85%, #fceea0 100%)",
+                  background: "linear-gradient(135deg, #9cdcbc 0%, #6cb898 45%, #409870 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 48px rgba(220, 180, 60, 0.45))",
+                  filter: "drop-shadow(0 0 36px rgba(80, 180, 130, 0.36))",
+                }}
+              >
+                Gezdiklerin
+              </span>
+              <span
+                className="dn-line-reveal dn-line-5 mt-1 block sm:mt-1.5"
+                style={{
+                  fontSize: "1.13em",
+                  background: "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f8d040 80%, #fff8c8 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  filter: "drop-shadow(0 0 40px rgba(248, 200, 40, 0.75)) drop-shadow(0 0 80px rgba(220, 160, 20, 0.4))",
                 }}
               >
                 Sana Kalanlar
@@ -165,11 +177,11 @@ export default function LandingPage() {
             </h1>
 
             <p
-              className="mx-auto max-w-[322px] px-2 py-2 text-center text-[0.94rem] leading-[1.65] [text-wrap:balance] sm:mb-8 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.05rem] sm:leading-relaxed lg:text-[1.1rem]"
+              className="dn-reveal dn-delay-3 mx-auto max-w-[322px] px-2 py-2 text-center text-[0.94rem] leading-[1.65] [text-wrap:balance] sm:mb-4 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.05rem] sm:leading-relaxed lg:text-[1rem] 2xl:max-w-2xl 2xl:text-[1.2rem] 2xl:mb-5"
               style={{ color: "rgba(240,237,232,0.66)" }}
             >
               <span className="block [text-wrap:balance]">
-                Film, dizi, oyun ve kitaplardan geriye kalan düşüncelerini tek bir yerde topla.
+                Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla.
               </span>
               <span className="mt-2.5 block [text-wrap:balance] sm:mt-2" style={{ color: "rgba(240,237,232,0.66)" }}>
                 Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
@@ -178,10 +190,10 @@ export default function LandingPage() {
           </div>
 
           {/* 3. CTA Butonlar */}
-          <div className="mb-8 mt-3 flex w-full flex-col gap-5 px-1.5 pb-1 sm:mb-0 sm:w-auto sm:flex-row sm:gap-4 sm:px-0 sm:pb-0">
+          <div className="dn-reveal dn-delay-4 mb-8 mt-3 flex w-full flex-col gap-5 px-1.5 pb-1 sm:mb-0 sm:w-auto sm:flex-row sm:gap-4 sm:px-0 sm:pb-0">
             <Link
               href="/register"
-              className="group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[#1a0e00] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px]"
+              className="dn-cta-gold group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[#1a0e00] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[17px]"
               style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
             >
               <span className="relative z-10">Hemen Başla →</span>
@@ -192,7 +204,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="w-[86%] self-center rounded-[1.6rem] border border-white/20 py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.04] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px]"
+              className="dn-cta-ghost w-[86%] self-center rounded-[1.6rem] border border-white/20 py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.04] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[10px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[17px]"
               style={{
                 color: "rgba(240,237,232,0.68)",
                 background: "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
@@ -241,7 +253,14 @@ export default function LandingPage() {
             <div className="p-4 sm:p-6">
               {/* Sahte header */}
               <div className="mb-4 flex items-center justify-between sm:mb-5">
-                <div className="h-6 w-24 rounded-lg bg-[#1a1a1a] sm:h-7 sm:w-36" />
+                <Image
+                  src="/app-logo.png"
+                  alt="DigyNotes"
+                  width={120}
+                  height={35}
+                  className="w-[96px] object-contain opacity-90 sm:w-[140px]"
+                  unoptimized
+                />
                 <div className="flex items-center gap-2">
                   <div className="h-7 w-7 rounded-full bg-[#1e1e1e] sm:h-8 sm:w-8" />
                   <div
@@ -256,7 +275,7 @@ export default function LandingPage() {
 
               {/* Sahte sekmeler */}
               <div className="mb-4 flex gap-1 overflow-x-auto border-b border-white/[0.05] pb-3 sm:mb-5 sm:gap-1.5">
-                {["Son Yazılar", "Film", "Dizi", "Oyun", "Kitap"].map((cat, i) => (
+                {["Son Yazılar", "Film", "Dizi", "Oyun", "Kitap", "Gezi"].map((cat, i) => (
                   <div
                     key={cat}
                     className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
@@ -371,7 +390,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           FEATURES
       ══════════════════════════════════════ */}
-      <section className="relative mx-auto w-full max-w-5xl px-4 pb-24 sm:px-6">
+      <section className="relative mx-auto w-full max-w-5xl px-4 pb-12 sm:px-6 sm:pb-24">
         <div className="mb-10 text-center sm:mb-14">
           <h2 className="mb-3 text-2xl font-black text-[#f0ede8] sm:mb-4 sm:text-4xl">
             Her şey{" "}
@@ -390,7 +409,7 @@ export default function LandingPage() {
             style={{ color: "rgba(240,237,232,0.38)" }}
           >
             <span className="block text-balance">
-              Film izle, dizi takip et, oyun oyna, kitap oku — not al.
+              Film izle, dizi takip et, oyun oyna, kitap oku, gezi yap — not al.
             </span>
             <span className="block text-balance">
               Yıldızla, etiketle, sosyal akışta keşfet.
@@ -398,7 +417,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
           {(
             [
               {
@@ -441,11 +460,21 @@ export default function LandingPage() {
                 iconBg: "rgba(201,168,76,0.1)",
                 iconBorder: "rgba(201,168,76,0.2)",
               },
+              {
+                Icon: LuMapPin,
+                title: "Gezi",
+                desc: "Gezdiğin şehirleri, ülkeleri ve mekânları puanla, anılarını kaydet.",
+                border: "rgba(80,160,120,0.18)",
+                gradientFrom: "rgba(60,130,90,0.07)",
+                iconColor: "#60a88a",
+                iconBg: "rgba(80,160,120,0.1)",
+                iconBorder: "rgba(80,160,120,0.2)",
+              },
             ] as const
           ).map((f) => (
             <div
               key={f.title}
-              className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 sm:p-7"
+              className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 last:col-span-2 sm:last:col-span-1 sm:p-7"
               style={{
                 background: `linear-gradient(145deg, ${f.gradientFrom}, rgba(14,14,14,1))`,
                 border: `1px solid ${f.border}`,
@@ -509,7 +538,7 @@ export default function LandingPage() {
           style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
         />
 
-        <h2 className="relative mb-4 mt-10 text-2xl font-black sm:mb-5 sm:mt-14 sm:text-4xl">
+        <h2 className="relative mb-4 mt-6 text-2xl font-black sm:mb-5 sm:mt-14 sm:text-4xl">
           <span
             style={{
               background: "linear-gradient(135deg, #f0ede8 0%, rgba(240,237,232,0.7) 100%)",
