@@ -102,7 +102,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   return (
     <div className="space-y-2">
       <div
-        className="flex min-h-[42px] cursor-text flex-wrap gap-1.5 rounded-lg border border-[#2a2a2a] bg-[#0c0c0c] p-2 transition-colors focus-within:border-[#c9a84c]/50"
+        className="flex min-h-[44px] cursor-text flex-wrap gap-1.5 rounded-lg border border-[#2a2a2a] bg-[#0c0c0c] p-2 transition-colors focus-within:border-[#c9a84c]/50"
         onClick={() => inputRef.current?.focus()}
       >
         {value.map((name) => (
@@ -137,7 +137,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
                     key={sug.id}
                     type="button"
                     onMouseDown={() => addTag(sug.name)}
-                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm transition-colors ${
+                    className={`flex w-full items-center justify-between px-3 py-3 text-left text-sm transition-colors ${
                       i === activeIndex
                         ? "bg-[#c9a84c]/10 text-[#c9a84c]"
                         : "text-[#888888] hover:bg-[#1e1e1e] hover:text-[#f0ede8]"

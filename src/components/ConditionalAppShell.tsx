@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import AppShell from "./AppShell";
 import { FullScreenLoader } from "./FullScreenLoader";
+import { RouteProgressBar } from "./RouteProgressBar";
 
 // These paths never get AppShell
 const ALWAYS_PUBLIC = ["/", "/login", "/register"];
@@ -18,16 +19,36 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
-  if (isAlwaysPublic) return <>{children}</>;
+  if (isAlwaysPublic) {
+    return (
+      <>
+        <RouteProgressBar />
+        {children}
+      </>
+    );
+  }
 
   if (isSemiPublic) {
     if (status === "loading") return <FullScreenLoader show />;
-    if (status === "unauthenticated") return <>{children}</>;
-    return <AppShell>{children}</AppShell>;
+    if (status === "unauthenticated") {
+      return (
+        <>
+          <RouteProgressBar />
+          {children}
+        </>
+      );
+    }
+    return (
+      <>
+        <RouteProgressBar />
+        <AppShell>{children}</AppShell>
+      </>
+    );
   }
 
   return (
     <>
+      <RouteProgressBar />
       <FullScreenLoader show={status === "loading"} />
       <AppShell>{children}</AppShell>
     </>
