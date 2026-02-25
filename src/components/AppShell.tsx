@@ -65,7 +65,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <>
       {/* ─── HEADER ─── */}
       <header className="sticky top-0 z-40 border-b border-[#1a1e2e] bg-[#0c0e16]">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="mx-auto max-w-5xl pl-0 pr-3 sm:px-6">
           {/* ══ TOP ROW ══ */}
           <div className="flex h-[60px] items-center justify-between">
             {/* Logo */}
@@ -220,17 +220,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* ── Mobile: yatay kaydırmalı kategori şeridi (yalnızca notlar/kategori sayfaları) ── */}
           {(pathname === "/notes" || pathname.startsWith("/category/")) && (
-            <div className="scrollbar-hide flex items-center gap-1.5 overflow-x-auto pb-2.5 pt-1 sm:hidden">
+            <div className="flex items-center justify-between gap-1 pb-3 pt-2 sm:hidden">
               {FIXED_CATEGORIES.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
                     key={cat}
                     onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                    className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
+                    className={`flex flex-1 items-center justify-center rounded-lg py-2 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
                       isActive
-                        ? "bg-[#c9a84c] text-[#0c0c0c] shadow-[0_2px_10px_rgba(201,168,76,0.35)]"
-                        : "bg-[#0f1320] text-[#6878a8] active:bg-[#182035] active:text-[#99aacc]"
+                        ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.35)]"
+                        : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235] active:bg-[#141828] active:text-[#9aabcc]"
                     }`}
                   >
                     {cat}

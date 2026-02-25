@@ -21,6 +21,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
+  const [imgOrientation, setImgOrientation] = useState<"portrait" | "landscape" | null>(null);
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+      setImgOrientation(img.naturalHeight > img.naturalWidth ? "portrait" : "landscape");
+    }
+  };
 
   useEffect(() => {
     fetch(`/api/posts/${params.id}`)
@@ -136,18 +144,34 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           </span>
         </nav>
 
-        <div className="relative w-full overflow-hidden rounded-2xl" style={{ height: "52vh" }}>
+        <div
+          className="relative w-full overflow-hidden rounded-2xl bg-[#0a0c14]"
+          style={{ height: imgOrientation === "landscape" ? "44vh" : "52vh" }}
+        >
+          {/* Blur backdrop — sadece dikey görsellerde yan boşlukları doldurur */}
+          {imgOrientation !== "landscape" && (
+            <Image
+              loader={customLoader}
+              src={post.image}
+              alt=""
+              fill
+              aria-hidden
+              className="scale-110 object-cover opacity-30 blur-2xl"
+              priority
+            />
+          )}
+          {/* Ana görsel */}
           <Image
             loader={customLoader}
             src={post.image}
             alt={post.title}
             fill
-            className="object-cover"
-            style={{ objectPosition: post.imagePosition ?? "center" }}
+            className={imgOrientation === "portrait" ? "object-contain" : "object-cover"}
+            onLoad={handleImageLoad}
             priority
           />
-          {/* Gradient: top (transparent) → bottom (full dark) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/40 to-transparent" />
+          {/* Gradient: top → bottom dark */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/30 to-transparent" />
 
           {/* ── Top controls ── */}
           <div className="absolute left-0 right-0 top-0 flex items-center justify-end gap-2 px-4 pt-4 sm:px-5">
