@@ -7,11 +7,13 @@ import { Toaster } from "react-hot-toast";
 import { useSession, signOut } from "next-auth/react";
 import { SearchBar } from "@/components/SearchBar";
 import { FIXED_CATEGORIES } from "@/lib/categories";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { theme, toggleTheme } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -66,7 +68,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* ─── HEADER ─── */}
-      <header className="sticky top-0 z-40 border-b border-[#1a1e2e] bg-[#0c0e16]">
+      <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--bg-header)]">
         <div className="mx-auto max-w-5xl pl-0 pr-3 sm:px-6">
           {/* ══ TOP ROW ══ */}
           <div className="flex h-[60px] items-center justify-between">
@@ -89,6 +91,33 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Suspense>
                 <SearchBar />
               </Suspense>
+
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+                className="flex h-10 w-10 items-center justify-center rounded-md text-[var(--text-secondary)] transition-colors duration-200 hover:text-[#c9a84c]"
+              >
+                {theme === "dark" ? (
+                  /* Sun icon */
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="4" />
+                    <line x1="12" y1="2" x2="12" y2="4" />
+                    <line x1="12" y1="20" x2="12" y2="22" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="2" y1="12" x2="4" y2="12" />
+                    <line x1="20" y1="12" x2="22" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                ) : (
+                  /* Moon icon */
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                )}
+              </button>
 
               {/* + Yeni Not */}
               <Link
@@ -116,8 +145,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     title={session.user?.name ?? ""}
                     className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[13px] font-bold text-[#c9a84c] transition-all duration-150 ${
                       showUserMenu
-                        ? "bg-[#1e2d4a] shadow-[0_0_0_2px_#3a5999]"
-                        : "bg-[#141925] shadow-[0_0_0_1px_rgba(42,62,120,0.5)] hover:bg-[#1a2133] hover:shadow-[0_0_0_1px_rgba(58,90,170,0.6)]"
+                        ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_#c9a84c]"
+                        : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border)] hover:shadow-[0_0_0_1px_#c9a84c]/50"
                     }`}
                   >
                     {userInitial}
@@ -125,17 +154,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
                   {/* ── Dropdown menu ── */}
                   {showUserMenu && (
-                    <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[#1e2235] bg-[#0d0f1a] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.8)]">
+                    <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
                       {/* User info */}
-                      <div className="flex items-center gap-3 border-b border-[#1a1e2e] px-3.5 py-3">
+                      <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
                         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#c9a84c]/20 bg-[#c9a84c]/10">
                           <span className="text-xs font-bold text-[#c9a84c]">{userInitial}</span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-semibold leading-tight text-[#f0ede8]">
+                          <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
                             {session.user?.name}
                           </p>
-                          <p className="mt-0.5 truncate text-[10px] leading-tight text-[#444]">
+                          <p className="mt-0.5 truncate text-[10px] leading-tight text-[var(--text-muted)]">
                             {session.user?.email}
                           </p>
                         </div>
@@ -147,7 +176,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           <Link
                             href={`/profile/${userUsername}`}
                             onClick={() => setShowUserMenu(false)}
-                            className="flex items-center gap-2.5 px-3.5 py-3 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
+                            className="flex items-center gap-2.5 px-3.5 py-3 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                           >
                             <svg
                               width="14"
@@ -167,7 +196,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         <Link
                           href="/profile/settings"
                           onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#999] transition-colors duration-100 hover:bg-[#131525] hover:text-[#f0ede8]"
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                         >
                           <svg
                             width="14"
@@ -187,7 +216,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
                       {isAdmin && (
                         <>
-                          <div className="border-t border-[#1a1e2e]" />
+                          <div className="border-t border-[var(--border-header)]" />
                           <div className="py-1">
                             <Link
                               href="/admin"
@@ -203,7 +232,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         </>
                       )}
 
-                      <div className="border-t border-[#1a1e2e]" />
+                      <div className="border-t border-[var(--border-header)]" />
 
                       <div className="py-1">
                         <button
@@ -211,7 +240,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             localStorage.removeItem("dn_username");
                             signOut({ callbackUrl: "/" });
                           }}
-                          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[#666] transition-colors duration-100 hover:bg-[#e53e3e]/5 hover:text-[#e53e3e]"
+                          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[var(--text-muted)] transition-colors duration-100 hover:bg-[var(--danger)]/5 hover:text-[var(--danger)]"
                         >
                           <svg
                             width="14"
@@ -246,7 +275,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className={`col-span-2 flex h-9 items-center justify-center rounded-lg text-[11px] font-semibold transition-all duration-150 active:scale-95 ${
                   activeCategory === "all"
                     ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.3)]"
-                    : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235]"
+                    : "bg-[var(--bg-card)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
                 }`}
               >
                 Son Yazılar
@@ -260,7 +289,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     className={`col-span-1 flex h-9 items-center justify-center rounded-lg text-[11px] font-semibold transition-all duration-150 active:scale-95 ${
                       isActive
                         ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.3)]"
-                        : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235]"
+                        : "bg-[var(--bg-card)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
                     }`}
                   >
                     {cat}
@@ -292,15 +321,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {/* spacer + ayraç + global nav */}
             <div className="min-w-[24px] flex-1" />
             <div className="mx-2 flex flex-shrink-0 items-center self-stretch">
-              <div className="h-4 w-px bg-[#2a2a3e]" />
+              <div className="h-4 w-px bg-[var(--border)]" />
             </div>
             <div className="flex flex-shrink-0 items-center gap-0.5 px-1">
               <Link
                 href="/feed"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isFeed
-                    ? "border-[#c9a84c] text-[#f0ede8]"
-                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                    ? "border-[#c9a84c] text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -312,8 +341,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href="/recommended"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isRecommended
-                    ? "border-[#c9a84c] text-[#f0ede8]"
-                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                    ? "border-[#c9a84c] text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -325,8 +354,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href="/discover"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isDiscover
-                    ? "border-[#c9a84c] text-[#f0ede8]"
-                    : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+                    ? "border-[#c9a84c] text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -361,12 +390,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <main className="pb-16 sm:pb-0">{children}</main>
 
       {/* ─── MOBILE BOTTOM TAB BAR ─── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#1a1e2e] bg-[#0c0e16] sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border-header)] bg-[var(--bg-header)] sm:hidden">
         <div className="flex items-center" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
           <Link
             href="/notes"
             className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
-              isNotes ? "text-[#c9a84c]" : "text-[#444]"
+              isNotes ? "text-[#c9a84c]" : "text-[var(--text-muted)]"
             }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -380,7 +409,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Link
             href="/feed"
             className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
-              isFeed ? "text-[#c9a84c]" : "text-[#444]"
+              isFeed ? "text-[#c9a84c]" : "text-[var(--text-muted)]"
             }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -391,7 +420,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Link
             href="/recommended"
             className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
-              isRecommended ? "text-[#c9a84c]" : "text-[#444]"
+              isRecommended ? "text-[#c9a84c]" : "text-[var(--text-muted)]"
             }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -402,7 +431,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Link
             href="/discover"
             className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
-              isDiscover ? "text-[#c9a84c]" : "text-[#444]"
+              isDiscover ? "text-[#c9a84c]" : "text-[var(--text-muted)]"
             }`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -418,14 +447,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
             }
             className={`flex flex-1 flex-col items-center gap-1 py-2.5 transition-colors duration-150 ${
-              isProfile ? "text-[#c9a84c]" : "text-[#444]"
+              isProfile ? "text-[#c9a84c]" : "text-[var(--text-muted)]"
             }`}
           >
             <div
               className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
                 isProfile
                   ? "bg-[#c9a84c]/20 text-[#c9a84c] ring-1 ring-[#c9a84c]/50"
-                  : "bg-[#1a1e2e] text-[#555] ring-1 ring-[#2a2e4e]"
+                  : "bg-[var(--bg-raised)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
               }`}
             >
               {userInitial}
@@ -440,9 +469,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         position="top-right"
         toastOptions={{
           style: {
-            background: "#161616",
-            color: "#e8eaf6",
-            border: "1px solid #2a2a2a",
+            background: "var(--bg-card)",
+            color: "var(--text-primary)",
+            border: "1px solid var(--border)",
             fontSize: "14px",
             borderRadius: "10px",
           },
@@ -468,8 +497,8 @@ function NavTab({
       onClick={onClick}
       className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
         active
-          ? "border-[#c9a84c] text-[#f0ede8]"
-          : "border-transparent text-[#6070a0] hover:text-[#c0c8e8]"
+          ? "border-[#c9a84c] text-[var(--text-primary)]"
+          : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       }`}
     >
       {children}

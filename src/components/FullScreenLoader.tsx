@@ -27,7 +27,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0c0c0c]"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[var(--bg-base)]"
       style={{
         opacity: show ? 1 : 0,
         transition: "opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -110,7 +110,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
         style={{
           marginTop: "10px",
           fontSize: "10px",
-          color: "#333",
+          color: "var(--text-muted)",
           letterSpacing: "0.15em",
           opacity: 0,
           animation: "dg-fade-up 0.5s ease forwards",

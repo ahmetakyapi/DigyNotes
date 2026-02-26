@@ -73,13 +73,13 @@ export function PostsList({ allPosts }: PostsListProps) {
       {/* ── Page header + tab switcher ── */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="flex items-center gap-1 rounded-lg border border-[#252d40] bg-[#0d0f1a] p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-1">
             <button
               onClick={() => setActiveTab("notlar")}
               className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 activeTab === "notlar"
                   ? "bg-[#c9a84c] text-[#0f1117]"
-                  : "text-[#888888] hover:text-[#f0ede8]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               Notlar
@@ -89,7 +89,7 @@ export function PostsList({ allPosts }: PostsListProps) {
               className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 activeTab === "istatistikler"
                   ? "bg-[#c9a84c] text-[#0f1117]"
-                  : "text-[#888888] hover:text-[#f0ede8]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               İstatistikler
@@ -99,7 +99,7 @@ export function PostsList({ allPosts }: PostsListProps) {
           {activeTab === "notlar" && (
             <div className="hidden items-center gap-3 sm:flex">
               <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c9a84c] to-transparent" />
-              <span className="text-xs text-[#555555]">
+              <span className="text-xs text-[var(--text-muted)]">
                 {stats.total} not
                 {stats.avgRating > 0 && (
                   <>
@@ -112,7 +112,6 @@ export function PostsList({ allPosts }: PostsListProps) {
           )}
         </div>
 
-        {/* Sort/Filter — sadece Notlar tabında */}
         {activeTab === "notlar" && (
           <SortFilterBar
             value={sortFilter}
@@ -126,13 +125,13 @@ export function PostsList({ allPosts }: PostsListProps) {
       {/* ── Aktif tag filtreleri ── */}
       {activeTab === "notlar" && activeTags.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-[#555555]">Etiket:</span>
+          <span className="text-xs text-[var(--text-muted)]">Etiket:</span>
           {activeTags.map((name) => (
             <TagBadge key={name} tag={{ id: name, name }} active onRemove={toggleTag} />
           ))}
           <button
             onClick={() => setActiveTags([])}
-            className="text-xs text-[#555555] transition-colors hover:text-[#e53e3e]"
+            className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
           >
             Temizle
           </button>
@@ -145,20 +144,21 @@ export function PostsList({ allPosts }: PostsListProps) {
       {activeTab === "notlar" &&
         (filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#555"
+                stroke="currentColor"
                 strokeWidth="1.5"
+                className="text-[var(--text-muted)]"
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" strokeLinecap="round" />
               </svg>
             </div>
-            <p className="mb-3 text-sm text-[#555555]">Sonuç bulunamadı.</p>
+            <p className="mb-3 text-sm text-[var(--text-muted)]">Sonuç bulunamadı.</p>
             <button
               onClick={() => {
                 setLocalQuery("");
@@ -175,7 +175,7 @@ export function PostsList({ allPosts }: PostsListProps) {
             {/* ── Featured card (sadece arama/filtre yokken) ── */}
             {featured && !hasSearch && (
               <Link href={`/posts/${featured.id}`} className="group mb-4 block">
-                <article className="relative h-[240px] overflow-hidden rounded-2xl border border-[#1e1e1e] transition-all duration-500 hover:border-[#c9a84c]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
+                <article className="relative h-[240px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c9a84c]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
                   <Image
                     unoptimized
                     src={featured.image}
@@ -185,11 +185,10 @@ export function PostsList({ allPosts }: PostsListProps) {
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
                     priority
                   />
-                  {/* Sürükleyici gradient */}
+                  {/* Dark gradient overlay — intentionally dark for text readability regardless of theme */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/60 to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0c0e16]/40 to-transparent" />
 
-                  {/* Üst rozetler */}
                   <div className="absolute left-5 top-5 flex items-center gap-2">
                     <span className="rounded-full border border-[#c9a84c]/20 bg-[#0c0c0c]/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a84c] backdrop-blur-md">
                       Öne Çıkan
@@ -197,7 +196,6 @@ export function PostsList({ allPosts }: PostsListProps) {
                     {featured.status && <StatusBadge status={featured.status} />}
                   </div>
 
-                  {/* Alt içerik */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
                     <div className="mb-3 flex items-center gap-2.5">
                       <span className="rounded-sm bg-[#c9a84c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0c0c0c]">
@@ -216,9 +214,9 @@ export function PostsList({ allPosts }: PostsListProps) {
                     <div className="flex items-center gap-3">
                       <StarRating rating={featured.rating} size={14} />
                       {featured.rating > 0 && (
-                        <span className="text-xs text-[#555555]">{featured.rating}/5</span>
+                        <span className="text-xs text-[#8892b0]">{featured.rating}/5</span>
                       )}
-                      <span className="ml-auto text-xs text-[#555555]">{featured.date}</span>
+                      <span className="ml-auto text-xs text-[#8892b0]">{featured.date}</span>
                     </div>
                   </div>
                 </article>
@@ -229,17 +227,15 @@ export function PostsList({ allPosts }: PostsListProps) {
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {(hasSearch ? filtered : rest).map((post, index) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className="flex h-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
-                    {/* Sıra numarası — sadece arama yokken */}
+                  <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
                     {!hasSearch && (
-                      <div className="flex w-9 flex-shrink-0 items-center justify-center border-r border-[#1e1e1e]">
-                        <span className="text-[10px] font-bold tabular-nums text-[#333] transition-colors group-hover:text-[#c9a84c]/60">
+                      <div className="flex w-9 flex-shrink-0 items-center justify-center border-r border-[var(--border)]">
+                        <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#c9a84c]/60">
                           {String(index + 2).padStart(2, "0")}
                         </span>
                       </div>
                     )}
 
-                    {/* Kapak görseli */}
                     <div
                       className="relative flex-shrink-0"
                       style={{ width: "36%", minHeight: "160px" }}
@@ -252,10 +248,9 @@ export function PostsList({ allPosts }: PostsListProps) {
                         sizes="(max-width: 768px) 36vw, 200px"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       />
-                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0d0f1a] to-transparent" />
+                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-card)] to-transparent" />
                     </div>
 
-                    {/* İçerik */}
                     <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
@@ -263,17 +258,17 @@ export function PostsList({ allPosts }: PostsListProps) {
                             {post.category}
                           </span>
                           {post.years && (
-                            <span className="text-[11px] text-[#444]">{post.years}</span>
+                            <span className="text-[11px] text-[var(--text-muted)]">{post.years}</span>
                           )}
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
 
-                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[#e8eaf6] transition-colors duration-200 group-hover:text-[#c9a84c] sm:text-base">
+                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c9a84c] sm:text-base">
                           {post.title}
                         </h2>
 
                         {post.creator && (
-                          <p className="mb-1.5 text-xs text-[#555555]">{post.creator}</p>
+                          <p className="mb-1.5 text-xs text-[var(--text-muted)]">{post.creator}</p>
                         )}
 
                         {post.tags && post.tags.length > 0 && (
@@ -290,21 +285,21 @@ export function PostsList({ allPosts }: PostsListProps) {
                               />
                             ))}
                             {post.tags.length > 3 && (
-                              <span className="self-center text-[10px] text-[#555555]">
+                              <span className="self-center text-[10px] text-[var(--text-muted)]">
                                 +{post.tags.length - 3}
                               </span>
                             )}
                           </div>
                         )}
 
-                        <p className="line-clamp-2 text-xs leading-relaxed text-[#444]">
+                        <p className="line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">
                           {post.excerpt}
                         </p>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-between border-t border-[#1a1e2e] pt-2.5">
+                      <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
                         <StarRating rating={post.rating} size={11} />
-                        <span className="text-[10px] text-[#444]">{post.date}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
                       </div>
                     </div>
                   </article>

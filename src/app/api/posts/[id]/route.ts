@@ -55,12 +55,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     externalRating,
   } = body;
 
-  const existing = await prisma.post.findUnique({
-    where: { id: params.id },
-    select: { id: true, userId: true },
-  });
+  const [existing, currentUser] = await Promise.all([
+    prisma.post.findUnique({ where: { id: params.id }, select: { id: true, userId: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } }),
+  ]);
+  const isAdmin = currentUser?.isAdmin ?? false;
 
-  if (!existing || (existing.userId !== null && existing.userId !== userId)) {
+  if (!existing || (!isAdmin && existing.userId !== null && existing.userId !== userId)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -116,14 +117,15 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const postToDelete = await prisma.post.findUnique({
-    where: { id: params.id },
-    select: { title: true, category: true },
-  });
+  const [postToDelete, currentUser] = await Promise.all([
+    prisma.post.findUnique({ where: { id: params.id }, select: { title: true, category: true } }),
+    prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } }),
+  ]);
+  const isAdmin = currentUser?.isAdmin ?? false;
 
-  const deleted = await prisma.post.deleteMany({
-    where: { id: params.id, userId },
-  });
+  const deleted = isAdmin
+    ? await prisma.post.deleteMany({ where: { id: params.id } })
+    : await prisma.post.deleteMany({ where: { id: params.id, userId } });
 
   if (deleted.count === 0) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

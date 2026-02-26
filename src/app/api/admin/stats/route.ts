@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -13,15 +13,23 @@ async function requireAdmin() {
   return user?.isAdmin ? (session.user as { id: string }).id : null;
 }
 
-export async function GET() {
+type SeriesRange = "7d" | "30d" | "90d" | "365d";
+const VALID_SERIES: SeriesRange[] = ["7d", "30d", "90d", "365d"];
+
+export async function GET(request: NextRequest) {
   const adminId = await requireAdmin();
   if (!adminId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const rawSeries = searchParams.get("series") || "30d";
+  const series: SeriesRange = VALID_SERIES.includes(rawSeries as SeriesRange) ? (rawSeries as SeriesRange) : "30d";
+  const seriesDays = series === "7d" ? 7 : series === "30d" ? 30 : series === "90d" ? 90 : 365;
+
   const now = new Date();
   const thirtyDaysAgo = new Date(now);
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - (seriesDays - 1));
   thirtyDaysAgo.setHours(0, 0, 0, 0);
 
   const todayStart = new Date(now);
@@ -100,9 +108,9 @@ export async function GET() {
     }),
   ]);
 
-  // Build daily series for last 30 days
+  // Build daily series for selected range
   const days: string[] = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < seriesDays; i++) {
     const d = new Date(thirtyDaysAgo);
     d.setDate(d.getDate() + i);
     days.push(d.toISOString().slice(0, 10));
@@ -144,6 +152,7 @@ export async function GET() {
   });
 
   return NextResponse.json({
+    series,
     kpi: {
       totalUsers,
       totalPosts,

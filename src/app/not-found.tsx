@@ -88,15 +88,22 @@ export default function NotFound() {
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
           className="dn404-aurora-1 absolute -left-40 top-1/4 h-[560px] w-[560px] rounded-full blur-[180px]"
-          style={{ background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)",
+          }}
         />
         <div
           className="dn404-aurora-2 absolute -right-40 top-1/3 h-[460px] w-[460px] rounded-full blur-[180px]"
-          style={{ background: "radial-gradient(circle, #3a4a8a 0%, #1a2258 50%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, #3a4a8a 0%, #1a2258 50%, transparent 70%)",
+          }}
         />
         <div
           className="dn404-aurora-3 absolute bottom-0 left-1/2 h-[380px] w-[760px] -translate-x-1/2 rounded-full blur-[200px]"
-          style={{ background: "radial-gradient(circle, #6a1a1a 0%, #3a0808 60%, transparent 70%)", opacity: 0.06 }}
+          style={{
+            background: "radial-gradient(circle, #6a1a1a 0%, #3a0808 60%, transparent 70%)",
+            opacity: 0.06,
+          }}
         />
         {/* Grid */}
         <div
@@ -114,7 +121,11 @@ export default function NotFound() {
         {/* Film */}
         <div
           className="dn404-tag-1 absolute left-[6%] top-[20%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.28]"
-          style={{ borderColor: "rgba(104,136,192,0.35)", background: "rgba(56,88,168,0.12)", color: "#6888c0" }}
+          style={{
+            borderColor: "rgba(104,136,192,0.35)",
+            background: "rgba(56,88,168,0.12)",
+            color: "#6888c0",
+          }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" />
@@ -125,7 +136,11 @@ export default function NotFound() {
         {/* Oyun */}
         <div
           className="dn404-tag-2 absolute right-[8%] top-[16%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.22]"
-          style={{ borderColor: "rgba(129,140,248,0.35)", background: "rgba(99,102,241,0.1)", color: "#818cf8" }}
+          style={{
+            borderColor: "rgba(129,140,248,0.35)",
+            background: "rgba(99,102,241,0.1)",
+            color: "#818cf8",
+          }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zm1 6.5V21h6v-5.5l-3-3-3 3zm7.5-6.5l-3 3 3 3H21V9h-5.5z" />
@@ -135,8 +150,12 @@ export default function NotFound() {
 
         {/* Kitap */}
         <div
-          className="dn404-tag-3 absolute left-[10%] bottom-[25%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.18]"
-          style={{ borderColor: "rgba(201,168,76,0.3)", background: "rgba(201,168,76,0.07)", color: "#c9a84c" }}
+          className="dn404-tag-3 absolute bottom-[25%] left-[10%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.18]"
+          style={{
+            borderColor: "rgba(201,168,76,0.3)",
+            background: "rgba(201,168,76,0.07)",
+            color: "#c9a84c",
+          }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" />
@@ -146,8 +165,12 @@ export default function NotFound() {
 
         {/* Gezi */}
         <div
-          className="dn404-tag-4 absolute right-[7%] bottom-[30%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.22]"
-          style={{ borderColor: "rgba(80,160,120,0.3)", background: "rgba(60,130,90,0.08)", color: "#60a88a" }}
+          className="dn404-tag-4 absolute bottom-[30%] right-[7%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.22]"
+          style={{
+            borderColor: "rgba(80,160,120,0.3)",
+            background: "rgba(60,130,90,0.08)",
+            color: "#60a88a",
+          }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
@@ -158,7 +181,11 @@ export default function NotFound() {
         {/* Dizi */}
         <div
           className="dn404-tag-5 absolute left-[18%] top-[58%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.14]"
-          style={{ borderColor: "rgba(200,176,144,0.3)", background: "rgba(168,140,96,0.07)", color: "#c8b090" }}
+          style={{
+            borderColor: "rgba(200,176,144,0.3)",
+            background: "rgba(168,140,96,0.07)",
+            color: "#c8b090",
+          }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z" />
@@ -169,7 +196,6 @@ export default function NotFound() {
 
       {/* ── Ana içerik ── */}
       <div className="relative z-10 flex flex-col items-center">
-
         {/* Üst durum rozeti */}
         <div
           className="dn404-reveal-1 mb-5 flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-sm"
@@ -179,7 +205,10 @@ export default function NotFound() {
             className="h-1.5 w-1.5 rounded-full"
             style={{ background: "#e53e3e", boxShadow: "0 0 6px #e53e3e" }}
           />
-          <span className="text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: "#e57070" }}>
+          <span
+            className="text-[10px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "#e57070" }}
+          >
             Sayfa Bulunamadı
           </span>
         </div>
@@ -219,7 +248,7 @@ export default function NotFound() {
         {/* Başlık */}
         <h2
           className="dn404-reveal-3 mb-3 text-[1.5rem] font-bold leading-tight sm:text-[1.8rem]"
-          style={{ color: "#f0ede8" }}
+          style={{ color: "var(--text-primary)" }}
         >
           Sayfa Bulunamadı
         </h2>
@@ -227,7 +256,7 @@ export default function NotFound() {
         {/* Açıklama */}
         <p
           className="dn404-reveal-3 mb-2 max-w-[340px] text-sm leading-relaxed sm:max-w-[400px] sm:text-[15px]"
-          style={{ color: "rgba(240,237,232,0.48)" }}
+          style={{ color: "var(--text-secondary)" }}
         >
           İzleyip not almadığın o filmler gibi —
           <br />
@@ -235,7 +264,7 @@ export default function NotFound() {
         </p>
         <p
           className="dn404-reveal-3 mb-9 max-w-[320px] text-xs leading-relaxed sm:max-w-sm"
-          style={{ color: "rgba(240,237,232,0.22)" }}
+          style={{ color: "var(--text-muted)" }}
         >
           Aradığın sayfa silinmiş, taşınmış ya da hiç var olmamış olabilir.
         </p>
@@ -267,10 +296,10 @@ export default function NotFound() {
 
           <Link
             href="/notes"
-            className="rounded-2xl border px-8 py-3 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.04]"
+            className="rounded-2xl border px-8 py-3 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--bg-raised)]"
             style={{
-              borderColor: "rgba(255,255,255,0.1)",
-              color: "rgba(240,237,232,0.6)",
+              borderColor: "var(--border)",
+              color: "var(--text-secondary)",
             }}
           >
             Notlarıma Git
@@ -280,7 +309,7 @@ export default function NotFound() {
         {/* Küçük hata kodu */}
         <p
           className="dn404-reveal-5 mt-10 font-mono text-[10px] tracking-widest"
-          style={{ color: "rgba(240,237,232,0.14)" }}
+          style={{ color: "var(--text-muted)", opacity: 0.5 }}
         >
           HTTP 404 · NOT_FOUND · digynotes
         </p>
