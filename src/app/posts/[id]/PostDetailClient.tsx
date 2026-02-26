@@ -1,9 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { Heart } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -14,14 +16,55 @@ import toast from "react-hot-toast";
 
 const customLoader = ({ src }: { src: string }) => src;
 
+interface CommentUser {
+  id: string;
+  name: string;
+  username: string | null;
+  avatarUrl: string | null;
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: CommentUser;
+}
+
+interface LikeData {
+  count: number;
+  liked: boolean;
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default function PostDetailClient({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const currentUserId = session?.user ? (session.user as { id: string }).id : null;
+
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
   const [imgOrientation, setImgOrientation] = useState<"portrait" | "landscape" | null>(null);
+
+  /* Like state */
+  const [likeData, setLikeData] = useState<LikeData>({ count: 0, liked: false });
+  const [isLiking, setIsLiking] = useState(false);
+
+  /* Comment state */
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -42,13 +85,27 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
   useEffect(() => {
     if (!post?.title) return;
-    fetch(
-      `/api/posts/related?title=${encodeURIComponent(post.title)}&excludePostId=${post.id}`
-    )
+    fetch(`/api/posts/related?title=${encodeURIComponent(post.title)}&excludePostId=${post.id}`)
       .then((r) => (r.ok ? r.json() : []))
       .then(setCommunityPosts)
       .catch(() => {});
   }, [post?.title, post?.id]);
+
+  /* Fetch likes */
+  useEffect(() => {
+    fetch(`/api/posts/${params.id}/likes`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => data && setLikeData(data))
+      .catch(() => {});
+  }, [params.id]);
+
+  /* Fetch comments */
+  useEffect(() => {
+    fetch(`/api/posts/${params.id}/comments`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setComments)
+      .catch(() => {});
+  }, [params.id]);
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
@@ -63,11 +120,92 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     }
   };
 
+  const toggleLike = async () => {
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+    if (isLiking) return;
+    setIsLiking(true);
+    // Optimistic update
+    setLikeData((prev) => ({
+      count: prev.liked ? prev.count - 1 : prev.count + 1,
+      liked: !prev.liked,
+    }));
+    try {
+      const res = await fetch(`/api/posts/${params.id}/likes`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setLikeData(data);
+      } else {
+        // Revert on error
+        setLikeData((prev) => ({
+          count: prev.liked ? prev.count - 1 : prev.count + 1,
+          liked: !prev.liked,
+        }));
+      }
+    } catch {
+      setLikeData((prev) => ({
+        count: prev.liked ? prev.count - 1 : prev.count + 1,
+        liked: !prev.liked,
+      }));
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
+  const submitComment = async () => {
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+    if (!commentText.trim()) return;
+    setIsSubmittingComment(true);
+    try {
+      const res = await fetch(`/api/posts/${params.id}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: commentText.trim() }),
+      });
+      if (res.ok) {
+        const newComment: Comment = await res.json();
+        setComments((prev) => [...prev, newComment]);
+        setCommentText("");
+        toast.success("Yorum eklendi");
+      } else {
+        const err = await res.json();
+        toast.error(err.error || "Yorum eklenemedi");
+      }
+    } catch {
+      toast.error("Yorum eklenemedi");
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+  const deleteComment = async (commentId: string) => {
+    setDeletingCommentId(commentId);
+    try {
+      const res = await fetch(`/api/posts/${params.id}/comments/${commentId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setComments((prev) => prev.filter((c) => c.id !== commentId));
+        toast.success("Yorum silindi");
+      } else {
+        toast.error("Yorum silinemedi");
+      }
+    } catch {
+      toast.error("Yorum silinemedi");
+    } finally {
+      setDeletingCommentId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
-          {/* Breadcrumb skeleton */}
           <div className="mb-3 flex items-center gap-2">
             <div className="h-3 w-12 animate-pulse rounded bg-[var(--bg-raised)]" />
             <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
@@ -75,7 +213,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
             <div className="h-3 w-32 animate-pulse rounded bg-[var(--bg-raised)]" />
           </div>
-          {/* Hero skeleton */}
           <div
             className="w-full animate-pulse rounded-2xl bg-[var(--bg-raised)]"
             style={{ height: "52vh" }}
@@ -122,6 +259,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     );
   }
 
+  const isOwnPost = !!currentUserId && currentUserId === post.user?.id;
+
   return (
     <main className="min-h-screen bg-[var(--bg-base)]">
       {/* ─── Hero Image ─── */}
@@ -148,7 +287,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           className="relative w-full overflow-hidden rounded-2xl bg-[var(--bg-raised)]"
           style={{ height: imgOrientation === "landscape" ? "44vh" : "52vh" }}
         >
-          {/* Blur backdrop — sadece dikey görsellerde yan boşlukları doldurur */}
+          {/* Blur backdrop */}
           {imgOrientation !== "landscape" && (
             <Image
               loader={customLoader}
@@ -160,7 +299,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               priority
             />
           )}
-          {/* Ana görsel */}
           <Image
             loader={customLoader}
             src={post.image}
@@ -170,27 +308,30 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             onLoad={handleImageLoad}
             priority
           />
-          {/* Gradient: top → bottom dark */}
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/30 to-transparent" />
 
-          {/* ── Top controls ── */}
+          {/* Top controls */}
           <div className="absolute left-0 right-0 top-0 flex items-center justify-end gap-2 px-4 pt-4 sm:px-5">
-            <Link
-              href={`/posts/${post.id}/edit`}
-              className="flex items-center gap-1.5 rounded-lg border border-white/25 bg-black/65 px-4 py-2 text-xs font-semibold text-white shadow-sm backdrop-blur-md transition-all hover:border-[#c9a84c]/80 hover:bg-black/80 hover:text-[#c9a84c]"
-            >
-              <FaEdit size={11} /> Düzenle
-            </Link>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              disabled={isDeleting}
-              className="flex items-center gap-1.5 rounded-lg border border-white/25 bg-black/65 px-3 py-2 text-xs text-white shadow-sm backdrop-blur-md transition-all hover:border-[#e53e3e]/80 hover:bg-black/80 hover:text-[#e53e3e] disabled:opacity-40"
-            >
-              <FaTrash size={10} /> Sil
-            </button>
+            {isOwnPost && (
+              <>
+                <Link
+                  href={`/posts/${post.id}/edit`}
+                  className="flex items-center gap-1.5 rounded-lg border border-white/25 bg-black/65 px-4 py-2 text-xs font-semibold text-white shadow-sm backdrop-blur-md transition-all hover:border-[#c9a84c]/80 hover:bg-black/80 hover:text-[#c9a84c]"
+                >
+                  <FaEdit size={11} /> Düzenle
+                </Link>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={isDeleting}
+                  className="flex items-center gap-1.5 rounded-lg border border-white/25 bg-black/65 px-3 py-2 text-xs text-white shadow-sm backdrop-blur-md transition-all hover:border-[#e53e3e]/80 hover:bg-black/80 hover:text-[#e53e3e] disabled:opacity-40"
+                >
+                  <FaTrash size={10} /> Sil
+                </button>
+              </>
+            )}
           </div>
 
-          {/* ── Overlaid title + meta ── */}
+          {/* Overlaid title + meta */}
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-6 sm:pb-8">
             <div className="max-w-3xl">
               <div className="mb-3 flex items-center gap-2">
@@ -243,20 +384,155 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
       {/* ─── Content ─── */}
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-        {/* Etiketler */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-1.5">
-            {post.tags.map((tag) => (
-              <TagBadge key={tag.id} tag={tag} />
-            ))}
+        {/* Etiketler + Like butonu */}
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div className="flex flex-wrap gap-1.5">
+            {post.tags &&
+              post.tags.length > 0 &&
+              post.tags.map((tag) => <TagBadge key={tag.id} tag={tag} />)}
           </div>
-        )}
+
+          {/* Like butonu — kendi notuna like yapamaz */}
+          {!isOwnPost && (
+            <button
+              type="button"
+              onClick={toggleLike}
+              disabled={isLiking}
+              className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 ${
+                likeData.liked
+                  ? "border-[#e53e3e]/40 bg-[#e53e3e]/10 text-[#e53e3e]"
+                  : "border-[#2a2a2a] bg-[#161616] text-[#888888] hover:border-[#e53e3e]/30 hover:text-[#e53e3e]"
+              }`}
+            >
+              <Heart
+                size={16}
+                weight={likeData.liked ? "fill" : "regular"}
+                className="transition-transform duration-150"
+              />
+              <span>{likeData.count > 0 ? likeData.count : ""}</span>
+            </button>
+          )}
+
+          {/* Kendi notu — sadece like sayısını göster */}
+          {isOwnPost && likeData.count > 0 && (
+            <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[#2a2a2a] px-3 py-1.5 text-sm text-[#888888]">
+              <Heart size={16} weight="fill" className="text-[#e53e3e]" />
+              <span>{likeData.count}</span>
+            </div>
+          )}
+        </div>
 
         <CommunityStatsCard title={post.title} creator={post.creator} />
 
         <article className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-[var(--text-primary)] prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[#c9a84c] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[#c9a84c] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[#c9a84c]">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
+
+        {/* ─── Yorumlar ─── */}
+        <div className="mt-12 border-t border-[#2a2a2a] pt-8">
+          <div className="mb-6 flex items-center gap-2">
+            <svg
+              className="h-4 w-4 text-[#888888]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.8}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <h2 className="text-sm font-semibold text-[#888888]">Yorumlar</h2>
+            {comments.length > 0 && (
+              <span className="rounded-full bg-[#1e1e1e] px-2 py-0.5 text-[10px] text-[#555555]">
+                {comments.length}
+              </span>
+            )}
+          </div>
+
+          {/* Mevcut yorumlar */}
+          {comments.length > 0 && (
+            <div className="mb-6 space-y-3">
+              {comments.map((comment) => {
+                const isOwn = comment.user.id === currentUserId;
+                return (
+                  <div
+                    key={comment.id}
+                    className="rounded-xl border border-[#2a2a2a] bg-[#161616] p-4"
+                  >
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#c9a84c]/10 text-[11px] font-bold text-[#c9a84c]">
+                          {comment.user.name?.charAt(0)?.toUpperCase() ?? "?"}
+                        </div>
+                        <div>
+                          <span className="text-xs font-semibold text-[#f0ede8]">
+                            {comment.user.name}
+                          </span>
+                          <span className="ml-2 text-[10px] text-[#555555]">
+                            {formatDate(comment.createdAt)}
+                          </span>
+                        </div>
+                      </div>
+                      {isOwn && (
+                        <button
+                          type="button"
+                          onClick={() => deleteComment(comment.id)}
+                          disabled={deletingCommentId === comment.id}
+                          className="text-[11px] text-[#555555] transition-colors duration-150 hover:text-[#e53e3e] disabled:opacity-40"
+                        >
+                          {deletingCommentId === comment.id ? "Siliniyor..." : "Sil"}
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-sm leading-relaxed text-[#888888]">{comment.content}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Yorum formu */}
+          {session?.user ? (
+            <div className="rounded-xl border border-[#2a2a2a] bg-[#161616] p-4">
+              <textarea
+                ref={commentInputRef}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Yorumunuzu yazın..."
+                rows={3}
+                maxLength={1000}
+                className="w-full resize-none bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.metaKey) submitComment();
+                }}
+              />
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-[10px] text-[#555555]">{commentText.length}/1000</span>
+                <button
+                  type="button"
+                  onClick={submitComment}
+                  disabled={isSubmittingComment || !commentText.trim()}
+                  className="rounded-lg bg-[#c9a84c] px-4 py-1.5 text-xs font-bold text-[#0c0c0c] transition-all duration-200 hover:bg-[#e0c068] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {isSubmittingComment ? "Gönderiliyor..." : "Yorum Yap"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[#2a2a2a] bg-[#161616] px-4 py-5 text-center">
+              <p className="mb-2 text-sm text-[#888888]">Yorum yapmak için giriş yapın.</p>
+              <Link
+                href="/login"
+                className="text-xs font-medium text-[#c9a84c] transition-colors hover:text-[#e0c068]"
+              >
+                Giriş Yap →
+              </Link>
+            </div>
+          )}
+        </div>
 
         {/* ─── Başkalarının Notları ─── */}
         {communityPosts.length > 0 && (
