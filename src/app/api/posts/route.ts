@@ -117,5 +117,9 @@ export async function POST(request: NextRequest) {
     include: { tags: { include: { tag: true } } },
   });
 
+  await prisma.activityLog.create({
+    data: { userId, action: "post.create", metadata: { postId: post.id, title: post.title, category: post.category } },
+  });
+
   return NextResponse.json(transformPostTags(post), { status: 201 });
 }

@@ -39,6 +39,10 @@ export async function POST(req: NextRequest) {
     update: {},
   });
 
+  await prisma.activityLog.create({
+    data: { userId, action: "user.follow", metadata: { targetUserId: target.id, targetUsername: username } },
+  });
+
   return NextResponse.json({ success: true });
 }
 

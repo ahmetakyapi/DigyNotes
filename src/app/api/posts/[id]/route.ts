@@ -101,6 +101,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     include: { tags: { include: { tag: true } } },
   });
 
+  await prisma.activityLog.create({
+    data: { userId, action: "post.update", metadata: { postId: post.id, title: post.title, category: post.category } },
+  });
+
   return NextResponse.json(transformPostTags(post));
 }
 
@@ -112,6 +116,11 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const postToDelete = await prisma.post.findUnique({
+    where: { id: params.id },
+    select: { title: true, category: true },
+  });
+
   const deleted = await prisma.post.deleteMany({
     where: { id: params.id, userId },
   });
@@ -119,6 +128,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   if (deleted.count === 0) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  await prisma.activityLog.create({
+    data: { userId, action: "post.delete", metadata: { postId: params.id, title: postToDelete?.title, category: postToDelete?.category } },
+  });
 
   return NextResponse.json({ success: true });
 }

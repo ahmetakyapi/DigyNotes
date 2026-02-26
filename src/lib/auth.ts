@@ -43,4 +43,23 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  events: {
+    async signIn({ user }) {
+      if (user.id) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() },
+        }).catch(() => {});
+      }
+    },
+    async signOut({ token }) {
+      const id = (token as { id?: string })?.id;
+      if (id) {
+        await prisma.user.update({
+          where: { id },
+          data: { lastLogoutAt: new Date() },
+        }).catch(() => {});
+      }
+    },
+  },
 };
