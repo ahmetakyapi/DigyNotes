@@ -23,7 +23,10 @@ function transformPostTags(
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const post = await prisma.post.findUnique({
     where: { id: params.id },
-    include: { tags: { include: { tag: true } } },
+    include: {
+      tags: { include: { tag: true } },
+      user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+    },
   });
   if (!post) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });

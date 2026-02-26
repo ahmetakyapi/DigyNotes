@@ -1107,11 +1107,11 @@ export default function AdminPage() {
 
             {/* Bulk action bar */}
             {selectedUsers.size > 0 && (
-              <div className="flex items-center gap-3 rounded-xl border border-[#c9a84c]/20 bg-[#c9a84c]/5 px-4 py-2.5">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#c9a84c]/20 bg-[#c9a84c]/5 px-4 py-2.5">
                 <span className="text-sm font-semibold text-[#c9a84c]">
                   {selectedUsers.size} seçildi
                 </span>
-                <div className="ml-auto flex gap-2">
+                <div className="flex flex-wrap gap-2 sm:ml-auto">
                   <button
                     onClick={() => runBulkAction("ban")}
                     disabled={bulkLoading}
@@ -1144,141 +1144,236 @@ export default function AdminPage() {
             )}
 
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[var(--border)]">
-                    <th className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        className="accent-[#c9a84c]"
-                        checked={users.length > 0 && selectedUsers.size === users.length}
-                        onChange={toggleSelectAll}
-                      />
-                    </th>
-                    {[
-                      "Kullanıcı",
-                      "E-posta",
-                      "Not",
-                      "Takipçi",
-                      "Katılım",
-                      "Admin",
-                      "Ban",
-                      "İşlem",
-                    ].map((h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {loadingUsers ? (
-                    <tr>
-                      <td colSpan={9} className="py-16 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
-                      </td>
-                    </tr>
-                  ) : (
-                    users.map((u) => (
-                      <tr
+              {/* ── Mobile kart listesi (md altı) ── */}
+              <div className="md:hidden">
+                <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
+                  <input
+                    type="checkbox"
+                    className="accent-[#c9a84c]"
+                    checked={users.length > 0 && selectedUsers.size === users.length}
+                    onChange={toggleSelectAll}
+                  />
+                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">Tümünü Seç</span>
+                </div>
+                {loadingUsers ? (
+                  <div className="flex justify-center py-12">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[var(--border)]">
+                    {users.map((u) => (
+                      <div
                         key={u.id}
-                        className={`group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)] ${u.isBanned ? "opacity-60" : ""}`}
+                        className={`flex items-start gap-3 p-4 transition-colors hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}
                       >
-                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                          <input
-                            type="checkbox"
-                            className="accent-[#c9a84c]"
-                            checked={selectedUsers.has(u.id)}
-                            onChange={() => toggleSelectUser(u.id)}
-                          />
-                        </td>
-                        <td
-                          className="cursor-pointer px-4 py-3"
+                        <input
+                          type="checkbox"
+                          className="mt-1.5 accent-[#c9a84c]"
+                          checked={selectedUsers.has(u.id)}
+                          onChange={() => toggleSelectUser(u.id)}
+                        />
+                        <div
+                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#c9a84c]"
                           onClick={() => router.push(`/admin/users/${u.id}`)}
                         >
-                          <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c9a84c]">
-                              {u.name.charAt(0).toUpperCase()}
+                          {u.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div
+                          className="min-w-0 flex-1 cursor-pointer"
+                          onClick={() => router.push(`/admin/users/${u.id}`)}
+                        >
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
+                            {u.isAdmin && (
+                              <span className="rounded bg-[#c9a84c]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
+                                admin
+                              </span>
+                            )}
+                            {u.isBanned && (
+                              <span className="rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">
+                                ban
+                              </span>
+                            )}
+                          </div>
+                          {u.username && (
+                            <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>
+                          )}
+                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">{u.email}</p>
+                          <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-[var(--text-muted)]">
+                            <span>
+                              <span className="font-semibold text-[var(--text-secondary)]">{u.postCount}</span> not
+                            </span>
+                            <span>
+                              <span className="font-semibold text-[var(--text-secondary)]">{u.followerCount}</span> takipçi
+                            </span>
+                            <span>
+                              {new Date(u.createdAt).toLocaleDateString("tr-TR", {
+                                day: "numeric",
+                                month: "short",
+                                year: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 flex-col items-end gap-2.5">
+                          <div className="flex items-center gap-3">
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Admin</span>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
+                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"}`}
+                              >
+                                <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
+                              </button>
                             </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
-                                {u.isAdmin && (
-                                  <span className="shrink-0 rounded bg-[#c9a84c]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
-                                    admin
-                                  </span>
-                                )}
-                                {u.isBanned && (
-                                  <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">
-                                    ban
-                                  </span>
-                                )}
-                              </div>
-                              {u.username && (
-                                <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>
-                              )}
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Ban</span>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); toggleBan(u); }}
+                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
+                              >
+                                <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
+                              </button>
                             </div>
                           </div>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
-                        <td className="px-4 py-3 text-center text-sm font-bold text-[var(--text-primary)]">
-                          {u.postCount}
-                        </td>
-                        <td className="px-4 py-3 text-center text-sm text-[var(--text-muted)]">
-                          {u.followerCount}
-                        </td>
-                        <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">
-                          {new Date(u.createdAt).toLocaleDateString("tr-TR", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </td>
-                        <td className="px-4 py-3 text-center">
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleAdmin(u);
-                            }}
-                            className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"}`}
-                          >
-                            <span
-                              className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
-                            />
-                          </button>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleBan(u);
-                            }}
-                            className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
-                          >
-                            <span
-                              className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`}
-                            />
-                          </button>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setConfirmDelete(u);
-                            }}
-                            className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] opacity-0 transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e] group-hover:opacity-100"
+                            onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }}
+                            className="rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
                           >
                             Sil
                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Desktop tablo (md ve üzeri) ── */}
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      <th className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          className="accent-[#c9a84c]"
+                          checked={users.length > 0 && selectedUsers.size === users.length}
+                          onChange={toggleSelectAll}
+                        />
+                      </th>
+                      {[
+                        "Kullanıcı",
+                        "E-posta",
+                        "Not",
+                        "Takipçi",
+                        "Katılım",
+                        "Admin",
+                        "Ban",
+                        "İşlem",
+                      ].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingUsers ? (
+                      <tr>
+                        <td colSpan={9} className="py-16 text-center">
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      users.map((u) => (
+                        <tr
+                          key={u.id}
+                          className={`group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)] ${u.isBanned ? "opacity-60" : ""}`}
+                        >
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              className="accent-[#c9a84c]"
+                              checked={selectedUsers.has(u.id)}
+                              onChange={() => toggleSelectUser(u.id)}
+                            />
+                          </td>
+                          <td
+                            className="cursor-pointer px-4 py-3"
+                            onClick={() => router.push(`/admin/users/${u.id}`)}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c9a84c]">
+                                {u.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
+                                  {u.isAdmin && (
+                                    <span className="shrink-0 rounded bg-[#c9a84c]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
+                                      admin
+                                    </span>
+                                  )}
+                                  {u.isBanned && (
+                                    <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">
+                                      ban
+                                    </span>
+                                  )}
+                                </div>
+                                {u.username && (
+                                  <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
+                          <td className="px-4 py-3 text-center text-sm font-bold text-[var(--text-primary)]">
+                            {u.postCount}
+                          </td>
+                          <td className="px-4 py-3 text-center text-sm text-[var(--text-muted)]">
+                            {u.followerCount}
+                          </td>
+                          <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">
+                            {new Date(u.createdAt).toLocaleDateString("tr-TR", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
+                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"}`}
+                            >
+                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleBan(u); }}
+                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
+                            >
+                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }}
+                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] opacity-0 transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e] group-hover:opacity-100"
+                            >
+                              Sil
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
               {usersTotalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
@@ -1350,66 +1445,46 @@ export default function AdminPage() {
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[var(--border)]">
-                    {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {loadingPosts ? (
-                    <tr>
-                      <td colSpan={7} className="py-16 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
-                      </td>
-                    </tr>
-                  ) : posts.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">
-                        Not bulunamadı
-                      </td>
-                    </tr>
-                  ) : (
-                    posts.map((p) => (
-                      <tr
+              {/* ── Mobile kart listesi (md altı) ── */}
+              <div className="md:hidden">
+                {loadingPosts ? (
+                  <div className="flex justify-center py-12">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                  </div>
+                ) : posts.length === 0 ? (
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
+                ) : (
+                  <div className="divide-y divide-[var(--border)]">
+                    {posts.map((p) => (
+                      <div
                         key={p.id}
-                        className="group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
+                        className="flex items-start gap-3 p-4 transition-colors hover:bg-[var(--bg-raised)]"
                       >
-                        <td
-                          className="cursor-pointer px-4 py-3"
-                          onClick={() => router.push(`/posts/${p.id}`)}
-                        >
-                          <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#c9a84c]">
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#c9a84c]"
+                            onClick={() => router.push(`/posts/${p.id}`)}
+                          >
                             {p.title}
                           </p>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
-                        <td className="px-4 py-3">
-                          {p.user ? (
-                            <div className="flex items-center gap-2">
-                              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
-                                {p.user.name.charAt(0).toUpperCase()}
-                              </div>
-                              <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-[var(--text-muted)]">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">
-                          {fmtShortDate(p.createdAt)}
-                        </td>
-                        <td className="px-4 py-3">
-                          {p.status ? (
+                          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                            <span>{p.category}</span>
+                            {p.user && (
+                              <span className="flex items-center gap-1">
+                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#c9a84c]">
+                                  {p.user.name.charAt(0).toUpperCase()}
+                                </span>
+                                {p.user.name}
+                              </span>
+                            )}
+                            <span>{fmtShortDate(p.createdAt)}</span>
+                            {p.rating > 0 && (
+                              <span className="text-[#c9a84c]">★ {p.rating.toFixed(1)}</span>
+                            )}
+                          </div>
+                          {p.status && (
                             <span
-                              className="rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
+                              className="inline-flex rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
                               style={{
                                 borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
                                 background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
@@ -1418,34 +1493,127 @@ export default function AdminPage() {
                             >
                               {p.status}
                             </span>
-                          ) : (
-                            <span className="text-xs text-[var(--text-muted)]">—</span>
                           )}
-                        </td>
-                        <td className="px-4 py-3 text-center text-sm text-[var(--text-secondary)]">
-                          {p.rating > 0 ? p.rating.toFixed(1) : "—"}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                            <button
-                              onClick={() => router.push(`/posts/${p.id}/edit`)}
-                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#c9a84c]"
-                            >
-                              Düzenle
-                            </button>
-                            <button
-                              onClick={() => setConfirmDeletePost(p)}
-                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
-                            >
-                              Sil
-                            </button>
-                          </div>
+                        </div>
+                        <div className="flex shrink-0 flex-col items-end gap-1.5">
+                          <button
+                            onClick={() => router.push(`/posts/${p.id}/edit`)}
+                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#c9a84c]/30 hover:text-[#c9a84c]"
+                          >
+                            Düzenle
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeletePost(p)}
+                            className="rounded-lg border border-[#e53e3e]/20 px-2.5 py-1.5 text-[11px] font-medium text-[#e53e3e]/70 transition-colors hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
+                          >
+                            Sil
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Desktop tablo (md ve üzeri) ── */}
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingPosts ? (
+                      <tr>
+                        <td colSpan={7} className="py-16 text-center">
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : posts.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">
+                          Not bulunamadı
+                        </td>
+                      </tr>
+                    ) : (
+                      posts.map((p) => (
+                        <tr
+                          key={p.id}
+                          className="group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
+                        >
+                          <td
+                            className="cursor-pointer px-4 py-3"
+                            onClick={() => router.push(`/posts/${p.id}`)}
+                          >
+                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#c9a84c]">
+                              {p.title}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
+                          <td className="px-4 py-3">
+                            {p.user ? (
+                              <div className="flex items-center gap-2">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
+                                  {p.user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-[var(--text-muted)]">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">
+                            {fmtShortDate(p.createdAt)}
+                          </td>
+                          <td className="px-4 py-3">
+                            {p.status ? (
+                              <span
+                                className="rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
+                                style={{
+                                  borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
+                                  background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
+                                  color: STATUS_COLORS[p.status] ?? "#777",
+                                }}
+                              >
+                                {p.status}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-[var(--text-muted)]">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-center text-sm text-[var(--text-secondary)]">
+                            {p.rating > 0 ? p.rating.toFixed(1) : "—"}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                              <button
+                                onClick={() => router.push(`/posts/${p.id}/edit`)}
+                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#c9a84c]"
+                              >
+                                Düzenle
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeletePost(p)}
+                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
+                              >
+                                Sil
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
               {postsTotalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
@@ -1563,89 +1731,147 @@ export default function AdminPage() {
 
             {/* Log table */}
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[var(--border)]">
-                    {["Zaman", "Kullanıcı", "Aksiyon", "Detay"].map((h) => (
-                      <th
-                        key={h}
-                        className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {loadingLogs ? (
-                    <tr>
-                      <td colSpan={4} className="py-16 text-center">
-                        <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
-                      </td>
-                    </tr>
-                  ) : logs.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">
-                        Henüz aktivite kaydı yok
-                      </td>
-                    </tr>
-                  ) : (
-                    logs.map((log) => {
-                      const meta = ACTION_META[log.action] ?? {
-                        label: log.action,
-                        color: "#555",
-                        icon: "·",
-                      };
+              {/* ── Mobile kart listesi (md altı) ── */}
+              <div className="md:hidden">
+                {loadingLogs ? (
+                  <div className="flex justify-center py-12">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                  </div>
+                ) : logs.length === 0 ? (
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
+                ) : (
+                  <div className="divide-y divide-[var(--border)]">
+                    {logs.map((log) => {
+                      const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
                       const data = log.metadata as Record<string, string> | null;
                       return (
-                        <tr
-                          key={log.id}
-                          className="border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
-                        >
-                          <td className="whitespace-nowrap px-4 py-3 text-[11px] text-[var(--text-muted)]">
-                            {fmtTime(log.createdAt)}
-                          </td>
-                          <td className="px-4 py-3">
-                            {log.user ? (
-                              <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
+                        <div key={log.id} className="flex items-start gap-3 p-4">
+                          <span
+                            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border text-xs"
+                            style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}
+                          >
+                            {meta.icon}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+                              <span
+                                className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
+                                style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}
+                              >
+                                {meta.label}
+                              </span>
+                              <span className="text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</span>
+                            </div>
+                            {log.user && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#c9a84c]">
                                   {log.user.name.charAt(0).toUpperCase()}
                                 </div>
-                                <div>
-                                  <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
-                                  {log.user.username && (
-                                    <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>
-                                  )}
-                                </div>
+                                <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
+                                {log.user.username && (
+                                  <span className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</span>
+                                )}
                               </div>
-                            ) : (
-                              <span className="text-xs text-[var(--text-muted)]">—</span>
                             )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span
-                              className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
-                              style={{
-                                borderColor: `${meta.color}25`,
-                                background: `${meta.color}0c`,
-                                color: meta.color,
-                              }}
-                            >
-                              <span className="text-xs leading-none">{meta.icon}</span>
-                              {meta.label}
-                            </span>
-                          </td>
-                          <td className="max-w-[200px] truncate px-4 py-3 text-[12px] text-[var(--text-muted)]">
-                            {data?.title ??
-                              data?.name ??
-                              (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}
-                          </td>
-                        </tr>
+                            {(data?.title ?? data?.name ?? data?.targetUsername) && (
+                              <p className="mt-1 truncate text-[11px] text-[var(--text-muted)]">
+                                {data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : null)}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       );
-                    })
-                  )}
-                </tbody>
-              </table>
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Desktop tablo (md ve üzeri) ── */}
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--border)]">
+                      {["Zaman", "Kullanıcı", "Aksiyon", "Detay"].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingLogs ? (
+                      <tr>
+                        <td colSpan={4} className="py-16 text-center">
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                        </td>
+                      </tr>
+                    ) : logs.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">
+                          Henüz aktivite kaydı yok
+                        </td>
+                      </tr>
+                    ) : (
+                      logs.map((log) => {
+                        const meta = ACTION_META[log.action] ?? {
+                          label: log.action,
+                          color: "#555",
+                          icon: "·",
+                        };
+                        const data = log.metadata as Record<string, string> | null;
+                        return (
+                          <tr
+                            key={log.id}
+                            className="border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
+                          >
+                            <td className="whitespace-nowrap px-4 py-3 text-[11px] text-[var(--text-muted)]">
+                              {fmtTime(log.createdAt)}
+                            </td>
+                            <td className="px-4 py-3">
+                              {log.user ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
+                                    {log.user.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
+                                    {log.user.username && (
+                                      <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-[var(--text-muted)]">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span
+                                className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
+                                style={{
+                                  borderColor: `${meta.color}25`,
+                                  background: `${meta.color}0c`,
+                                  color: meta.color,
+                                }}
+                              >
+                                <span className="text-xs leading-none">{meta.icon}</span>
+                                {meta.label}
+                              </span>
+                            </td>
+                            <td className="max-w-[200px] truncate px-4 py-3 text-[12px] text-[var(--text-muted)]">
+                              {data?.title ??
+                                data?.name ??
+                                (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
               {logsTotalPages > 1 && (
                 <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">

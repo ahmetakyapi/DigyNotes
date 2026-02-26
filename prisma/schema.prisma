@@ -25,6 +25,8 @@ model User {
   followers     Follow[]      @relation("Following")
   following     Follow[]      @relation("Follower")
   activityLogs  ActivityLog[]
+  comments      Comment[]
+  likedPosts    PostLike[]
 
   @@map("users")
 }
@@ -67,6 +69,8 @@ model Post {
   userId        String?
   user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags          PostTag[]
+  comments      Comment[]
+  likes         PostLike[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -89,6 +93,30 @@ model PostTag {
 
   @@id([postId, tagId])
   @@map("post_tags")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+model PostLike {
+  postId    String
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([postId, userId])
+  @@map("post_likes")
 }
 
 model ActivityLog {

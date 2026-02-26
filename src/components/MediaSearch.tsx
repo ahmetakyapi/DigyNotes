@@ -45,6 +45,8 @@ type SearchTab = "film" | "dizi" | "kitap" | "oyun";
 interface MediaSearchProps {
   category: string;
   onSelect: (result: MediaResult) => void;
+  /** Tab'ı kilitle ve tab bar'ı gizle */
+  lockedTab?: SearchTab;
 }
 
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
@@ -199,8 +201,8 @@ async function searchMedia(
   }));
 }
 
-export function MediaSearch({ category, onSelect }: MediaSearchProps) {
-  const [activeTab, setActiveTab] = useState<SearchTab>(() => getInitialTab(category));
+export function MediaSearch({ category, onSelect, lockedTab }: MediaSearchProps) {
+  const [activeTab, setActiveTab] = useState<SearchTab>(() => lockedTab ?? getInitialTab(category));
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<
     (MediaResult & { _tmdbId?: number; _mediaType?: "movie" | "tv"; _rawgId?: number })[]
@@ -222,6 +224,14 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
     setHighlighted(-1);
     setTimeout(() => inputRef.current?.focus(), 50);
   };
+
+  // lockedTab değişince tab'i güncelle (kategori değişince)
+  useEffect(() => {
+    if (lockedTab) {
+      handleTabChange(lockedTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lockedTab]);
 
   useEffect(() => {
     if (!query.trim() || query.length < 2) {
@@ -314,23 +324,25 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
 
   return (
     <div ref={containerRef}>
-      {/* Tab bar */}
-      <div className="mb-3 flex items-center gap-1">
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => handleTabChange(tab.key)}
-            className={`rounded-md px-3 py-2.5 text-[13px] font-semibold transition-colors ${
-              activeTab === tab.key
-                ? "bg-[#c9a84c] text-[#0c0c0c]"
-                : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Tab bar — lockedTab varsa gizle */}
+      {!lockedTab && (
+        <div className="mb-3 flex items-center gap-1">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => handleTabChange(tab.key)}
+              className={`rounded-md px-3 py-2.5 text-[13px] font-semibold transition-colors ${
+                activeTab === tab.key
+                  ? "bg-[#c9a84c] text-[#0c0c0c]"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Search input */}
       <div className="relative">
