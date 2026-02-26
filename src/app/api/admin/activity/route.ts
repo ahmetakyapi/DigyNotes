@@ -13,6 +13,76 @@ async function requireAdmin() {
   return user?.isAdmin ? (session.user as { id: string }).id : null;
 }
 
+type RangeKey = "24h" | "7d" | "30d" | "90d" | "365d";
+const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
+
+function getRangeStart(range: RangeKey): Date {
+  const now = new Date();
+  const ms: Record<RangeKey, number> = {
+    "24h":  24 * 60 * 60 * 1000,
+    "7d":   7  * 24 * 60 * 60 * 1000,
+    "30d":  30 * 24 * 60 * 60 * 1000,
+    "90d":  90 * 24 * 60 * 60 * 1000,
+    "365d": 365 * 24 * 60 * 60 * 1000,
+  };
+  return new Date(now.getTime() - ms[range]);
+}
+
+function buildBuckets(range: RangeKey, logs: { createdAt: Date }[]) {
+  const now = new Date();
+  const buckets: { label: string; key: string; count: number }[] = [];
+
+  if (range === "24h") {
+    for (let i = 23; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+      d.setMinutes(0, 0, 0);
+      buckets.push({ key: d.toISOString(), label: `${String(d.getHours()).padStart(2, "0")}:00`, count: 0 });
+    }
+    logs.forEach((log) => {
+      const h = new Date(log.createdAt);
+      h.setMinutes(0, 0, 0);
+      const b = buckets.find((x) => x.key === h.toISOString());
+      if (b) b.count++;
+    });
+  } else if (range === "7d" || range === "30d" || range === "90d") {
+    const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      buckets.push({
+        key: d.toISOString(),
+        label: d.toLocaleDateString("tr-TR", { day: "numeric", month: "short" }),
+        count: 0,
+      });
+    }
+    logs.forEach((log) => {
+      const d = new Date(log.createdAt);
+      d.setHours(0, 0, 0, 0);
+      const b = buckets.find((x) => x.key === d.toISOString());
+      if (b) b.count++;
+    });
+  } else {
+    // 365d → monthly
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      buckets.push({
+        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+        label: d.toLocaleDateString("tr-TR", { month: "short", year: "2-digit" }),
+        count: 0,
+      });
+    }
+    logs.forEach((log) => {
+      const d = new Date(log.createdAt);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const b = buckets.find((x) => x.key === key);
+      if (b) b.count++;
+    });
+  }
+
+  return buckets;
+}
+
 export async function GET(request: NextRequest) {
   const adminId = await requireAdmin();
   if (!adminId) {
@@ -22,15 +92,15 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const action = searchParams.get("action") || "";
+  const rawRange = searchParams.get("range") || "24h";
+  const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey) ? (rawRange as RangeKey) : "24h";
   const limit = 50;
   const skip = (page - 1) * limit;
 
-  const now = new Date();
-  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
+  const rangeStart = getRangeStart(range);
   const where = action ? { action } : {};
 
-  const [logs, total, hourlyData] = await Promise.all([
+  const [logs, total, chartLogs] = await Promise.all([
     prisma.activityLog.findMany({
       where,
       include: {
@@ -41,39 +111,19 @@ export async function GET(request: NextRequest) {
       take: limit,
     }),
     prisma.activityLog.count({ where }),
-    // Hourly activity for last 24 hours
     prisma.activityLog.findMany({
-      where: { createdAt: { gte: twentyFourHoursAgo } },
+      where: { createdAt: { gte: rangeStart } },
       select: { createdAt: true, action: true },
       orderBy: { createdAt: "asc" },
     }),
   ]);
-
-  // Build hourly buckets for last 24 hours
-  const hours: { hour: string; label: string; count: number }[] = [];
-  for (let i = 23; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 60 * 60 * 1000);
-    d.setMinutes(0, 0, 0);
-    hours.push({
-      hour: d.toISOString(),
-      label: `${String(d.getHours()).padStart(2, "0")}:00`,
-      count: 0,
-    });
-  }
-
-  hourlyData.forEach((log) => {
-    const logHour = new Date(log.createdAt);
-    logHour.setMinutes(0, 0, 0);
-    const key = logHour.toISOString();
-    const bucket = hours.find((h) => h.hour === key);
-    if (bucket) bucket.count++;
-  });
 
   return NextResponse.json({
     logs,
     total,
     page,
     totalPages: Math.ceil(total / limit),
-    hourlyData: hours,
+    chartData: buildBuckets(range, chartLogs),
+    range,
   });
 }

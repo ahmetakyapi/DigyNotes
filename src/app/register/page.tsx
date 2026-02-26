@@ -69,7 +69,7 @@ export default function RegisterPage() {
     password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a0a] px-4 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)] px-4 py-12">
       <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -101,16 +101,16 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        <div className="rounded-2xl border border-[#1e1e1e] bg-[#111111] p-8 shadow-2xl shadow-black/60">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-8">
           <div className="mb-8">
-            <h1 className="mb-1 text-2xl font-bold text-[#f0ede8]">Hesap Oluştur</h1>
-            <p className="text-sm text-[#555]">Notlarını kaydetmeye hemen başla.</p>
+            <h1 className="mb-1 text-2xl font-bold text-[var(--text-primary)]">Hesap Oluştur</h1>
+            <p className="text-sm text-[var(--text-muted)]">Notlarını kaydetmeye hemen başla.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Ad Soyad
               </label>
               <input
@@ -120,17 +120,17 @@ export default function RegisterPage() {
                 required
                 autoComplete="name"
                 placeholder="Adın Soyadın"
-                className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] px-4 py-3 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
               />
             </div>
 
             {/* Username */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Kullanıcı Adı
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#444]">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--text-muted)]">
                   @
                 </span>
                 <input
@@ -144,17 +144,17 @@ export default function RegisterPage() {
                   placeholder="kullanici_adin"
                   minLength={3}
                   maxLength={30}
-                  className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] py-3 pl-8 pr-4 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
                 />
               </div>
-              <p className="mt-1 text-[11px] text-[#444]">
+              <p className="mt-1 text-[11px] text-[var(--text-muted)]">
                 Harf, rakam ve _ kullanabilirsin. Sonradan değiştirilebilir.
               </p>
             </div>
 
             {/* Email */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 E-posta
               </label>
               <input
@@ -164,13 +164,13 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] px-4 py-3 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Şifre
               </label>
               <div className="relative">
@@ -181,12 +181,12 @@ export default function RegisterPage() {
                   required
                   autoComplete="new-password"
                   placeholder="En az 6 karakter"
-                  className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] px-4 py-3 pr-12 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#444] transition-colors hover:text-[#888]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
                   tabIndex={-1}
                 >
                   {showPw ? (
@@ -235,11 +235,11 @@ export default function RegisterPage() {
                             : s === 2
                               ? "bg-[#f6ad55]"
                               : "bg-[#48bb78]"
-                          : "bg-[#1e1e1e]"
+                          : "bg-[var(--border)]"
                       }`}
                     />
                   ))}
-                  <span className="ml-1 text-[10px] text-[#444]">
+                  <span className="ml-1 text-[10px] text-[var(--text-muted)]">
                     {strength === 1 ? "Zayıf" : strength === 2 ? "Orta" : "Güçlü"}
                   </span>
                 </div>
@@ -248,7 +248,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Şifre (Tekrar)
               </label>
               <input
@@ -258,10 +258,10 @@ export default function RegisterPage() {
                 required
                 autoComplete="new-password"
                 placeholder="Şifreyi tekrar girin"
-                className={`w-full rounded-xl border bg-[#0d0d0d] px-4 py-3 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:ring-1 focus:ring-[#c9a84c]/10 ${
+                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:ring-1 focus:ring-[#c9a84c]/10 ${
                   confirmPw && confirmPw !== password
                     ? "border-[#e53e3e]/50 focus:border-[#e53e3e]/70"
-                    : "border-[#222] focus:border-[#c9a84c]/50"
+                    : "border-[var(--border)] focus:border-[#c9a84c]/50"
                 }`}
               />
               {confirmPw && confirmPw !== password && (
@@ -292,7 +292,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full rounded-xl bg-[#c9a84c] py-3.5 text-sm font-semibold text-[#0a0a0a] shadow-lg shadow-[#c9a84c]/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e0c068] hover:shadow-[#c9a84c]/35 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 w-full rounded-xl bg-[#c9a84c] py-3.5 text-sm font-semibold text-[#0c0c0c] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e0c068] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -316,13 +316,13 @@ export default function RegisterPage() {
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-[#1e1e1e]" />
-            <span className="text-xs text-[#333]">veya</span>
-            <div className="h-px flex-1 bg-[#1e1e1e]" />
+            <div className="h-px flex-1 bg-[var(--border)]" />
+            <span className="text-xs text-[var(--text-muted)]">veya</span>
+            <div className="h-px flex-1 bg-[var(--border)]" />
           </div>
 
           {/* Login link */}
-          <p className="text-center text-sm text-[#444]">
+          <p className="text-center text-sm text-[var(--text-secondary)]">
             Zaten hesabın var mı?{" "}
             <Link
               href="/login"
@@ -335,7 +335,7 @@ export default function RegisterPage() {
 
         {/* Back link */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-xs text-[#333] transition-colors hover:text-[#555]">
+          <Link href="/" className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]">
             ← Ana sayfaya dön
           </Link>
         </div>

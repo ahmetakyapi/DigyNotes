@@ -3,6 +3,8 @@ import "./globals.css";
 import { Metadata, Viewport } from "next";
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ConditionalAppShell from "@/components/ConditionalAppShell";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { MaintenanceGuard } from "@/components/MaintenanceGuard";
 
 export const viewport: Viewport = {
   themeColor: "#0f1117",
@@ -76,10 +78,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} min-h-screen bg-[#0c0e16] text-[#e8eaf6]`}>
-        <SessionProviderWrapper>
-          <ConditionalAppShell>{children}</ConditionalAppShell>
-        </SessionProviderWrapper>
+      <head>
+        {/* Prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('dn_theme');if(t==='light'){document.documentElement.classList.add('light')}}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body className={`${inter.className} min-h-screen`}>
+        <MaintenanceGuard>
+          <ThemeProvider>
+            <SessionProviderWrapper>
+              <ConditionalAppShell>{children}</ConditionalAppShell>
+            </SessionProviderWrapper>
+          </ThemeProvider>
+        </MaintenanceGuard>
       </body>
     </html>
   );

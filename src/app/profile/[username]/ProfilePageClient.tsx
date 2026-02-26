@@ -62,20 +62,20 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0e16] py-10">
+      <div className="min-h-screen py-10">
         <div className="mx-auto max-w-4xl space-y-6 px-4">
           <div className="flex items-center gap-4">
-            <div className="h-20 w-20 animate-pulse rounded-full bg-[#0d0f1a]" />
+            <div className="h-20 w-20 animate-pulse rounded-full bg-[var(--bg-card)]" />
             <div className="space-y-2">
-              <div className="h-5 w-40 animate-pulse rounded bg-[#0d0f1a]" />
-              <div className="h-3 w-24 animate-pulse rounded bg-[#0d0f1a]" />
+              <div className="h-5 w-40 animate-pulse rounded bg-[var(--bg-card)]" />
+              <div className="h-3 w-24 animate-pulse rounded bg-[var(--bg-card)]" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-40 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]"
+                className="h-40 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
               />
             ))}
           </div>
@@ -86,11 +86,11 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
   if (notFound || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0c0e16]">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
             <svg
-              className="h-7 w-7 text-[#555555]"
+              className="h-7 w-7 text-[var(--text-muted)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -103,8 +103,8 @@ export default function ProfilePageClient({ username }: { username: string }) {
               />
             </svg>
           </div>
-          <p className="mb-1 font-medium text-[#888888]">Profil bulunamadı</p>
-          <p className="mb-4 text-xs text-[#555555]">
+          <p className="mb-1 font-medium text-[var(--text-secondary)]">Profil bulunamadı</p>
+          <p className="mb-4 text-xs text-[var(--text-muted)]">
             @{username} adlı profil mevcut değil veya gizli.
           </p>
           <Link href="/discover" className="text-xs text-[#c9a84c] hover:underline">
@@ -116,13 +116,13 @@ export default function ProfilePageClient({ username }: { username: string }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0e16]">
+    <main className="min-h-screen">
       {/* Profile Header */}
-      <div className="border-b border-[#1a1e2e] bg-[#0c0e16]">
+      <div className="border-b border-[var(--border)] bg-[var(--bg-header)]">
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
             {/* Avatar */}
-            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+            <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
               {user.avatarUrl ? (
                 <Image
                   loader={customLoader}
@@ -144,8 +144,8 @@ export default function ProfilePageClient({ username }: { username: string }) {
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h1 className="text-2xl font-bold text-[#f0ede8]">{user.name}</h1>
-                  <p className="mb-2 text-sm text-[#555555]">@{user.username}</p>
+                  <h1 className="text-2xl font-bold text-[var(--text-primary)]">{user.name}</h1>
+                  <p className="mb-2 text-sm text-[var(--text-muted)]">@{user.username}</p>
                 </div>
                 {/* Follow button — sadece başka kullanıcıysa ve giriş yapılmışsa */}
                 {currentUser?.id && currentUser.id !== user.id && (
@@ -159,35 +159,35 @@ export default function ProfilePageClient({ username }: { username: string }) {
                 )}
               </div>
               {user.bio && (
-                <p className="max-w-lg text-sm leading-relaxed text-[#888888]">{user.bio}</p>
+                <p className="max-w-lg text-sm leading-relaxed text-[var(--text-secondary)]">{user.bio}</p>
               )}
 
               {/* Stats */}
               <div className="mt-4 flex items-center gap-5">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-[#f0ede8]">{user.postCount}</p>
-                  <p className="text-xs text-[#555555]">Not</p>
+                  <p className="text-lg font-bold text-[var(--text-primary)]">{user.postCount}</p>
+                  <p className="text-xs text-[var(--text-muted)]">Not</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setFollowModal("followers")}
                   className="text-center transition-opacity hover:opacity-70"
                 >
-                  <p className="text-lg font-bold text-[#f0ede8]">{followerCount}</p>
-                  <p className="text-xs text-[#555555]">Takipçi</p>
+                  <p className="text-lg font-bold text-[var(--text-primary)]">{followerCount}</p>
+                  <p className="text-xs text-[var(--text-muted)]">Takipçi</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setFollowModal("following")}
                   className="text-center transition-opacity hover:opacity-70"
                 >
-                  <p className="text-lg font-bold text-[#f0ede8]">{user.followingCount}</p>
-                  <p className="text-xs text-[#555555]">Takip</p>
+                  <p className="text-lg font-bold text-[var(--text-primary)]">{user.followingCount}</p>
+                  <p className="text-xs text-[var(--text-muted)]">Takip</p>
                 </button>
                 {user.avgRating > 0 && (
                   <div className="text-center">
                     <p className="text-lg font-bold text-[#c9a84c]">★ {user.avgRating}</p>
-                    <p className="text-xs text-[#555555]">Ort. Puan</p>
+                    <p className="text-xs text-[var(--text-muted)]">Ort. Puan</p>
                   </div>
                 )}
               </div>
@@ -209,13 +209,13 @@ export default function ProfilePageClient({ username }: { username: string }) {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {posts.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-sm text-[#555555]">Henüz not yok.</p>
+            <p className="text-sm text-[var(--text-muted)]">Henüz not yok.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {posts.map((post) => (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
+                <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c9a84c]/30">
                   {/* Cover */}
                   <div
                     className="relative flex-shrink-0"
@@ -230,7 +230,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       unoptimized
                     />
-                    <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0d0f1a] to-transparent" />
+                    <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-card)] to-transparent" />
                   </div>
 
                   {/* Content */}
@@ -242,11 +242,11 @@ export default function ProfilePageClient({ username }: { username: string }) {
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
                       </div>
-                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[#e8eaf6] transition-colors duration-200 group-hover:text-[#c9a84c]">
+                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c9a84c]">
                         {post.title}
                       </h2>
                       {post.creator && (
-                        <p className="mb-1.5 text-xs text-[#555555]">{post.creator}</p>
+                        <p className="mb-1.5 text-xs text-[var(--text-muted)]">{post.creator}</p>
                       )}
                       {post.tags && post.tags.length > 0 && (
                         <div className="mb-1.5 flex flex-wrap gap-1">
@@ -254,16 +254,16 @@ export default function ProfilePageClient({ username }: { username: string }) {
                             <TagBadge key={tag.id} tag={tag} />
                           ))}
                           {post.tags.length > 2 && (
-                            <span className="self-center text-[10px] text-[#555555]">
+                            <span className="self-center text-[10px] text-[var(--text-muted)]">
                               +{post.tags.length - 2}
                             </span>
                           )}
                         </div>
                       )}
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-[#1a1e2e] pt-2.5">
+                    <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
                       <StarRating rating={post.rating} size={11} />
-                      <span className="text-[10px] text-[#444]">{post.date}</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
                     </div>
                   </div>
                 </article>

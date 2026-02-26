@@ -41,19 +41,20 @@ export default async function NotesPage() {
   if (posts.length === 0) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
           <svg
             width="28"
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#4a5568"
+            stroke="currentColor"
             strokeWidth="1.5"
+            className="text-[var(--text-muted)]"
           >
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
           </svg>
         </div>
-        <p className="mb-4 text-base text-[#4a5568]">Henüz not eklenmemiş.</p>
+        <p className="mb-4 text-base text-[var(--text-muted)]">Henüz not eklenmemiş.</p>
         <Link
           href="/new-post"
           className="rounded-lg bg-[#c9a84c] px-5 py-2.5 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068]"

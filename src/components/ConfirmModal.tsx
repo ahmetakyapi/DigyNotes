@@ -19,13 +19,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-sm rounded-xl border border-[#252d40] bg-[#151b2d] p-6 shadow-2xl">
-        <h3 className="mb-2 text-base font-bold text-[#e8eaf6]">{title}</h3>
-        <p className="mb-6 text-sm leading-relaxed text-[#8892b0]">{message}</p>
+      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
+        <h3 className="mb-2 text-base font-bold text-[var(--text-primary)]">{title}</h3>
+        <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">{message}</p>
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="rounded-lg px-4 py-3 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
+            className="rounded-lg px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
             Vazgeç
           </button>

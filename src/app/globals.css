@@ -6,8 +6,10 @@
   --bg-base: #0f1117;
   --bg-card: #151b2d;
   --bg-raised: #1e2639;
+  --bg-header: #0c0e16;
   --border: #252d40;
   --border-subtle: #1c2333;
+  --border-header: #1a1e2e;
   --gold: #c9a84c;
   --gold-light: #e0c068;
   --text-primary: #e8eaf6;
@@ -16,9 +18,26 @@
   --danger: #e53e3e;
 }
 
+html.light {
+  --bg-base: #faf9f7;
+  --bg-card: #f0ede8;
+  --bg-raised: #e8e4de;
+  --bg-header: #f5f3ef;
+  --border: #d4cfc8;
+  --border-subtle: #ddd9d3;
+  --border-header: #d4cfc8;
+  --gold: #c9a84c;
+  --gold-light: #e0c068;
+  --text-primary: #1c1a18;
+  --text-secondary: #5a5550;
+  --text-muted: #9a9590;
+  --danger: #dc2626;
+}
+
 html {
   background-color: var(--bg-base);
   color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -27,6 +46,7 @@ body {
   font-family: Inter, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Landing motion */
@@ -345,8 +365,12 @@ body {
   color: #e8eaf6;
 }
 
-/* ─── Dark Form Select ─── */
+/* ─── Form Select ─── */
 select option {
-  background-color: #1e2639;
-  color: #e8eaf6;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+html.light select option {
+  background-color: #f0ede8;
+  color: #1c1a18;
 }
