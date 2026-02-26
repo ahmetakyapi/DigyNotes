@@ -3,6 +3,12 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
+  // Check if registration is enabled
+  const regSetting = await prisma.siteSettings.findUnique({ where: { key: "registrationEnabled" } });
+  if (regSetting && regSetting.value === "false") {
+    return NextResponse.json({ error: "Yeni kayıt şu anda kapalıdır." }, { status: 403 });
+  }
+
   const { name, email, password, username } = await request.json();
 
   if (!name?.trim() || !email?.trim() || !password || !username?.trim()) {

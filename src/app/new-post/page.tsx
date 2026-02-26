@@ -15,8 +15,8 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
 const inputBase =
-  "w-full px-3.5 py-2.5 rounded-lg text-[#e8eaf6] placeholder-[#3a4060] bg-[#080b14] border border-[#1e2235] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#50608a] mb-1.5";
+  "w-full px-3.5 py-2.5 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-raised)] border border-[var(--border)] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
+const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-1.5";
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-[#c9a84c]/60 border-[#c9a84c]" : "";
@@ -156,14 +156,14 @@ export default function NewPostPage() {
   const statusOptions = getStatusOptions(category);
 
   return (
-    <main className="min-h-screen bg-[#0c0e16] pb-24">
+    <main className="min-h-screen pb-24">
       <div className="mx-auto max-w-3xl space-y-3 px-4 py-5 sm:px-6 sm:py-7">
         {/* ── Page title ── */}
         <div className="flex items-center gap-3 pb-1">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           >
             <svg
               width="16"
@@ -177,7 +177,7 @@ export default function NewPostPage() {
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
           </button>
-          <h1 className="text-lg font-bold text-[#e8eaf6]">Yeni Not</h1>
+          <h1 className="text-lg font-bold text-[var(--text-primary)]">Yeni Not</h1>
           {autofillDone && (
             <span className="inline-flex items-center gap-1 rounded-full border border-[#c9a84c]/30 bg-[#c9a84c]/10 px-2 py-0.5 text-[10px] font-semibold text-[#c9a84c]">
               <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20">
@@ -189,11 +189,11 @@ export default function NewPostPage() {
         </div>
 
         {/* ── 1. İçerik Ara ── */}
-        <div className="overflow-visible rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]">
+        <div className="overflow-visible rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
           <button
             type="button"
             onClick={() => setIsSearchOpen((v) => !v)}
-            className="flex w-full items-center justify-between px-4 py-3.5 transition-colors hover:bg-[#10121e]"
+            className="flex w-full items-center justify-between px-4 py-3.5 transition-colors hover:bg-[var(--bg-raised)]"
           >
             <div className="flex items-center gap-2.5">
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#c9a84c]/15">
@@ -212,10 +212,10 @@ export default function NewPostPage() {
                 </svg>
               </div>
               <span className="text-sm font-semibold text-[#c9a84c]">İçerik Ara</span>
-              <span className="text-[10px] text-[#2a3050]">— bilgileri otomatik doldur</span>
+              <span className="text-[10px] text-[var(--text-muted)]">— bilgileri otomatik doldur</span>
             </div>
             <svg
-              className={`h-4 w-4 text-[#2a3050] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
+              className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -229,21 +229,21 @@ export default function NewPostPage() {
             </svg>
           </button>
           {isSearchOpen && (
-            <div className="border-t border-[#1a1e2e] px-4 pb-5 pt-4">
+            <div className="border-t border-[var(--border)] px-4 pb-5 pt-4">
               <MediaSearch category={category} onSelect={handleMediaSelect} />
             </div>
           )}
         </div>
 
         {/* ── 2. Kapak + Başlık + Kategori ── */}
-        <div className="rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
           <div className="flex gap-4">
             {/* Poster thumbnail */}
             <div
-              className={`relative flex-shrink-0 overflow-hidden rounded-lg bg-[#080b14] transition-all duration-300 ${
+              className={`relative flex-shrink-0 overflow-hidden rounded-lg bg-[var(--bg-raised)] transition-all duration-300 ${
                 image
-                  ? "h-36 w-24 border border-[#1e2540] sm:h-44 sm:w-28"
-                  : "h-20 w-14 border border-dashed border-[#1e2540]"
+                  ? "h-36 w-24 border border-[var(--border)] sm:h-44 sm:w-28"
+                  : "h-20 w-14 border border-dashed border-[var(--border)]"
               }`}
             >
               {image ? (
@@ -265,13 +265,13 @@ export default function NewPostPage() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
-                    className="text-[#2a3050]"
+                    className="text-[var(--text-muted)]"
                   >
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <circle cx="8.5" cy="8.5" r="1.5" />
                     <path d="M21 15l-5-5L5 21" />
                   </svg>
-                  <span className="text-[9px] text-[#2a3050]">Görsel</span>
+                  <span className="text-[9px] text-[var(--text-muted)]">Görsel</span>
                 </div>
               )}
               {isLandscape && (
@@ -304,7 +304,7 @@ export default function NewPostPage() {
                       className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition-all duration-150 ${
                         category === cat
                           ? "bg-[#c9a84c] text-[#0c0c0c] shadow-[0_2px_8px_rgba(201,168,76,0.25)]"
-                          : "border border-[#1e2540] bg-[#080b14] text-[#6070a0] hover:border-[#2a3a60] hover:text-[#c0c8e8]"
+                          : "border border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c9a84c]/30 hover:text-[var(--text-primary)]"
                       } ${flashFields.has("category") && cat === category ? "ring-2 ring-[#c9a84c]/60" : ""}`}
                     >
                       {cat}
@@ -329,7 +329,7 @@ export default function NewPostPage() {
         </div>
 
         {/* ── 3. Yaratıcı + Yıl + Durum ── */}
-        <div className="rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
           <div className="mb-4 grid grid-cols-2 gap-3">
             <div>
               <label className={labelClass}>
@@ -363,14 +363,12 @@ export default function NewPostPage() {
             <div className="flex flex-wrap gap-2">
               {statusOptions.map((s) => {
                 const isCompleted = ["İzlendi", "Okundu", "Tamamlandı", "Gidildi"].includes(s);
-                const isOngoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"].includes(
-                  s
-                );
+                const isOngoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"].includes(s);
                 const activeStyle = isCompleted
                   ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
                   : isOngoing
                     ? "bg-[#c9a84c]/15 border-[#c9a84c]/40 text-[#c9a84c]"
-                    : "bg-[#6070a0]/15 border-[#6070a0]/40 text-[#8892b0]";
+                    : "bg-[var(--text-secondary)]/15 border-[var(--text-secondary)]/40 text-[var(--text-secondary)]";
                 return (
                   <button
                     key={s}
@@ -379,7 +377,7 @@ export default function NewPostPage() {
                     className={`rounded-lg border px-4 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
                       status === s
                         ? activeStyle
-                        : "border-[#1e2540] bg-[#080b14] text-[#6070a0] hover:border-[#2a3a60] hover:text-[#c0c8e8]"
+                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c9a84c]/30 hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {s}
@@ -391,22 +389,22 @@ export default function NewPostPage() {
         </div>
 
         {/* ── 4. Puan ── */}
-        <div className="flex items-center gap-4 rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] px-4 py-4">
+        <div className="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4">
           <div className="flex flex-1 flex-col gap-1.5">
             <label className={labelClass}>Puan</label>
             <StarRating rating={rating} interactive onRate={setRating} size={30} />
           </div>
           <div className="flex items-end gap-1">
-            <span className="text-3xl font-bold leading-none text-[#f0ede8]">
+            <span className="text-3xl font-bold leading-none text-[var(--text-primary)]">
               {rating > 0 ? rating.toFixed(1) : "—"}
             </span>
-            {rating > 0 && <span className="mb-0.5 text-xs text-[#555]">/ 5</span>}
+            {rating > 0 && <span className="mb-0.5 text-xs text-[var(--text-muted)]">/ 5</span>}
           </div>
           {rating > 0 && (
             <button
               type="button"
               onClick={() => setRating(0)}
-              className="flex-shrink-0 text-[11px] text-[#3a3a5a] transition-colors hover:text-[#e53e3e]"
+              className="flex-shrink-0 text-[11px] text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
             >
               Sıfırla
             </button>
@@ -414,13 +412,13 @@ export default function NewPostPage() {
         </div>
 
         {/* ── 5. Etiketler ── */}
-        <div className="rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] px-4 py-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4">
           <label className={labelClass}>Etiketler</label>
           <TagInput value={tags} onChange={setTags} />
         </div>
 
         {/* ── 6. Not Editörü ── */}
-        <div className="rounded-xl border border-[#c9a84c]/25 bg-[#0d0f1a] p-4 shadow-[0_0_40px_rgba(201,168,76,0.05)]">
+        <div className="rounded-xl border border-[#c9a84c]/25 bg-[var(--bg-card)] p-4">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-[#c9a84c]/15">
               <svg className="h-3 w-3 text-[#c9a84c]" fill="currentColor" viewBox="0 0 20 20">
@@ -429,26 +427,26 @@ export default function NewPostPage() {
             </div>
             <span className={labelClass + " mb-0"}>Notunuz</span>
           </div>
-          <div className="overflow-hidden rounded-lg border border-[#1e2540]">
+          <div className="overflow-hidden rounded-lg border border-[var(--border)]">
             <ReactQuill theme="snow" value={content} onChange={setContent} />
           </div>
         </div>
       </div>
 
       {/* ── Sticky Save Bar ── */}
-      <div className="bg-[#0c0e16]/96 fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] backdrop-blur-xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="min-w-0">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-[#2a3050]">Kaydet</p>
-            <p className="max-w-[180px] truncate text-sm text-[#6272a4] sm:max-w-xs">
-              {title || <span className="italic text-[#2a3050]">Başlık girilmedi</span>}
+            <p className="text-[9px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Kaydet</p>
+            <p className="max-w-[180px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
+              {title || <span className="italic text-[var(--text-muted)]">Başlık girilmedi</span>}
             </p>
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             >
               İptal
             </button>
@@ -456,7 +454,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-bold text-[#0c0e16] shadow-[0_4px_20px_rgba(201,168,76,0.35)] transition-all hover:bg-[#e0c068] hover:shadow-[0_4px_28px_rgba(201,168,76,0.5)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-bold text-[#0c0e16] transition-all hover:bg-[#e0c068] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting && (
                 <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -475,9 +473,8 @@ export default function NewPostPage() {
             </button>
           </div>
         </div>
-        {/* Mobile tab bar spacer */}
         <div
-          className="h-safe-bottom sm:hidden"
+          className="sm:hidden"
           style={{ height: "env(safe-area-inset-bottom, 0px)" }}
         />
       </div>

@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
         username: true,
         avatarUrl: true,
         isAdmin: true,
+        isBanned: true,
         isPublic: true,
         createdAt: true,
         _count: { select: { posts: true, followers: true, following: true } },

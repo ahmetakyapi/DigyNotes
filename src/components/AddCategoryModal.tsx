@@ -47,14 +47,14 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-sm rounded-xl border border-[#252d40] bg-[#151b2d] p-6 shadow-2xl">
-        <h2 className="mb-5 text-base font-bold text-[#e8eaf6]">Yeni Kategori</h2>
+      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
+        <h2 className="mb-5 text-base font-bold text-[var(--text-primary)]">Yeni Kategori</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mb-4 w-full rounded-lg border border-[#252d40] bg-[#0f1117] px-4 py-3 text-sm text-[#e8eaf6] placeholder-[#4a5568] transition-colors focus:border-[#c9a84c] focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/20"
+            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c] focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/20"
             placeholder="Kategori adı (örn: Film, Kitap…)"
             autoFocus
             required
@@ -63,14 +63,14 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-3 text-sm text-[#8892b0] transition-colors hover:text-[#e8eaf6]"
+              className="rounded-lg px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-md bg-[#c9a84c] px-5 py-3 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
+              className="rounded-md bg-[#c9a84c] px-5 py-3 text-sm font-semibold text-[#0c0c0c] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}
             </button>

@@ -16,9 +16,9 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[#e8eaf6] placeholder-[#4a5568] bg-[#0d0f1a] border border-[#1e2235] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#6272a4] mb-2";
-const sectionClass = "rounded-xl bg-[#0d0f1a] border border-[#1a1e2e] p-5";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
+const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
+const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-[#c9a84c]/60 border-[#c9a84c]" : "";
@@ -191,13 +191,13 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0e16] py-8">
+      <div className="min-h-screen py-8">
         <div className="mx-auto max-w-3xl space-y-4 px-4 sm:px-6">
-          <div className="mb-8 h-8 w-48 animate-pulse rounded-lg bg-[#1a1e2e]" />
+          <div className="mb-8 h-8 w-48 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
-              <div className="h-3 w-24 animate-pulse rounded bg-[#1a1e2e]" />
-              <div className="h-10 animate-pulse rounded-lg bg-[#1a1e2e]" />
+            <div key={i} className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+              <div className="h-3 w-24 animate-pulse rounded bg-[var(--bg-raised)]" />
+              <div className="h-10 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
             </div>
           ))}
         </div>
@@ -206,14 +206,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0e16] py-8 pb-28">
+    <main className="min-h-screen py-8 pb-28">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         {/* Page header */}
-        <div className="mb-8 border-b border-[#1a1e2e] pb-5">
+        <div className="mb-8 border-b border-[var(--border)] pb-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-[#e8eaf6]">Yazıyı Düzenle</h1>
+                <h1 className="text-xl font-bold text-[var(--text-primary)]">Yazıyı Düzenle</h1>
                 <span className="inline-flex items-center rounded-full border border-[#c9a84c]/25 bg-[#c9a84c]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#c9a84c]">
                   Düzenleniyor
                 </span>
@@ -224,12 +224,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   </span>
                 )}
               </div>
-              {title && <p className="max-w-xs truncate text-sm text-[#4a5568]">{title}</p>}
+              {title && <p className="max-w-xs truncate text-sm text-[var(--text-muted)]">{title}</p>}
             </div>
             <button
               type="button"
               onClick={() => router.push(`/category/${encodeURIComponent(originalCategory)}`)}
-              className="flex-shrink-0 whitespace-nowrap text-sm text-[#4a5568] transition-colors hover:text-[#c9a84c]"
+              className="flex-shrink-0 whitespace-nowrap text-sm text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
             >
               ← {originalCategory || "Geri"}
             </button>
@@ -237,11 +237,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </div>
 
         {/* İçerik Ara */}
-        <div className="mb-6 overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]">
+        <div className="mb-6 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
           <button
             type="button"
             onClick={() => setIsSearchOpen((v) => !v)}
-            className="flex w-full items-center justify-between px-4 py-3.5 transition-colors hover:bg-[#10121e]"
+            className="flex w-full items-center justify-between px-4 py-3.5 transition-colors hover:bg-[var(--bg-raised)]"
           >
             <div className="flex items-center gap-2.5">
               <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-[#c9a84c]/15">
@@ -263,13 +263,13 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <span className="text-xs font-semibold text-[#c9a84c]">
                   Film, Dizi veya Kitap Ara
                 </span>
-                <span className="ml-2 hidden text-[10px] text-[#3a3a4a] sm:inline">
+                <span className="ml-2 hidden text-[10px] text-[var(--text-muted)] sm:inline">
                   — mevcut alanların üzerine yazar
                 </span>
               </div>
             </div>
             <svg
-              className={`h-4 w-4 text-[#3a3a5a] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
+              className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -283,7 +283,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </svg>
           </button>
           {isSearchOpen && (
-            <div className="border-t border-[#1a1e2e] px-5 pb-5 pt-4">
+            <div className="border-t border-[var(--border)] px-5 pb-5 pt-4">
               <MediaSearch category={category} onSelect={handleMediaSelect} />
             </div>
           )}
@@ -401,7 +401,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 }}
                 size={26}
               />
-              <span className="text-sm text-[#6272a4]">
+              <span className="text-sm text-[var(--text-secondary)]">
                 {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
               </span>
               {rating > 0 && (
@@ -411,7 +411,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                     setRating(0);
                     markDirty();
                   }}
-                  className="text-xs text-[#4a5568] transition-colors hover:text-[#e53e3e]"
+                  className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
                 >
                   Sıfırla
                 </button>
@@ -433,7 +433,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             />
             {image && (
               <div className="mt-3 space-y-2">
-                <div className="relative h-32 w-full overflow-hidden rounded-lg border border-[#252d40]">
+                <div className="relative h-32 w-full overflow-hidden rounded-lg border border-[var(--border)]">
                   <Image
                     loader={customLoader}
                     src={image}
@@ -465,7 +465,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <div className="mb-4">
               <div className="mb-2 flex items-center justify-between">
                 <label className={labelClass + " mb-0"}>Kısa Özet</label>
-                <span className="text-[10px] text-[#3a3a5a]">{excerpt.length} karakter</span>
+                <span className="text-[10px] text-[var(--text-muted)]">{excerpt.length} karakter</span>
               </div>
               <textarea
                 value={excerpt}
@@ -480,7 +480,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </div>
             <div>
               <label className={labelClass}>İçerik</label>
-              <div className="overflow-hidden rounded-lg border border-[#1e2235]">
+              <div className="overflow-hidden rounded-lg border border-[var(--border)]">
                 <ReactQuill
                   theme="snow"
                   value={content}
@@ -496,23 +496,23 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       </div>
 
       {/* ─── Sticky Save Bar ─── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] bg-[#0c0e16]/95 backdrop-blur-xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#3a3a5a]">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
               Düzenleniyor
             </p>
             {title ? (
-              <p className="max-w-[200px] truncate text-sm text-[#8892b0] sm:max-w-xs">{title}</p>
+              <p className="max-w-[200px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">{title}</p>
             ) : (
-              <p className="text-sm italic text-[#3a3a5a]">—</p>
+              <p className="text-sm italic text-[var(--text-muted)]">—</p>
             )}
           </div>
           <div className="flex flex-shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[#4a5568] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             >
               İptal
             </button>
@@ -520,7 +520,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-semibold text-[#0c0e16] shadow-[0_4px_20px_rgba(201,168,76,0.3)] transition-all hover:bg-[#e0c068] hover:shadow-[0_4px_24px_rgba(201,168,76,0.45)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-semibold text-[#0c0e16] transition-all hover:bg-[#e0c068] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? (
                 <>

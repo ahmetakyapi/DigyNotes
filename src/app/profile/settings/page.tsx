@@ -5,9 +5,9 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[#f0ede8] placeholder-[#555] bg-[#0d0f1a] border border-[#1a1e2e] focus:outline-none focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#555] mb-2";
-const sectionClass = "rounded-xl bg-[#0d0f1a] border border-[#1a1e2e] p-5";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
+const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
+const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
 const customLoader = ({ src }: { src: string }) => src;
 
 interface UserProfile {
@@ -123,12 +123,12 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0e16] py-10">
+      <div className="min-h-screen py-10">
         <div className="mx-auto max-w-2xl space-y-4 px-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-5"
+              className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
             />
           ))}
         </div>
@@ -138,18 +138,18 @@ export default function ProfileSettingsPage() {
 
   const usernameHint = {
     idle: null,
-    checking: <span className="text-[#555555]">Kontrol ediliyor...</span>,
+    checking: <span className="text-[var(--text-muted)]">Kontrol ediliyor...</span>,
     ok: <span className="text-green-500">✓ Kullanılabilir</span>,
     taken: <span className="text-[#e53e3e]">✗ Bu kullanıcı adı alınmış</span>,
     invalid: <span className="text-[#e53e3e]">3-20 karakter, yalnızca a-z, 0-9, _</span>,
   }[usernameStatus];
 
   return (
-    <main className="min-h-screen bg-[#0c0e16] py-8 pb-36 sm:pb-24">
+    <main className="min-h-screen py-8 pb-36 sm:pb-24">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <div className="mb-8 border-b border-[#1a1e2e] pb-5">
-          <h1 className="text-xl font-bold text-[#f0ede8]">Profil Ayarları</h1>
-          <p className="mt-1 text-xs text-[#555555]">
+        <div className="mb-8 border-b border-[var(--border)] pb-5">
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">Profil Ayarları</h1>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">
             Profilini düzenle ve herkese açık hale getir
           </p>
         </div>
@@ -159,7 +159,7 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <label className={labelClass}>Profil Görseli URL</label>
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
                 {avatarUrl ? (
                   <Image
                     loader={customLoader}
@@ -190,7 +190,7 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <label className={labelClass}>Kullanıcı Adı</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#555555]">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">
                 @
               </span>
               <input
@@ -204,7 +204,7 @@ export default function ProfileSettingsPage() {
             </div>
             {usernameHint && <p className="mt-1.5 text-xs">{usernameHint}</p>}
             {username && (
-              <p className="mt-1 text-[10px] text-[#555555]">Profil URL: /profile/{username}</p>
+              <p className="mt-1 text-[10px] text-[var(--text-muted)]">Profil URL: /profile/{username}</p>
             )}
           </div>
 
@@ -212,7 +212,7 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <div className="mb-2 flex items-center justify-between">
               <label className={labelClass + " mb-0"}>Hakkında</label>
-              <span className="text-[10px] text-[#555555]">{bio.length}/200</span>
+              <span className="text-[10px] text-[var(--text-muted)]">{bio.length}/200</span>
             </div>
             <textarea
               value={bio}
@@ -227,8 +227,8 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-[#f0ede8]">Profili Herkese Açık Yap</p>
-                <p className="mt-0.5 text-xs text-[#555555]">
+                <p className="text-sm font-medium text-[var(--text-primary)]">Profili Herkese Açık Yap</p>
+                <p className="mt-0.5 text-xs text-[var(--text-muted)]">
                   Açık olduğunda notlarınız ve profiliniz herkese görünür
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => setIsPublic((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-[#c9a84c]" : "bg-[#1a1e2e]"
+                  isPublic ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"
                 }`}
               >
                 <span
@@ -251,16 +251,16 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] bg-[#0c0e16]/95 backdrop-blur-xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-header)]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <p className="text-xs text-[#555555]">
+          <p className="text-xs text-[var(--text-muted)]">
             {isPublic ? "Profilin herkese açık" : "Profilin gizli"}
           </p>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[#555] transition-colors hover:bg-[#0d0f1a] hover:text-[#f0ede8]"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             >
               İptal
             </button>
@@ -273,7 +273,7 @@ export default function ProfileSettingsPage() {
                 usernameStatus === "invalid" ||
                 usernameStatus === "checking"
               }
-              className="rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-semibold text-[#0c0c0c] shadow-[0_4px_20px_rgba(201,168,76,0.3)] transition-all hover:bg-[#e0c068] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-semibold text-[#0c0c0c] transition-all hover:bg-[#e0c068] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>

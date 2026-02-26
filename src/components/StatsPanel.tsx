@@ -49,7 +49,7 @@ function DonutChart({ slices, total }: { slices: DonutSlice[]; total: number }) 
   return (
     <svg viewBox="0 0 100 100" className="h-full w-full" style={{ transform: "rotate(-90deg)" }}>
       {/* Track */}
-      <circle cx="50" cy="50" r={R} fill="none" stroke="#1a1e2e" strokeWidth="13" />
+      <circle cx="50" cy="50" r={R} fill="none" stroke="var(--border)" strokeWidth="13" />
       {slices.map((s, i) => {
         const pct = total > 0 ? s.count / total : 0;
         const dash = Math.max(0, pct * CIRC - gap);
@@ -78,7 +78,7 @@ function DonutChart({ slices, total }: { slices: DonutSlice[]; total: number }) 
 /* ─── Sub-components ──────────────────────────────────────── */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[#3a3a5a]">
+    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
       {children}
     </p>
   );
@@ -98,7 +98,7 @@ function BigStat({
   color?: string;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+    <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
       <div
         className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl"
         style={{ background: `${color}18`, border: `1px solid ${color}28` }}
@@ -107,10 +107,10 @@ function BigStat({
       </div>
       <div>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-black leading-none text-[#f0ede8]">{value}</span>
-          {sub && <span className="text-sm text-[#4a5568]">{sub}</span>}
+          <span className="text-3xl font-black leading-none text-[var(--text-primary)]">{value}</span>
+          {sub && <span className="text-sm text-[var(--text-muted)]">{sub}</span>}
         </div>
-        <p className="mt-1 text-[10px] uppercase tracking-wider text-[#3a3a5a]">{label}</p>
+        <p className="mt-1 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">{label}</p>
       </div>
     </div>
   );
@@ -130,10 +130,10 @@ function HorizBar({
   const pct = total > 0 ? (count / total) * 100 : 0;
   return (
     <div className="group flex items-center gap-3">
-      <span className="w-24 flex-shrink-0 truncate text-xs text-[#6272a4] transition-colors group-hover:text-[#f0ede8]">
+      <span className="w-24 flex-shrink-0 truncate text-xs text-[var(--text-secondary)] transition-colors group-hover:text-[var(--text-primary)]">
         {label}
       </span>
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#1a1e2e]">
+      <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
@@ -144,8 +144,8 @@ function HorizBar({
         />
       </div>
       <div className="flex w-16 flex-shrink-0 items-center justify-end gap-2">
-        <span className="text-xs font-bold text-[#f0ede8]">{count}</span>
-        <span className="text-[10px] text-[#3a3a5a]">{pct.toFixed(0)}%</span>
+        <span className="text-xs font-bold text-[var(--text-primary)]">{count}</span>
+        <span className="text-[10px] text-[var(--text-muted)]">{pct.toFixed(0)}%</span>
       </div>
     </div>
   );
@@ -163,18 +163,18 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
           </svg>
         ))}
       </div>
-      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[#1a1e2e]">
+      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${pct}%`,
             background: isHigh
               ? "linear-gradient(90deg, #c9a84c, #e0c068)"
-              : "linear-gradient(90deg, #3a3a5a, #5a5a7a)",
+              : "var(--bg-raised)",
           }}
         />
       </div>
-      <span className="w-5 flex-shrink-0 text-right text-xs font-bold text-[#f0ede8]">{count}</span>
+      <span className="w-5 flex-shrink-0 text-right text-xs font-bold text-[var(--text-primary)]">{count}</span>
     </div>
   );
 }
@@ -190,12 +190,12 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
         return (
           <div key={d.month} className="group relative flex flex-1 flex-col items-center gap-1.5">
             {d.count > 0 && (
-              <div className="absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-md border border-[#252d40] bg-[#1a1e2e] px-2 py-0.5 text-[10px] text-[#f0ede8] group-hover:flex">
+              <div className="absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-primary)] group-hover:flex">
                 {d.count} not
               </div>
             )}
             <div
-              className="flex w-full flex-col justify-end overflow-hidden rounded-t-sm bg-[#1a1e2e]"
+              className="flex w-full flex-col justify-end overflow-hidden rounded-t-sm bg-[var(--border)]"
               style={{ height: 52 }}
             >
               <div
@@ -204,13 +204,13 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
                   height: `${pct}%`,
                   background: isLast
                     ? "linear-gradient(180deg, #e0c068, #c9a84c)"
-                    : "linear-gradient(180deg, #2a2e50, #1e2238)",
+                    : "var(--bg-raised)",
                   minHeight: d.count > 0 ? 4 : 0,
                   boxShadow: isLast && d.count > 0 ? "0 0 10px rgba(201,168,76,0.4)" : "none",
                 }}
               />
             </div>
-            <span className={`text-[9px] ${isLast ? "text-[#c9a84c]" : "text-[#3a3a5a]"}`}>
+            <span className={`text-[9px] ${isLast ? "text-[#c9a84c]" : "text-[var(--text-muted)]"}`}>
               {d.short}
             </span>
           </div>
@@ -295,9 +295,9 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
   if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#1a1e2e] bg-[#0d0f1a]">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
           <svg
-            className="h-7 w-7 text-[#3a3a5a]"
+            className="h-7 w-7 text-[var(--text-muted)]"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -310,7 +310,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
             />
           </svg>
         </div>
-        <p className="text-sm text-[#4a5568]">İstatistik görmek için önce not ekle.</p>
+        <p className="text-sm text-[var(--text-muted)]">İstatistik görmek için önce not ekle.</p>
         <Link
           href="/new-post"
           className="mt-3 text-xs text-[#c9a84c] transition-colors hover:text-[#e0c068]"
@@ -393,15 +393,15 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       {/* ── Orta bölüm: Donut + Puan dağılımı ── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Kategori donut */}
-        <div className="rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <SectionLabel>Kategori Dağılımı</SectionLabel>
           <div className="flex items-center gap-6">
             {/* Donut */}
             <div className="relative h-28 w-28 flex-shrink-0">
               <DonutChart slices={donutSlices} total={stats.total} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-black text-[#f0ede8]">{stats.total}</span>
-                <span className="text-[9px] uppercase tracking-wider text-[#3a3a5a]">Not</span>
+                <span className="text-xl font-black text-[var(--text-primary)]">{stats.total}</span>
+                <span className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Not</span>
               </div>
             </div>
             {/* Legend + bars */}
@@ -416,10 +416,10 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center justify-between">
-                        <span className="truncate text-xs text-[#8892b0]">{cat}</span>
-                        <span className="ml-2 text-xs font-bold text-[#f0ede8]">{count}</span>
+                        <span className="truncate text-xs text-[var(--text-secondary)]">{cat}</span>
+                        <span className="ml-2 text-xs font-bold text-[var(--text-primary)]">{count}</span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-[#1a1e2e]">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{
@@ -438,7 +438,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         </div>
 
         {/* Puan dağılımı */}
-        <div className="rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <SectionLabel>Puan Dağılımı</SectionLabel>
           <div className="space-y-3">
             {[5, 4, 3, 2, 1].map((star) => (
@@ -454,7 +454,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       </div>
 
       {/* ── Durum Dağılımı ── */}
-      <div className="rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <SectionLabel>Durum Özeti</SectionLabel>
         <div className="mb-5 grid grid-cols-3 gap-3">
           {[
@@ -471,7 +471,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 <span className="text-xs font-bold" style={{ color: s.color }}>
                   {s.icon}
                 </span>
-                <span className="text-2xl font-black text-[#f0ede8]">{s.count}</span>
+                <span className="text-2xl font-black text-[var(--text-primary)]">{s.count}</span>
               </div>
               <p className="text-[10px] uppercase tracking-wider" style={{ color: `${s.color}99` }}>
                 {s.label}
@@ -482,12 +482,12 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         {/* Tamamlanma progress bar */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-[#3a3a5a]">
+            <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
               Tamamlanma Oranı
             </span>
             <span className="text-xs font-bold text-[#34d399]">{stats.completionPct}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[#1a1e2e]">
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
             <div
               className="h-full rounded-full transition-all duration-1000"
               style={{
@@ -501,24 +501,24 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       </div>
 
       {/* ── Aylık Aktivite ── */}
-      <div className="rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <div className="mb-4 flex items-center justify-between">
           <SectionLabel>Aylık Aktivite</SectionLabel>
-          <span className="text-[10px] text-[#3a3a5a]">Son 8 ay</span>
+          <span className="text-[10px] text-[var(--text-muted)]">Son 8 ay</span>
         </div>
         <MonthlyChart data={stats.months} />
       </div>
 
       {/* ── En Yüksek Puanlı ── */}
       {stats.topRated.length > 0 && (
-        <div className="rounded-2xl border border-[#1a1e2e] bg-[#0d0f1a] p-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <SectionLabel>En Yüksek Puanlı ({stats.topRated.length})</SectionLabel>
           <div className="space-y-2">
             {stats.topRated.map((post, i) => (
               <Link
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="group flex items-center gap-3 rounded-xl border border-[#1a1e2e] p-3 transition-all duration-200 hover:border-[#c9a84c]/30 hover:bg-[#c9a84c]/5"
+                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-[#c9a84c]/30 hover:bg-[#c9a84c]/5"
               >
                 {/* Rank */}
                 <span
@@ -547,15 +547,15 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
 
                 {/* Info */}
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 text-sm font-semibold text-[#e8eaf6] transition-colors group-hover:text-[#c9a84c]">
+                  <p className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">
                     {post.title}
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
                     {post.creator && (
-                      <span className="truncate text-[10px] text-[#4a5568]">{post.creator}</span>
+                      <span className="truncate text-[10px] text-[var(--text-muted)]">{post.creator}</span>
                     )}
                     {post.years && (
-                      <span className="text-[10px] text-[#3a3a5a]">· {post.years}</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">· {post.years}</span>
                     )}
                   </div>
                 </div>

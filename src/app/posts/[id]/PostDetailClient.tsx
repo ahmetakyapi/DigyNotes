@@ -65,27 +65,27 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0c0e16]">
+      <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
           {/* Breadcrumb skeleton */}
           <div className="mb-3 flex items-center gap-2">
-            <div className="h-3 w-12 animate-pulse rounded bg-[#1a1e2e]" />
-            <div className="h-3 w-2 animate-pulse rounded bg-[#1a1e2e]" />
-            <div className="h-3 w-16 animate-pulse rounded bg-[#1a1e2e]" />
-            <div className="h-3 w-2 animate-pulse rounded bg-[#1a1e2e]" />
-            <div className="h-3 w-32 animate-pulse rounded bg-[#1a1e2e]" />
+            <div className="h-3 w-12 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-3 w-16 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-3 w-32 animate-pulse rounded bg-[var(--bg-raised)]" />
           </div>
           {/* Hero skeleton */}
           <div
-            className="w-full animate-pulse rounded-2xl bg-[#1a1e2e]"
+            className="w-full animate-pulse rounded-2xl bg-[var(--bg-raised)]"
             style={{ height: "52vh" }}
           />
         </div>
         <div className="mx-auto max-w-3xl space-y-4 px-4 py-10 sm:px-6">
-          <div className="h-8 w-3/4 animate-pulse rounded-lg bg-[#1a1e2e]" />
-          <div className="h-4 w-full animate-pulse rounded bg-[#1a1e2e]" />
-          <div className="h-4 w-5/6 animate-pulse rounded bg-[#1a1e2e]" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-[#1a1e2e]" />
+          <div className="h-8 w-3/4 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
+          <div className="h-4 w-full animate-pulse rounded bg-[var(--bg-raised)]" />
+          <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--bg-raised)]" />
+          <div className="h-4 w-4/5 animate-pulse rounded bg-[var(--bg-raised)]" />
         </div>
       </div>
     );
@@ -113,7 +113,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <p className="mb-1 font-medium text-[#e53e3e]">İçerik bulunamadı</p>
           <Link
             href="/notes"
-            className="text-xs text-[#4a5568] transition-colors hover:text-[#c9a84c]"
+            className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
           >
             ← Notlara dön
           </Link>
@@ -123,29 +123,29 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   }
 
   return (
-    <main className="min-h-screen bg-[#0c0e16]">
+    <main className="min-h-screen bg-[var(--bg-base)]">
       {/* ─── Hero Image ─── */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
         {/* Breadcrumb */}
-        <nav className="mb-3 flex items-center gap-1.5 text-xs text-[#4a5568]">
+        <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
           <Link href="/notes" className="transition-colors hover:text-[#c9a84c]">
             Notlar
           </Link>
-          <span className="text-[#2a2a3a]">›</span>
+          <span className="text-[var(--border)]">›</span>
           <Link
             href={`/category/${encodeURIComponent(post.category)}`}
             className="transition-colors hover:text-[#c9a84c]"
           >
             {post.category}
           </Link>
-          <span className="text-[#2a2a3a]">›</span>
-          <span className="max-w-[180px] truncate text-[#6272a4] sm:max-w-xs">
+          <span className="text-[var(--border)]">›</span>
+          <span className="max-w-[180px] truncate text-[var(--text-secondary)] sm:max-w-xs">
             {post.title.length > 35 ? post.title.slice(0, 35) + "…" : post.title}
           </span>
         </nav>
 
         <div
-          className="relative w-full overflow-hidden rounded-2xl bg-[#0a0c14]"
+          className="relative w-full overflow-hidden rounded-2xl bg-[var(--bg-raised)]"
           style={{ height: imgOrientation === "landscape" ? "44vh" : "52vh" }}
         >
           {/* Blur backdrop — sadece dikey görsellerde yan boşlukları doldurur */}
@@ -171,7 +171,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             priority
           />
           {/* Gradient: top → bottom dark */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/30 to-transparent" />
 
           {/* ── Top controls ── */}
           <div className="absolute left-0 right-0 top-0 flex items-center justify-end gap-2 px-4 pt-4 sm:px-5">
@@ -199,39 +199,39 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
               </div>
-              <h1 className="mb-3 text-2xl font-bold leading-tight text-[#e8eaf6] sm:text-3xl lg:text-4xl">
+              <h1 className="mb-3 text-2xl font-bold leading-tight text-[var(--text-primary)] sm:text-3xl lg:text-4xl">
                 {post.title}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 text-sm text-[#8892b0] sm:gap-3">
+              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--text-secondary)] sm:gap-3">
                 {post.creator && <span>{post.creator}</span>}
                 {post.years && (
                   <>
-                    <span className="text-[#252d40]">•</span>
+                    <span className="text-[var(--border)]">•</span>
                     <span>{post.years}</span>
                   </>
                 )}
                 {post.rating > 0 && (
                   <>
-                    <span className="text-[#252d40]">•</span>
+                    <span className="text-[var(--border)]">•</span>
                     <StarRating rating={post.rating} size={13} />
-                    <span className="text-xs text-[#4a5568]">({post.rating}/5)</span>
+                    <span className="text-xs text-[var(--text-muted)]">({post.rating}/5)</span>
                   </>
                 )}
                 {post.externalRating && post.externalRating > 0 && (
                   <>
-                    <span className="text-[#252d40]">•</span>
+                    <span className="text-[var(--border)]">•</span>
                     <span className="flex items-center gap-1 text-xs font-medium text-[#c9a84c]">
                       <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
                       </svg>
                       TMDB {post.externalRating.toFixed(1)}
-                      <span className="font-normal text-[#555555]">/10</span>
+                      <span className="font-normal text-[var(--text-muted)]">/10</span>
                     </span>
                   </>
                 )}
                 {post.date && (
                   <>
-                    <span className="text-[#252d40]">•</span>
+                    <span className="text-[var(--border)]">•</span>
                     <span className="text-xs">{post.date}</span>
                   </>
                 )}
@@ -254,16 +254,16 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
         <CommunityStatsCard title={post.title} creator={post.creator} />
 
-        <article className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-[#e8eaf6] prose-p:leading-[1.85] prose-p:text-[#c5cae9] prose-a:text-[#c9a84c] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[#8892b0] prose-strong:text-[#e8eaf6] prose-code:rounded prose-code:bg-[#151b2d] prose-code:px-1 prose-code:text-[#c9a84c] prose-pre:border prose-pre:border-[#252d40] prose-pre:bg-[#151b2d] prose-ol:text-[#c5cae9] prose-ul:text-[#c5cae9] prose-li:marker:text-[#c9a84c]">
+        <article className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-[var(--text-primary)] prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[#c9a84c] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[#c9a84c] prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[#c9a84c] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[#c9a84c]">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </article>
 
         {/* ─── Başkalarının Notları ─── */}
         {communityPosts.length > 0 && (
-          <div className="mt-12 border-t border-[#1a1e2e] pt-8">
+          <div className="mt-12 border-t border-[var(--border)] pt-8">
             <div className="mb-4 flex items-center gap-2">
               <svg
-                className="h-4 w-4 text-[#555555]"
+                className="h-4 w-4 text-[var(--text-muted)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -278,10 +278,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
-              <h2 className="text-sm font-semibold text-[#888888]">
+              <h2 className="text-sm font-semibold text-[var(--text-secondary)]">
                 Bu içerik hakkında diğer notlar
               </h2>
-              <span className="rounded-full bg-[#1e1e1e] px-2 py-0.5 text-[10px] text-[#555555]">
+              <span className="rounded-full bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
                 {communityPosts.length}
               </span>
             </div>
@@ -290,13 +290,13 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <Link
                   key={cp.id}
                   href={`/posts/${cp.id}`}
-                  className="group block rounded-xl border border-[#1e1e2e] bg-[#0e0e1a] p-4 transition-colors hover:border-[#2a2a3e] hover:bg-[#10101e]"
+                  className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[#c9a84c]/30 hover:bg-[var(--bg-raised)]"
                 >
                   <div className="mb-2 flex items-center gap-2">
                     <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#c9a84c]/10 text-[10px] font-bold text-[#c9a84c]">
                       {cp.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
-                    <span className="text-xs font-medium text-[#888888]">
+                    <span className="text-xs font-medium text-[var(--text-secondary)]">
                       {cp.user?.name ?? "Kullanıcı"}
                     </span>
                     {cp.rating > 0 && (
@@ -308,7 +308,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       </span>
                     )}
                   </div>
-                  <p className="line-clamp-3 text-sm leading-relaxed text-[#6272a4] group-hover:text-[#8892b0]">
+                  <p className="line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">
                     {cp.excerpt}
                   </p>
                 </Link>
@@ -318,10 +318,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         )}
 
         {/* Alt Navigasyon */}
-        <div className="mt-12 border-t border-[#1a1e2e] pt-6">
+        <div className="mt-12 border-t border-[var(--border)] pt-6">
           <Link
             href={`/category/${encodeURIComponent(post.category)}`}
-            className="flex items-center gap-1.5 text-sm text-[#4a5568] transition-colors hover:text-[#c9a84c]"
+            className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
