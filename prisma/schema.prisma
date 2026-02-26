@@ -16,6 +16,7 @@ model User {
   avatarUrl     String?
   isPublic      Boolean       @default(true)
   isAdmin       Boolean       @default(false)
+  isBanned      Boolean       @default(false)
   createdAt     DateTime      @default(now())
   lastLoginAt   DateTime?
   lastLogoutAt  DateTime?
@@ -99,4 +100,12 @@ model ActivityLog {
   createdAt DateTime @default(now())
 
   @@map("activity_logs")
+}
+
+model SiteSettings {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
 }

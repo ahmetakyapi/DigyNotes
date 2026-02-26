@@ -85,21 +85,21 @@ export default function DiscoverPage() {
     <main className="min-h-screen py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6">
         {/* Header */}
-        <div className="mb-6 border-b border-[#1a1e2e] pb-5">
-          <h1 className="mb-1 text-2xl font-bold text-[#f0ede8]">Topluluk</h1>
-          <p className="text-sm text-[#555555]">
+        <div className="mb-6 border-b border-[var(--border)] pb-5">
+          <h1 className="mb-1 text-2xl font-bold text-[var(--text-primary)]">Topluluk</h1>
+          <p className="text-sm text-[var(--text-muted)]">
             Kullanıcıları ara, profillerini incele ve notlarını keşfet
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-8 flex gap-1 rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] p-1">
+        <div className="mb-8 flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-1">
           <button
             onClick={() => setActiveTab("top")}
             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
               activeTab === "top"
                 ? "bg-[#c9a84c] text-[#0c0c0c]"
-                : "text-[#555555] hover:text-[#888888]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             En Çok Beğenilenler
@@ -109,7 +109,7 @@ export default function DiscoverPage() {
             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
               activeTab === "users"
                 ? "bg-[#c9a84c] text-[#0c0c0c]"
-                : "text-[#555555] hover:text-[#888888]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
             Kullanıcılar
@@ -125,7 +125,7 @@ export default function DiscoverPage() {
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
-                      className="h-8 w-20 animate-pulse rounded-full border border-[#1a1e2e] bg-[#0d0f1a]"
+                      className="h-8 w-20 animate-pulse rounded-full border border-[var(--border)] bg-[var(--bg-card)]"
                     />
                   ))}
                 </div>
@@ -133,7 +133,7 @@ export default function DiscoverPage() {
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
-                      className="h-52 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]"
+                      className="h-52 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
                     />
                   ))}
                 </div>
@@ -143,7 +143,7 @@ export default function DiscoverPage() {
                 {/* Trending Tags */}
                 {trendingTags.length > 0 && (
                   <section className="mb-10">
-                    <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[#555555]">
+                    <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                       Popüler Etiketler
                     </h2>
                     <div className="flex flex-wrap gap-2">
@@ -151,11 +151,11 @@ export default function DiscoverPage() {
                         <Link
                           key={tag.id}
                           href={`/tag/${encodeURIComponent(tag.name)}`}
-                          className="flex items-center gap-1.5 rounded-full border border-[#1a1e2e] bg-[#0d0f1a] px-3 py-1.5 text-sm text-[#888888] transition-all hover:border-[#c9a84c]/50 hover:text-[#c9a84c]"
+                          className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-all hover:border-[#c9a84c]/50 hover:text-[#c9a84c]"
                         >
                           <span className="text-[#c9a84c]">#</span>
                           {tag.name}
-                          <span className="rounded-sm bg-[#1a1e2e] px-1.5 py-0.5 text-[10px] text-[#555555]">
+                          <span className="rounded-sm bg-[var(--bg-raised)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">
                             {tag.count}
                           </span>
                         </Link>
@@ -167,7 +167,7 @@ export default function DiscoverPage() {
                 {/* Top Posts */}
                 {topPosts.length > 0 ? (
                   <section>
-                    <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[#555555]">
+                    <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                       En Yüksek Puanlı Notlar
                     </h2>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -179,7 +179,7 @@ export default function DiscoverPage() {
                 ) : (
                   trendingTags.length === 0 && (
                     <div className="py-16 text-center">
-                      <p className="text-sm text-[#555555]">
+                      <p className="text-sm text-[var(--text-muted)]">
                         Henüz herkese açık içerik yok.
                       </p>
                     </div>
@@ -196,7 +196,7 @@ export default function DiscoverPage() {
             {/* Search */}
             <div className="relative mb-6">
               <svg
-                className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555555]"
+                className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -213,7 +213,7 @@ export default function DiscoverPage() {
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="İsim veya @kullanıcıadı ara..."
-                className="w-full rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] py-3 pl-11 pr-4 text-sm text-[#f0ede8] placeholder-[#555555] transition-colors focus:border-[#c9a84c]/50 focus:outline-none"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-11 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c]/50 focus:outline-none"
               />
             </div>
 
@@ -223,19 +223,19 @@ export default function DiscoverPage() {
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
                     key={i}
-                    className="h-24 animate-pulse rounded-xl border border-[#1a1e2e] bg-[#0d0f1a]"
+                    className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
                   />
                 ))}
               </div>
             ) : users.length === 0 ? (
               <div className="py-16 text-center">
-                <p className="text-sm text-[#555555]">
+                <p className="text-sm text-[var(--text-muted)]">
                   {query ? "Kullanıcı bulunamadı." : "Henüz herkese açık profil yok."}
                 </p>
               </div>
             ) : (
               <>
-                <p className="mb-4 text-xs text-[#555555]">{users.length} kullanıcı bulundu</p>
+                <p className="mb-4 text-xs text-[var(--text-muted)]">{users.length} kullanıcı bulundu</p>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {users.map((user) => (
                     <UserCard key={user.id} user={user} />
@@ -254,7 +254,7 @@ function TopPostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/posts/${post.id}`}
-      className="group block overflow-hidden rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] transition-all hover:border-[#2a3050]"
+      className="group block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c9a84c]/30"
     >
       <div className="relative h-28 overflow-hidden">
         <Image
@@ -265,7 +265,7 @@ function TopPostCard({ post }: { post: Post }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           style={{ objectPosition: post.imagePosition ?? "center" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f1a] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         {post.status && (
           <div className="absolute bottom-1.5 left-2">
             <StatusBadge status={post.status} />
@@ -273,10 +273,10 @@ function TopPostCard({ post }: { post: Post }) {
         )}
       </div>
       <div className="p-3">
-        <p className="mb-0.5 line-clamp-1 text-xs font-semibold text-[#f0ede8] transition-colors group-hover:text-[#c9a84c]">
+        <p className="mb-0.5 line-clamp-1 text-xs font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">
           {post.title}
         </p>
-        {post.creator && <p className="mb-1 text-[10px] text-[#555555]">{post.creator}</p>}
+        {post.creator && <p className="mb-1 text-[10px] text-[var(--text-muted)]">{post.creator}</p>}
         {post.rating > 0 && <StarRating rating={post.rating} size={10} />}
         {post.user?.username && (
           <span
@@ -294,7 +294,7 @@ function TopPostCard({ post }: { post: Post }) {
                 window.location.href = `/profile/${post.user!.username}`;
               }
             }}
-            className="relative z-10 mt-1.5 block cursor-pointer text-[10px] text-[#555555] transition-colors hover:text-[#c9a84c]"
+            className="relative z-10 mt-1.5 block cursor-pointer text-[10px] text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
           >
             @{post.user.username}
           </span>

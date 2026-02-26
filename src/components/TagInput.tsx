@@ -102,7 +102,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   return (
     <div className="space-y-2">
       <div
-        className="flex min-h-[44px] cursor-text flex-wrap gap-1.5 rounded-lg border border-[#2a2a2a] bg-[#0c0c0c] p-2 transition-colors focus-within:border-[#c9a84c]/50"
+        className="flex min-h-[44px] cursor-text flex-wrap gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-2 transition-colors focus-within:border-[#c9a84c]/50"
         onClick={() => inputRef.current?.focus()}
       >
         {value.map((name) => (
@@ -127,11 +127,11 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               placeholder={value.length === 0 ? "Etiket ekle (örn: sci-fi, drama)..." : ""}
-              className="w-full bg-transparent py-0.5 text-sm text-[#f0ede8] outline-none placeholder:text-[#555555]"
+              className="w-full bg-transparent py-0.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
               maxLength={30}
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg border border-[#2a2a2a] bg-[#161616] shadow-xl">
+              <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-xl">
                 {suggestions.map((sug, i) => (
                   <button
                     key={sug.id}
@@ -140,14 +140,14 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
                     className={`flex w-full items-center justify-between px-3 py-3 text-left text-sm transition-colors ${
                       i === activeIndex
                         ? "bg-[#c9a84c]/10 text-[#c9a84c]"
-                        : "text-[#888888] hover:bg-[#1e1e1e] hover:text-[#f0ede8]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     <span>
                       <span className="text-[#c9a84c]/60">#</span>
                       {sug.name}
                     </span>
-                    <span className="text-xs text-[#555555]">{sug.count}</span>
+                    <span className="text-xs text-[var(--text-muted)]">{sug.count}</span>
                   </button>
                 ))}
               </div>
@@ -155,7 +155,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
           </div>
         )}
       </div>
-      <p className="text-xs text-[#555555]">
+      <p className="text-xs text-[var(--text-muted)]">
         Enter veya virgül ile ekle · Maks 10 etiket · {value.length}/10
       </p>
     </div>

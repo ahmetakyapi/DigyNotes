@@ -1,72 +1,183 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FaSearch, FaTimes } from "react-icons/fa";
+import { MagnifyingGlass, X, UserCircle } from "@phosphor-icons/react";
+
+interface UserResult {
+  id: string;
+  name: string;
+  username: string | null;
+  avatarUrl: string | null;
+}
 
 export function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const [userResults, setUserResults] = useState<UserResult[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setUserResults([]);
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const searchUsers = useCallback(async (q: string) => {
+    if (!q) { setUserResults([]); return; }
+    setLoadingUsers(true);
+    try {
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setUserResults(Array.isArray(data) ? data.slice(0, 6) : []);
+      }
+    } catch {
+      setUserResults([]);
+    } finally {
+      setLoadingUsers(false);
+    }
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+
+    if (val.startsWith("@")) {
+      const userQuery = val.slice(1).trim();
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => searchUsers(userQuery), 300);
+    } else {
+      setUserResults([]);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    }
+  };
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = query.trim();
+    if (q.startsWith("@")) return;
     if (q) {
       router.push(`/notes?q=${encodeURIComponent(q)}`);
     } else {
       router.push("/notes");
     }
     setOpen(false);
+    setUserResults([]);
   };
 
   const clear = () => {
     setQuery("");
+    setUserResults([]);
     router.push("/notes");
     setOpen(false);
   };
+
+  const selectUser = (username: string | null) => {
+    if (!username) return;
+    router.push(`/profile/${username}`);
+    setQuery("");
+    setUserResults([]);
+    setOpen(false);
+  };
+
+  const isUserMode = query.startsWith("@");
 
   if (!open) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex h-10 w-10 items-center justify-center rounded-md text-[#8892b0] transition-colors hover:text-[#c9a84c]"
+        className="flex h-10 w-10 items-center justify-center rounded-md text-[var(--text-secondary)] transition-colors duration-200 hover:text-[#c9a84c]"
         title="Ara"
       >
-        <FaSearch size={14} />
+        <MagnifyingGlass size={16} />
       </button>
     );
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="flex items-center gap-2 rounded-lg border border-[#2a2a2a] bg-[#161616] px-3 py-1.5"
-    >
-      <FaSearch size={12} className="flex-shrink-0 text-[#555555]" />
-      <input
-        ref={inputRef}
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Başlık veya yazar ara..."
-        className="w-20 bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none sm:w-44"
-        onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
-      />
-      {query && (
-        <button
-          type="button"
-          onClick={clear}
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[#555555] transition-colors hover:text-[#888]"
-        >
-          <FaTimes size={11} />
-        </button>
+    <div ref={containerRef} className="relative">
+      <form
+        onSubmit={submit}
+        className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5"
+      >
+        {isUserMode ? (
+          <UserCircle size={13} className="flex-shrink-0 text-[#c9a84c]" weight="bold" />
+        ) : (
+          <MagnifyingGlass size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
+        )}
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={handleChange}
+          placeholder="Ara... veya @kullanıcı"
+          className="w-40 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:w-52"
+          onKeyDown={(e) => e.key === "Escape" && (setOpen(false), setUserResults([]))}
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={clear}
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[#888]"
+          >
+            <X size={11} />
+          </button>
+        )}
+      </form>
+
+      {/* User results dropdown */}
+      {isUserMode && query.length > 1 && (userResults.length > 0 || loadingUsers) && (
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)]">
+          {loadingUsers && userResults.length === 0 ? (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Aranıyor...</div>
+          ) : (
+            userResults.map((u) => (
+              <button
+                key={u.id}
+                type="button"
+                onClick={() => selectUser(u.username)}
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-raised)] active:opacity-80"
+              >
+                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c9a84c] border border-[var(--border)]">
+                  {u.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={u.avatarUrl} alt={u.name} className="h-full w-full object-cover" />
+                  ) : (
+                    u.name.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">{u.name}</p>
+                  {u.username && (
+                    <p className="truncate text-xs text-[var(--text-muted)]">@{u.username}</p>
+                  )}
+                </div>
+              </button>
+            ))
+          )}
+        </div>
       )}
-    </form>
+
+      {/* Hint when @ typed but no username yet */}
+      {query === "@" && (
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
+          <p className="text-xs text-[var(--text-muted)]">Kullanıcı adı yazmaya başla...</p>
+        </div>
+      )}
+    </div>
   );
 }

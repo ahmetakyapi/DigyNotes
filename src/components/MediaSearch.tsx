@@ -323,8 +323,8 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
             onClick={() => handleTabChange(tab.key)}
             className={`rounded-md px-3 py-2.5 text-[13px] font-semibold transition-colors ${
               activeTab === tab.key
-                ? "bg-[#c9a84c] text-[#0f1117]"
-                : "text-[#6070a0] hover:bg-[#1a1e2e] hover:text-[#c0c8e8]"
+                ? "bg-[#c9a84c] text-[#0c0c0c]"
+                : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             }`}
           >
             {tab.label}
@@ -342,9 +342,9 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-[#1a1e2e] bg-[#0d0f1a] px-4 py-2.5 pr-10 text-sm text-[#f0ede8] placeholder-[#555555] transition-colors focus:border-[#c9a84c] focus:outline-none"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 pr-10 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c] focus:outline-none"
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555]">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
           {isLoading || isSelecting ? (
             <svg className="h-4 w-4 animate-spin text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
               <circle
@@ -371,7 +371,10 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
 
         {/* Dropdown */}
         {isOpen && results.length > 0 && (
-          <div className="absolute z-50 mt-1 w-full overflow-y-auto rounded-xl border border-[#1a1e2e] bg-[#0d0f1a] shadow-[0_8px_32px_rgba(0,0,0,0.6)]" style={{ maxHeight: "min(320px, 40vh)" }}>
+          <div
+            className="absolute z-50 mt-1 w-full overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-xl"
+            style={{ maxHeight: "min(320px, 40vh)" }}
+          >
             {results.map((item, i) => (
               <button
                 key={i}
@@ -379,7 +382,7 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
                 onClick={() => handleSelect(item)}
                 onMouseEnter={() => setHighlighted(i)}
                 className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors ${
-                  highlighted === i ? "bg-[#131828]" : "hover:bg-[#111525]"
+                  highlighted === i ? "bg-[var(--bg-raised)]" : "hover:bg-[var(--bg-raised)]"
                 }`}
               >
                 {item.image ? (
@@ -387,22 +390,22 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className={`flex-shrink-0 rounded bg-[#1a1e2e] object-cover ${
+                    className={`flex-shrink-0 rounded bg-[var(--bg-raised)] object-cover ${
                       activeTab === "oyun" ? "h-10 w-16" : "h-12 w-8"
                     }`}
                   />
                 ) : (
                   <div
-                    className={`flex flex-shrink-0 items-center justify-center rounded bg-[#1a1e2e] ${
+                    className={`flex flex-shrink-0 items-center justify-center rounded bg-[var(--bg-raised)] ${
                       activeTab === "oyun" ? "h-10 w-16" : "h-12 w-8"
                     }`}
                   >
-                    <span className="text-xs text-[#555555]">?</span>
+                    <span className="text-xs text-[var(--text-muted)]">?</span>
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-[#f0ede8]">{item.title}</p>
-                  {item.years && <p className="text-xs text-[#555555]">{item.years}</p>}
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
+                  {item.years && <p className="text-xs text-[var(--text-muted)]">{item.years}</p>}
                 </div>
               </button>
             ))}
@@ -412,9 +415,9 @@ export function MediaSearch({ category, onSelect }: MediaSearchProps) {
 
       {/* Oyun API uyarısı */}
       {activeTab === "oyun" && !RAWG_KEY && (
-        <p className="mt-2 text-[11px] text-[#6070a0]">
+        <p className="mt-2 text-[11px] text-[var(--text-secondary)]">
           Oyun araması için{" "}
-          <code className="rounded bg-[#1a1e2e] px-1 text-[#c9a84c]">NEXT_PUBLIC_RAWG_API_KEY</code>{" "}
+          <code className="rounded bg-[var(--bg-raised)] px-1 text-[#c9a84c]">NEXT_PUBLIC_RAWG_API_KEY</code>{" "}
           env değişkeni gerekli.
         </p>
       )}
