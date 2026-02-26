@@ -23,5 +23,7 @@ export const config = {
     "/api/follows/:path*",
     "/api/feed/:path*",
     "/api/recommendations/:path*",
+    "/admin",
+    "/admin/:path*",
   ],
 };

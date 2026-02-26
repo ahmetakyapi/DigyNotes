@@ -16,8 +16,7 @@ const customLoader = ({ src }: { src: string }) => src;
 
 const inputBase =
   "w-full px-3.5 py-2.5 rounded-lg text-[#e8eaf6] placeholder-[#3a4060] bg-[#080b14] border border-[#1e2235] focus:outline-none focus:border-[#c9a84c] focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
-const labelClass =
-  "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#50608a] mb-1.5";
+const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[#50608a] mb-1.5";
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-[#c9a84c]/60 border-[#c9a84c]" : "";
@@ -157,17 +156,24 @@ export default function NewPostPage() {
   const statusOptions = getStatusOptions(category);
 
   return (
-    <main className="min-h-screen bg-[#0c0e16] pb-40 sm:pb-24">
+    <main className="min-h-screen bg-[#0c0e16] pb-24">
       <div className="mx-auto max-w-3xl space-y-3 px-4 py-5 sm:px-6 sm:py-7">
-
         {/* ── Page title ── */}
         <div className="flex items-center gap-3 pb-1">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[#445] transition-colors hover:bg-[#1a1e2e] hover:text-[#e8eaf6]"
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2" strokeLinecap="round">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            >
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
           </button>
@@ -191,8 +197,18 @@ export default function NewPostPage() {
           >
             <div className="flex items-center gap-2.5">
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#c9a84c]/15">
-                <svg className="h-3.5 w-3.5 text-[#c9a84c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                <svg
+                  className="h-3.5 w-3.5 text-[#c9a84c]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
+                  />
                 </svg>
               </div>
               <span className="text-sm font-semibold text-[#c9a84c]">İçerik Ara</span>
@@ -200,9 +216,16 @@ export default function NewPostPage() {
             </div>
             <svg
               className={`h-4 w-4 text-[#2a3050] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
-              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
           {isSearchOpen && (
@@ -218,7 +241,9 @@ export default function NewPostPage() {
             {/* Poster thumbnail */}
             <div
               className={`relative flex-shrink-0 overflow-hidden rounded-lg bg-[#080b14] transition-all duration-300 ${
-                image ? "h-36 w-24 border border-[#1e2540] sm:h-44 sm:w-28" : "h-20 w-14 border border-dashed border-[#1e2540]"
+                image
+                  ? "h-36 w-24 border border-[#1e2540] sm:h-44 sm:w-28"
+                  : "h-20 w-14 border border-dashed border-[#1e2540]"
               }`}
             >
               {image ? (
@@ -233,7 +258,15 @@ export default function NewPostPage() {
                 />
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center gap-1">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" className="text-[#2a3050]">
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    className="text-[#2a3050]"
+                  >
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <circle cx="8.5" cy="8.5" r="1.5" />
                     <path d="M21 15l-5-5L5 21" />
@@ -330,7 +363,9 @@ export default function NewPostPage() {
             <div className="flex flex-wrap gap-2">
               {statusOptions.map((s) => {
                 const isCompleted = ["İzlendi", "Okundu", "Tamamlandı", "Gidildi"].includes(s);
-                const isOngoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"].includes(s);
+                const isOngoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"].includes(
+                  s
+                );
                 const activeStyle = isCompleted
                   ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
                   : isOngoing
@@ -365,9 +400,7 @@ export default function NewPostPage() {
             <span className="text-3xl font-bold leading-none text-[#f0ede8]">
               {rating > 0 ? rating.toFixed(1) : "—"}
             </span>
-            {rating > 0 && (
-              <span className="mb-0.5 text-xs text-[#555]">/ 5</span>
-            )}
+            {rating > 0 && <span className="mb-0.5 text-xs text-[#555]">/ 5</span>}
           </div>
           {rating > 0 && (
             <button
@@ -400,11 +433,10 @@ export default function NewPostPage() {
             <ReactQuill theme="snow" value={content} onChange={setContent} />
           </div>
         </div>
-
       </div>
 
       {/* ── Sticky Save Bar ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] bg-[#0c0e16]/96 backdrop-blur-xl">
+      <div className="bg-[#0c0e16]/96 fixed bottom-0 left-0 right-0 z-50 border-t border-[#1a1e2e] backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="min-w-0">
             <p className="text-[9px] font-bold uppercase tracking-widest text-[#2a3050]">Kaydet</p>
@@ -428,7 +460,14 @@ export default function NewPostPage() {
             >
               {isSubmitting && (
                 <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
               )}
@@ -437,7 +476,10 @@ export default function NewPostPage() {
           </div>
         </div>
         {/* Mobile tab bar spacer */}
-        <div className="h-safe-bottom sm:hidden" style={{ height: "env(safe-area-inset-bottom, 0px)" }} />
+        <div
+          className="h-safe-bottom sm:hidden"
+          style={{ height: "env(safe-area-inset-bottom, 0px)" }}
+        />
       </div>
     </main>
   );

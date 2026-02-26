@@ -7,19 +7,23 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(cuid())
-  email      String     @unique
-  name       String
-  password   String
-  username   String?    @unique
-  bio        String?    @db.Text
-  avatarUrl  String?
-  isPublic   Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  posts      Post[]
-  categories Category[]
-  followers  Follow[]   @relation("Following")
-  following  Follow[]   @relation("Follower")
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String
+  password      String
+  username      String        @unique
+  bio           String?       @db.Text
+  avatarUrl     String?
+  isPublic      Boolean       @default(true)
+  isAdmin       Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  lastLoginAt   DateTime?
+  lastLogoutAt  DateTime?
+  posts         Post[]
+  categories    Category[]
+  followers     Follow[]      @relation("Following")
+  following     Follow[]      @relation("Follower")
+  activityLogs  ActivityLog[]
 
   @@map("users")
 }
@@ -84,4 +88,15 @@ model PostTag {
 
   @@id([postId, tagId])
   @@map("post_tags")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
 }

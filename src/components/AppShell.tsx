@@ -14,6 +14,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userUsername, setUserUsername] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +31,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           setUserUsername(data.username);
           localStorage.setItem("dn_username", data.username);
         }
+        if (data?.isAdmin) setIsAdmin(true);
       })
       .catch(() => {});
   }, []);
@@ -183,6 +185,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         </Link>
                       </div>
 
+                      {isAdmin && (
+                        <>
+                          <div className="border-t border-[#1a1e2e]" />
+                          <div className="py-1">
+                            <Link
+                              href="/admin"
+                              onClick={() => setShowUserMenu(false)}
+                              className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[#c9a84c] transition-colors duration-100 hover:bg-[#c9a84c]/5 hover:text-[#e0c068]"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                              </svg>
+                              Admin Paneli
+                            </Link>
+                          </div>
+                        </>
+                      )}
+
                       <div className="border-t border-[#1a1e2e]" />
 
                       <div className="py-1">
@@ -218,19 +238,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* ══ CATEGORY STRIP ══ */}
 
-          {/* ── Mobile: yatay kaydırmalı kategori şeridi (yalnızca notlar/kategori sayfaları) ── */}
+          {/* ── Mobile: tek satır kategori grid ── */}
           {(pathname === "/notes" || pathname.startsWith("/category/")) && (
-            <div className="scrollbar-hide -mx-0 flex items-center gap-1.5 overflow-x-auto pb-3 pt-2 sm:hidden">
-              {/* Tümü butonu */}
+            <div className="grid grid-cols-8 gap-1.5 px-3 pb-2.5 pt-1.5 sm:hidden">
               <button
                 onClick={() => router.push("/notes")}
-                className={`flex flex-shrink-0 items-center justify-center rounded-lg px-3.5 py-2.5 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
+                className={`col-span-2 flex h-9 items-center justify-center rounded-lg text-[11px] font-semibold transition-all duration-150 active:scale-95 ${
                   activeCategory === "all"
-                    ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.35)]"
-                    : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235] active:bg-[#141828] active:text-[#9aabcc]"
+                    ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.3)]"
+                    : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235]"
                 }`}
               >
-                Tümü
+                Son Yazılar
               </button>
               {FIXED_CATEGORIES.map((cat) => {
                 const isActive = activeCategory === cat;
@@ -238,10 +257,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <button
                     key={cat}
                     onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                    className={`flex flex-shrink-0 items-center justify-center rounded-lg px-3.5 py-2.5 text-[12px] font-semibold transition-all duration-150 active:scale-95 ${
+                    className={`col-span-1 flex h-9 items-center justify-center rounded-lg text-[11px] font-semibold transition-all duration-150 active:scale-95 ${
                       isActive
-                        ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.35)]"
-                        : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235] active:bg-[#141828] active:text-[#9aabcc]"
+                        ? "bg-[#c9a84c] text-[#0a0a0a] shadow-[0_2px_12px_rgba(201,168,76,0.3)]"
+                        : "bg-[#0d0f1a] text-[#6878a8] ring-1 ring-[#1e2235]"
                     }`}
                   >
                     {cat}
@@ -254,6 +273,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* ── Desktop: scrollable single row ── */}
           <div ref={scrollRef} className="scrollbar-hide hidden items-center overflow-x-auto sm:flex">
+            <NavTab
+              active={activeCategory === "all"}
+              onClick={() => router.push("/notes")}
+            >
+              Son Yazılar
+            </NavTab>
             {FIXED_CATEGORIES.map((cat) => (
               <NavTab
                 key={cat}
@@ -312,6 +337,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </svg>
                 Keşfet
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+                    pathname === "/admin" || pathname.startsWith("/admin/")
+                      ? "border-[#c9a84c] text-[#c9a84c]"
+                      : "border-transparent text-[#c9a84c]/50 hover:text-[#c9a84c]"
+                  }`}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
         </div>

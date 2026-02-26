@@ -50,5 +50,10 @@ export async function POST(request: NextRequest) {
   const category = await prisma.category.create({
     data: { name: name.trim(), userId },
   });
+
+  await prisma.activityLog.create({
+    data: { userId, action: "category.create", metadata: { categoryId: category.id, name: category.name } },
+  });
+
   return NextResponse.json(category, { status: 201 });
 }

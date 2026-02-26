@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
   const users = await prisma.user.findMany({
     where: {
       isPublic: true,
-      username: { not: null },
       ...(q
         ? {
             OR: [

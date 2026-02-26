@@ -21,6 +21,7 @@ export async function GET() {
       bio: true,
       avatarUrl: true,
       isPublic: true,
+      isAdmin: true,
       createdAt: true,
     },
   });

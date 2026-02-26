@@ -9,6 +9,7 @@ import { FullScreenLoader } from "@/components/FullScreenLoader";
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
@@ -35,7 +36,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, username }),
     });
 
     const data = await res.json();
@@ -121,6 +122,34 @@ export default function RegisterPage() {
                 placeholder="Adın Soyadın"
                 className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] px-4 py-3 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
               />
+            </div>
+
+            {/* Username */}
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#555]">
+                Kullanıcı Adı
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[#444]">
+                  @
+                </span>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) =>
+                    setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))
+                  }
+                  required
+                  autoComplete="username"
+                  placeholder="kullanici_adin"
+                  minLength={3}
+                  maxLength={30}
+                  className="w-full rounded-xl border border-[#222] bg-[#0d0d0d] py-3 pl-8 pr-4 text-sm text-[#f0ede8] placeholder-[#333] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-[#444]">
+                Harf, rakam ve _ kullanabilirsin. Sonradan değiştirilebilir.
+              </p>
             </div>
 
             {/* Email */}
