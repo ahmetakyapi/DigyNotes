@@ -287,6 +287,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </div>
 
         <form className="grid items-start gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]">
+          {/* ── Sol kolon: meta bilgiler + etiketler + içerik ── */}
           <div className="min-w-0 space-y-3.5 sm:space-y-4">
             <div className={sectionClass}>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -376,9 +377,36 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             </div>
+
+            <div className={sectionClass}>
+              <div className="mb-4">
+                <label className={labelClass}>Etiketler</label>
+                <TagInput
+                  value={tags}
+                  onChange={(t) => {
+                    setTags(t);
+                    markDirty();
+                  }}
+                />
+              </div>
+              <div className="border-t border-[var(--border)] pt-4">
+                <label className={labelClass}>İçerik</label>
+                <div className="dn-compose-editor overflow-hidden rounded-lg border border-[var(--border)]">
+                  <ReactQuill
+                    theme="snow"
+                    value={content}
+                    onChange={(v) => {
+                      setContent(v);
+                      markDirty();
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <aside className="order-2 min-w-0 space-y-3.5 sm:space-y-4 xl:sticky xl:top-24 xl:order-none xl:self-start">
+          {/* ── Sağ kolon: kapak, özet, puan ── */}
+          <aside className="min-w-0 space-y-3.5 sm:space-y-4 xl:sticky xl:top-24 xl:self-start">
             <div className={sectionClass}>
               <label className={labelClass}>Kapak Görseli URL</label>
               <input
@@ -504,32 +532,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </aside>
-
-          <div className={`${sectionClass} order-3 xl:order-none xl:col-start-1`}>
-            <div className="mb-4">
-              <label className={labelClass}>Etiketler</label>
-              <TagInput
-                value={tags}
-                onChange={(t) => {
-                  setTags(t);
-                  markDirty();
-                }}
-              />
-            </div>
-            <div className="border-t border-[var(--border)] pt-4">
-              <label className={labelClass}>İçerik</label>
-              <div className="dn-compose-editor overflow-hidden rounded-lg border border-[var(--border)]">
-                <ReactQuill
-                  theme="snow"
-                  value={content}
-                  onChange={(v) => {
-                    setContent(v);
-                    markDirty();
-                  }}
-                />
-              </div>
-            </div>
-          </div>
         </form>
       </div>
 
