@@ -42,14 +42,14 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
           style={{ animation: "dg-spin 1.2s linear infinite" }}
         >
           {/* Track ring */}
-          <circle cx="40" cy="40" r={r} fill="none" stroke="#1c1c1c" strokeWidth="2.5" />
+          <circle cx="40" cy="40" r={r} fill="none" stroke="var(--border)" strokeWidth="2.5" />
           {/* Glowing arc */}
           <circle
             cx="40"
             cy="40"
             r={r}
             fill="none"
-            stroke="#c9a84c"
+            stroke="#c4a24b"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeDasharray={`${arcLength} ${gapLength}`}
@@ -61,7 +61,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
             cx="40"
             cy="4"
             r="3"
-            fill="#e0c068"
+            fill="#d7ba68"
             style={{ filter: "drop-shadow(0 0 4px rgba(224,192,104,0.9))" }}
           />
         </svg>
@@ -73,7 +73,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
               fontSize: "26px",
               fontWeight: 700,
               fontFamily: "Georgia, 'Times New Roman', serif",
-              color: "#c9a84c",
+              color: "#c4a24b",
               textShadow: "0 0 24px rgba(201,168,76,0.35)",
               letterSpacing: "-0.02em",
             }}
@@ -93,7 +93,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
               fontSize: "12px",
               letterSpacing: "0.22em",
               fontWeight: 600,
-              color: i < 4 ? "#c9a84c" : "#666",
+              color: i < 4 ? "#c4a24b" : "var(--text-dim)",
               opacity: 0,
               animation: "dg-fade-up 0.45s ease forwards",
               animationDelay: `${0.08 + i * 0.055}s`,
@@ -123,14 +123,14 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
       {/* ── Bottom shimmer bar ── */}
       <div
         className="absolute bottom-0 left-0 right-0"
-        style={{ height: "2px", background: "#0f0f0f", overflow: "hidden" }}
+        style={{ height: "2px", background: "var(--bg-soft)", overflow: "hidden" }}
       >
         <div
           style={{
             height: "100%",
             width: "35%",
             background:
-              "linear-gradient(90deg, transparent 0%, #c9a84c 40%, #e0c068 50%, #c9a84c 60%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, #c4a24b 40%, #d7ba68 50%, #c4a24b 60%, transparent 100%)",
             animation: "dg-shimmer 1.6s ease-in-out infinite",
           }}
         />

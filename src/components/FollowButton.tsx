@@ -43,7 +43,7 @@ export default function FollowButton({ username, initialIsFollowing, onFollowCha
       className={`rounded-lg border px-5 py-2 text-sm font-semibold transition-all disabled:opacity-50 ${
         isFollowing
           ? "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#e53e3e]/60 hover:text-[#e53e3e]"
-          : "border-[#c9a84c]/60 bg-[#c9a84c]/10 text-[#c9a84c] hover:bg-[#c9a84c]/20"
+          : "border-[#c4a24b]/60 bg-[#c4a24b]/10 text-[#c4a24b] hover:bg-[#c4a24b]/20"
       }`}
     >
       {loading ? (

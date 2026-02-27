@@ -154,7 +154,7 @@ export default function NotFound() {
           style={{
             borderColor: "rgba(201,168,76,0.3)",
             background: "rgba(201,168,76,0.07)",
-            color: "#c9a84c",
+            color: "#c4a24b",
           }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
@@ -219,7 +219,7 @@ export default function NotFound() {
           <h1
             className="text-[clamp(6.5rem,24vw,12rem)] font-black leading-none tracking-tighter"
             style={{
-              background: "linear-gradient(160deg, #f0ede8 0%, rgba(240,237,232,0.12) 100%)",
+              background: "linear-gradient(160deg, var(--text-contrast) 0%, transparent 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               filter: "drop-shadow(0 0 60px rgba(201,168,76,0.15))",
@@ -233,7 +233,7 @@ export default function NotFound() {
             className="dn404-glitch-layer pointer-events-none absolute inset-0 text-[clamp(6.5rem,24vw,12rem)] font-black leading-none tracking-tighter"
             aria-hidden
             style={{
-              background: "linear-gradient(135deg, #c9a84c, #e0c068)",
+              background: "linear-gradient(135deg, #c4a24b, #d7ba68)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -281,7 +281,7 @@ export default function NotFound() {
         <div className="dn404-reveal-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
           <Link
             href="/"
-            className="group relative overflow-hidden rounded-2xl px-8 py-3 text-sm font-bold text-[#1a0e00] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02]"
+            className="group relative overflow-hidden rounded-2xl px-8 py-3 text-sm font-bold text-[var(--text-on-accent)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02]"
             style={{
               background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)",
               boxShadow: "0 4px 20px rgba(201,168,76,0.25)",

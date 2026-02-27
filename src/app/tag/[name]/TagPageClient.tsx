@@ -35,13 +35,13 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
           <div className="mb-2 flex items-center gap-2">
             <Link
               href="/discover"
-              className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
+              className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]"
             >
               ← Keşfet
             </Link>
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            <span className="text-[#c9a84c]">#</span>
+            <span className="text-[#c4a24b]">#</span>
             {tagName}
           </h1>
           {!loading && (
@@ -54,7 +54,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
-          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c9a84c]/40"
+          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/40"
         >
           <option value="newest">En Yeni</option>
           <option value="oldest">En Eski</option>
@@ -91,7 +91,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
 function PostCard({ post }: { post: Post }) {
   return (
-    <div className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c9a84c]/30">
+    <div className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30">
       {/* Image */}
       <div className="relative h-40 w-full overflow-hidden">
         <Image
@@ -104,7 +104,7 @@ function PostCard({ post }: { post: Post }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
-          <span className="rounded-sm border border-[#c9a84c]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
+          <span className="rounded-sm border border-[#c4a24b]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
             {post.category}
           </span>
           {post.status && <StatusBadge status={post.status} />}
@@ -113,7 +113,7 @@ function PostCard({ post }: { post: Post }) {
 
       {/* Body */}
       <div className="p-4">
-        <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">
+        <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
           {post.title}
         </h3>
         {post.creator && <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>}
@@ -127,7 +127,7 @@ function PostCard({ post }: { post: Post }) {
         {/* User */}
         {post.user && (
           <div className="mt-3 flex items-center gap-2 border-t border-[var(--border)] pt-3">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c9a84c]/20 text-[9px] font-bold text-[#c9a84c]">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c4a24b]/20 text-[9px] font-bold text-[#c4a24b]">
               {post.user.avatarUrl ? (
                 <Image
                   loader={customLoader}
@@ -144,7 +144,7 @@ function PostCard({ post }: { post: Post }) {
             {post.user.username ? (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]"
               >
                 @{post.user.username}
               </Link>

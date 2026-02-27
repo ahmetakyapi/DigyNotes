@@ -69,16 +69,16 @@ export function PostsList({ allPosts }: PostsListProps) {
   if (allPosts.length === 0) return null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-3 py-6 sm:px-6 sm:py-8">
       {/* ── Page header + tab switcher ── */}
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-2.5 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-1">
             <button
               onClick={() => setActiveTab("notlar")}
-              className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 activeTab === "notlar"
-                  ? "bg-[#c9a84c] text-[#0f1117]"
+                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -86,9 +86,9 @@ export function PostsList({ allPosts }: PostsListProps) {
             </button>
             <button
               onClick={() => setActiveTab("istatistikler")}
-              className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                 activeTab === "istatistikler"
-                  ? "bg-[#c9a84c] text-[#0f1117]"
+                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -98,13 +98,13 @@ export function PostsList({ allPosts }: PostsListProps) {
 
           {activeTab === "notlar" && (
             <div className="hidden items-center gap-3 sm:flex">
-              <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c9a84c] to-transparent" />
+              <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
               <span className="text-xs text-[var(--text-muted)]">
                 {stats.total} not
                 {stats.avgRating > 0 && (
                   <>
                     {" "}
-                    · <span className="text-[#c9a84c]">★ {stats.avgRating.toFixed(1)}</span> ort.
+                    · <span className="text-[var(--gold)]">★ {stats.avgRating.toFixed(1)}</span> ort.
                   </>
                 )}
               </span>
@@ -165,7 +165,7 @@ export function PostsList({ allPosts }: PostsListProps) {
                 setSortFilter({ sort: "newest", minRating: 0 });
                 setActiveTags([]);
               }}
-              className="text-xs text-[#c9a84c] hover:underline"
+              className="text-xs text-[var(--gold)] hover:underline"
             >
               Filtreleri temizle
             </button>
@@ -174,8 +174,8 @@ export function PostsList({ allPosts }: PostsListProps) {
           <>
             {/* ── Featured card (sadece arama/filtre yokken) ── */}
             {featured && !hasSearch && (
-              <Link href={`/posts/${featured.id}`} className="group mb-4 block">
-                <article className="relative h-[240px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c9a84c]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
+              <Link href={`/posts/${featured.id}`} className="group mb-5 block">
+                <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c4a24b]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
                   <Image
                     unoptimized
                     src={featured.image}
@@ -185,12 +185,26 @@ export function PostsList({ allPosts }: PostsListProps) {
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
                     priority
                   />
-                  {/* Dark gradient overlay — intentionally dark for text readability regardless of theme */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c0e16] via-[#0c0e16]/60 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0c0e16]/40 to-transparent" />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 55%, var(--media-overlay-strong) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(120deg, var(--media-panel-sheen) 0%, transparent 40%, transparent 75%, var(--media-panel-sheen) 100%)",
+                    }}
+                  />
 
                   <div className="absolute left-5 top-5 flex items-center gap-2">
-                    <span className="rounded-full border border-[#c9a84c]/20 bg-[#0c0c0c]/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[#c9a84c] backdrop-blur-md">
+                    <span
+                      className="rounded-full border border-[#c4a24b]/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
+                      style={{ backgroundColor: "var(--bg-overlay)" }}
+                    >
                       Öne Çıkan
                     </span>
                     {featured.status && <StatusBadge status={featured.status} />}
@@ -198,25 +212,25 @@ export function PostsList({ allPosts }: PostsListProps) {
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
                     <div className="mb-3 flex items-center gap-2.5">
-                      <span className="rounded-sm bg-[#c9a84c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0c0c0c]">
+                      <span className="rounded-sm bg-[var(--gold)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-on-accent)]">
                         {featured.category}
                       </span>
                       {featured.years && (
-                        <span className="text-sm text-[#8892b0]">{featured.years}</span>
+                        <span className="text-sm text-[var(--media-text-secondary)]">{featured.years}</span>
                       )}
                     </div>
-                    <h2 className="mb-2 text-2xl font-bold leading-tight text-[#f0ede8] transition-colors duration-300 group-hover:text-[#c9a84c] sm:text-3xl lg:text-4xl">
+                    <h2 className="mb-2 text-2xl font-bold leading-tight text-[var(--media-text-primary)] transition-colors duration-300 group-hover:text-[var(--gold)] sm:text-3xl lg:text-4xl">
                       {featured.title}
                     </h2>
                     {featured.creator && (
-                      <p className="mb-4 text-sm text-[#8892b0]">{featured.creator}</p>
+                      <p className="mb-4 text-sm text-[var(--media-text-secondary)]">{featured.creator}</p>
                     )}
                     <div className="flex items-center gap-3">
                       <StarRating rating={featured.rating} size={14} />
                       {featured.rating > 0 && (
-                        <span className="text-xs text-[#8892b0]">{featured.rating}/5</span>
+                        <span className="text-xs text-[var(--media-text-secondary)]">{featured.rating}/5</span>
                       )}
-                      <span className="ml-auto text-xs text-[#8892b0]">{featured.date}</span>
+                      <span className="ml-auto text-xs text-[var(--media-text-secondary)]">{featured.date}</span>
                     </div>
                   </div>
                 </article>
@@ -224,22 +238,19 @@ export function PostsList({ allPosts }: PostsListProps) {
             )}
 
             {/* ── Post listesi ── */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
               {(hasSearch ? filtered : rest).map((post, index) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
+                  <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
                     {!hasSearch && (
                       <div className="flex w-9 flex-shrink-0 items-center justify-center border-r border-[var(--border)]">
-                        <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#c9a84c]/60">
+                        <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#c4a24b]/60">
                           {String(index + 2).padStart(2, "0")}
                         </span>
                       </div>
                     )}
 
-                    <div
-                      className="relative flex-shrink-0"
-                      style={{ width: "36%", minHeight: "160px" }}
-                    >
+                    <div className="relative min-h-[148px] flex-shrink-0 sm:min-h-[160px]" style={{ width: "34%" }}>
                       <Image
                         unoptimized
                         src={post.image}
@@ -251,10 +262,10 @@ export function PostsList({ allPosts }: PostsListProps) {
                       <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-card)] to-transparent" />
                     </div>
 
-                    <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
+                    <div className="flex min-w-0 flex-1 flex-col justify-between p-3.5 sm:p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                          <span className="flex-shrink-0 rounded-sm border border-[#c9a84c]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c9a84c]">
+                          <span className="flex-shrink-0 rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                             {post.category}
                           </span>
                           {post.years && (
@@ -263,7 +274,7 @@ export function PostsList({ allPosts }: PostsListProps) {
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
 
-                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c9a84c] sm:text-base">
+                        <h2 className="mb-1 line-clamp-2 text-[15px] font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-base">
                           {post.title}
                         </h2>
 

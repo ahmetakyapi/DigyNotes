@@ -115,7 +115,7 @@ export default function FollowListModal({ username, type, onClose }: FollowListM
                           unoptimized
                         />
                       ) : (
-                        <span className="text-sm font-semibold text-[#c9a84c]">
+                        <span className="text-sm font-semibold text-[#c4a24b]">
                           {u.name.charAt(0).toUpperCase()}
                         </span>
                       )}

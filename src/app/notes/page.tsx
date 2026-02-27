@@ -57,7 +57,7 @@ export default async function NotesPage() {
         <p className="mb-4 text-base text-[var(--text-muted)]">Henüz not eklenmemiş.</p>
         <Link
           href="/new-post"
-          className="rounded-lg bg-[#c9a84c] px-5 py-2.5 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#e0c068]"
+          className="rounded-lg bg-[#c4a24b] px-5 py-2.5 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#d7ba68]"
         >
           İlk notu ekle
         </Link>

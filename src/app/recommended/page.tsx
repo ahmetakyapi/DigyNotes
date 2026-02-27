@@ -49,7 +49,7 @@ export default function RecommendedPage() {
           <p className="mb-4 text-sm text-[var(--text-muted)]">
             Daha fazla not ekleyip tag&apos;ledikçe öneriler belirecek.
           </p>
-          <Link href="/new-post" className="rounded-lg border border-[#c9a84c]/60 bg-[#c9a84c]/10 px-5 py-2 text-sm font-semibold text-[#c9a84c] transition-all hover:bg-[#c9a84c]/20">
+          <Link href="/new-post" className="rounded-lg border border-[#c4a24b]/60 bg-[#c4a24b]/10 px-5 py-2 text-sm font-semibold text-[#c4a24b] transition-all hover:bg-[#c4a24b]/20">
             Not Ekle
           </Link>
         </div>
@@ -64,17 +64,17 @@ export default function RecommendedPage() {
 
 function RecommendedCard({ post }: { post: Post }) {
   return (
-    <div className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c9a84c]/30">
+    <div className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30">
       <div className="relative h-40 w-full overflow-hidden">
         <Image loader={customLoader} src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" style={{ objectPosition: post.imagePosition ?? "center" }} />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
-          <span className="rounded-sm border border-[#c9a84c]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">{post.category}</span>
+          <span className="rounded-sm border border-[#c4a24b]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">{post.category}</span>
           {post.status && <StatusBadge status={post.status} />}
         </div>
       </div>
       <div className="p-4">
-        <h3 className="mb-0.5 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">{post.title}</h3>
+        <h3 className="mb-0.5 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">{post.title}</h3>
         {post.creator && <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>}
         {post.rating > 0 && <div className="mb-2"><StarRating rating={post.rating} size={11} /></div>}
         {post.tags && post.tags.length > 0 && (
@@ -84,13 +84,13 @@ function RecommendedCard({ post }: { post: Post }) {
         )}
         {post.user && (
           <div className="flex items-center gap-2 border-t border-[var(--border)] pt-3">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9a84c]/20 text-[9px] font-bold text-[#c9a84c]">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c4a24b]/20 text-[9px] font-bold text-[#c4a24b]">
               {post.user.avatarUrl ? (
                 <Image loader={customLoader} src={post.user.avatarUrl} alt={post.user.name} width={24} height={24} className="h-full w-full object-cover" />
               ) : post.user.name.charAt(0).toUpperCase()}
             </div>
             {post.user.username ? (
-              <Link href={`/profile/${post.user.username}`} className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]">
+              <Link href={`/profile/${post.user.username}`} className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]">
                 @{post.user.username}
               </Link>
             ) : <span className="text-xs text-[var(--text-muted)]">{post.user.name}</span>}
