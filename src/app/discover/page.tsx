@@ -98,7 +98,7 @@ export default function DiscoverPage() {
             onClick={() => setActiveTab("top")}
             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
               activeTab === "top"
-                ? "bg-[#c9a84c] text-[#0c0c0c]"
+                ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                 : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
@@ -108,7 +108,7 @@ export default function DiscoverPage() {
             onClick={() => setActiveTab("users")}
             className={`flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all ${
               activeTab === "users"
-                ? "bg-[#c9a84c] text-[#0c0c0c]"
+                ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                 : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
           >
@@ -129,7 +129,7 @@ export default function DiscoverPage() {
                     />
                   ))}
                 </div>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
@@ -151,9 +151,9 @@ export default function DiscoverPage() {
                         <Link
                           key={tag.id}
                           href={`/tag/${encodeURIComponent(tag.name)}`}
-                          className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-all hover:border-[#c9a84c]/50 hover:text-[#c9a84c]"
+                          className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition-all hover:border-[#c4a24b]/50 hover:text-[var(--gold)]"
                         >
-                          <span className="text-[#c9a84c]">#</span>
+                          <span className="text-[var(--gold)]">#</span>
                           {tag.name}
                           <span className="rounded-sm bg-[var(--bg-raised)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)]">
                             {tag.count}
@@ -170,7 +170,7 @@ export default function DiscoverPage() {
                     <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                       En Yüksek Puanlı Notlar
                     </h2>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                       {topPosts.map((post) => (
                         <TopPostCard key={post.id} post={post} />
                       ))}
@@ -213,7 +213,7 @@ export default function DiscoverPage() {
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="İsim veya @kullanıcıadı ara..."
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-11 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c]/50 focus:outline-none"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-11 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--gold)] focus:outline-none"
               />
             </div>
 
@@ -254,7 +254,7 @@ function TopPostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/posts/${post.id}`}
-      className="group block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c9a84c]/30"
+      className="group block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30"
     >
       <div className="relative h-28 overflow-hidden">
         <Image
@@ -273,7 +273,7 @@ function TopPostCard({ post }: { post: Post }) {
         )}
       </div>
       <div className="p-3">
-        <p className="mb-0.5 line-clamp-1 text-xs font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">
+        <p className="mb-0.5 line-clamp-1 text-xs font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
           {post.title}
         </p>
         {post.creator && <p className="mb-1 text-[10px] text-[var(--text-muted)]">{post.creator}</p>}
@@ -294,7 +294,7 @@ function TopPostCard({ post }: { post: Post }) {
                 window.location.href = `/profile/${post.user!.username}`;
               }
             }}
-            className="relative z-10 mt-1.5 block cursor-pointer text-[10px] text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]"
+            className="relative z-10 mt-1.5 block cursor-pointer text-[10px] text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
           >
             @{post.user.username}
           </span>

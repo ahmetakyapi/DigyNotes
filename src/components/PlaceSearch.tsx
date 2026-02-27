@@ -169,8 +169,8 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
     <div className="space-y-3">
       {/* Arama kutusu */}
       <div className="relative">
-        <div className="flex items-center gap-2 rounded border border-[#2a2a2a] bg-[#0c0c0c] px-3 py-2.5 focus-within:border-[#c9a84c] transition-colors duration-200">
-          <MagnifyingGlass size={16} className="shrink-0 text-[#555555]" />
+        <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-[#c4a24b]">
+          <MagnifyingGlass size={16} className="shrink-0 text-[var(--text-muted)]" />
           <input
             type="text"
             value={query}
@@ -178,16 +178,16 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             onFocus={() => results.length > 0 && setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 150)}
             placeholder="Şehir, ülke veya yer adı ara..."
-            className="flex-1 bg-transparent text-sm text-[#f0ede8] placeholder-[#555555] outline-none"
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
           />
           {loading && (
-            <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-[#c9a84c] border-t-transparent" />
+            <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-[#c4a24b] border-t-transparent" />
           )}
           {query && !loading && (
             <button
               type="button"
               onClick={handleClear}
-              className="shrink-0 text-[#555555] transition-colors duration-200 hover:text-[#f0ede8]"
+              className="shrink-0 text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
             >
               <X size={14} />
             </button>
@@ -196,7 +196,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
 
         {/* Sonuçlar dropdown */}
         {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded border border-[#2a2a2a] bg-[#161616] shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-card)]">
             {results.map((place) => {
               const { main, secondary } = getPlaceLabel(place);
               return (
@@ -204,10 +204,10 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                   key={place.place_id}
                   type="button"
                   onMouseDown={() => handleSelect(place)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[#1e1e1e] active:bg-[#252525]"
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--bg-raised)] active:opacity-80"
                 >
                   {/* Thumbnail */}
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-[#1a1a1a]">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-[var(--bg-raised)]">
                     {place.thumbUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -217,16 +217,16 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <MapPin size={18} weight="fill" className="text-[#2a2a2a]" />
+                        <MapPin size={18} weight="fill" className="text-[var(--text-muted)]" />
                       </div>
                     )}
                   </div>
 
                   {/* Metin */}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[#f0ede8]">{main}</p>
+                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">{main}</p>
                     {secondary && (
-                      <p className="truncate text-xs text-[#555555]">{secondary}</p>
+                      <p className="truncate text-xs text-[var(--text-muted)]">{secondary}</p>
                     )}
                   </div>
                 </button>
@@ -236,8 +236,8 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
         )}
 
         {showResults && results.length === 0 && !loading && query.length >= 3 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded border border-[#2a2a2a] bg-[#161616] px-4 py-3">
-            <p className="text-sm text-[#555555]">Sonuç bulunamadı</p>
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
+            <p className="text-sm text-[var(--text-muted)]">Sonuç bulunamadı</p>
           </div>
         )}
       </div>

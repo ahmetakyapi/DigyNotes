@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
@@ -10,7 +10,17 @@ export const viewport: Viewport = {
   themeColor: "#0f1117",
 };
 
-const inter = Inter({ subsets: ["latin", "latin-ext"] });
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const sora = Sora({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -82,11 +92,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Prevent flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('dn_theme');if(t==='light'){document.documentElement.classList.add('light')}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('dn_theme');var r=document.documentElement;var l=t==='light';r.classList.toggle('light',l);r.dataset.theme=l?'light':'dark';r.style.colorScheme=l?'light':'dark'}catch(e){}})()`,
           }}
         />
       </head>
-      <body className={`${inter.className} min-h-screen`}>
+      <body className={`${manrope.variable} ${sora.variable} min-h-screen`}>
         <MaintenanceGuard>
           <ThemeProvider>
             <SessionProviderWrapper>

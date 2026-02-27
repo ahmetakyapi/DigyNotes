@@ -334,7 +334,7 @@ export function MediaSearch({ category, onSelect, lockedTab }: MediaSearchProps)
               onClick={() => handleTabChange(tab.key)}
               className={`rounded-md px-3 py-2.5 text-[13px] font-semibold transition-colors ${
                 activeTab === tab.key
-                  ? "bg-[#c9a84c] text-[#0c0c0c]"
+                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -354,11 +354,11 @@ export function MediaSearch({ category, onSelect, lockedTab }: MediaSearchProps)
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 pr-10 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c] focus:outline-none"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 pr-10 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[var(--gold)] focus:outline-none"
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
           {isLoading || isSelecting ? (
-            <svg className="h-4 w-4 animate-spin text-[#c9a84c]" viewBox="0 0 24 24" fill="none">
+            <svg className="h-4 w-4 animate-spin text-[var(--gold)]" viewBox="0 0 24 24" fill="none">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -429,7 +429,7 @@ export function MediaSearch({ category, onSelect, lockedTab }: MediaSearchProps)
       {activeTab === "oyun" && !RAWG_KEY && (
         <p className="mt-2 text-[11px] text-[var(--text-secondary)]">
           Oyun araması için{" "}
-          <code className="rounded bg-[var(--bg-raised)] px-1 text-[#c9a84c]">NEXT_PUBLIC_RAWG_API_KEY</code>{" "}
+          <code className="rounded bg-[var(--bg-raised)] px-1 text-[var(--gold)]">NEXT_PUBLIC_RAWG_API_KEY</code>{" "}
           env değişkeni gerekli.
         </p>
       )}

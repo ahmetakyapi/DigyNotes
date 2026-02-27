@@ -33,10 +33,10 @@ const RATING_OPTIONS = [
 
 export function SortFilterBar({ value, onChange, totalCount, filteredCount }: SortFilterBarProps) {
   const selectClass =
-    "bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-secondary)] text-[11px] rounded-md px-2 py-2.5 outline-none hover:border-[#c9a84c]/30 focus:border-[#c9a84c]/40 transition-colors cursor-pointer";
+    "h-10 min-w-[112px] rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2.5 text-xs text-[var(--text-secondary)] outline-none transition-colors hover:border-[#c4a24b]/30 focus:border-[#c4a24b]/40 cursor-pointer";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:justify-normal">
       {filteredCount < totalCount && (
         <span className="mr-1 text-[11px] text-[var(--text-muted)]">
           {filteredCount}/{totalCount}

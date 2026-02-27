@@ -53,8 +53,8 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/register"
-            className="rounded-xl px-4 py-2 text-sm font-bold text-[#0a0a0a] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5"
-            style={{ background: "linear-gradient(135deg, #f0c060, #c9a84c, #d4963a)" }}
+            className="rounded-xl px-4 py-2 text-sm font-bold text-[var(--text-on-accent)] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5"
+            style={{ background: "linear-gradient(135deg, #f0c060, #c4a24b, #d4963a)" }}
           >
             Kayıt Ol
           </Link>
@@ -82,7 +82,7 @@ export default function LandingPage() {
           <div
             className="dn-aurora-float-3 absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.06] blur-[160px] sm:h-[500px] sm:w-[900px]"
             style={{
-              background: "radial-gradient(circle, #c9a84c 0%, #8a6820 60%, transparent 70%)",
+              background: "radial-gradient(circle, #c4a24b 0%, #8a6820 60%, transparent 70%)",
             }}
           />
           <div
@@ -103,7 +103,7 @@ export default function LandingPage() {
           />
           <div
             className="dn-aurora-core absolute left-1/2 top-1/2 h-[150px] w-[300px] -translate-x-1/2 -translate-y-1/2 opacity-[0.05] blur-[90px] sm:h-[250px] sm:w-[500px]"
-            style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, #c4a24b, transparent 70%)" }}
           />
         </div>
 
@@ -117,13 +117,13 @@ export default function LandingPage() {
             }}
           >
             <span
-              className="dn-dot-pulse h-1.5 w-1.5 rounded-full shadow-[0_0_8px_#c9a84c] sm:h-2 sm:w-2"
-              style={{ background: "radial-gradient(circle, #fbbf24, #c9a84c)" }}
+              className="dn-dot-pulse h-1.5 w-1.5 rounded-full shadow-[0_0_8px_#c4a24b] sm:h-2 sm:w-2"
+              style={{ background: "radial-gradient(circle, #fbbf24, #c4a24b)" }}
             />
             <span
               className="text-[9px] font-bold uppercase tracking-[0.2em] sm:text-xs"
               style={{
-                background: "linear-gradient(90deg, #c9a84c, #e0c068)",
+                background: "linear-gradient(90deg, #c4a24b, #d7ba68)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -197,7 +197,7 @@ export default function LandingPage() {
 
             <p
               className="dn-reveal dn-delay-3 mx-auto max-w-[322px] px-2 py-2 text-center text-[0.94rem] leading-[1.65] [text-wrap:balance] sm:mb-4 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.05rem] sm:leading-relaxed lg:text-[1rem] 2xl:mb-5 2xl:max-w-2xl 2xl:text-[1.2rem]"
-              style={{ color: "rgba(240,237,232,0.66)" }}
+              style={{ color: "var(--text-secondary)" }}
             >
               <span className="block [text-wrap:balance]">
                 Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde
@@ -205,7 +205,7 @@ export default function LandingPage() {
               </span>
               <span
                 className="mt-2.5 block [text-wrap:balance] sm:mt-2"
-                style={{ color: "rgba(240,237,232,0.66)" }}
+                style={{ color: "var(--text-secondary)" }}
               >
                 Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
               </span>
@@ -216,7 +216,7 @@ export default function LandingPage() {
           <div className="dn-reveal dn-delay-4 mb-8 mt-3 flex w-full flex-col gap-5 px-1.5 pb-1 sm:mb-0 sm:w-auto sm:flex-row sm:gap-4 sm:px-0 sm:pb-0">
             <Link
               href="/register"
-              className="dn-cta-gold group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[#1a0e00] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[17px]"
+              className="dn-cta-gold group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[var(--text-on-accent)] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[17px]"
               style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
             >
               <span className="relative z-10">Hemen Başla →</span>
@@ -229,11 +229,10 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="dn-cta-ghost w-[86%] self-center rounded-[1.6rem] border border-white/20 py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.04] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[10px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[17px]"
+              className="dn-cta-ghost w-[86%] self-center rounded-[1.6rem] border border-[var(--border)] py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#c4a24b]/30 hover:bg-[var(--bg-raised)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[10px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[17px]"
               style={{
-                color: "rgba(240,237,232,0.68)",
-                background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
+                color: "var(--text-secondary)",
+                background: "var(--bg-overlay)",
               }}
             >
               Giriş Yap
@@ -305,7 +304,7 @@ export default function LandingPage() {
                   <div
                     key={cat}
                     className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
-                      i === 0 ? "text-[#c9a84c]" : "text-[#2a2a2a]"
+                      i === 0 ? "text-[#c4a24b]" : "text-[#2a2a2a]"
                     }`}
                     style={
                       i === 0
@@ -353,7 +352,7 @@ export default function LandingPage() {
                         key={s}
                         viewBox="0 0 24 24"
                         className="h-2.5 w-2.5 sm:h-3 sm:w-3"
-                        fill={s <= 4 ? "#c9a84c" : "#1e1e1e"}
+                        fill={s <= 4 ? "#c4a24b" : "#1e1e1e"}
                       >
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                       </svg>
@@ -392,7 +391,7 @@ export default function LandingPage() {
                             key={s}
                             viewBox="0 0 24 24"
                             className="h-2 w-2 sm:h-2.5 sm:w-2.5"
-                            fill={s <= 4 ? "#c9a84c" : "#222"}
+                            fill={s <= 4 ? "#c4a24b" : "#222"}
                           >
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                           </svg>
@@ -422,7 +421,7 @@ export default function LandingPage() {
             Her şey{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #c9a84c, #e0c068)",
+                background: "linear-gradient(90deg, #c4a24b, #d7ba68)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -432,7 +431,7 @@ export default function LandingPage() {
           </h2>
           <p
             className="mx-auto max-w-sm text-base leading-relaxed"
-            style={{ color: "rgba(240,237,232,0.38)" }}
+            style={{ color: "var(--text-secondary)" }}
           >
             <span className="block text-balance">
               Film izle, dizi takip et, oyun oyna, kitap oku, gezi yap — not al.
@@ -480,7 +479,7 @@ export default function LandingPage() {
                 desc: "Okuduğun ya da okumak istediğin kitapları listele, notlar al.",
                 border: "rgba(201,168,76,0.18)",
                 gradientFrom: "rgba(160,128,40,0.08)",
-                iconColor: "#c9a84c",
+                iconColor: "#c4a24b",
                 iconBg: "rgba(201,168,76,0.1)",
                 iconBorder: "rgba(201,168,76,0.2)",
               },
@@ -530,7 +529,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-4">
           {(
             [
-              { label: "Yıldızlı Puanlama", Icon: LuStar, color: "#c9a84c" },
+              { label: "Yıldızlı Puanlama", Icon: LuStar, color: "#c4a24b" },
               { label: "Otomatik Medya Arama", Icon: LuSearch, color: "#8898b8" },
               { label: "Tag & Kategori Sistemi", Icon: LuTag, color: "#a09080" },
               { label: "Sosyal Akış & Keşfet", Icon: LuUsers, color: "#818cf8" },
@@ -565,15 +564,13 @@ export default function LandingPage() {
         {/* Arka glow */}
         <div
           className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 opacity-10 blur-[80px]"
-          style={{ background: "radial-gradient(circle, #c9a84c, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, #c4a24b, transparent 70%)" }}
         />
 
         <h2 className="relative mb-4 mt-6 text-2xl font-black sm:mb-5 sm:mt-14 sm:text-4xl">
           <span
             style={{
-              background: "linear-gradient(135deg, #f0ede8 0%, rgba(240,237,232,0.7) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              color: "var(--text-primary)",
             }}
           >
             Notlarını almaya{" "}
@@ -590,7 +587,7 @@ export default function LandingPage() {
         </h2>
         <p
           className="mb-8 max-w-sm text-[13px] leading-relaxed sm:mb-10 sm:text-sm"
-          style={{ color: "rgba(240,237,232,0.42)" }}
+          style={{ color: "var(--text-secondary)" }}
         >
           Kayıt ol, kategorilerini oluştur ve ilk notunu ekle.
           <br />
@@ -598,7 +595,7 @@ export default function LandingPage() {
         </p>
         <Link
           href="/register"
-          className="group relative w-full max-w-[260px] overflow-hidden rounded-2xl px-6 py-3.5 text-[14px] font-bold text-[#1a0e00] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:max-w-none sm:px-12 sm:py-4 sm:text-[15px]"
+          className="group relative w-full max-w-[260px] overflow-hidden rounded-2xl px-6 py-3.5 text-[14px] font-bold text-[var(--text-on-accent)] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:max-w-none sm:px-12 sm:py-4 sm:text-[15px]"
           style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
         >
           <span className="relative z-10">Hesap Oluştur →</span>

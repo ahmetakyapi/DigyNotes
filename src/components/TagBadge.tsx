@@ -16,12 +16,12 @@ export default function TagBadge({ tag, onClick, onRemove, active }: TagBadgePro
         onClick ? "cursor-pointer" : ""
       } ${
         active
-          ? "border border-[#c9a84c]/50 bg-[#c9a84c]/20 text-[#c9a84c]"
-          : "border border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c9a84c]/40 hover:text-[#c9a84c]"
+          ? "border border-[#c4a24b]/50 bg-[#c4a24b]/20 text-[#c4a24b]"
+          : "border border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c4a24b]/40 hover:text-[#c4a24b]"
       }`}
       onClick={() => onClick?.(tag.name)}
     >
-      <span className="text-[#c9a84c]/60">#</span>
+      <span className="text-[#c4a24b]/60">#</span>
       {tag.name}
       {onRemove && (
         <button
