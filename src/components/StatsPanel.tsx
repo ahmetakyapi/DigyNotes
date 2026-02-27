@@ -9,7 +9,7 @@ import StarRating from "@/components/StarRating";
 const customLoader = ({ src }: { src: string }) => src;
 
 const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
-  film: { fill: "#c9a84c", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },
+  film: { fill: "#c4a24b", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },
   dizi: { fill: "#818cf8", glow: "rgba(129,140,248,0.25)", bg: "rgba(129,140,248,0.08)" },
   kitap: { fill: "#34d399", glow: "rgba(52,211,153,0.25)", bg: "rgba(52,211,153,0.08)" },
 };
@@ -89,7 +89,7 @@ function BigStat({
   sub,
   label,
   icon,
-  color = "#c9a84c",
+  color = "#c4a24b",
 }: {
   value: string | number;
   sub?: string;
@@ -158,7 +158,7 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
     <div className="group flex items-center gap-2.5">
       <div className="flex w-16 flex-shrink-0 items-center gap-0.5">
         {Array.from({ length: star }).map((_, i) => (
-          <svg key={i} className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="#c9a84c">
+          <svg key={i} className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="#c4a24b">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
           </svg>
         ))}
@@ -169,7 +169,7 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
           style={{
             width: `${pct}%`,
             background: isHigh
-              ? "linear-gradient(90deg, #c9a84c, #e0c068)"
+              ? "linear-gradient(90deg, #c4a24b, #d7ba68)"
               : "var(--bg-raised)",
           }}
         />
@@ -203,14 +203,14 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
                 style={{
                   height: `${pct}%`,
                   background: isLast
-                    ? "linear-gradient(180deg, #e0c068, #c9a84c)"
+                    ? "linear-gradient(180deg, #d7ba68, #c4a24b)"
                     : "var(--bg-raised)",
                   minHeight: d.count > 0 ? 4 : 0,
                   boxShadow: isLast && d.count > 0 ? "0 0 10px rgba(201,168,76,0.4)" : "none",
                 }}
               />
             </div>
-            <span className={`text-[9px] ${isLast ? "text-[#c9a84c]" : "text-[var(--text-muted)]"}`}>
+            <span className={`text-[9px] ${isLast ? "text-[#c4a24b]" : "text-[var(--text-muted)]"}`}>
               {d.short}
             </span>
           </div>
@@ -313,7 +313,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <p className="text-sm text-[var(--text-muted)]">İstatistik görmek için önce not ekle.</p>
         <Link
           href="/new-post"
-          className="mt-3 text-xs text-[#c9a84c] transition-colors hover:text-[#e0c068]"
+          className="mt-3 text-xs text-[#c4a24b] transition-colors hover:text-[#d7ba68]"
         >
           + İlk notu ekle
         </Link>
@@ -335,7 +335,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <BigStat
           value={stats.total}
           label="Toplam Not"
-          color="#c9a84c"
+          color="#c4a24b"
           icon={
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -351,7 +351,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
           value={stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "—"}
           sub={stats.avgRating > 0 ? "/ 5" : undefined}
           label="Ortalama Puan"
-          color="#e0c068"
+          color="#d7ba68"
           icon={
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -459,7 +459,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <div className="mb-5 grid grid-cols-3 gap-3">
           {[
             { label: "Tamamlandı", count: stats.done, color: "#34d399", icon: "✓" },
-            { label: "Devam Ediyor", count: stats.ongoing, color: "#c9a84c", icon: "▶" },
+            { label: "Devam Ediyor", count: stats.ongoing, color: "#c4a24b", icon: "▶" },
             { label: "Bekliyor", count: stats.planned, color: "#6272a4", icon: "◷" },
           ].map((s) => (
             <div
@@ -518,14 +518,14 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
               <Link
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-[#c9a84c]/30 hover:bg-[#c9a84c]/5"
+                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-[#c4a24b]/30 hover:bg-[#c4a24b]/5"
               >
                 {/* Rank */}
                 <span
                   className="w-5 flex-shrink-0 text-center text-[10px] font-black"
                   style={{
                     color:
-                      i === 0 ? "#c9a84c" : i === 1 ? "#a0a0c0" : i === 2 ? "#b08060" : "#3a3a5a",
+                      i === 0 ? "#c4a24b" : i === 1 ? "#a0a0c0" : i === 2 ? "#b08060" : "#3a3a5a",
                   }}
                 >
                   {String(i + 1).padStart(2, "0")}
@@ -547,7 +547,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
 
                 {/* Info */}
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c]">
+                  <p className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
                     {post.title}
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
@@ -563,7 +563,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 {/* Rating */}
                 <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
                   <StarRating rating={post.rating} size={11} />
-                  <span className="text-[10px] font-bold text-[#c9a84c]">{post.rating}/5</span>
+                  <span className="text-[10px] font-bold text-[#c4a24b]">{post.rating}/5</span>
                 </div>
               </Link>
             ))}

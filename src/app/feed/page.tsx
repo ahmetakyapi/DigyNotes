@@ -51,7 +51,7 @@ export default function FeedPage() {
           <p className="mb-4 text-sm text-[var(--text-muted)]">Keşfet sayfasından kullanıcıları bul.</p>
           <Link
             href="/discover"
-            className="rounded-lg border border-[#c9a84c]/60 bg-[#c9a84c]/10 px-5 py-2 text-sm font-semibold text-[#c9a84c] transition-all hover:bg-[#c9a84c]/20"
+            className="rounded-lg border border-[#c4a24b]/60 bg-[#c4a24b]/10 px-5 py-2 text-sm font-semibold text-[#c4a24b] transition-all hover:bg-[#c4a24b]/20"
           >
             Keşfet
           </Link>
@@ -69,10 +69,10 @@ export default function FeedPage() {
 
 function FeedCard({ post }: { post: Post }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c9a84c]/30">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30">
       {post.user && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c9a84c]/20 text-xs font-bold text-[#c9a84c]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#c4a24b]/20 text-xs font-bold text-[#c4a24b]">
             {post.user.avatarUrl ? (
               <Image loader={customLoader} src={post.user.avatarUrl} alt={post.user.name} width={32} height={32} className="h-full w-full object-cover" />
             ) : (
@@ -82,7 +82,7 @@ function FeedCard({ post }: { post: Post }) {
           <div className="min-w-0">
             <span className="block truncate text-sm font-semibold text-[var(--text-primary)]">{post.user.name}</span>
             {post.user.username && (
-              <Link href={`/profile/${post.user.username}`} className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c9a84c]">
+              <Link href={`/profile/${post.user.username}`} className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]">
                 @{post.user.username}
               </Link>
             )}
@@ -97,7 +97,7 @@ function FeedCard({ post }: { post: Post }) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center gap-1.5">
-            <span className="rounded-sm border border-[#c9a84c]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">{post.category}</span>
+            <span className="rounded-sm border border-[#c4a24b]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">{post.category}</span>
             {post.status && <StatusBadge status={post.status} />}
           </div>
           <h3 className="mb-0.5 line-clamp-1 font-semibold text-[var(--text-primary)]">{post.title}</h3>

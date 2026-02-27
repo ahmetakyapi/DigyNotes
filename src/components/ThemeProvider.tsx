@@ -17,29 +17,39 @@ export function useTheme() {
   return useContext(ThemeContext);
 }
 
+function applyTheme(next: Theme) {
+  const root = document.documentElement;
+  root.classList.toggle("light", next === "light");
+  root.dataset.theme = next;
+  root.style.colorScheme = next;
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const stored = localStorage.getItem("dn_theme") as Theme | null;
-    const initial = stored === "light" ? "light" : "dark";
-    setTheme(initial);
-    if (initial === "light") {
-      document.documentElement.classList.add("light");
-    } else {
-      document.documentElement.classList.remove("light");
+    let stored: Theme | null = null;
+    try {
+      stored = localStorage.getItem("dn_theme") as Theme | null;
+    } catch {
+      stored = null;
     }
+
+    const hasLightClass = document.documentElement.classList.contains("light");
+    const initial = stored === "light" || hasLightClass ? "light" : "dark";
+    setTheme(initial);
+    applyTheme(initial);
   }, []);
 
   const toggleTheme = () => {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
-      localStorage.setItem("dn_theme", next);
-      if (next === "light") {
-        document.documentElement.classList.add("light");
-      } else {
-        document.documentElement.classList.remove("light");
+      try {
+        localStorage.setItem("dn_theme", next);
+      } catch {
+        // Theme switch should still work even if storage is blocked.
       }
+      applyTheme(next);
       return next;
     });
   };

@@ -81,7 +81,7 @@ type SeriesKey = "7d" | "30d" | "90d" | "365d";
 /* ─────────────────────────── constants ─────────────────────── */
 
 const STATUS_COLORS: Record<string, string> = {
-  İzlendi: "#c9a84c",
+  İzlendi: "#c4a24b",
   İzleniyor: "#818cf8",
   Okundu: "#34d399",
   Okunuyor: "#60a5fa",
@@ -92,7 +92,7 @@ const STATUS_COLORS: Record<string, string> = {
   Belirsiz: "#3a3a5a",
 };
 const PIE_COLORS = [
-  "#c9a84c",
+  "#c4a24b",
   "#818cf8",
   "#34d399",
   "#60a5fa",
@@ -107,7 +107,7 @@ const ACTION_META: Record<string, { label: string; color: string; icon: string }
   "post.create": { label: "Not oluşturuldu", color: "#34d399", icon: "+" },
   "post.update": { label: "Not güncellendi", color: "#60a5fa", icon: "↻" },
   "post.delete": { label: "Not silindi", color: "#e53e3e", icon: "×" },
-  "user.register": { label: "Yeni kayıt", color: "#c9a84c", icon: "★" },
+  "user.register": { label: "Yeni kayıt", color: "#c4a24b", icon: "★" },
   "category.create": { label: "Kategori oluşturuldu", color: "#818cf8", icon: "□" },
   "user.follow": { label: "Takip", color: "#f472b6", icon: "♥" },
 };
@@ -239,7 +239,7 @@ const DarkTooltip = ({
 function Spinner() {
   return (
     <div className="flex h-40 items-center justify-center">
-      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
     </div>
   );
 }
@@ -260,7 +260,7 @@ function RangePills<T extends string>({
           key={k}
           onClick={() => onChange(k)}
           className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors duration-150 ${
-            value === k ? "bg-[#c9a84c] text-[#0c0c0c]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            value === k ? "bg-[#c4a24b] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
           {label}
@@ -589,13 +589,13 @@ export default function AdminPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#c9a84c]/20 bg-[#c9a84c]/10">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#c4a24b]/20 bg-[#c4a24b]/10">
                 <svg
                   width="13"
                   height="13"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#c9a84c"
+                  stroke="#c4a24b"
                   strokeWidth="2"
                   strokeLinecap="round"
                 >
@@ -603,7 +603,7 @@ export default function AdminPage() {
                 </svg>
               </div>
               <span className="text-sm font-bold text-[var(--text-primary)]">Admin Paneli</span>
-              <span className="hidden rounded-md border border-[#c9a84c]/20 bg-[#c9a84c]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#c9a84c] sm:inline">
+              <span className="hidden rounded-md border border-[#c4a24b]/20 bg-[#c4a24b]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#c4a24b] sm:inline">
                 DigyNotes
               </span>
             </div>
@@ -616,7 +616,7 @@ export default function AdminPage() {
                   onClick={() => setTab(t.key)}
                   className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
                     tab === t.key
-                      ? "bg-[#c9a84c] text-[#0c0c0c] shadow-[0_2px_10px_rgba(201,168,76,0.3)]"
+                      ? "bg-[#c4a24b] text-[var(--text-on-accent)] shadow-[0_2px_10px_rgba(201,168,76,0.3)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -642,7 +642,7 @@ export default function AdminPage() {
                   <KpiCard
                     value={stats.kpi.totalUsers}
                     label="Kullanıcı"
-                    color="#c9a84c"
+                    color="#c4a24b"
                     icon={
                       <svg
                         width="15"
@@ -817,8 +817,8 @@ export default function AdminPage() {
                       >
                         <defs>
                           <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#c9a84c" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="#c9a84c" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#c4a24b" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#c4a24b" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -841,11 +841,11 @@ export default function AdminPage() {
                           type="monotone"
                           dataKey="users"
                           name="Kullanıcı"
-                          stroke="#c9a84c"
+                          stroke="#c4a24b"
                           strokeWidth={2}
                           fill="url(#g2)"
                           dot={false}
-                          activeDot={{ r: 4, fill: "#c9a84c", strokeWidth: 0 }}
+                          activeDot={{ r: 4, fill: "#c4a24b", strokeWidth: 0 }}
                         />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -939,7 +939,7 @@ export default function AdminPage() {
                           <YAxis
                             type="category"
                             dataKey="category"
-                            tick={{ fill: "#777", fontSize: 11 }}
+                            tick={{ fill: "var(--text-dim)", fontSize: 11 }}
                             width={68}
                             axisLine={false}
                             tickLine={false}
@@ -948,7 +948,7 @@ export default function AdminPage() {
                           <Bar
                             dataKey="count"
                             name="Not"
-                            fill="#c9a84c"
+                            fill="#c4a24b"
                             radius={[0, 4, 4, 0]}
                             barSize={14}
                           />
@@ -965,7 +965,7 @@ export default function AdminPage() {
                       {stats.topUsers.map((u, i) => {
                         const maxPosts = stats.topUsers[0]?.postCount ?? 1;
                         const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
-                        const rankColors = ["#c9a84c", "#a0a0c0", "#b08060"];
+                        const rankColors = ["#c4a24b", "#a0a0c0", "#b08060"];
                         const rc = rankColors[i] ?? "#2a2a4a";
                         return (
                           <div
@@ -980,7 +980,7 @@ export default function AdminPage() {
                               {i + 1}
                             </span>
                             <div
-                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-[#c9a84c]"
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-[#c4a24b]"
                               style={{ background: `${rc}15`, border: `1px solid ${rc}25` }}
                             >
                               {u.name.charAt(0).toUpperCase()}
@@ -1032,7 +1032,7 @@ export default function AdminPage() {
                             <Cell
                               key={i}
                               fill={
-                                i === stats.ratingDistribution.length - 1 ? "#c9a84c" : "#818cf8"
+                                i === stats.ratingDistribution.length - 1 ? "#c4a24b" : "#818cf8"
                               }
                             />
                           ))}
@@ -1097,7 +1097,7 @@ export default function AdminPage() {
                     setUsersPage(1);
                   }}
                   placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c9a84c]/40 focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1107,8 +1107,8 @@ export default function AdminPage() {
 
             {/* Bulk action bar */}
             {selectedUsers.size > 0 && (
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#c9a84c]/20 bg-[#c9a84c]/5 px-4 py-2.5">
-                <span className="text-sm font-semibold text-[#c9a84c]">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#c4a24b]/20 bg-[#c4a24b]/5 px-4 py-2.5">
+                <span className="text-sm font-semibold text-[#c4a24b]">
                   {selectedUsers.size} seçildi
                 </span>
                 <div className="flex flex-wrap gap-2 sm:ml-auto">
@@ -1149,7 +1149,7 @@ export default function AdminPage() {
                 <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
                   <input
                     type="checkbox"
-                    className="accent-[#c9a84c]"
+                    className="accent-[#c4a24b]"
                     checked={users.length > 0 && selectedUsers.size === users.length}
                     onChange={toggleSelectAll}
                   />
@@ -1157,7 +1157,7 @@ export default function AdminPage() {
                 </div>
                 {loadingUsers ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                   </div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
@@ -1168,12 +1168,12 @@ export default function AdminPage() {
                       >
                         <input
                           type="checkbox"
-                          className="mt-1.5 accent-[#c9a84c]"
+                          className="mt-1.5 accent-[#c4a24b]"
                           checked={selectedUsers.has(u.id)}
                           onChange={() => toggleSelectUser(u.id)}
                         />
                         <div
-                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#c9a84c]"
+                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#c4a24b]"
                           onClick={() => router.push(`/admin/users/${u.id}`)}
                         >
                           {u.name.charAt(0).toUpperCase()}
@@ -1185,7 +1185,7 @@ export default function AdminPage() {
                           <div className="flex flex-wrap items-center gap-1.5">
                             <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
                             {u.isAdmin && (
-                              <span className="rounded bg-[#c9a84c]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
+                              <span className="rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
                                 admin
                               </span>
                             )}
@@ -1221,7 +1221,7 @@ export default function AdminPage() {
                               <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Admin</span>
                               <button
                                 onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
-                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"}`}
+                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
                               >
                                 <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
                               </button>
@@ -1257,7 +1257,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3">
                         <input
                           type="checkbox"
-                          className="accent-[#c9a84c]"
+                          className="accent-[#c4a24b]"
                           checked={users.length > 0 && selectedUsers.size === users.length}
                           onChange={toggleSelectAll}
                         />
@@ -1285,7 +1285,7 @@ export default function AdminPage() {
                     {loadingUsers ? (
                       <tr>
                         <td colSpan={9} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                         </td>
                       </tr>
                     ) : (
@@ -1297,7 +1297,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <input
                               type="checkbox"
-                              className="accent-[#c9a84c]"
+                              className="accent-[#c4a24b]"
                               checked={selectedUsers.has(u.id)}
                               onChange={() => toggleSelectUser(u.id)}
                             />
@@ -1307,14 +1307,14 @@ export default function AdminPage() {
                             onClick={() => router.push(`/admin/users/${u.id}`)}
                           >
                             <div className="flex items-center gap-2.5">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c9a84c]">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c4a24b]">
                                 {u.name.charAt(0).toUpperCase()}
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
                                   <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
                                   {u.isAdmin && (
-                                    <span className="shrink-0 rounded bg-[#c9a84c]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c9a84c]">
+                                    <span className="shrink-0 rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
                                       admin
                                     </span>
                                   )}
@@ -1347,7 +1347,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
-                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"}`}
+                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
                             >
                               <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
@@ -1363,7 +1363,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }}
-                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] opacity-0 transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e] group-hover:opacity-100"
+                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
                             >
                               Sil
                             </button>
@@ -1397,7 +1397,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c9a84c]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -1436,7 +1436,7 @@ export default function AdminPage() {
                     setPostsPage(1);
                   }}
                   placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c9a84c]/40 focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1449,7 +1449,7 @@ export default function AdminPage() {
               <div className="md:hidden">
                 {loadingPosts ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                   </div>
                 ) : posts.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
@@ -1462,7 +1462,7 @@ export default function AdminPage() {
                       >
                         <div className="min-w-0 flex-1">
                           <p
-                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#c9a84c]"
+                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#c4a24b]"
                             onClick={() => router.push(`/posts/${p.id}`)}
                           >
                             {p.title}
@@ -1471,7 +1471,7 @@ export default function AdminPage() {
                             <span>{p.category}</span>
                             {p.user && (
                               <span className="flex items-center gap-1">
-                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#c9a84c]">
+                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#c4a24b]">
                                   {p.user.name.charAt(0).toUpperCase()}
                                 </span>
                                 {p.user.name}
@@ -1479,7 +1479,7 @@ export default function AdminPage() {
                             )}
                             <span>{fmtShortDate(p.createdAt)}</span>
                             {p.rating > 0 && (
-                              <span className="text-[#c9a84c]">★ {p.rating.toFixed(1)}</span>
+                              <span className="text-[#c4a24b]">★ {p.rating.toFixed(1)}</span>
                             )}
                           </div>
                           {p.status && (
@@ -1488,7 +1488,7 @@ export default function AdminPage() {
                               style={{
                                 borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
                                 background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
-                                color: STATUS_COLORS[p.status] ?? "#777",
+                                color: STATUS_COLORS[p.status] ?? "var(--text-dim)",
                               }}
                             >
                               {p.status}
@@ -1498,7 +1498,7 @@ export default function AdminPage() {
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
                           <button
                             onClick={() => router.push(`/posts/${p.id}/edit`)}
-                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#c9a84c]/30 hover:text-[#c9a84c]"
+                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[#c4a24b]"
                           >
                             Düzenle
                           </button>
@@ -1534,7 +1534,7 @@ export default function AdminPage() {
                     {loadingPosts ? (
                       <tr>
                         <td colSpan={7} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                         </td>
                       </tr>
                     ) : posts.length === 0 ? (
@@ -1553,7 +1553,7 @@ export default function AdminPage() {
                             className="cursor-pointer px-4 py-3"
                             onClick={() => router.push(`/posts/${p.id}`)}
                           >
-                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#c9a84c]">
+                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#c4a24b]">
                               {p.title}
                             </p>
                           </td>
@@ -1561,7 +1561,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3">
                             {p.user ? (
                               <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c4a24b]">
                                   {p.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
@@ -1580,7 +1580,7 @@ export default function AdminPage() {
                                 style={{
                                   borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
                                   background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
-                                  color: STATUS_COLORS[p.status] ?? "#777",
+                                  color: STATUS_COLORS[p.status] ?? "var(--text-dim)",
                                 }}
                               >
                                 {p.status}
@@ -1593,10 +1593,10 @@ export default function AdminPage() {
                             {p.rating > 0 ? p.rating.toFixed(1) : "—"}
                           </td>
                           <td className="px-4 py-3">
-                            <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                            <div className="flex items-center gap-1">
                               <button
                                 onClick={() => router.push(`/posts/${p.id}/edit`)}
-                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#c9a84c]"
+                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#c4a24b]"
                               >
                                 Düzenle
                               </button>
@@ -1637,7 +1637,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c9a84c]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -1669,7 +1669,7 @@ export default function AdminPage() {
             <Card title={`Aktivite — ${RANGE_LABELS[activityRange]}`}>
               {loadingLogs ? (
                 <div className="flex h-32 items-center justify-center">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={160}>
@@ -1735,7 +1735,7 @@ export default function AdminPage() {
               <div className="md:hidden">
                 {loadingLogs ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                   </div>
                 ) : logs.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
@@ -1764,7 +1764,7 @@ export default function AdminPage() {
                             </div>
                             {log.user && (
                               <div className="flex items-center gap-1.5">
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#c9a84c]">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#c4a24b]">
                                   {log.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
@@ -1805,7 +1805,7 @@ export default function AdminPage() {
                     {loadingLogs ? (
                       <tr>
                         <td colSpan={4} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c9a84c]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                         </td>
                       </tr>
                     ) : logs.length === 0 ? (
@@ -1833,7 +1833,7 @@ export default function AdminPage() {
                             <td className="px-4 py-3">
                               {log.user ? (
                                 <div className="flex items-center gap-2">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c9a84c]">
+                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c4a24b]">
                                     {log.user.name.charAt(0).toUpperCase()}
                                   </div>
                                   <div>
@@ -1895,7 +1895,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c9a84c]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -2029,7 +2029,7 @@ export default function AdminPage() {
                             saveSettings({ maintenanceMessage: e.target.value });
                           }
                         }}
-                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c9a84c]/40 focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/15"
+                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                         placeholder="Bakım mesajı..."
                       />
                     </div>

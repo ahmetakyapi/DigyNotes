@@ -54,7 +54,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c9a84c] focus:outline-none focus:ring-1 focus:ring-[#c9a84c]/20"
+            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c4a24b] focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/20"
             placeholder="Kategori adı (örn: Film, Kitap…)"
             autoFocus
             required
@@ -70,7 +70,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-md bg-[#c9a84c] px-5 py-3 text-sm font-semibold text-[#0c0c0c] transition-colors hover:bg-[#e0c068] disabled:opacity-50"
+              className="rounded-md bg-[#c4a24b] px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[#d7ba68] disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}
             </button>
