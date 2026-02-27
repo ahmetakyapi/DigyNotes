@@ -5,6 +5,7 @@ import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ConditionalAppShell from "@/components/ConditionalAppShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
+import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   themeColor: "#0f1117",
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SessionProviderWrapper>
           </ThemeProvider>
         </MaintenanceGuard>
+        <Analytics />
       </body>
     </html>
   );
