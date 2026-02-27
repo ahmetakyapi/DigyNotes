@@ -107,7 +107,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
           <p className="mb-4 text-xs text-[var(--text-muted)]">
             @{username} adlı profil mevcut değil veya gizli.
           </p>
-          <Link href="/discover" className="text-xs text-[#c9a84c] hover:underline">
+          <Link href="/discover" className="text-xs text-[#c4a24b] hover:underline">
             ← Kullanıcıları keşfet
           </Link>
         </div>
@@ -134,7 +134,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   unoptimized
                 />
               ) : (
-                <span className="text-3xl font-semibold text-[#c9a84c]">
+                <span className="text-3xl font-semibold text-[#c4a24b]">
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -186,7 +186,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                 </button>
                 {user.avgRating > 0 && (
                   <div className="text-center">
-                    <p className="text-lg font-bold text-[#c9a84c]">★ {user.avgRating}</p>
+                    <p className="text-lg font-bold text-[#c4a24b]">★ {user.avgRating}</p>
                     <p className="text-xs text-[var(--text-muted)]">Ort. Puan</p>
                   </div>
                 )}
@@ -215,7 +215,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {posts.map((post) => (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c9a84c]/30">
+                <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30">
                   {/* Cover */}
                   <div
                     className="relative flex-shrink-0"
@@ -237,12 +237,12 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-sm border border-[#c9a84c]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c9a84c]">
+                        <span className="rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c4a24b]">
                           {post.category}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
                       </div>
-                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c9a84c]">
+                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c4a24b]">
                         {post.title}
                       </h2>
                       {post.creator && (

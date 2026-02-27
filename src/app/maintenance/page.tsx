@@ -9,13 +9,13 @@ export default async function MaintenancePage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg-base)] px-4 text-center">
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#c9a84c]/20 bg-[#c9a84c]/10">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#c4a24b]/20 bg-[#c4a24b]/10">
         <svg
           width="32"
           height="32"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#c9a84c"
+          stroke="#c4a24b"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"

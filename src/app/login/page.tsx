@@ -41,7 +41,7 @@ export default function LoginPage() {
       <FullScreenLoader show={redirecting} message="Giriş yapılıyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-[#c9a84c]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#c4a24b]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
         <div className="bg-gradient-radial from-[#4a90e2]/4 absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
               />
             </div>
 
@@ -105,7 +105,7 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
                 />
                 <button
                   type="button"
@@ -171,7 +171,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#c9a84c] py-3.5 text-sm font-semibold text-[#0c0c0c] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e0c068] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-[#c4a24b] py-3.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d7ba68] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -205,7 +205,7 @@ export default function LoginPage() {
             Hesabın yok mu?{" "}
             <Link
               href="/register"
-              className="font-medium text-[#c9a84c] transition-colors hover:text-[#e0c068]"
+              className="font-medium text-[#c4a24b] transition-colors hover:text-[#d7ba68]"
             >
               Kayıt Ol
             </Link>

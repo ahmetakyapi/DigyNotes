@@ -5,7 +5,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c9a84c]/50 focus:ring-1 focus:ring-[#c9a84c]/20 transition-all text-sm";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-sm";
 const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
 const customLoader = ({ src }: { src: string }) => src;
@@ -171,7 +171,7 @@ export default function ProfileSettingsPage() {
                     unoptimized
                   />
                 ) : (
-                  <span className="text-2xl font-semibold text-[#c9a84c]">
+                  <span className="text-2xl font-semibold text-[#c4a24b]">
                     {profile?.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -236,7 +236,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => setIsPublic((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-[#c9a84c]" : "bg-[var(--bg-raised)]"
+                  isPublic ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"
                 }`}
               >
                 <span
@@ -273,7 +273,7 @@ export default function ProfileSettingsPage() {
                 usernameStatus === "invalid" ||
                 usernameStatus === "checking"
               }
-              className="rounded-lg bg-[#c9a84c] px-6 py-2.5 text-sm font-semibold text-[#0c0c0c] transition-all hover:bg-[#e0c068] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-[#c4a24b] px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[#d7ba68] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>

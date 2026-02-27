@@ -75,7 +75,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       {/* ── Header ── */}
       <div className="mb-6">
         <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors hover:text-[#c9a84c]">
+          <Link href="/notes" className="transition-colors hover:text-[#c4a24b]">
             Notlar
           </Link>
           <span className="opacity-40">›</span>
@@ -85,7 +85,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         <div>
           <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryName}</h1>
           <div className="flex items-center gap-3">
-            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c9a84c] to-transparent" />
+            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
             <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
               {posts.length} not
             </span>
@@ -102,7 +102,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryName} içinde ara...`}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#c9a84c]/40 focus:ring-1 focus:ring-[#c9a84c]/10"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#c4a24b]/40 focus:ring-1 focus:ring-[#c4a24b]/10"
           />
           {searchQuery && (
             <button
@@ -146,7 +146,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           {!searchQuery && sortFilter.minRating === 0 && (
             <Link
               href="/new-post"
-              className="mt-3 text-xs text-[#c9a84c] transition-colors hover:text-[#e0c068]"
+              className="mt-3 text-xs text-[#c4a24b] transition-colors hover:text-[#d7ba68]"
             >
               + İlk notu ekle
             </Link>
@@ -156,7 +156,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {filtered.map((post, index) => (
             <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-              <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c9a84c]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
+              <article className="flex h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)]">
                 <div
                   className="relative flex-shrink-0"
                   style={{ width: "32%", minHeight: "140px" }}
@@ -181,7 +181,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       )}
                       {post.status && <StatusBadge status={post.status} />}
                     </div>
-                    <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[#c9a84c] sm:text-[15px]">
+                    <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b] sm:text-[15px]">
                       {post.title}
                     </h2>
                     {post.creator && <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>}

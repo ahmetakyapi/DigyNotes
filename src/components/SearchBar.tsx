@@ -10,7 +10,11 @@ interface UserResult {
   avatarUrl: string | null;
 }
 
-export function SearchBar() {
+interface SearchBarProps {
+  mobileMode?: "compact" | "full";
+}
+
+export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -95,15 +99,23 @@ export function SearchBar() {
   };
 
   const isUserMode = query.startsWith("@");
+  const isMobileFull = mobileMode === "full";
 
   if (!open) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex h-10 w-10 items-center justify-center rounded-md text-[var(--text-secondary)] transition-colors duration-200 hover:text-[#c9a84c]"
+        className={
+          isMobileFull
+            ? "flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--gold)]"
+            : "flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgba(3,8,20,0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-10 sm:rounded-lg sm:border-transparent sm:bg-transparent sm:shadow-none"
+        }
         title="Ara"
       >
         <MagnifyingGlass size={16} />
+        {isMobileFull && (
+          <span className="dn-display text-xs font-medium tracking-[0.01em]">Ara</span>
+        )}
       </button>
     );
   }
@@ -112,10 +124,12 @@ export function SearchBar() {
     <div ref={containerRef} className="relative">
       <form
         onSubmit={submit}
-        className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5"
+        className={`flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 shadow-[var(--shadow-soft)] ${
+          isMobileFull ? "w-full" : ""
+        }`}
       >
         {isUserMode ? (
-          <UserCircle size={13} className="flex-shrink-0 text-[#c9a84c]" weight="bold" />
+          <UserCircle size={13} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
         ) : (
           <MagnifyingGlass size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
         )}
@@ -125,14 +139,16 @@ export function SearchBar() {
           value={query}
           onChange={handleChange}
           placeholder="Ara... veya @kullanıcı"
-          className="w-40 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:w-52"
+          className={`bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none ${
+            isMobileFull ? "min-w-0 flex-1" : "w-[min(58vw,220px)] sm:w-52"
+          }`}
           onKeyDown={(e) => e.key === "Escape" && (setOpen(false), setUserResults([]))}
         />
         {query && (
           <button
             type="button"
             onClick={clear}
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[#888]"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
           >
             <X size={11} />
           </button>
@@ -152,7 +168,7 @@ export function SearchBar() {
                 onClick={() => selectUser(u.username)}
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-raised)] active:opacity-80"
               >
-                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c9a84c] border border-[var(--border)]">
+                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)] border border-[var(--border)]">
                   {u.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={u.avatarUrl} alt={u.name} className="h-full w-full object-cover" />
