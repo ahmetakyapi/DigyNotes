@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import PasswordStrength from "@/components/PasswordStrength";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 export default function RegisterPage() {
@@ -74,9 +75,6 @@ export default function RegisterPage() {
     }
   };
 
-  const strength =
-    password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
-
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)] px-4 py-12">
       <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
@@ -129,7 +127,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="name"
                 placeholder="Adın Soyadın"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
               />
             </div>
 
@@ -153,7 +151,7 @@ export default function RegisterPage() {
                   placeholder="kullanici_adin"
                   minLength={3}
                   maxLength={30}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
                 />
               </div>
               <p className="mt-1 text-[11px] text-[var(--text-muted)]">
@@ -173,7 +171,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
               />
             </div>
 
@@ -190,7 +188,7 @@ export default function RegisterPage() {
                   required
                   autoComplete="new-password"
                   placeholder="En az 6 karakter"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
                 />
                 <button
                   type="button"
@@ -232,27 +230,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               {/* Password strength */}
-              {password.length > 0 && (
-                <div className="mt-2 flex gap-1">
-                  {[1, 2, 3].map((s) => (
-                    <div
-                      key={s}
-                      className={`h-0.5 flex-1 rounded-full transition-colors ${
-                        strength >= s
-                          ? s === 1
-                            ? "bg-[#e53e3e]"
-                            : s === 2
-                              ? "bg-[#f6ad55]"
-                              : "bg-[#48bb78]"
-                          : "bg-[var(--border)]"
-                      }`}
-                    />
-                  ))}
-                  <span className="ml-1 text-[10px] text-[var(--text-muted)]">
-                    {strength === 1 ? "Zayıf" : strength === 2 ? "Orta" : "Güçlü"}
-                  </span>
-                </div>
-              )}
+              <PasswordStrength password={password} />
             </div>
 
             {/* Confirm Password */}
@@ -267,7 +245,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="new-password"
                 placeholder="Şifreyi tekrar girin"
-                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-[#c4a24b]/10 ${
+                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm ${
                   confirmPw && confirmPw !== password
                     ? "border-[#e53e3e]/50 focus:border-[#e53e3e]/70"
                     : "border-[var(--border)] focus:border-[#c4a24b]/50"

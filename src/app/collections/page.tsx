@@ -200,7 +200,7 @@ export default function CollectionsPage() {
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
               placeholder="Örn. 2024'te İzlediklerim"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
             />
           </label>
           <label className="space-y-2">
@@ -213,7 +213,7 @@ export default function CollectionsPage() {
               onChange={(event) => setDescription(event.target.value)}
               maxLength={400}
               placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
             />
           </label>
           <button
@@ -261,7 +261,7 @@ export default function CollectionsPage() {
             value={collectionQuery}
             onChange={(event) => setCollectionQuery(event.target.value)}
             placeholder="Koleksiyon ara..."
-            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:max-w-sm"
+            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:max-w-sm sm:text-sm"
           />
         </div>
       )}

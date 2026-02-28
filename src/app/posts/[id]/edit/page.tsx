@@ -25,7 +25,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[#c4a24b]/20";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[#c4a24b]/20";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass =

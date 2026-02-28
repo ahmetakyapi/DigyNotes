@@ -113,11 +113,34 @@ export default function PersonalStatsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Kişisel İstatistikler</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          Üretim ritmini, kategorilerini ve puan dağılımını takip et.
-        </p>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Kişisel İstatistikler</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
+            Üretim ritmini, kategorilerini ve puan dağılımını takip et.
+          </p>
+        </div>
+        <Link
+          href="/stats/year-in-review"
+          className="hover:border-[var(--gold)]/30 flex items-center gap-2 self-start rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:text-[var(--gold)]"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Yılın Özeti
+        </Link>
       </div>
 
       {data.kpis.totalPosts === 0 ? (

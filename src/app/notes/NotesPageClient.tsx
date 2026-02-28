@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Post } from "@/types";
 import { PostsList } from "@/components/PostsList";
+import RecentlyViewed from "@/components/RecentlyViewed";
 
 const PAGE_SIZE = 12;
 
@@ -209,6 +210,10 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
           </div>
         </div>
       )}
+
+      <div className="mx-auto max-w-5xl px-3 pt-3 sm:px-6 sm:pt-4">
+        <RecentlyViewed />
+      </div>
 
       <PostsList
         allPosts={posts}

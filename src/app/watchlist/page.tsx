@@ -411,13 +411,13 @@ export default function WatchlistPage() {
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Liste içinde ara..."
-                  className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                  className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
                 />
               </label>
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-                className="h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                className="h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
               >
                 <option value="recent">En yeni eklenen</option>
                 <option value="title">Başlığa göre</option>

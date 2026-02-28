@@ -19,6 +19,7 @@ import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import { getCategoryLabel, isTravelCategory, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -162,7 +163,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryLabel} içinde ara...`}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#c4a24b]/40 focus:ring-1 focus:ring-[#c4a24b]/10"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#c4a24b]/40 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-xs"
           />
           {searchQuery && (
             <button
@@ -285,9 +286,11 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                           {displayCreator}
                         </p>
                       )}
-                      <p className="line-clamp-3 text-xs leading-relaxed text-[var(--text-muted)]">
-                        {displayExcerpt}
-                      </p>
+                      {!(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
+                        <p className="line-clamp-3 text-xs leading-relaxed text-[var(--text-muted)]">
+                          {displayExcerpt}
+                        </p>
+                      )}
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
                       <StarRating rating={post.rating} size={12} />
