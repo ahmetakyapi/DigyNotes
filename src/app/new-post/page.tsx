@@ -1,21 +1,32 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
 import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { MediaSearch } from "@/components/MediaSearch";
-import PlaceSearch, { type PlaceResult } from "@/components/PlaceSearch";
+import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import TagInput from "@/components/TagInput";
+import { FormStatusMessage } from "@/components/FormStatusMessage";
 import toast from "react-hot-toast";
-import { FIXED_CATEGORIES } from "@/lib/categories";
+import {
+  FIXED_CATEGORIES,
+  getCategoryLabel,
+  getCategoryFromSearchTab,
+  isOtherCategory,
+  isTravelCategory,
+  normalizeFixedCategory,
+} from "@/lib/categories";
+import { ClientApiError, getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
+import { CATEGORY_EXAMPLE_TAGS, categorySupportsSpoiler } from "@/lib/post-config";
+import { getPostTemplate, getTemplateSignature } from "@/lib/post-templates";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const customLoader = ({ src }: { src: string }) => src;
 
-/* ── Kategori bazlı alan konfigürasyonu ── */
 const CATEGORY_CONFIG: Record<
   string,
   {
@@ -27,7 +38,7 @@ const CATEGORY_CONFIG: Record<
     creatorRequired: boolean;
   }
 > = {
-  Film: {
+  movies: {
     showCreator: true,
     creatorLabel: "Yönetmen",
     yearsLabel: "Yıl",
@@ -35,7 +46,7 @@ const CATEGORY_CONFIG: Record<
     yearsRequired: true,
     creatorRequired: true,
   },
-  Dizi: {
+  series: {
     showCreator: true,
     creatorLabel: "Yönetmen / Yapımcı",
     yearsLabel: "Yayın Yılları",
@@ -43,7 +54,7 @@ const CATEGORY_CONFIG: Record<
     yearsRequired: true,
     creatorRequired: true,
   },
-  Oyun: {
+  game: {
     showCreator: true,
     creatorLabel: "Geliştirici",
     yearsLabel: "Yıl",
@@ -51,7 +62,7 @@ const CATEGORY_CONFIG: Record<
     yearsRequired: true,
     creatorRequired: true,
   },
-  Kitap: {
+  book: {
     showCreator: true,
     creatorLabel: "Yazar",
     yearsLabel: "Yıl",
@@ -59,7 +70,7 @@ const CATEGORY_CONFIG: Record<
     yearsRequired: true,
     creatorRequired: true,
   },
-  Gezi: {
+  travel: {
     showCreator: false,
     creatorLabel: "",
     yearsLabel: "Ziyaret Tarihi",
@@ -67,7 +78,7 @@ const CATEGORY_CONFIG: Record<
     yearsRequired: false,
     creatorRequired: false,
   },
-  Diğer: {
+  other: {
     showCreator: true,
     creatorLabel: "Kaynak / Kişi",
     yearsLabel: "Yıl",
@@ -78,12 +89,13 @@ const CATEGORY_CONFIG: Record<
 };
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[#c4a24b]/20";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
-const sectionClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5 sm:p-4 xl:p-5";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/20 focus:bg-[var(--bg-card)]";
+const labelClass =
+  "block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)] mb-1.5";
+const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
 
 function flashClass(flashed: boolean) {
-  return flashed ? "ring-2 ring-[#c4a24b]/60 border-[#c4a24b]" : "";
+  return flashed ? "ring-2 ring-[var(--gold)]/50 border-[var(--gold)]/60" : "";
 }
 
 function detectImagePosition(url: string, cb: (pos: string) => void) {
@@ -102,26 +114,36 @@ function stripHtml(html: string) {
 
 export default function NewPostPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialCategory = FIXED_CATEGORIES[0];
+  const initialTemplate = getPostTemplate(initialCategory);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<string>(FIXED_CATEGORIES[0]);
+  const [category, setCategory] = useState<string>(initialCategory);
   const [rating, setRating] = useState(0);
   const [image, setImage] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialTemplate?.html ?? "");
   const [creator, setCreator] = useState("");
   const [years, setYears] = useState("");
-  const [status, setStatus] = useState(getStatusOptions(FIXED_CATEGORIES[0])[0]);
+  const [status, setStatus] = useState(getStatusOptions(initialCategory)[0]);
+  const [hasSpoiler, setHasSpoiler] = useState(false);
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+  const [locationLabel, setLocationLabel] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [externalRating, setExternalRating] = useState<number | null>(null);
   const [imagePosition, setImagePosition] = useState("center");
   const [isLandscape, setIsLandscape] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(true);
   const [flashFields, setFlashFields] = useState<Set<string>>(new Set());
   const [autofillDone, setAutofillDone] = useState(false);
-  const [popularTags, setPopularTags] = useState<string[]>([]);
-  const [popularTagsLoading, setPopularTagsLoading] = useState(true);
+  const [lastAppliedTemplateCategory, setLastAppliedTemplateCategory] = useState<string | null>(
+    initialTemplate ? initialCategory : null
+  );
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prefillAppliedRef = useRef(false);
 
   useEffect(() => {
     if (!image) {
@@ -140,41 +162,45 @@ export default function NewPostPage() {
     };
   }, [image]);
 
-  /* Kategori değişince popüler tagleri getir, yoksa global fallback */
-  const fetchPopularTags = useCallback(async (cat: string) => {
-    setPopularTagsLoading(true);
-    try {
-      const res = await fetch(`/api/tags?category=${encodeURIComponent(cat)}&limit=8`);
-      if (!res.ok) return;
-      const data: { id: string; name: string; count: number }[] = await res.json();
-      if (data.length > 0) {
-        setPopularTags(data.map((t) => t.name));
-        return;
-      }
-      // Kategori bazlı tag yoksa global en popülerleri getir
-      const fallback = await fetch(`/api/tags?limit=8`);
-      if (!fallback.ok) return;
-      const globalData: { id: string; name: string; count: number }[] = await fallback.json();
-      setPopularTags(globalData.map((t) => t.name));
-    } catch {
-      setPopularTags([]);
-    } finally {
-      setPopularTagsLoading(false);
-    }
-  }, []);
+  const applyTemplate = useCallback(
+    (nextCategory: string, options?: { force?: boolean }) => {
+      const template = getPostTemplate(nextCategory);
+      if (!template) return false;
 
-  /* İlk yüklemede de popüler tagleri getir */
-  useEffect(() => {
-    fetchPopularTags(FIXED_CATEGORIES[0]);
-  }, [fetchPopularTags]);
+      const currentSignature = getTemplateSignature(content);
+      const previousTemplate = lastAppliedTemplateCategory
+        ? getPostTemplate(lastAppliedTemplateCategory)
+        : null;
+      const previousTemplateSignature = previousTemplate
+        ? getTemplateSignature(previousTemplate.html)
+        : "";
+      const shouldReplace =
+        options?.force || currentSignature === "" || currentSignature === previousTemplateSignature;
+
+      if (!shouldReplace) return false;
+
+      setContent(template.html);
+      setLastAppliedTemplateCategory(nextCategory);
+      return true;
+    },
+    [content, lastAppliedTemplateCategory]
+  );
 
   const handleCategoryChange = (cat: string) => {
+    applyTemplate(cat);
     setCategory(cat);
     setStatus(getStatusOptions(cat)[0]);
-    setIsSearchOpen(cat !== "Diğer");
-    // Gezi seçilince creator alanını temizle (gösterilmeyecek)
-    if (cat === "Gezi") setCreator("");
-    fetchPopularTags(cat);
+    setIsSearchOpen(!isOtherCategory(cat));
+    if (!categorySupportsSpoiler(cat)) {
+      setHasSpoiler(false);
+    }
+    if (isTravelCategory(cat)) {
+      setCreator("");
+    } else {
+      setLat(null);
+      setLng(null);
+      setLocationLabel("");
+    }
   };
 
   const handleMediaSelect = (result: {
@@ -184,26 +210,33 @@ export default function NewPostPage() {
     image: string;
     excerpt: string;
     externalRating?: number | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    locationLabel?: string;
     _tab?: string;
   }) => {
+    const isTravelResult = result._tab === "gezi";
+    const nextCategory = getCategoryFromSearchTab(result._tab);
+
     setTitle(result.title);
-    setCreator(result.creator);
-    setYears(result.years);
-    if (result.image) setImage(result.image);
-    if (result.excerpt) setContent(`<p>${result.excerpt}</p>`);
-    setExternalRating(result.externalRating ?? null);
-    if (result._tab) {
-      const catName =
-        result._tab === "dizi"
-          ? "Dizi"
-          : result._tab === "kitap"
-            ? "Kitap"
-            : result._tab === "oyun"
-              ? "Oyun"
-              : "Film";
-      handleCategoryChange(catName);
+    if (!isTravelResult) setCreator(result.creator);
+    if (nextCategory) {
+      handleCategoryChange(nextCategory);
     }
-    const filled = new Set<string>(["title", "creator", "years"]);
+    setYears(result.years || (isTravelResult ? new Date().getFullYear().toString() : ""));
+    if (result.image) setImage(result.image);
+    if (result.excerpt && !isTravelResult) {
+      setContent(`<p>${result.excerpt}</p>`);
+      setLastAppliedTemplateCategory(null);
+    }
+    setExternalRating(result.externalRating ?? null);
+    if (isTravelResult) {
+      setLat(typeof result.latitude === "number" ? result.latitude : null);
+      setLng(typeof result.longitude === "number" ? result.longitude : null);
+      setLocationLabel(result.locationLabel ?? "");
+    }
+    const filled = new Set<string>(["title", "years"]);
+    if (!isTravelResult) filled.add("creator");
     if (result.image) filled.add("image");
     if (result._tab) filled.add("category");
     setFlashFields(filled);
@@ -212,25 +245,6 @@ export default function NewPostPage() {
     flashTimerRef.current = setTimeout(() => setFlashFields(new Set()), 2000);
   };
 
-  /* Gezi yer arama handler */
-  const handlePlaceSelect = (place: PlaceResult) => {
-    const placeName =
-      place.address?.city ||
-      place.address?.town ||
-      place.address?.village ||
-      place.display_name.split(",")[0].trim();
-    setTitle(placeName);
-    setYears(new Date().getFullYear().toString());
-    if (place.thumbUrl) setImage(place.thumbUrl);
-    const filled = new Set<string>(["title", "years"]);
-    if (place.thumbUrl) filled.add("image");
-    setFlashFields(filled);
-    setAutofillDone(true);
-    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
-    flashTimerRef.current = setTimeout(() => setFlashFields(new Set()), 2000);
-  };
-
-  /* Popüler tag'e tıklanınca ekle */
   const handleAddPopularTag = (tagName: string) => {
     if (tags.length >= 10) {
       toast.error("En fazla 10 etiket ekleyebilirsiniz.");
@@ -240,33 +254,72 @@ export default function NewPostPage() {
     setTags((prev) => [...prev, tagName]);
   };
 
-  const config = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG["Diğer"];
+  useEffect(() => {
+    if (prefillAppliedRef.current) return;
 
-  /* Kategori → MediaSearch tab eşlemesi */
-  const mediaTab =
-    category === "Film"
-      ? ("film" as const)
-      : category === "Dizi"
-        ? ("dizi" as const)
-        : category === "Oyun"
-          ? ("oyun" as const)
-          : category === "Kitap"
-            ? ("kitap" as const)
-            : undefined;
+    const prefillTitle = searchParams.get("title")?.trim();
+    const prefillCategory = searchParams.get("category")?.trim();
+    const prefillCreator = searchParams.get("creator")?.trim();
+    const prefillYears = searchParams.get("years")?.trim();
+    const prefillImage = searchParams.get("image")?.trim();
+    const prefillExcerpt = searchParams.get("excerpt")?.trim();
+    const prefillExternalRating = Number.parseFloat(searchParams.get("externalRating") ?? "");
+    const hasPrefillData = Boolean(
+      prefillTitle ||
+      prefillCategory ||
+      prefillCreator ||
+      prefillYears ||
+      prefillImage ||
+      prefillExcerpt
+    );
 
-  /* Arama bölümü başlığı */
-  const searchLabel =
-    category === "Film"
-      ? "Film Ara"
-      : category === "Dizi"
-        ? "Dizi Ara"
-        : category === "Oyun"
-          ? "Oyun Ara"
-          : category === "Kitap"
-            ? "Kitap Ara"
-            : category === "Gezi"
-              ? "Yer Ara"
-              : null; // Diğer → gizle
+    if (!hasPrefillData) return;
+    prefillAppliedRef.current = true;
+
+    const nextCategory = normalizeFixedCategory(prefillCategory) ?? category;
+
+    if (nextCategory) {
+      handleCategoryChange(nextCategory);
+    }
+
+    if (prefillTitle) setTitle(prefillTitle);
+    if (prefillCreator && !isTravelCategory(nextCategory)) setCreator(prefillCreator);
+    if (prefillYears) setYears(prefillYears);
+    if (prefillImage) setImage(prefillImage);
+    if (prefillExcerpt && !isTravelCategory(nextCategory)) {
+      setContent(`<p>${prefillExcerpt}</p>`);
+      setLastAppliedTemplateCategory(null);
+    }
+    if (Number.isFinite(prefillExternalRating)) {
+      setExternalRating(prefillExternalRating);
+    }
+    setAutofillDone(true);
+    setIsSearchOpen(false);
+  }, [category, handleCategoryChange, searchParams]);
+
+  const handlePlaceSelect = (place: PlaceResult) => {
+    const main =
+      place.address?.city ||
+      place.address?.town ||
+      place.address?.village ||
+      place.display_name.split(",")[0].trim();
+
+    setTitle(main);
+    if (!image && place.thumbUrl) setImage(place.thumbUrl);
+    if (!years) setYears(new Date().getFullYear().toString());
+    setLat(Number.parseFloat(place.lat));
+    setLng(Number.parseFloat(place.lon));
+    setLocationLabel(place.display_name);
+    toast.success("Konum güncellendi");
+  };
+
+  const config = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG["other"];
+  const supportsSpoiler = categorySupportsSpoiler(category);
+  const exampleTags = CATEGORY_EXAMPLE_TAGS[category as keyof typeof CATEGORY_EXAMPLE_TAGS] ?? [];
+  const activeTemplate = getPostTemplate(category);
+  const isTemplateActive = Boolean(
+    activeTemplate && getTemplateSignature(content) === getTemplateSignature(activeTemplate.html)
+  );
 
   const doSubmit = async () => {
     const plainContent = stripHtml(content);
@@ -275,113 +328,126 @@ export default function NewPostPage() {
     if (config.yearsRequired) requiredFields.push(years);
 
     if (requiredFields.some((f) => !f)) {
-      toast.error("Lütfen zorunlu alanları doldurun.");
+      const message = "Lütfen zorunlu alanları doldurun.";
+      setSubmitError(message);
+      toast.error(message);
       return;
     }
     const autoExcerpt = plainContent.slice(0, 300);
+    setSubmitError("");
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          category,
-          rating,
-          status,
-          image,
-          excerpt: autoExcerpt,
-          content,
-          creator: config.showCreator ? creator : "",
-          years,
-          imagePosition,
-          tags,
-          externalRating,
-        }),
-      });
-      if (!res.ok) throw new Error();
+      await requestJson(
+        "/api/posts",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            category,
+            rating,
+            status,
+            image,
+            excerpt: autoExcerpt,
+            content,
+            creator: config.showCreator ? creator : "",
+            years,
+            hasSpoiler: supportsSpoiler ? hasSpoiler : false,
+            lat: isTravelCategory(category) ? lat : null,
+            lng: isTravelCategory(category) ? lng : null,
+            imagePosition,
+            tags,
+            externalRating,
+          }),
+        },
+        "Not kaydedilemedi."
+      );
       toast.success("Not başarıyla kaydedildi!");
       router.push("/notes");
-    } catch {
-      toast.error("Not kaydedilirken bir hata oluştu!");
+    } catch (error) {
+      const message = getClientErrorMessage(error, "Not kaydedilemedi.");
+      setSubmitError(message);
+      toast.error(message);
+
+      if (error instanceof ClientApiError && error.status === 401) {
+        router.push("/login");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const inputClass = (field: string) => `${inputBase} ${flashClass(flashFields.has(field))}`;
+  const ic = (field: string) => `${inputBase} ${flashClass(flashFields.has(field))}`;
   const statusOptions = getStatusOptions(category);
 
+  /* ─────────────────────────────────────────── */
+  /* LAYOUT: Sol (form + içerik) | Sağ sticky sidebar (arama + kapak + puan)
+     Mobilde: Sağ sidebar CSS order-1 → en üstte görünür (arama önce gelir)
+             Sol form CSS order-2 → arama altında */
+  /* ─────────────────────────────────────────── */
   return (
-    <main className="min-h-[calc(100dvh-3.75rem)] py-4 pb-36 sm:py-6 sm:pb-32 lg:py-8">
+    <main className="min-h-[calc(100dvh-3.75rem)] pb-28 sm:pb-24">
       <div className="mx-auto max-w-[1280px] px-3.5 sm:px-5 lg:px-6">
-        <div className="mb-5 border-b border-[var(--border)] pb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">Yeni Not</h1>
-                <span className="inline-flex items-center rounded-full border border-[#c4a24b]/25 bg-[#c4a24b]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--gold)]">
-                  Taslak
-                </span>
-                {autofillDone && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[#2bbf6a]/25 bg-[#2bbf6a]/10 px-2 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" />
-                    Otomatik dolduruldu
-                  </span>
-                )}
-              </div>
-              {title ? (
-                <p className="max-w-xs truncate text-sm text-[var(--text-muted)]">{title}</p>
-              ) : (
-                <p className="text-sm text-[var(--text-muted)]">Yeni içerik oluştur</p>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex-shrink-0 whitespace-nowrap text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
-            >
-              ← Geri
-            </button>
+        {/* ── Sayfa başlığı ── */}
+        <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] py-5 sm:py-6">
+          <div className="flex min-w-0 flex-wrap items-center gap-2.5">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] sm:text-2xl">Yeni Not</h1>
+            <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--gold)]">
+              Taslak
+            </span>
+            {autofillDone && (
+              <span className="bg-[#2bbf6a]/8 inline-flex items-center gap-1.5 rounded-full border border-[#2bbf6a]/25 px-2.5 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" />
+                Otomatik dolduruldu
+              </span>
+            )}
           </div>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex-shrink-0 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
+          >
+            ← Geri
+          </button>
         </div>
 
-        <form className="grid items-start gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]">
-          <div className="min-w-0 space-y-3.5 sm:space-y-4">
-            <div className={sectionClass}>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className={labelClass}>Başlık</label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className={inputClass("title")}
-                    placeholder="Başlık girin..."
-                  />
-                </div>
+        {submitError && (
+          <div className="pt-4">
+            <FormStatusMessage message={submitError} />
+          </div>
+        )}
 
+        {/* ── İki kolon ızgarası ── */}
+        <form className="grid gap-4 pt-5 sm:pt-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          {/* ════════════════════════════════
+              SOL — Form alanları + İçerik
+              (mobile: order-2, masaüstü: order-1)
+          ════════════════════════════════ */}
+          <div className="order-2 min-w-0 space-y-4 xl:order-1">
+            {/* ─ Temel Bilgiler + Etiketler (tek kart) ─ */}
+            <div className={cardClass}>
+              {/* Kategori | Durum */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>Kategori</label>
                   <select
                     value={category}
                     onChange={(e) => handleCategoryChange(e.target.value)}
-                    className={inputClass("category")}
+                    className={ic("category")}
                   >
                     {FIXED_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>
-                        {cat}
+                        {getCategoryLabel(cat)}
                       </option>
                     ))}
                   </select>
                 </div>
-
                 <div>
                   <label className={labelClass}>Durum</label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className={inputClass("status")}
+                    className={ic("status")}
                   >
                     {statusOptions.map((s) => (
                       <option key={s} value={s}>
@@ -390,135 +456,284 @@ export default function NewPostPage() {
                     ))}
                   </select>
                 </div>
+              </div>
 
-                {searchLabel !== null && (
-                  <div className="sm:col-span-2">
-                    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)]/40 p-3">
-                      <button
-                        type="button"
-                        onClick={() => setIsSearchOpen((v) => !v)}
-                        className="flex w-full items-center justify-between"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#c4a24b]/15">
-                            <svg
-                              className="h-3.5 w-3.5 text-[var(--gold)]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
-                              />
-                            </svg>
-                          </div>
-                          <div className="min-w-0 text-left">
-                            <p className="text-xs font-semibold text-[var(--gold)]">Otomatik Doldurma</p>
-                            <p className="truncate text-[10px] text-[var(--text-muted)]">{searchLabel} tipi aktif</p>
-                          </div>
-                        </div>
-                        <svg
-                          className={`h-4 w-4 text-[var(--text-muted)] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
-                      {isSearchOpen && (
-                        <div className="mt-3 border-t border-[var(--border)] pt-3.5">
-                          {category === "Gezi" ? (
-                            <PlaceSearch onSelect={handlePlaceSelect} />
-                          ) : (
-                            <MediaSearch category={category} onSelect={handleMediaSelect} lockedTab={mediaTab} />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              {/* Başlık */}
+              <div className="mt-3.5">
+                <label className={labelClass}>Başlık</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className={ic("title")}
+                  placeholder="Başlık girin..."
+                />
+              </div>
 
+              {/* Creator | Yıl — Gezi'de sadece Yıl gösterilir */}
+              <div className="mt-3.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {config.showCreator && (
                   <div>
                     <label className={labelClass}>
                       {config.creatorLabel}
                       {config.creatorRequired && (
-                        <span className="ml-1 text-[#e53e3e]">*</span>
+                        <span className="ml-1 text-[var(--danger)]">*</span>
                       )}
                     </label>
                     <input
                       type="text"
                       value={creator}
                       onChange={(e) => setCreator(e.target.value)}
-                      className={inputClass("creator")}
+                      className={ic("creator")}
                       placeholder="—"
                     />
                   </div>
                 )}
-
                 <div className={config.showCreator ? "" : "sm:col-span-2"}>
                   <label className={labelClass}>
                     {config.yearsLabel}
-                    {config.yearsRequired && (
-                      <span className="ml-1 text-[#e53e3e]">*</span>
-                    )}
+                    {config.yearsRequired && <span className="ml-1 text-[var(--danger)]">*</span>}
                   </label>
                   <input
                     type="text"
                     value={years}
                     onChange={(e) => setYears(e.target.value)}
-                    className={inputClass("years")}
+                    className={ic("years")}
                     placeholder={config.yearsPlaceholder}
                   />
                 </div>
               </div>
+
+              {isTravelCategory(category) && (
+                <div className="mt-3.5 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className={labelClass}>Konum</p>
+                      <p className="-mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
+                        Gezi notunu haritaya işlemek için bir yer seç.
+                      </p>
+                    </div>
+                    {typeof lat === "number" && typeof lng === "number" && (
+                      <a
+                        href={buildOpenStreetMapLink(lat, lng)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
+                      >
+                        Haritada aç
+                      </a>
+                    )}
+                  </div>
+                  <PlaceSearch onSelect={handlePlaceSelect} />
+                  <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
+                    {typeof lat === "number" && typeof lng === "number" ? (
+                      <div className="space-y-1.5">
+                        <p className="font-medium text-[var(--text-secondary)]">
+                          {locationLabel || title || "Konum seçildi"}
+                        </p>
+                        <p>
+                          {formatCoordinate(lat)}, {formatCoordinate(lng)}
+                        </p>
+                      </div>
+                    ) : (
+                      <p>
+                        Henüz bir konum seçilmedi. Gezi notlarının haritada görünmesi için koordinat
+                        gerekir.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Etiketler ── */}
+              <div className="mt-4 border-t border-[var(--border)] pt-4">
+                {/* Label + popüler chip'ler aynı satırda */}
+                <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]">
+                    Etiketler
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {exampleTags.map((tagName) => {
+                      const isAdded = tags.includes(tagName);
+                      return (
+                        <button
+                          key={tagName}
+                          type="button"
+                          onClick={() => handleAddPopularTag(tagName)}
+                          disabled={isAdded || tags.length >= 10}
+                          className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
+                            isAdded
+                              ? "border-[var(--gold)]/40 bg-[var(--gold)]/10 text-[var(--gold)]"
+                              : "hover:border-[var(--gold)]/40 border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                          }`}
+                        >
+                          #{tagName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <TagInput value={tags} onChange={setTags} />
+              </div>
             </div>
-            <div className={sectionClass}>
-              <label className={labelClass}>İçerik</label>
-              <div className="dn-compose-editor overflow-hidden rounded-lg border border-[var(--border)]">
+
+            {/* ─ İçerik editörü ─ */}
+            <div className={cardClass}>
+              <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <label className={labelClass}>İçerik</label>
+                  {activeTemplate && (
+                    <p className="-mt-0.5 text-[11px] leading-5 text-[var(--text-muted)]">
+                      {activeTemplate.description}
+                    </p>
+                  )}
+                </div>
+                {activeTemplate && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentSignature = getTemplateSignature(content);
+                      if (
+                        currentSignature !== "" &&
+                        !isTemplateActive &&
+                        !window.confirm(
+                          "Mevcut içerik değişecek. Kategori şablonunu yeniden uygulamak istiyor musun?"
+                        )
+                      ) {
+                        return;
+                      }
+
+                      applyTemplate(category, { force: true });
+                    }}
+                    className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+                      isTemplateActive
+                        ? "border-[#c4a24b]/35 bg-[#c4a24b]/10 text-[var(--gold)]"
+                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}
+                  </button>
+                )}
+              </div>
+              <div className="dn-compose-editor mt-1 overflow-hidden rounded-lg border border-[var(--border)]">
                 <ReactQuill theme="snow" value={content} onChange={setContent} />
               </div>
+              {activeTemplate && (
+                <p className="mt-2 text-[11px] leading-5 text-[var(--text-muted)]">
+                  Kategori değişince boş veya daha önce otomatik eklenmiş şablon içeriği otomatik
+                  güncellenir.
+                </p>
+              )}
             </div>
           </div>
 
-          <aside className="order-2 min-w-0 space-y-3.5 sm:space-y-4 xl:sticky xl:top-24 xl:order-none xl:self-start">
-            <div className={sectionClass}>
-              <label className={labelClass}>Kapak Görseli URL</label>
+          {/* ════════════════════════════════
+              SAĞ SIDEBAR — Arama + Kapak + Puan
+              (mobile: order-1 → en üstte; masaüstü: order-2 sticky)
+          ════════════════════════════════ */}
+          <aside className="order-1 min-w-0 space-y-4 xl:sticky xl:top-24 xl:order-2 xl:self-start">
+            {/* ─ Otomatik Doldurma ─ */}
+            {!isOtherCategory(category) && (
+              <div className={cardClass}>
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen((v) => !v)}
+                  className="flex w-full items-center gap-3 text-left"
+                >
+                  {/* İkon */}
+                  <div className="border-[var(--gold)]/20 bg-[var(--gold)]/8 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border">
+                    <svg
+                      className="h-4 w-4 text-[var(--gold)]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* Başlık + açıklama */}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
+                      Otomatik Doldurma
+                    </p>
+                    <p className="text-[11px] text-[var(--text-muted)]">
+                      {isTravelCategory(category)
+                        ? "Yer ara, başlık ve kapak otomatik dolsun"
+                        : "Film, Dizi, Oyun, Kitap veya Gezi ara"}
+                    </p>
+                  </div>
+
+                  {/* Sağ taraf: badge + chevron */}
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    {autofillDone && (
+                      <span className="rounded-full border border-[#2bbf6a]/25 bg-[#2bbf6a]/10 px-2 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
+                        Dolduruldu
+                      </span>
+                    )}
+                    <svg
+                      className={`h-4 w-4 flex-shrink-0 text-[var(--text-muted)] transition-transform duration-200 ${isSearchOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </button>
+
+                {isSearchOpen && (
+                  <div className="mt-4 border-t border-[var(--border)] pt-4">
+                    <MediaSearch category={category} onSelect={handleMediaSelect} />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ─ Kapak Görseli ─ */}
+            <div className={cardClass}>
+              <label className={labelClass}>Kapak Görseli</label>
               <input
                 type="url"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
-                className={inputClass("image")}
+                className={`${ic("image")} mt-0.5`}
                 placeholder="https://..."
               />
+
               {image && (
-                <div className="mt-3 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--shadow-soft)]">
-                  <div className="relative h-36 w-full sm:h-48 lg:h-52 xl:h-56">
+                <div className="mt-3 overflow-hidden rounded-xl border border-[var(--border-subtle)]">
+                  {/* Önizleme alanı */}
+                  <div className="relative h-52 w-full bg-[var(--media-panel-bg)]">
+                    {/* Blurlu arka plan */}
                     <Image
                       loader={customLoader}
                       src={image}
                       alt=""
                       fill
                       aria-hidden
-                      className="scale-105 object-cover opacity-55 blur-2xl"
+                      className="scale-110 object-cover opacity-40 blur-2xl"
                       unoptimized
                     />
+                    {/* Sheen overlay */}
                     <div
                       className="absolute inset-0"
                       style={{
                         background:
-                          "linear-gradient(120deg, var(--media-panel-sheen) 0%, transparent 45%, transparent 75%, var(--media-panel-sheen) 100%)",
+                          "linear-gradient(135deg, var(--media-panel-sheen) 0%, transparent 50%, var(--media-panel-sheen) 100%)",
                       }}
                     />
+                    {/* Ana görsel */}
                     <Image
                       loader={customLoader}
                       src={image}
@@ -530,74 +745,53 @@ export default function NewPostPage() {
                           ? { objectPosition: imagePosition }
                           : {
                               objectPosition: imagePosition,
-                              filter: "drop-shadow(0 16px 24px rgba(0,0,0,0.35))",
+                              filter: "drop-shadow(0 20px 32px rgba(0,0,0,0.5))",
                             }
                       }
                       unoptimized
                     />
+                    {/* Alt gradient */}
                     <div
                       className="absolute inset-0"
                       style={{
                         background:
-                          "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 60%, var(--media-overlay-strong) 100%)",
+                          "linear-gradient(180deg, transparent 40%, var(--media-overlay-mid) 75%, var(--media-overlay-strong) 100%)",
                       }}
                     />
-                    <span className="absolute left-3 top-3 rounded-full border border-[#c4a24b]/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] backdrop-blur-md">
+                    {/* Üst sol badge */}
+                    <span className="border-[var(--gold)]/30 absolute left-3 top-3 rounded-full border bg-black/50 px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] backdrop-blur-md">
                       Kapak Önizleme
                     </span>
-                    <span className="absolute bottom-3 right-3 rounded-md border border-white/25 bg-black/40 px-2 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
-                      {isLandscape ? "Yatay kadraj" : "Poster kadrajı"}
+                    {/* Alt sağ kadraj bilgisi */}
+                    <span className="absolute bottom-3 right-3 rounded-md border border-white/20 bg-black/50 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+                      {isLandscape ? "Yatay" : "Poster"}
                     </span>
                   </div>
-                  <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-card)] px-3.5 py-2.5">
-                    <p className="text-[11px] text-[var(--text-secondary)]">
+                  {/* Alt bilgi çubuğu */}
+                  <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-raised)] px-3.5 py-2">
+                    <p className="text-[11px] text-[var(--text-muted)]">
                       {isLandscape
-                        ? "Yatay görseller için üst odaklı kadraj otomatik uygulandı."
-                        : "Poster tipindeki görseller için merkez odak korunuyor."}
+                        ? "Yatay görsel — üst odaklı kadraj uygulandı"
+                        : "Poster görsel — merkez odak korunuyor"}
                     </p>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className={sectionClass}>
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Not Özeti
-              </p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Kategori</p>
-                  <p className="mt-0.5 truncate text-sm font-semibold text-[var(--text-primary)]">
-                    {category || "-"}
-                  </p>
-                </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Durum</p>
-                  <p className="mt-0.5 truncate text-sm font-semibold text-[var(--text-primary)]">
-                    {status || "-"}
-                  </p>
-                </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">Puan</p>
-                  <p className="mt-0.5 text-sm font-semibold text-[var(--text-primary)]">
-                    {rating > 0 ? `${rating} / 5` : "Yok"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className={sectionClass}>
+            {/* ─ Puan ─ */}
+            <div className={cardClass}>
               <label className={labelClass}>Puan</label>
-              <div className="mt-1 flex flex-wrap items-center gap-3">
-                <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                <span className="text-sm text-[var(--text-secondary)]">
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <StarRating rating={rating} interactive onRate={setRating} size={26} />
+                <span className="text-sm font-medium text-[var(--text-secondary)]">
                   {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
                   <button
                     type="button"
                     onClick={() => setRating(0)}
-                    className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+                    className="text-xs text-[var(--text-muted)] transition-colors duration-150 hover:text-[var(--danger)]"
                   >
                     Sıfırla
                   </button>
@@ -605,67 +799,54 @@ export default function NewPostPage() {
               </div>
             </div>
 
-            <div className={sectionClass}>
-              <label className={labelClass}>Etiketler</label>
-              <div className="mb-3">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-                  Popüler Etiketler
-                </p>
-                {popularTagsLoading ? (
-                  <div className="flex flex-wrap gap-2">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} className="h-7 w-16 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
-                    ))}
-                  </div>
-                ) : popularTags.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {popularTags.map((tagName) => {
-                      const isAdded = tags.includes(tagName);
-                      return (
-                        <button
-                          key={tagName}
-                          type="button"
-                          onClick={() => handleAddPopularTag(tagName)}
-                          disabled={isAdded || tags.length >= 10}
-                          className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
-                            isAdded
-                              ? "border-[#c4a24b]/40 bg-[#c4a24b]/10 text-[var(--gold)]"
-                              : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c4a24b]/40 hover:text-[var(--gold)]"
-                          }`}
-                        >
-                          #{tagName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-xs text-[var(--text-muted)]">Henüz etiket kullanılmamış</p>
-                )}
+            {supportsSpoiler && (
+              <div className={cardClass}>
+                <p className={labelClass}>Yayın Ayarları</p>
+                <label className="hover:border-[var(--gold)]/30 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={hasSpoiler}
+                    onChange={(e) => setHasSpoiler(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--gold)] focus:ring-[var(--gold)]"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-[var(--text-primary)]">
+                      Spoiler uyarısı ekle
+                    </span>
+                    <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
+                      Detay sayfasında içerik blur olur ve okur önce onay verir.
+                    </span>
+                  </span>
+                </label>
               </div>
-
-              <TagInput value={tags} onChange={setTags} />
-            </div>
+            )}
           </aside>
         </form>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1280px] flex-col gap-2.5 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 lg:px-6">
+      {/* ── Sabit alt kaydetme çubuğu ── */}
+      <div className="bg-[var(--bg-base)]/95 fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3.5 py-3 sm:px-5 lg:px-6">
+          {/* Sol: başlık önizleme */}
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-              Yeni Not
+              Yeni Not · {category}
             </p>
             {title ? (
-              <p className="max-w-[200px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">{title}</p>
+              <p className="max-w-[180px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
+                {title}
+              </p>
             ) : (
               <p className="text-sm italic text-[var(--text-muted)]">Başlık girilmedi</p>
             )}
           </div>
-          <div className="flex w-full flex-shrink-0 items-center gap-2 sm:w-auto">
+
+          {/* Sağ: butonlar */}
+          <div className="flex flex-shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] sm:px-4"
+              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             >
               İptal
             </button>
@@ -673,7 +854,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--gold)] px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+              className="flex items-center gap-2 rounded-lg bg-[var(--gold)] px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? (
                 <>

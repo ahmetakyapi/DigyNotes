@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
+import { buildPostSearchWhere } from "@/lib/search";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 import sanitizeHtml from "sanitize-html";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const sanitizeConfig: sanitizeHtml.IOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
@@ -27,6 +33,10 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
   const tagsParam = searchParams.get("tags");
+  const query = searchParams.get("q");
+  const paginate = searchParams.get("paginate") === "1";
+  const cursor = searchParams.get("cursor");
+  const limit = Math.min(Math.max(parseInt(searchParams.get("limit") ?? "12", 10) || 12, 1), 24);
   const tagNames = tagsParam
     ? tagsParam
         .split(",")
@@ -36,18 +46,45 @@ export async function GET(request: NextRequest) {
 
   const where: Record<string, unknown> = {};
   if (userId) where.userId = userId;
-  if (category) where.category = category;
+  const categoryVariants = getCategoryVariants(category);
+  if (categoryVariants.length > 0) {
+    where.category = { in: categoryVariants };
+  }
+  Object.assign(where, buildPostSearchWhere(query ?? undefined));
   if (tagNames.length > 0) {
     where.tags = { some: { tag: { name: { in: tagNames } } } };
   }
 
+  const include = { tags: { include: { tag: true } } };
+
+  if (!paginate) {
+    const posts = await prisma.post.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include,
+    });
+
+    return NextResponse.json(posts.map(transformPostTags));
+  }
+
   const posts = await prisma.post.findMany({
     where,
-    orderBy: { createdAt: "desc" },
-    include: { tags: { include: { tag: true } } },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    take: limit + 1,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    include,
   });
 
-  return NextResponse.json(posts.map(transformPostTags));
+  let nextCursor: string | null = null;
+  if (posts.length > limit) {
+    posts.pop();
+    nextCursor = posts[posts.length - 1]?.id ?? null;
+  }
+
+  return NextResponse.json({
+    items: posts.map(transformPostTags),
+    nextCursor,
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -59,9 +96,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
+  const normalizedCategory = normalizeCategory(body.category);
   const {
     title,
-    category,
     image,
     excerpt,
     content,
@@ -69,12 +106,15 @@ export async function POST(request: NextRequest) {
     years,
     rating,
     status,
+    hasSpoiler,
+    lat,
+    lng,
     imagePosition,
     tags,
     externalRating,
   } = body;
 
-  if (!title || !category || !image || !excerpt || !content) {
+  if (!title || !normalizedCategory || !image || !excerpt || !content) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -94,7 +134,7 @@ export async function POST(request: NextRequest) {
   const post = await prisma.post.create({
     data: {
       title,
-      category,
+      category: normalizedCategory,
       image,
       excerpt,
       content: sanitizedContent,
@@ -103,6 +143,9 @@ export async function POST(request: NextRequest) {
       rating: rating ?? 0,
       externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
+      hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,
+      lat: typeof lat === "number" ? lat : null,
+      lng: typeof lng === "number" ? lng : null,
       imagePosition: imagePosition || "center",
       date: new Date().toLocaleDateString("tr-TR", {
         year: "numeric",
@@ -118,7 +161,11 @@ export async function POST(request: NextRequest) {
   });
 
   await prisma.activityLog.create({
-    data: { userId, action: "post.create", metadata: { postId: post.id, title: post.title, category: post.category } },
+    data: {
+      userId,
+      action: "post.create",
+      metadata: { postId: post.id, title: post.title, category: post.category },
+    },
   });
 
   return NextResponse.json(transformPostTags(post), { status: 201 });

@@ -4,14 +4,16 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/types";
+import { getCategoryLabel } from "@/lib/categories";
+import { getPostImageSrc } from "@/lib/post-image";
 import StarRating from "@/components/StarRating";
 
 const customLoader = ({ src }: { src: string }) => src;
 
 const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
-  film: { fill: "#c4a24b", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },
-  dizi: { fill: "#818cf8", glow: "rgba(129,140,248,0.25)", bg: "rgba(129,140,248,0.08)" },
-  kitap: { fill: "#34d399", glow: "rgba(52,211,153,0.25)", bg: "rgba(52,211,153,0.08)" },
+  movies: { fill: "#c4a24b", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },
+  series: { fill: "#818cf8", glow: "rgba(129,140,248,0.25)", bg: "rgba(129,140,248,0.08)" },
+  book: { fill: "#34d399", glow: "rgba(52,211,153,0.25)", bg: "rgba(52,211,153,0.08)" },
 };
 const FALLBACK_COLORS = [
   { fill: "#f87171", glow: "rgba(248,113,113,0.25)", bg: "rgba(248,113,113,0.08)" },
@@ -107,10 +109,14 @@ function BigStat({
       </div>
       <div>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-black leading-none text-[var(--text-primary)]">{value}</span>
+          <span className="text-3xl font-black leading-none text-[var(--text-primary)]">
+            {value}
+          </span>
           {sub && <span className="text-sm text-[var(--text-muted)]">{sub}</span>}
         </div>
-        <p className="mt-1 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">{label}</p>
+        <p className="mt-1 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+          {label}
+        </p>
       </div>
     </div>
   );
@@ -168,13 +174,13 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${pct}%`,
-            background: isHigh
-              ? "linear-gradient(90deg, #c4a24b, #d7ba68)"
-              : "var(--bg-raised)",
+            background: isHigh ? "linear-gradient(90deg, #c4a24b, #d7ba68)" : "var(--bg-raised)",
           }}
         />
       </div>
-      <span className="w-5 flex-shrink-0 text-right text-xs font-bold text-[var(--text-primary)]">{count}</span>
+      <span className="w-5 flex-shrink-0 text-right text-xs font-bold text-[var(--text-primary)]">
+        {count}
+      </span>
     </div>
   );
 }
@@ -210,7 +216,9 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
                 }}
               />
             </div>
-            <span className={`text-[9px] ${isLast ? "text-[#c4a24b]" : "text-[var(--text-muted)]"}`}>
+            <span
+              className={`text-[9px] ${isLast ? "text-[#c4a24b]" : "text-[var(--text-muted)]"}`}
+            >
               {d.short}
             </span>
           </div>
@@ -401,7 +409,9 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
               <DonutChart slices={donutSlices} total={stats.total} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-xl font-black text-[var(--text-primary)]">{stats.total}</span>
-                <span className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">Not</span>
+                <span className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                  Not
+                </span>
               </div>
             </div>
             {/* Legend + bars */}
@@ -416,8 +426,12 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                     />
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center justify-between">
-                        <span className="truncate text-xs text-[var(--text-secondary)]">{cat}</span>
-                        <span className="ml-2 text-xs font-bold text-[var(--text-primary)]">{count}</span>
+                        <span className="truncate text-xs text-[var(--text-secondary)]">
+                          {getCategoryLabel(cat)}
+                        </span>
+                        <span className="ml-2 text-xs font-bold text-[var(--text-primary)]">
+                          {count}
+                        </span>
                       </div>
                       <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
                         <div
@@ -532,18 +546,16 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 </span>
 
                 {/* Image */}
-                {post.image && (
-                  <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-md">
-                    <Image
-                      loader={customLoader}
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                )}
+                <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-md">
+                  <Image
+                    loader={customLoader}
+                    src={getPostImageSrc(post.image)}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
 
                 {/* Info */}
                 <div className="min-w-0 flex-1">
@@ -552,7 +564,9 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
                     {post.creator && (
-                      <span className="truncate text-[10px] text-[var(--text-muted)]">{post.creator}</span>
+                      <span className="truncate text-[10px] text-[var(--text-muted)]">
+                        {post.creator}
+                      </span>
                     )}
                     {post.years && (
                       <span className="text-[10px] text-[var(--text-muted)]">· {post.years}</span>

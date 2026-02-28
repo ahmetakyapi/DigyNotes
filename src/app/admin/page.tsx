@@ -17,6 +17,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import toast from "react-hot-toast";
+import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 /* ─────────────────────────── types ─────────────────────────── */
 
@@ -260,7 +261,9 @@ function RangePills<T extends string>({
           key={k}
           onClick={() => onChange(k)}
           className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors duration-150 ${
-            value === k ? "bg-[#c4a24b] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+            value === k
+              ? "bg-[#c4a24b] text-[var(--text-on-accent)]"
+              : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
           {label}
@@ -317,13 +320,24 @@ export default function AdminPage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [panelError, setPanelError] = useState("");
 
   /* ── fetch stats ── */
   const fetchStats = useCallback(async (series: SeriesKey) => {
     setLoadingStats(true);
-    const d = await fetch(`/api/admin/stats?series=${series}`).then((r) => r.json());
-    setStats(d);
-    setLoadingStats(false);
+    try {
+      const data = await requestJson<StatsData>(
+        `/api/admin/stats?series=${series}`,
+        undefined,
+        "İstatistikler yüklenemedi."
+      );
+      setStats(data);
+      setPanelError("");
+    } catch (error) {
+      setPanelError(getClientErrorMessage(error, "İstatistikler yüklenemedi."));
+    } finally {
+      setLoadingStats(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -335,11 +349,21 @@ export default function AdminPage() {
     setLoadingUsers(true);
     const p = new URLSearchParams({ page: String(page) });
     if (search) p.set("search", search);
-    const d = await fetch(`/api/admin/users?${p}`).then((r) => r.json());
-    setUsers(d.users ?? []);
-    setUsersTotal(d.total ?? 0);
-    setUsersTotalPages(d.totalPages ?? 1);
-    setLoadingUsers(false);
+    try {
+      const data = await requestJson<{ users?: UserRow[]; total?: number; totalPages?: number }>(
+        `/api/admin/users?${p}`,
+        undefined,
+        "Kullanıcılar yüklenemedi."
+      );
+      setUsers(data.users ?? []);
+      setUsersTotal(data.total ?? 0);
+      setUsersTotalPages(data.totalPages ?? 1);
+      setPanelError("");
+    } catch (error) {
+      setPanelError(getClientErrorMessage(error, "Kullanıcılar yüklenemedi."));
+    } finally {
+      setLoadingUsers(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -351,11 +375,21 @@ export default function AdminPage() {
     setLoadingPosts(true);
     const p = new URLSearchParams({ page: String(page) });
     if (q) p.set("q", q);
-    const d = await fetch(`/api/admin/posts?${p}`).then((r) => r.json());
-    setPosts(d.posts ?? []);
-    setPostsTotal(d.total ?? 0);
-    setPostsTotalPages(d.totalPages ?? 1);
-    setLoadingPosts(false);
+    try {
+      const data = await requestJson<{ posts?: PostRow[]; total?: number; totalPages?: number }>(
+        `/api/admin/posts?${p}`,
+        undefined,
+        "İçerikler yüklenemedi."
+      );
+      setPosts(data.posts ?? []);
+      setPostsTotal(data.total ?? 0);
+      setPostsTotalPages(data.totalPages ?? 1);
+      setPanelError("");
+    } catch (error) {
+      setPanelError(getClientErrorMessage(error, "İçerikler yüklenemedi."));
+    } finally {
+      setLoadingPosts(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -367,12 +401,23 @@ export default function AdminPage() {
     setLoadingLogs(true);
     const p = new URLSearchParams({ page: String(page), range });
     if (filter) p.set("action", filter);
-    const d = await fetch(`/api/admin/activity?${p}`).then((r) => r.json());
-    setLogs(d.logs ?? []);
-    setLogsTotal(d.total ?? 0);
-    setLogsTotalPages(d.totalPages ?? 1);
-    setChartData(d.chartData ?? []);
-    setLoadingLogs(false);
+    try {
+      const data = await requestJson<{
+        logs?: ActivityLog[];
+        total?: number;
+        totalPages?: number;
+        chartData?: { label: string; count: number }[];
+      }>(`/api/admin/activity?${p}`, undefined, "Aktivite verisi yüklenemedi.");
+      setLogs(data.logs ?? []);
+      setLogsTotal(data.total ?? 0);
+      setLogsTotalPages(data.totalPages ?? 1);
+      setChartData(data.chartData ?? []);
+      setPanelError("");
+    } catch (error) {
+      setPanelError(getClientErrorMessage(error, "Aktivite verisi yüklenemedi."));
+    } finally {
+      setLoadingLogs(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -382,9 +427,19 @@ export default function AdminPage() {
   /* ── fetch settings ── */
   const fetchSettings = useCallback(async () => {
     setLoadingSettings(true);
-    const d = await fetch("/api/admin/settings").then((r) => r.json());
-    setSettings(d);
-    setLoadingSettings(false);
+    try {
+      const data = await requestJson<SiteSettings>(
+        "/api/admin/settings",
+        undefined,
+        "Ayarlar yüklenemedi."
+      );
+      setSettings(data);
+      setPanelError("");
+    } catch (error) {
+      setPanelError(getClientErrorMessage(error, "Ayarlar yüklenemedi."));
+    } finally {
+      setLoadingSettings(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -393,81 +448,130 @@ export default function AdminPage() {
 
   /* ── toggle admin ── */
   async function toggleAdmin(user: UserRow) {
-    await fetch(`/api/admin/users/${user.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isAdmin: !user.isAdmin }),
-    });
-    fetchUsers(usersPage, userSearch);
+    try {
+      const updated = await requestJson<UserRow>(
+        `/api/admin/users/${user.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isAdmin: !user.isAdmin }),
+        },
+        "Rol güncellenemedi."
+      );
+      toast.success(
+        updated.isAdmin ? `${updated.name} artık admin` : `${updated.name} admin değil`
+      );
+      await fetchUsers(usersPage, userSearch);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Rol güncellenemedi."));
+    }
   }
 
   /* ── toggle ban ── */
   async function toggleBan(user: UserRow) {
-    await fetch(`/api/admin/users/${user.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isBanned: !user.isBanned }),
-    });
-    toast.success(
-      user.isBanned ? `${user.name} banlı durumdan çıkarıldı` : `${user.name} banlandı`
-    );
-    fetchUsers(usersPage, userSearch);
+    try {
+      const updated = await requestJson<UserRow>(
+        `/api/admin/users/${user.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isBanned: !user.isBanned }),
+        },
+        "Kullanıcı durumu güncellenemedi."
+      );
+      toast.success(
+        updated.isBanned ? `${updated.name} banlandı` : `${updated.name} banlı durumdan çıkarıldı`
+      );
+      await fetchUsers(usersPage, userSearch);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Kullanıcı durumu güncellenemedi."));
+    }
   }
 
   /* ── delete user ── */
   async function deleteUser(id: string) {
-    await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
-    setConfirmDelete(null);
-    toast.success("Kullanıcı silindi");
-    fetchUsers(usersPage, userSearch);
+    try {
+      await requestJson(`/api/admin/users/${id}`, { method: "DELETE" }, "Kullanıcı silinemedi.");
+      setConfirmDelete(null);
+      toast.success("Kullanıcı silindi");
+      await fetchUsers(usersPage, userSearch);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Kullanıcı silinemedi."));
+    }
   }
 
   /* ── delete post ── */
   async function deletePost(postId: string) {
-    await fetch("/api/admin/posts", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId }),
-    });
-    setConfirmDeletePost(null);
-    toast.success("Not silindi");
-    fetchPosts(postsPage, postSearch);
+    try {
+      await requestJson(
+        "/api/admin/posts",
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postId }),
+        },
+        "Not silinemedi."
+      );
+      setConfirmDeletePost(null);
+      toast.success("Not silindi");
+      await fetchPosts(postsPage, postSearch);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Not silinemedi."));
+    }
   }
 
   /* ── bulk user actions ── */
   async function runBulkAction(action: "ban" | "unban" | "delete") {
     if (selectedUsers.size === 0) return;
     setBulkLoading(true);
-    const res = await fetch("/api/admin/users/bulk", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, userIds: Array.from(selectedUsers) }),
-    }).then((r) => r.json());
-    setBulkLoading(false);
-    setSelectedUsers(new Set());
-    if (res.success) {
-      const labels: Record<string, string> = {
-        ban: "Banlandı",
-        unban: "Ban kaldırıldı",
-        delete: "Silindi",
-      };
-      toast.success(`${res.affected} kullanıcı — ${labels[action]}`);
+    try {
+      const res = await requestJson<{ success: boolean; affected: number }>(
+        "/api/admin/users/bulk",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, userIds: Array.from(selectedUsers) }),
+        },
+        "Toplu işlem uygulanamadı."
+      );
+      setSelectedUsers(new Set());
+      if (res.success) {
+        const labels: Record<string, string> = {
+          ban: "Banlandı",
+          unban: "Ban kaldırıldı",
+          delete: "Silindi",
+        };
+        toast.success(`${res.affected} kullanıcı — ${labels[action]}`);
+      }
+      await fetchUsers(1, userSearch);
+      setUsersPage(1);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Toplu işlem uygulanamadı."));
+    } finally {
+      setBulkLoading(false);
     }
-    fetchUsers(1, userSearch);
-    setUsersPage(1);
   }
 
   /* ── save settings ── */
   async function saveSettings(patch: Partial<SiteSettings>) {
     setSavingSettings(true);
-    const d = await fetch("/api/admin/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(patch),
-    }).then((r) => r.json());
-    setSettings(d);
-    setSavingSettings(false);
-    toast.success("Ayarlar kaydedildi");
+    try {
+      const data = await requestJson<SiteSettings>(
+        "/api/admin/settings",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patch),
+        },
+        "Ayarlar kaydedilemedi."
+      );
+      setSettings(data);
+      toast.success("Ayarlar kaydedildi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Ayarlar kaydedilemedi."));
+    } finally {
+      setSavingSettings(false);
+    }
   }
 
   const toggleSelectUser = (id: string) => {
@@ -585,7 +689,7 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-[var(--bg-base)] pb-20">
       {/* ── sticky header ── */}
-      <div className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-md">
+      <div className="bg-[var(--bg-base)]/95 sticky top-0 z-30 border-b border-[var(--border)] backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-3">
@@ -630,6 +734,12 @@ export default function AdminPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+        {panelError && (
+          <div className="bg-[#e53e3e]/8 mb-5 rounded-2xl border border-[#e53e3e]/20 px-4 py-3 text-sm text-[#e53e3e]">
+            {panelError}
+          </div>
+        )}
+
         {/* ══════════════ OVERVIEW ══════════════ */}
         {tab === "overview" && (
           <div className="space-y-5">
@@ -779,7 +889,11 @@ export default function AdminPage() {
                             <stop offset="100%" stopColor="#818cf8" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                          vertical={false}
+                        />
                         <XAxis
                           dataKey="date"
                           tickFormatter={fmtShortDate}
@@ -821,7 +935,11 @@ export default function AdminPage() {
                             <stop offset="100%" stopColor="#c4a24b" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                          vertical={false}
+                        />
                         <XAxis
                           dataKey="date"
                           tickFormatter={fmtShortDate}
@@ -1013,7 +1131,11 @@ export default function AdminPage() {
                         data={stats.ratingDistribution}
                         margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                          vertical={false}
+                        />
                         <XAxis
                           dataKey="label"
                           tick={{ fill: "#555", fontSize: 11 }}
@@ -1097,7 +1219,7 @@ export default function AdminPage() {
                     setUsersPage(1);
                   }}
                   placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1153,7 +1275,9 @@ export default function AdminPage() {
                     checked={users.length > 0 && selectedUsers.size === users.length}
                     onChange={toggleSelectAll}
                   />
-                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">Tümünü Seç</span>
+                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">
+                    Tümünü Seç
+                  </span>
                 </div>
                 {loadingUsers ? (
                   <div className="flex justify-center py-12">
@@ -1198,13 +1322,21 @@ export default function AdminPage() {
                           {u.username && (
                             <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>
                           )}
-                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">{u.email}</p>
+                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">
+                            {u.email}
+                          </p>
                           <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-[var(--text-muted)]">
                             <span>
-                              <span className="font-semibold text-[var(--text-secondary)]">{u.postCount}</span> not
+                              <span className="font-semibold text-[var(--text-secondary)]">
+                                {u.postCount}
+                              </span>{" "}
+                              not
                             </span>
                             <span>
-                              <span className="font-semibold text-[var(--text-secondary)]">{u.followerCount}</span> takipçi
+                              <span className="font-semibold text-[var(--text-secondary)]">
+                                {u.followerCount}
+                              </span>{" "}
+                              takipçi
                             </span>
                             <span>
                               {new Date(u.createdAt).toLocaleDateString("tr-TR", {
@@ -1218,26 +1350,43 @@ export default function AdminPage() {
                         <div className="flex shrink-0 flex-col items-end gap-2.5">
                           <div className="flex items-center gap-3">
                             <div className="flex flex-col items-center gap-0.5">
-                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Admin</span>
+                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                Admin
+                              </span>
                               <button
-                                onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleAdmin(u);
+                                }}
                                 className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
                               >
-                                <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
+                                <span
+                                  className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
+                                />
                               </button>
                             </div>
                             <div className="flex flex-col items-center gap-0.5">
-                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Ban</span>
+                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                Ban
+                              </span>
                               <button
-                                onClick={(e) => { e.stopPropagation(); toggleBan(u); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleBan(u);
+                                }}
                                 className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
                               >
-                                <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
+                                <span
+                                  className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`}
+                                />
                               </button>
                             </div>
                           </div>
                           <button
-                            onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConfirmDelete(u);
+                            }}
                             className="rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
                           >
                             Sil
@@ -1312,7 +1461,9 @@ export default function AdminPage() {
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
+                                  <p className="truncate font-medium text-[var(--text-primary)]">
+                                    {u.name}
+                                  </p>
                                   {u.isAdmin && (
                                     <span className="shrink-0 rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
                                       admin
@@ -1325,7 +1476,9 @@ export default function AdminPage() {
                                   )}
                                 </div>
                                 {u.username && (
-                                  <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>
+                                  <p className="text-[10px] text-[var(--text-muted)]">
+                                    @{u.username}
+                                  </p>
                                 )}
                               </div>
                             </div>
@@ -1346,23 +1499,36 @@ export default function AdminPage() {
                           </td>
                           <td className="px-4 py-3 text-center">
                             <button
-                              onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleAdmin(u);
+                              }}
                               className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
                             >
-                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
+                              <span
+                                className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
+                              />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
                             <button
-                              onClick={(e) => { e.stopPropagation(); toggleBan(u); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleBan(u);
+                              }}
                               className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
                             >
-                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
+                              <span
+                                className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`}
+                              />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
                             <button
-                              onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setConfirmDelete(u);
+                              }}
                               className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
                             >
                               Sil
@@ -1436,7 +1602,7 @@ export default function AdminPage() {
                     setPostsPage(1);
                   }}
                   placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1452,7 +1618,9 @@ export default function AdminPage() {
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                   </div>
                 ) : posts.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">
+                    Not bulunamadı
+                  </div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {posts.map((p) => (
@@ -1520,14 +1688,16 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
-                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
-                        <th
-                          key={h}
-                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                        >
-                          {h}
-                        </th>
-                      ))}
+                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map(
+                        (h) => (
+                          <th
+                            key={h}
+                            className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
+                          >
+                            {h}
+                          </th>
+                        )
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -1539,7 +1709,10 @@ export default function AdminPage() {
                       </tr>
                     ) : posts.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">
+                        <td
+                          colSpan={7}
+                          className="py-16 text-center text-sm text-[var(--text-muted)]"
+                        >
                           Not bulunamadı
                         </td>
                       </tr>
@@ -1557,14 +1730,18 @@ export default function AdminPage() {
                               {p.title}
                             </p>
                           </td>
-                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
+                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">
+                            {p.category}
+                          </td>
                           <td className="px-4 py-3">
                             {p.user ? (
                               <div className="flex items-center gap-2">
                                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c4a24b]">
                                   {p.user.name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
+                                <span className="text-[11px] text-[var(--text-muted)]">
+                                  {p.user.name}
+                                </span>
                               </div>
                             ) : (
                               <span className="text-xs text-[var(--text-muted)]">—</span>
@@ -1738,17 +1915,27 @@ export default function AdminPage() {
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
                   </div>
                 ) : logs.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">
+                    Henüz aktivite kaydı yok
+                  </div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {logs.map((log) => {
-                      const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
+                      const meta = ACTION_META[log.action] ?? {
+                        label: log.action,
+                        color: "#555",
+                        icon: "·",
+                      };
                       const data = log.metadata as Record<string, string> | null;
                       return (
                         <div key={log.id} className="flex items-start gap-3 p-4">
                           <span
                             className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border text-xs"
-                            style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}
+                            style={{
+                              borderColor: `${meta.color}25`,
+                              background: `${meta.color}0c`,
+                              color: meta.color,
+                            }}
                           >
                             {meta.icon}
                           </span>
@@ -1756,26 +1943,38 @@ export default function AdminPage() {
                             <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
                               <span
                                 className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
-                                style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}
+                                style={{
+                                  borderColor: `${meta.color}25`,
+                                  background: `${meta.color}0c`,
+                                  color: meta.color,
+                                }}
                               >
                                 {meta.label}
                               </span>
-                              <span className="text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</span>
+                              <span className="text-[11px] text-[var(--text-muted)]">
+                                {fmtTime(log.createdAt)}
+                              </span>
                             </div>
                             {log.user && (
                               <div className="flex items-center gap-1.5">
                                 <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#c4a24b]">
                                   {log.user.name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
+                                <span className="text-[12px] text-[var(--text-secondary)]">
+                                  {log.user.name}
+                                </span>
                                 {log.user.username && (
-                                  <span className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</span>
+                                  <span className="text-[10px] text-[var(--text-muted)]">
+                                    @{log.user.username}
+                                  </span>
                                 )}
                               </div>
                             )}
                             {(data?.title ?? data?.name ?? data?.targetUsername) && (
                               <p className="mt-1 truncate text-[11px] text-[var(--text-muted)]">
-                                {data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : null)}
+                                {data?.title ??
+                                  data?.name ??
+                                  (data?.targetUsername ? `→ @${data.targetUsername}` : null)}
                               </p>
                             )}
                           </div>
@@ -1810,7 +2009,10 @@ export default function AdminPage() {
                       </tr>
                     ) : logs.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">
+                        <td
+                          colSpan={4}
+                          className="py-16 text-center text-sm text-[var(--text-muted)]"
+                        >
                           Henüz aktivite kaydı yok
                         </td>
                       </tr>
@@ -1837,9 +2039,13 @@ export default function AdminPage() {
                                     {log.user.name.charAt(0).toUpperCase()}
                                   </div>
                                   <div>
-                                    <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
+                                    <p className="text-[12px] text-[var(--text-secondary)]">
+                                      {log.user.name}
+                                    </p>
                                     {log.user.username && (
-                                      <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>
+                                      <p className="text-[10px] text-[var(--text-muted)]">
+                                        @{log.user.username}
+                                      </p>
                                     )}
                                   </div>
                                 </div>
@@ -1934,8 +2140,12 @@ export default function AdminPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Yeni Kayıt</h3>
-                      <p className="text-xs text-[var(--text-muted)]">Yeni kullanıcı kaydını aç veya kapat</p>
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                        Yeni Kayıt
+                      </h3>
+                      <p className="text-xs text-[var(--text-muted)]">
+                        Yeni kullanıcı kaydını aç veya kapat
+                      </p>
                     </div>
                     <div className="ml-auto">
                       <button
@@ -1988,7 +2198,9 @@ export default function AdminPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Bakım Modu</h3>
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                        Bakım Modu
+                      </h3>
                       <p className="text-xs text-[var(--text-muted)]">
                         Yöneticiler dışında tüm kullanıcılar bakım sayfasına yönlendirilir
                       </p>
@@ -2019,7 +2231,9 @@ export default function AdminPage() {
 
                   {/* Maintenance message */}
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[var(--text-muted)]">Bakım Mesajı</label>
+                    <label className="text-xs font-semibold text-[var(--text-muted)]">
+                      Bakım Mesajı
+                    </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -2029,7 +2243,7 @@ export default function AdminPage() {
                             saveSettings({ maintenanceMessage: e.target.value });
                           }
                         }}
-                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
                         placeholder="Bakım mesajı..."
                       />
                     </div>
@@ -2064,7 +2278,8 @@ export default function AdminPage() {
             </div>
             <h3 className="mb-1 text-base font-bold text-[var(--text-primary)]">Kullanıcıyı Sil</h3>
             <p className="mb-1 text-sm text-[var(--text-secondary)]">
-              <span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span> silinecek.
+              <span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span>{" "}
+              silinecek.
             </p>
             <p className="mb-5 text-xs text-[var(--text-muted)]">
               Bu işlem geri alınamaz. Tüm notları ve kategorileri de silinir.
@@ -2107,7 +2322,9 @@ export default function AdminPage() {
             </div>
             <h3 className="mb-1 text-base font-bold text-[var(--text-primary)]">Notu Sil</h3>
             <p className="mb-1 text-sm text-[var(--text-secondary)]">
-              <span className="font-semibold text-[var(--text-primary)]">{confirmDeletePost.title}</span>{" "}
+              <span className="font-semibold text-[var(--text-primary)]">
+                {confirmDeletePost.title}
+              </span>{" "}
               silinecek.
             </p>
             <p className="mb-5 text-xs text-[var(--text-muted)]">Bu işlem geri alınamaz.</p>

@@ -15,8 +15,15 @@ export async function DELETE(
   const { commentId } = params;
   const userId = (session.user as { id: string }).id;
 
-  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+    select: { id: true, userId: true, postId: true },
+  });
   if (!comment) {
+    return NextResponse.json({ error: "Yorum bulunamadı" }, { status: 404 });
+  }
+
+  if (comment.postId !== params.id) {
     return NextResponse.json({ error: "Yorum bulunamadı" }, { status: 404 });
   }
 

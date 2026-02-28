@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { FIXED_CATEGORIES } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
+import { getSiteSetting } from "@/lib/site-settings";
 
 export async function POST(request: NextRequest) {
   // Check if registration is enabled
-  const regSetting = await prisma.siteSettings.findUnique({ where: { key: "registrationEnabled" } });
-  if (regSetting && regSetting.value === "false") {
+  const regSetting = await getSiteSetting("registrationEnabled");
+  if (regSetting === "false") {
     return NextResponse.json({ error: "Yeni kayıt şu anda kapalıdır." }, { status: 403 });
   }
 
@@ -41,19 +43,24 @@ export async function POST(request: NextRequest) {
   const hashed = await bcrypt.hash(password, 12);
 
   const user = await prisma.user.create({
-    data: { name: name.trim(), email: email.toLowerCase(), password: hashed, username: cleanUsername },
+    data: {
+      name: name.trim(),
+      email: email.toLowerCase(),
+      password: hashed,
+      username: cleanUsername,
+    },
   });
 
   await prisma.category.createMany({
-    data: [
-      { name: "Film", userId: user.id },
-      { name: "Dizi", userId: user.id },
-      { name: "Kitap", userId: user.id },
-    ],
+    data: FIXED_CATEGORIES.map((name) => ({ name, userId: user.id })),
   });
 
   await prisma.activityLog.create({
-    data: { userId: user.id, action: "user.register", metadata: { name: user.name, email: user.email } },
+    data: {
+      userId: user.id,
+      action: "user.register",
+      metadata: { name: user.name, email: user.email },
+    },
   });
 
   return NextResponse.json({ id: user.id, name: user.name, email: user.email }, { status: 201 });

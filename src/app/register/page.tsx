@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,50 +21,56 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  const publishError = (message: string) => {
+    setError(message);
+    toast.error(message);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (password !== confirmPw) {
-      setError("Şifreler eşleşmiyor.");
+      publishError("Şifreler eşleşmiyor.");
       return;
     }
     if (password.length < 6) {
-      setError("Şifre en az 6 karakter olmalı.");
+      publishError("Şifre en az 6 karakter olmalı.");
       return;
     }
 
     setLoading(true);
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, username }),
-    });
+    try {
+      await requestJson(
+        "/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, username }),
+        },
+        "Hesap oluşturulamadı."
+      );
 
-    const data = await res.json();
+      const loginResult = await signIn("credentials", {
+        email: email.toLowerCase(),
+        password,
+        redirect: false,
+      });
 
-    if (!res.ok) {
-      setLoading(false);
-      setError(data.error ?? "Bir hata oluştu.");
-      return;
-    }
+      if (loginResult?.error) {
+        toast.success("Hesabın oluşturuldu. Devam etmek için giriş yapabilirsin.");
+        router.push("/login");
+        return;
+      }
 
-    // Auto-login after register
-    const loginResult = await signIn("credentials", {
-      email: email.toLowerCase(),
-      password,
-      redirect: false,
-    });
-
-    setLoading(false);
-
-    if (loginResult?.error) {
-      router.push("/login");
-    } else {
       setRedirecting(true);
       router.push("/notes");
       router.refresh();
+    } catch (error) {
+      publishError(getClientErrorMessage(error, "Hesap oluşturulamadı."));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,7 +129,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="name"
                 placeholder="Adın Soyadın"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
               />
             </div>
 
@@ -144,7 +153,7 @@ export default function RegisterPage() {
                   placeholder="kullanici_adin"
                   minLength={3}
                   maxLength={30}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
                 />
               </div>
               <p className="mt-1 text-[11px] text-[var(--text-muted)]">
@@ -164,7 +173,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
               />
             </div>
 
@@ -181,7 +190,7 @@ export default function RegisterPage() {
                   required
                   autoComplete="new-password"
                   placeholder="En az 6 karakter"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
                 />
                 <button
                   type="button"
@@ -258,7 +267,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="new-password"
                 placeholder="Şifreyi tekrar girin"
-                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:ring-1 focus:ring-[#c4a24b]/10 ${
+                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-[#c4a24b]/10 ${
                   confirmPw && confirmPw !== password
                     ? "border-[#e53e3e]/50 focus:border-[#e53e3e]/70"
                     : "border-[var(--border)] focus:border-[#c4a24b]/50"
@@ -270,23 +279,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Error */}
-            {error && (
-              <div className="bg-[#e53e3e]/8 flex items-center gap-2 rounded-xl border border-[#e53e3e]/20 px-4 py-3 text-sm text-[#e53e3e]">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" strokeLinecap="round" />
-                </svg>
-                {error}
-              </div>
-            )}
+            {error && <FormStatusMessage message={error} />}
 
             {/* Submit */}
             <button
@@ -335,7 +328,10 @@ export default function RegisterPage() {
 
         {/* Back link */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]">
+          <Link
+            href="/"
+            className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+          >
             ← Ana sayfaya dön
           </Link>
         </div>

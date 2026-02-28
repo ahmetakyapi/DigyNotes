@@ -7,26 +7,30 @@ datasource db {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
+  id            String         @id @default(cuid())
+  email         String         @unique
   name          String
   password      String
-  username      String        @unique
-  bio           String?       @db.Text
+  username      String         @unique
+  bio           String?        @db.Text
   avatarUrl     String?
-  isPublic      Boolean       @default(true)
-  isAdmin       Boolean       @default(false)
-  isBanned      Boolean       @default(false)
-  createdAt     DateTime      @default(now())
+  isPublic      Boolean        @default(true)
+  isAdmin       Boolean        @default(false)
+  isBanned      Boolean        @default(false)
+  createdAt     DateTime       @default(now())
   lastLoginAt   DateTime?
   lastLogoutAt  DateTime?
   posts         Post[]
   categories    Category[]
-  followers     Follow[]      @relation("Following")
-  following     Follow[]      @relation("Follower")
+  followers     Follow[]       @relation("Following")
+  following     Follow[]       @relation("Follower")
   activityLogs  ActivityLog[]
   comments      Comment[]
   likedPosts    PostLike[]
+  bookmarks     Bookmark[]
+  collections   Collection[]
+  wishlistItems Wishlist[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -53,27 +57,33 @@ model Category {
 }
 
 model Post {
-  id            String    @id @default(cuid())
-  title         String
-  category      String
-  image         String
-  excerpt       String    @db.Text
-  content       String    @db.Text
-  creator       String?
-  years         String?
-  rating        Float     @default(0)
-  externalRating Float?
-  status        String?
-  imagePosition String?   @default("center")
-  date          String
-  userId        String?
-  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags          PostTag[]
-  comments      Comment[]
-  likes         PostLike[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String           @id @default(cuid())
+  title             String
+  category          String
+  image             String
+  excerpt           String           @db.Text
+  content           String           @db.Text
+  creator           String?
+  years             String?
+  rating            Float            @default(0)
+  externalRating    Float?
+  status            String?
+  hasSpoiler        Boolean          @default(false)
+  lat               Float?
+  lng               Float?
+  imagePosition     String?          @default("center")
+  date              String
+  userId            String?
+  user              User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags              PostTag[]
+  comments          Comment[]
+  likes             PostLike[]
+  bookmarks         Bookmark[]
+  collectionEntries CollectionPost[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
+  @@index([category, lat, lng])
   @@map("posts")
 }
 
@@ -96,15 +106,19 @@ model PostTag {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
+  id        String    @id @default(cuid())
+  content   String    @db.Text
   postId    String
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
+  @@index([postId, parentId, createdAt])
   @@map("comments")
 }
 
@@ -117,6 +131,77 @@ model PostLike {
 
   @@id([postId, userId])
   @@map("post_likes")
+}
+
+model Bookmark {
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+  @@map("bookmarks")
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  userId      String
+  title       String
+  description String?          @db.Text
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts       CollectionPost[]
+
+  @@index([userId, updatedAt])
+  @@map("collections")
+}
+
+model CollectionPost {
+  collectionId String
+  postId       String
+  position     Int        @default(0)
+  addedAt      DateTime   @default(now())
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  post         Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, postId])
+  @@index([collectionId, position, addedAt])
+  @@map("collection_posts")
+}
+
+model Wishlist {
+  id             String   @id @default(cuid())
+  userId         String
+  category       String
+  title          String
+  creator        String?
+  years          String?
+  image          String?
+  excerpt        String?  @db.Text
+  externalRating Float?
+  externalId     String
+  addedAt        DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category, externalId])
+  @@index([userId, category, addedAt])
+  @@map("wishlist_items")
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  referenceId String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read, createdAt])
+  @@map("notifications")
 }
 
 model ActivityLog {

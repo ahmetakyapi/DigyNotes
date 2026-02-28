@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 
 const inputBase =
   "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-sm";
-const labelClass = "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
+const labelClass =
+  "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -204,7 +205,9 @@ export default function ProfileSettingsPage() {
             </div>
             {usernameHint && <p className="mt-1.5 text-xs">{usernameHint}</p>}
             {username && (
-              <p className="mt-1 text-[10px] text-[var(--text-muted)]">Profil URL: /profile/{username}</p>
+              <p className="mt-1 text-[10px] text-[var(--text-muted)]">
+                Profil URL: /profile/{username}
+              </p>
             )}
           </div>
 
@@ -227,7 +230,9 @@ export default function ProfileSettingsPage() {
           <div className={sectionClass}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">Profili Herkese Açık Yap</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">
+                  Profili Herkese Açık Yap
+                </p>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">
                   Açık olduğunda notlarınız ve profiliniz herkese görünür
                 </p>
@@ -251,7 +256,7 @@ export default function ProfileSettingsPage() {
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--bg-header)]/95 backdrop-blur-xl">
+      <div className="bg-[var(--bg-header)]/95 fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <p className="text-xs text-[var(--text-muted)]">
             {isPublic ? "Profilin herkese açık" : "Profilin gizli"}

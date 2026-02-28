@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --font-sans: "Avenir Next", "Segoe UI Variable", "Segoe UI", sans-serif;
+  --font-display: "Avenir Next Condensed", "Trebuchet MS", var(--font-sans);
   --bg-base: #0b1120;
   --bg-card: #121a2d;
   --bg-raised: #1a2540;
@@ -12,9 +14,9 @@
   --border: #273553;
   --border-subtle: #1e2941;
   --border-header: #1b2439;
-  --gold: #c4a24b;
-  --gold-light: #d7ba68;
-  --text-on-accent: #171106;
+  --gold: #c6972e;
+  --gold-light: #dfba63;
+  --text-on-accent: #151003;
   --text-primary: #ecf2ff;
   --text-secondary: #9aaacd;
   --text-muted: #7283a2;
@@ -43,86 +45,78 @@
   --media-control-hover-bg: rgba(6, 10, 16, 0.76);
   --media-control-hover-border: rgba(196, 162, 75, 0.62);
   --media-glow: 0 20px 48px rgba(5, 8, 15, 0.5);
+  --image-edge-fade: rgba(18, 26, 45, 0.96);
   --new-note-glow:
-    0 0 0 1px rgba(196, 162, 75, 0.32),
-    0 10px 24px rgba(196, 162, 75, 0.26),
-    0 0 24px rgba(215, 186, 104, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    0 0 0 1px rgba(196, 162, 75, 0.32), 0 10px 24px rgba(196, 162, 75, 0.26),
+    0 0 24px rgba(215, 186, 104, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.22);
   --new-note-glow-breathe:
-    0 0 0 1px rgba(196, 162, 75, 0.34),
-    0 11px 25px rgba(196, 162, 75, 0.28),
-    0 0 27px rgba(215, 186, 104, 0.27),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    0 0 0 1px rgba(196, 162, 75, 0.34), 0 11px 25px rgba(196, 162, 75, 0.28),
+    0 0 27px rgba(215, 186, 104, 0.27), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   --new-note-glow-strong:
-    0 0 0 1px rgba(215, 186, 104, 0.44),
-    0 14px 30px rgba(196, 162, 75, 0.34),
-    0 0 34px rgba(215, 186, 104, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    0 0 0 1px rgba(215, 186, 104, 0.44), 0 14px 30px rgba(196, 162, 75, 0.34),
+    0 0 34px rgba(215, 186, 104, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 html.light,
 html[data-theme="light"] {
-  --bg-base: #f7f1e7;
-  --bg-card: #fffdf8;
-  --bg-raised: #f4ebdd;
-  --bg-header: #fcf7ef;
-  --bg-soft: #efe3d2;
-  --bg-overlay: rgba(255, 250, 241, 0.86);
-  --border: #dcccb3;
-  --border-subtle: #e8dcc9;
-  --border-header: #e2d3bc;
-  --gold: #a47d3f;
-  --gold-light: #c19c64;
-  --text-on-accent: #231709;
-  --text-primary: #302516;
-  --text-secondary: #675741;
-  --text-muted: #8a7862;
+  --bg-base: #f5ede0;
+  --bg-card: #fdf7ee;
+  --bg-raised: #f1e5d3;
+  --bg-header: #f8efe2;
+  --bg-soft: #ebdcc5;
+  --bg-overlay: rgba(249, 242, 231, 0.9);
+  --border: #cfba9b;
+  --border-subtle: #ddccb2;
+  --border-header: #d9c4a5;
+  --gold: #c08a1e;
+  --gold-light: #ddb253;
+  --text-on-accent: #1a1207;
+  --text-primary: #332415;
+  --text-secondary: #503a21;
+  --text-muted: #674e31;
   --danger: #c63f4f;
-  --surface-strong: #fbf6ee;
-  --surface-strong-hover: #f6efdf;
-  --surface-strong-active: #efe4d1;
-  --surface-strong-muted: #f2e7d7;
-  --surface-strong-border: #d6c4a7;
-  --text-contrast: #2f2416;
-  --text-dim: #6f5d46;
-  --text-faint: #9a876f;
-  --grid-line: rgba(125, 102, 72, 0.16);
-  --shadow-card: 0 12px 24px rgba(98, 72, 40, 0.11);
-  --shadow-soft: 0 6px 12px rgba(98, 72, 40, 0.08);
-  --media-panel-bg: #ddceb8;
-  --media-panel-sheen: rgba(125, 98, 67, 0.22);
-  --media-overlay-strong: rgba(30, 22, 14, 0.74);
-  --media-overlay-mid: rgba(30, 22, 14, 0.5);
-  --media-overlay-soft: rgba(30, 22, 14, 0.08);
+  --surface-strong: #fbf4e9;
+  --surface-strong-hover: #f5ecd9;
+  --surface-strong-active: #efdfc8;
+  --surface-strong-muted: #f2e5d3;
+  --surface-strong-border: #d4bf9f;
+  --text-contrast: #312314;
+  --text-dim: #6d573d;
+  --text-faint: #8b7357;
+  --grid-line: rgba(130, 101, 67, 0.15);
+  --shadow-card: 0 14px 30px rgba(112, 82, 46, 0.11);
+  --shadow-soft: 0 8px 18px rgba(112, 82, 46, 0.08);
+  --media-panel-bg: #dcc8ab;
+  --media-panel-sheen: rgba(150, 116, 74, 0.18);
+  --media-overlay-strong: rgba(37, 25, 13, 0.68);
+  --media-overlay-mid: rgba(37, 25, 13, 0.44);
+  --media-overlay-soft: rgba(37, 25, 13, 0.06);
   --media-text-primary: #fff8ed;
-  --media-text-secondary: #ead9c0;
-  --media-control-bg: rgba(255, 250, 242, 0.75);
-  --media-control-border: rgba(189, 160, 119, 0.78);
-  --media-control-text: #3b2d1d;
-  --media-control-hover-bg: rgba(255, 250, 242, 0.94);
-  --media-control-hover-border: rgba(164, 125, 63, 0.5);
-  --media-glow: 0 12px 24px rgba(98, 72, 40, 0.17);
+  --media-text-secondary: #f1e3cf;
+  --media-control-bg: rgba(252, 245, 235, 0.78);
+  --media-control-border: rgba(176, 137, 84, 0.72);
+  --media-control-text: #3a2a18;
+  --media-control-hover-bg: rgba(252, 245, 235, 0.96);
+  --media-control-hover-border: rgba(184, 135, 40, 0.52);
+  --media-glow: 0 12px 28px rgba(112, 82, 46, 0.16);
+  --image-edge-fade: rgba(253, 247, 238, 0);
   --new-note-glow:
-    0 0 0 1px rgba(164, 125, 63, 0.3),
-    0 6px 14px rgba(164, 125, 63, 0.16),
-    0 0 16px rgba(193, 156, 100, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    0 0 0 1px rgba(164, 125, 63, 0.3), 0 6px 14px rgba(164, 125, 63, 0.16),
+    0 0 16px rgba(193, 156, 100, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.42);
   --new-note-glow-breathe:
-    0 0 0 1px rgba(164, 125, 63, 0.33),
-    0 7px 16px rgba(164, 125, 63, 0.19),
-    0 0 19px rgba(193, 156, 100, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    0 0 0 1px rgba(164, 125, 63, 0.33), 0 7px 16px rgba(164, 125, 63, 0.19),
+    0 0 19px rgba(193, 156, 100, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   --new-note-glow-strong:
-    0 0 0 1px rgba(164, 125, 63, 0.38),
-    0 9px 20px rgba(164, 125, 63, 0.22),
-    0 0 24px rgba(193, 156, 100, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 0 0 1px rgba(164, 125, 63, 0.38), 0 9px 20px rgba(164, 125, 63, 0.22),
+    0 0 24px rgba(193, 156, 100, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 html {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 body {
@@ -136,7 +130,9 @@ body {
   font-family: var(--font-sans), "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .dn-display {
@@ -147,10 +143,11 @@ body {
 html.light body,
 html[data-theme="light"] body {
   background-image:
-    radial-gradient(circle at 9% -10%, rgba(193, 156, 100, 0.24), transparent 40%),
-    radial-gradient(circle at 88% 10%, rgba(172, 141, 98, 0.16), transparent 44%),
-    radial-gradient(circle at 44% 116%, rgba(235, 216, 188, 0.3), transparent 50%),
-    linear-gradient(180deg, rgba(255, 252, 245, 0.9) 0%, rgba(247, 241, 231, 0) 42%);
+    radial-gradient(circle at 9% -10%, rgba(201, 153, 89, 0.22), transparent 38%),
+    radial-gradient(circle at 88% 8%, rgba(183, 129, 95, 0.15), transparent 42%),
+    radial-gradient(circle at 50% 116%, rgba(216, 189, 140, 0.22), transparent 48%),
+    radial-gradient(circle at 32% 34%, rgba(147, 159, 112, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(255, 249, 240, 0.84) 0%, rgba(245, 237, 224, 0) 44%);
   background-attachment: fixed;
 }
 
@@ -300,11 +297,15 @@ html[data-theme="light"] body {
   0%,
   100% {
     border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 0 0 rgba(255, 255, 255, 0), 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow:
+      inset 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(0, 0, 0, 0);
   }
   50% {
     border-color: rgba(255, 255, 255, 0.32);
-    box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.03), 0 0 24px rgba(113, 132, 180, 0.16);
+    box-shadow:
+      inset 0 0 24px rgba(255, 255, 255, 0.03),
+      0 0 24px rgba(113, 132, 180, 0.16);
   }
 }
 
@@ -501,6 +502,14 @@ html[data-theme="light"] body {
 
 .dn-compose-editor .ql-editor {
   min-height: clamp(190px, 30vh, 280px);
+}
+
+/* xl: editör max yükseklik — sayfa uzamaz, kart içi scroll */
+@media (min-width: 1280px) {
+  .dn-compose-editor .ql-editor {
+    max-height: clamp(300px, calc(100dvh - 24rem), 720px);
+    overflow-y: auto;
+  }
 }
 
 /* ─── Form Select ─── */
