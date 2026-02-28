@@ -12,6 +12,7 @@ import {
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -216,7 +217,7 @@ function FeedCard({ post }: { post: Post }) {
             {post.creator && (
               <p className="mt-2 text-sm text-[var(--text-secondary)]">{displayCreator}</p>
             )}
-            {post.excerpt && (
+            {post.excerpt && !(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
               <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--text-muted)]">
                 {displayExcerpt}
               </p>

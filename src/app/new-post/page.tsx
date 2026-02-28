@@ -89,7 +89,7 @@ const CATEGORY_CONFIG: Record<
 };
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/20 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/20 focus:bg-[var(--bg-card)]";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)] mb-1.5";
 const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
@@ -779,7 +779,55 @@ export default function NewPostPage() {
               )}
             </div>
 
-            {/* ─ Puan ─ */}
+            {/* ─ Puan (desktop only — mobilde order-3 bölümünde) ─ */}
+            <div className={`${cardClass} hidden xl:block`}>
+              <label className={labelClass}>Puan</label>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <StarRating rating={rating} interactive onRate={setRating} size={26} />
+                <span className="text-sm font-medium text-[var(--text-secondary)]">
+                  {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
+                </span>
+                {rating > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setRating(0)}
+                    className="text-xs text-[var(--text-muted)] transition-colors duration-150 hover:text-[var(--danger)]"
+                  >
+                    Sıfırla
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {supportsSpoiler && (
+              <div className={`${cardClass} hidden xl:block`}>
+                <p className={labelClass}>Yayın Ayarları</p>
+                <label className="hover:border-[var(--gold)]/30 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={hasSpoiler}
+                    onChange={(e) => setHasSpoiler(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--gold)] focus:ring-[var(--gold)]"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-[var(--text-primary)]">
+                      Spoiler uyarısı ekle
+                    </span>
+                    <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
+                      Detay sayfasında içerik blur olur ve okur önce onay verir.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            )}
+          </aside>
+
+          {/* ════════════════════════════════
+              MOBİL ALT — Puan + Yayın Ayarları
+              (yalnızca mobilde görünür, order-3 → form ve içerikten sonra)
+          ════════════════════════════════ */}
+          <div className="order-3 min-w-0 space-y-4 xl:hidden">
+            {/* ─ Puan (mobile) ─ */}
             <div className={cardClass}>
               <label className={labelClass}>Puan</label>
               <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -820,7 +868,7 @@ export default function NewPostPage() {
                 </label>
               </div>
             )}
-          </aside>
+          </div>
         </form>
       </div>
 

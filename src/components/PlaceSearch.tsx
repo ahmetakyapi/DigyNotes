@@ -178,7 +178,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             onFocus={() => results.length > 0 && setShowResults(true)}
             onBlur={() => setTimeout(() => setShowResults(false), 150)}
             placeholder="Şehir, ülke veya yer adı ara..."
-            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
+            className="flex-1 bg-transparent text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:text-sm"
           />
           {loading && (
             <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-[#c4a24b] border-t-transparent" />
@@ -210,11 +210,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                   <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-[var(--bg-raised)]">
                     {place.thumbUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={place.thumbUrl}
-                        alt={main}
-                        className="h-full w-full object-cover"
-                      />
+                      <img src={place.thumbUrl} alt={main} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
                         <MapPin size={18} weight="fill" className="text-[var(--text-muted)]" />
@@ -224,7 +220,9 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
 
                   {/* Metin */}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">{main}</p>
+                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">
+                      {main}
+                    </p>
                     {secondary && (
                       <p className="truncate text-xs text-[var(--text-muted)]">{secondary}</p>
                     )}

@@ -47,14 +47,14 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
             {tagName}
           </h1>
           {!loading && (
-            <p className="mt-1 text-sm text-[var(--text-muted)]">{posts.length} public not</p>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">{posts.length} herkese açık not</p>
           )}
         </div>
 
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
-          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/40"
+          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/40 sm:text-sm"
         >
           <option value="newest">En Yeni</option>
           <option value="oldest">En Eski</option>
@@ -62,7 +62,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
         </select>
       </div>
 
-      {/* Content */}
+      {/* İçerik */}
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -86,7 +86,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
               />
             </svg>
           </div>
-          <p className="text-[var(--text-muted)]">Bu tag ile henüz public not yok.</p>
+          <p className="text-[var(--text-muted)]">Bu etiketle henüz herkese açık not yok.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

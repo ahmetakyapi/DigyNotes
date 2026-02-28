@@ -324,7 +324,7 @@ export default function DiscoverPage() {
                           value={topQuery}
                           onChange={(e) => setTopQuery(e.target.value)}
                           placeholder="Not veya kullanıcı ara..."
-                          className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--gold)]"
+                          className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--gold)] sm:text-sm"
                         />
                       </label>
                     </div>
@@ -474,7 +474,7 @@ export default function DiscoverPage() {
                     value={query}
                     onChange={(e) => handleSearch(e.target.value)}
                     placeholder="İsim veya @ ile kullanıcı ara..."
-                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--gold)]"
+                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--gold)] sm:text-sm"
                   />
                 </label>
               </div>

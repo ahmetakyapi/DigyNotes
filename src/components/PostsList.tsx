@@ -14,12 +14,13 @@ import {
   hasActiveSortFilters,
   matchesAdvancedFilters,
 } from "@/components/SortFilterBar";
-import { StatsPanel } from "@/components/StatsPanel";
+
 import TagBadge from "@/components/TagBadge";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
+import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
 
 interface PostsListProps {
   allPosts: Post[];
@@ -88,9 +89,7 @@ export function PostsList({
   const [localQuery, setLocalQuery] = useState(urlQuery);
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<PostsViewMode>("grid");
-  const [activeTab, setActiveTab] = useState<"notlar" | "kaydedilenler" | "istatistikler">(
-    initialTab
-  );
+  const [activeTab, setActiveTab] = useState<"notlar" | "kaydedilenler">(initialTab);
 
   const toggleTag = (name: string) => {
     setActiveTags((prev) =>
@@ -166,12 +165,7 @@ export function PostsList({
   const displayedPosts = hasSearch || viewMode === "list" ? filtered : rest;
 
   useEffect(() => {
-    if (
-      activeTab === "istatistikler" ||
-      !currentHasMore ||
-      currentIsLoadingMore ||
-      !currentLoadMore
-    ) {
+    if (!currentHasMore || currentIsLoadingMore || !currentLoadMore) {
       return;
     }
 
@@ -194,7 +188,7 @@ export function PostsList({
   if (allPosts.length === 0 && savedPosts.length === 0) return null;
 
   return (
-    <div className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-5">
+    <div className="mx-auto max-w-5xl px-3 pb-4 pt-2 sm:px-6 sm:pb-5 sm:pt-3">
       {/* ── Page header + tab switcher ── */}
       <div className="mb-3.5 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -218,16 +212,6 @@ export function PostsList({
               }`}
             >
               Kaydettiklerim
-            </button>
-            <button
-              onClick={() => setActiveTab("istatistikler")}
-              className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
-                activeTab === "istatistikler"
-                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
-                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              İstatistikler
             </button>
           </div>
 
@@ -271,7 +255,7 @@ export function PostsList({
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
-                    Grid
+                    Tablo
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
@@ -306,24 +290,6 @@ export function PostsList({
           </button>
         </div>
       )}
-
-      {/* ── İstatistikler sekmesi ── */}
-      {activeTab === "istatistikler" &&
-        (hasMorePosts ? (
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5 text-center shadow-[var(--shadow-soft)]">
-            <p className="text-sm text-[var(--text-secondary)]">
-              Bu sekmedeki hızlı istatistikler tüm notlar yüklendiğinde anlamlı oluyor.
-            </p>
-            <Link
-              href="/stats"
-              className="mt-3 inline-flex rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)]"
-            >
-              Detaylı İstatistikler
-            </Link>
-          </div>
-        ) : (
-          <StatsPanel posts={allPosts} />
-        ))}
 
       {(activeTab === "notlar" || activeTab === "kaydedilenler") &&
         (filtered.length === 0 ? (
@@ -536,7 +502,10 @@ export function PostsList({
                           <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
                             <StarRating rating={post.rating} size={11} />
                             <span className="text-[10px] text-[var(--text-muted)]">
-                              {post.date}
+                              {(() => {
+                                const rt = formatReadingTime(estimateReadingTime(post.content));
+                                return rt ? `${rt} · ${post.date}` : post.date;
+                              })()}
                             </span>
                           </div>
                         </div>
@@ -580,7 +549,10 @@ export function PostsList({
                           <div className="mt-2 flex items-center justify-between gap-3">
                             <StarRating rating={post.rating} size={10} />
                             <span className="text-[10px] text-[var(--text-muted)]">
-                              {post.date}
+                              {(() => {
+                                const rt = formatReadingTime(estimateReadingTime(post.content));
+                                return rt ? `${rt} · ${post.date}` : post.date;
+                              })()}
                             </span>
                           </div>
                         </div>

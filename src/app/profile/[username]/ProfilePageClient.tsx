@@ -360,7 +360,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   ? "Not, kategori veya etiket ara..."
                   : "Koleksiyon veya not ara..."
               }
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-sm text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none sm:text-sm"
             />
           </div>
         </div>
