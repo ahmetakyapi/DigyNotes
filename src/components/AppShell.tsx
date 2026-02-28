@@ -5,8 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
 import { useSession, signOut } from "next-auth/react";
+import { Bell } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";
-import { FIXED_CATEGORIES } from "@/lib/categories";
+import { FIXED_CATEGORIES, getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { useTheme } from "@/components/ThemeProvider";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
@@ -20,6 +21,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showNewNoteHint, setShowNewNoteHint] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +67,39 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (!session?.user) {
+      setNotificationCount(0);
+      return;
+    }
+
+    let active = true;
+
+    const loadNotifications = async () => {
+      try {
+        const response = await fetch("/api/notifications?limit=1");
+        if (!response.ok) return;
+        const data = await response.json();
+        if (active && typeof data?.unreadCount === "number") {
+          setNotificationCount(data.unreadCount);
+        }
+      } catch {
+        if (active) setNotificationCount(0);
+      }
+    };
+
+    const handleRefresh = () => {
+      void loadNotifications();
+    };
+
+    void loadNotifications();
+    window.addEventListener("notifications:refresh", handleRefresh);
+    return () => {
+      active = false;
+      window.removeEventListener("notifications:refresh", handleRefresh);
+    };
+  }, [session?.user]);
+
   const handleNewNoteClick = () => {
     setShowNewNoteHint(false);
     try {
@@ -77,12 +112,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const getActiveCategory = () => {
     if (pathname === "/notes") return "all";
     const match = pathname.match(/^\/category\/(.+)/);
-    return match ? decodeURIComponent(match[1]) : "";
+    return match ? normalizeCategory(decodeURIComponent(match[1])) : "";
   };
   const activeCategory = getActiveCategory();
   const isDiscover = pathname === "/discover";
   const isFeed = pathname === "/feed";
   const isRecommended = pathname === "/recommended";
+  const isNotifications = pathname === "/notifications";
   const isComposerRoute = pathname === "/new-post" || /^\/posts\/[^/]+\/edit$/.test(pathname);
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
   const hideMobileBottomTabs = isComposerRoute || isAdminRoute;
@@ -121,6 +157,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <SearchBar />
               </Suspense>
 
+              <Link
+                href="/notifications"
+                title="Bildirimler"
+                className={`relative flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgba(3,8,20,0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-10 sm:rounded-lg sm:border-transparent sm:bg-transparent sm:shadow-none ${
+                  isNotifications ? "text-[var(--gold)]" : ""
+                }`}
+              >
+                <Bell
+                  size={16}
+                  weight={notificationCount > 0 || isNotifications ? "fill" : "regular"}
+                />
+                {notificationCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-[var(--gold)] px-1 text-[10px] font-bold leading-[18px] text-[var(--text-on-accent)]">
+                    {notificationCount > 9 ? "9+" : notificationCount}
+                  </span>
+                )}
+              </Link>
+
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
@@ -129,7 +183,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               >
                 {theme === "dark" ? (
                   /* Sun icon */
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <circle cx="12" cy="12" r="4" />
                     <line x1="12" y1="2" x2="12" y2="4" />
                     <line x1="12" y1="20" x2="12" y2="22" />
@@ -142,7 +205,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   </svg>
                 ) : (
                   /* Moon icon */
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                   </svg>
                 )}
@@ -153,10 +225,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-[#c4a24b]/40 bg-[var(--bg-card)]/95 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgba(3,8,20,0.4)] backdrop-blur-md sm:hidden"
+                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-[#c4a24b]/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgba(3,8,20,0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
-                    <div className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-[#c4a24b]/40 bg-[var(--bg-card)]/95" />
+                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-[#c4a24b]/40" />
                   </div>
                 )}
                 <Link
@@ -208,7 +280,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       {/* User info */}
                       <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
                         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/10">
-                          <span className="text-xs font-bold text-[var(--gold)]">{userInitial}</span>
+                          <span className="text-xs font-bold text-[var(--gold)]">
+                            {userInitial}
+                          </span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
@@ -262,6 +336,109 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           </svg>
                           Profil Ayarları
                         </Link>
+                        <Link
+                          href="/collections"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                          </svg>
+                          Koleksiyonlar
+                        </Link>
+                        <Link
+                          href="/watchlist"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                          </svg>
+                          İstek Listesi
+                        </Link>
+                        <Link
+                          href="/stats"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M4 19V10" />
+                            <path d="M10 19V5" />
+                            <path d="M16 19v-7" />
+                            <path d="M22 19v-3" />
+                          </svg>
+                          İstatistikler
+                        </Link>
+                        <a
+                          href="/api/users/me/export?format=csv"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M12 3v12" />
+                            <path d="m7 10 5 5 5-5" />
+                            <path d="M5 21h14" />
+                          </svg>
+                          CSV Dışa Aktar
+                        </a>
+                        <a
+                          href="/api/users/me/export?format=json"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M12 3v12" />
+                            <path d="m7 10 5 5 5-5" />
+                            <path d="M5 21h14" />
+                          </svg>
+                          JSON Dışa Aktar
+                        </a>
                       </div>
 
                       {isAdmin && (
@@ -271,9 +448,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             <Link
                               href="/admin"
                               onClick={() => setShowUserMenu(false)}
-                              className="mx-1 flex items-center gap-2.5 rounded-lg border border-[#c4a24b]/25 bg-[#c4a24b]/8 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#c4a24b]/40 hover:bg-[#c4a24b]/14 hover:text-[var(--gold-light)]"
+                              className="bg-[#c4a24b]/8 hover:bg-[#c4a24b]/14 mx-1 flex items-center gap-2.5 rounded-lg border border-[#c4a24b]/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#c4a24b]/40 hover:text-[var(--gold-light)]"
                             >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                              >
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                               </svg>
                               Admin Paneli
@@ -291,7 +476,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             localStorage.removeItem("dn_username");
                             signOut({ callbackUrl: "/" });
                           }}
-                          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[var(--text-muted)] transition-colors duration-100 hover:bg-[var(--danger)]/5 hover:text-[var(--danger)]"
+                          className="hover:bg-[var(--danger)]/5 flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[var(--text-muted)] transition-colors duration-100 hover:text-[var(--danger)]"
                         >
                           <svg
                             width="14"
@@ -330,7 +515,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                   }`}
                 >
-                  Son Yazılar
+                  Son Notlar
                 </button>
                 {FIXED_CATEGORIES.map((cat) => {
                   const isActive = activeCategory === cat;
@@ -344,7 +529,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                       }`}
                     >
-                      {cat}
+                      {getCategoryLabel(cat)}
                     </button>
                   );
                 })}
@@ -352,14 +537,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           )}
 
-
           {/* ── Desktop: scrollable single row ── */}
-          <div ref={scrollRef} className="scrollbar-hide hidden items-center overflow-x-auto sm:flex">
-            <NavTab
-              active={activeCategory === "all"}
-              onClick={() => router.push("/notes")}
-            >
-              Son Yazılar
+          <div
+            ref={scrollRef}
+            className="scrollbar-hide hidden items-center overflow-x-auto sm:flex"
+          >
+            <NavTab active={activeCategory === "all"} onClick={() => router.push("/notes")}>
+              Son Notlar
             </NavTab>
             {FIXED_CATEGORIES.map((cat) => (
               <NavTab
@@ -367,7 +551,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 active={activeCategory === cat}
                 onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
               >
-                {cat}
+                {getCategoryLabel(cat)}
               </NavTab>
             ))}
 
@@ -382,10 +566,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isFeed
                     ? "border-[var(--gold)] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M3 11l19-9-9 19-2-8-8-2z" />
                 </svg>
                 Akış
@@ -395,10 +588,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isRecommended
                     ? "border-[var(--gold)] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
                 Öneriler
@@ -408,10 +610,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isDiscover
                     ? "border-[var(--gold)] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -419,22 +630,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </svg>
                 Keşfet
               </Link>
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className={`flex h-9 flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border px-3.5 text-[13px] font-semibold transition-all duration-150 ${
-                    pathname === "/admin" || pathname.startsWith("/admin/")
-                      ? "border-[var(--gold)] bg-[var(--bg-raised)] text-[var(--gold)] shadow-[0_0_0_1px_rgba(196,162,75,0.22),0_6px_16px_rgba(3,8,20,0.16)]"
-                      : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--gold)] hover:bg-[var(--bg-raised)] hover:text-[var(--gold)]"
-                  }`}
-                >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  Admin
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)] opacity-85 shadow-[0_0_0_3px_rgba(196,162,75,0.14)]" />
-                </Link>
-              )}
             </div>
           </div>
         </div>
@@ -453,10 +648,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/notes"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isNotes ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-muted)]"
+                isNotes ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
               }`}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="9" y1="13" x2="15" y2="13" />
@@ -467,10 +671,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/feed"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isFeed ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-muted)]"
+                isFeed ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
               }`}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M3 11l19-9-9 19-2-8-8-2z" />
               </svg>
               <span className="text-[10px] font-medium">Akış</span>
@@ -478,10 +691,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/recommended"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isRecommended ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-muted)]"
+                isRecommended
+                  ? "bg-[#c4a24b]/14 text-[var(--gold)]"
+                  : "text-[var(--text-secondary)]"
               }`}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
               </svg>
               <span className="text-[10px] font-medium">Öneriler</span>
@@ -489,10 +713,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/discover"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isDiscover ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-muted)]"
+                isDiscover ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
               }`}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -505,7 +738,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
               }
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isProfile ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-muted)]"
+                isProfile ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
               }`}
             >
               <div
@@ -557,7 +790,7 @@ function NavTab({
       className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
         active
           ? "border-[var(--gold)] text-[var(--text-primary)]"
-          : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+          : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
       }`}
     >
       {children}

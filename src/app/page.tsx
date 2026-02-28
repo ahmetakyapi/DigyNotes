@@ -12,6 +12,7 @@ import {
   LuTag,
   LuUsers,
 } from "react-icons/lu";
+import { LandingThemeToggle } from "@/components/LandingThemeToggle";
 
 export const metadata: Metadata = {
   title: "DigyNotes — Film, Dizi, Oyun, Kitap ve Gezi Notları",
@@ -38,7 +39,8 @@ export default function LandingPage() {
           priority
           unoptimized
         />
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <LandingThemeToggle />
           <Link
             href="/login"
             className="hidden px-5 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-primary)] sm:block"
@@ -53,8 +55,8 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/register"
-            className="rounded-xl px-4 py-2 text-sm font-bold text-[var(--text-on-accent)] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5"
-            style={{ background: "linear-gradient(135deg, #f0c060, #c4a24b, #d4963a)" }}
+            className="rounded-xl px-4 py-2 text-sm font-bold text-[#1b1307] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5"
+            style={{ background: "linear-gradient(135deg, #ebc15c, #c6972e, #b77f18)" }}
           >
             Kayıt Ol
           </Link>
@@ -108,9 +110,9 @@ export default function LandingPage() {
         </div>
 
         {/* ── Tüm içerik — badge + başlık+açıklama + butonlar, 3 öğe justify-between ── */}
-        <div className="relative z-10 flex w-full max-w-[430px] flex-col items-center gap-4 pb-0 pt-0.5 sm:contents sm:max-w-none sm:flex-none sm:justify-between sm:gap-0 sm:py-0">
+        <div className="relative z-10 flex w-full max-w-[430px] flex-col items-center gap-6 pb-0 pt-1 sm:max-w-5xl sm:gap-8 sm:py-0 xl:max-w-6xl">
           <div
-            className="dn-badge-sheen dn-reveal dn-delay-1 relative mb-3 mt-5 flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-4 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2 2xl:mb-5 2xl:px-6 2xl:py-2.5"
+            className="dn-badge-sheen dn-reveal dn-delay-1 relative mb-2 mt-5 flex items-center gap-2 rounded-full border border-white/10 px-4 py-1.5 backdrop-blur-sm sm:mb-2 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2 2xl:px-6 2xl:py-2.5"
             style={{
               background:
                 "linear-gradient(135deg, rgba(201,168,76,0.1), rgba(129,140,248,0.06), rgba(255,107,53,0.06))",
@@ -133,10 +135,10 @@ export default function LandingPage() {
           </div>
 
           {/* 2. Başlık + Açıklama grubu */}
-          <div className="flex flex-col items-center sm:contents">
-            <h1 className="mb-3 w-full overflow-visible px-1 pb-[0.12em] pt-[0.28em] text-center text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.16] sm:mb-3 sm:px-0 sm:pb-[0.12em] sm:pt-[0.52em] sm:text-[clamp(2.6rem,6.5vw,5.4rem)] sm:leading-[1.2] lg:text-[clamp(2.2rem,4.6vw,4.2rem)] lg:leading-[1.18] 2xl:text-[clamp(2.8rem,3.8vw,5.6rem)] 2xl:leading-[1.1]">
+          <div className="flex flex-col items-center">
+            <h1 className="mb-5 w-full overflow-visible px-1 pb-[0.18em] pt-[0.4em] text-center text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.14] tracking-[-0.038em] sm:mb-6 sm:px-0 sm:pb-[0.22em] sm:pt-[0.58em] sm:text-[clamp(3.35rem,6vw,5.25rem)] sm:leading-[1.12] xl:text-[clamp(4rem,5.4vw,5.8rem)] xl:leading-[1.1] 2xl:text-[clamp(4.5rem,4.8vw,6.4rem)]">
               <span
-                className="dn-line-reveal dn-line-1 mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-1 mb-1 block px-[0.04em] pb-[0.08em] pt-[0.14em] sm:mb-1.5"
                 style={{
                   background: "linear-gradient(135deg, #90aadc 0%, #5070c8 45%, #2848a0 100%)",
                   WebkitBackgroundClip: "text",
@@ -147,7 +149,7 @@ export default function LandingPage() {
                 İzlediklerin
               </span>
               <span
-                className="dn-line-reveal dn-line-2 mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-2 mb-1 block px-[0.04em] py-[0.08em] sm:mb-1.5"
                 style={{
                   background: "linear-gradient(135deg, #d4b4f4 0%, #a878e0 45%, #7848c0 100%)",
                   WebkitBackgroundClip: "text",
@@ -158,7 +160,7 @@ export default function LandingPage() {
                 Oynadıkların
               </span>
               <span
-                className="dn-line-reveal dn-line-3 mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-3 mb-1 block px-[0.04em] py-[0.08em] sm:mb-1.5"
                 style={{
                   background: "linear-gradient(135deg, #f0cc98 0%, #d4a060 45%, #b87838 100%)",
                   WebkitBackgroundClip: "text",
@@ -169,7 +171,7 @@ export default function LandingPage() {
                 Okudukların
               </span>
               <span
-                className="dn-line-reveal dn-line-4 mb-0.5 block sm:mb-1"
+                className="dn-line-reveal dn-line-4 mb-1 block px-[0.04em] py-[0.08em] sm:mb-1.5"
                 style={{
                   background: "linear-gradient(135deg, #9cdcbc 0%, #6cb898 45%, #409870 100%)",
                   WebkitBackgroundClip: "text",
@@ -180,9 +182,9 @@ export default function LandingPage() {
                 Gezdiklerin
               </span>
               <span
-                className="dn-line-reveal dn-line-5 mt-1 block sm:mt-1.5"
+                className="dn-line-reveal dn-line-5 mt-2 block px-[0.04em] pb-[0.1em] pt-[0.08em] sm:mt-2.5"
                 style={{
-                  fontSize: "1.13em",
+                  fontSize: "1.08em",
                   background:
                     "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f8d040 80%, #fff8c8 100%)",
                   WebkitBackgroundClip: "text",
@@ -195,44 +197,37 @@ export default function LandingPage() {
               </span>
             </h1>
 
-            <p
-              className="dn-reveal dn-delay-3 mx-auto max-w-[322px] px-2 py-2 text-center text-[0.94rem] leading-[1.65] [text-wrap:balance] sm:mb-4 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.05rem] sm:leading-relaxed lg:text-[1rem] 2xl:mb-5 2xl:max-w-2xl 2xl:text-[1.2rem]"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <p className="dn-reveal dn-delay-3 mx-auto max-w-[322px] px-2 py-2 text-center text-[0.96rem] font-medium leading-[1.72] text-[var(--text-secondary)] [text-wrap:balance] sm:mb-3 sm:max-w-3xl sm:px-0 sm:py-0 sm:text-[1.08rem] sm:leading-[1.86] xl:max-w-4xl xl:text-[1.18rem] 2xl:max-w-[54rem] 2xl:text-[1.24rem]">
               <span className="block [text-wrap:balance]">
                 Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde
                 topla.
               </span>
-              <span
-                className="mt-2.5 block [text-wrap:balance] sm:mt-2"
-                style={{ color: "var(--text-secondary)" }}
-              >
+              <span className="mt-4 block [text-wrap:balance] sm:mt-3">
                 Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
               </span>
             </p>
           </div>
 
           {/* 3. CTA Butonlar */}
-          <div className="dn-reveal dn-delay-4 mb-8 mt-3 flex w-full flex-col gap-5 px-1.5 pb-1 sm:mb-0 sm:w-auto sm:flex-row sm:gap-4 sm:px-0 sm:pb-0">
+          <div className="dn-reveal dn-delay-4 mb-8 mt-3 flex w-full flex-col gap-4 px-1.5 pb-1 sm:mb-0 sm:mt-2 sm:w-auto sm:flex-row sm:gap-5 sm:px-0 sm:pb-0">
             <Link
               href="/register"
-              className="dn-cta-gold group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[9px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[var(--text-on-accent)] shadow-[0_6px_20px_rgba(201,168,76,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_10px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[17px]"
-              style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
+              className="dn-cta-gold group relative w-[86%] self-center overflow-hidden rounded-[1.6rem] py-[10px] text-center text-[clamp(0.98rem,4.2vw,1.2rem)] font-bold text-[#1b1307] shadow-[0_8px_24px_rgba(198,151,46,0.34)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(198,151,46,0.42)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[12px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[17px]"
+              style={{ background: "linear-gradient(135deg, #e7bf5d, #c6972e, #b37a16, #cf9d2f)" }}
             >
               <span className="relative z-10">Hemen Başla →</span>
               <div
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 style={{
-                  background: "linear-gradient(135deg, #e0b84c, #d4a030, #c89020, #dab040)",
+                  background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)",
                 }}
               />
             </Link>
             <Link
               href="/login"
-              className="dn-cta-ghost w-[86%] self-center rounded-[1.6rem] border border-[var(--border)] py-[8px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-medium backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#c4a24b]/30 hover:bg-[var(--bg-raised)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[10px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[17px]"
+              className="dn-cta-ghost w-[86%] self-center rounded-[1.6rem] border border-[var(--border)] py-[9px] text-center text-[clamp(0.9rem,3.9vw,1.06rem)] font-semibold text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--gold)]/35 hover:bg-[var(--surface-strong)] sm:w-auto sm:self-auto sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[17px]"
               style={{
-                color: "var(--text-secondary)",
-                background: "var(--bg-overlay)",
+                background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)",
               }}
             >
               Giriş Yap
@@ -244,7 +239,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           APP ÖNİZLEME
       ══════════════════════════════════════ */}
-      <section className="relative px-4 pb-16">
+      <section className="relative px-4 pb-20 pt-4 sm:pt-6">
         <div className="relative mx-auto w-full max-w-4xl">
           {/* Üstten gelen glow halkası */}
           <div
@@ -257,20 +252,34 @@ export default function LandingPage() {
           <div
             className="relative overflow-hidden rounded-2xl shadow-[0_40px_120px_rgba(0,0,0,0.8)]"
             style={{
-              border: "1px solid rgba(255,255,255,0.07)",
-              background: "linear-gradient(180deg, #161616, #111)",
+              border: "1px solid var(--border-subtle)",
+              background: "linear-gradient(180deg, var(--bg-card), var(--surface-strong))",
             }}
           >
             {/* Tarayıcı çubuğu */}
-            <div className="flex items-center gap-2 border-b border-white/[0.06] bg-[#0e0e0e] px-5 py-3.5">
+            <div
+              className="flex items-center gap-2 border-b px-5 py-3.5"
+              style={{
+                borderColor: "var(--border-subtle)",
+                background: "var(--bg-soft)",
+              }}
+            >
               <div className="flex gap-1.5">
                 <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
                 <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
                 <div className="h-3 w-3 rounded-full bg-[#28c840]" />
               </div>
-              <div className="ml-3 flex h-7 max-w-xs flex-1 items-center justify-center gap-2 rounded-lg border border-white/[0.06] bg-[#1a1a1a]">
+              <div
+                className="ml-3 flex h-7 max-w-xs flex-1 items-center justify-center gap-2 rounded-lg border"
+                style={{
+                  borderColor: "var(--border-subtle)",
+                  background: "var(--bg-card)",
+                }}
+              >
                 <div className="h-2 w-2 rounded-full bg-[#28c840] opacity-60" />
-                <span className="text-[11px] font-medium text-[#3a3a3a]">digynotes.app/notes</span>
+                <span className="text-[11px] font-medium text-[var(--text-muted)]">
+                  digynotes.app/notes
+                </span>
               </div>
             </div>
 
@@ -287,32 +296,36 @@ export default function LandingPage() {
                   unoptimized
                 />
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full bg-[#1e1e1e] sm:h-8 sm:w-8" />
                   <div
-                    className="hidden h-8 w-24 rounded-lg border sm:block"
-                    style={{
-                      background: "rgba(201,168,76,0.12)",
-                      borderColor: "rgba(201,168,76,0.2)",
-                    }}
+                    className="h-7 w-7 rounded-full sm:h-8 sm:w-8"
+                    style={{ background: "var(--bg-raised)" }}
                   />
+              <div
+                className="hidden h-8 w-24 rounded-lg border sm:block"
+                style={{
+                  background: "color-mix(in srgb, var(--gold) 12%, transparent)",
+                  borderColor: "color-mix(in srgb, var(--gold) 22%, transparent)",
+                }}
+              />
                 </div>
               </div>
 
               {/* Sahte sekmeler */}
-              <div className="mb-4 flex gap-1 overflow-x-auto border-b border-white/[0.05] pb-3 sm:mb-5 sm:gap-1.5">
-                {["Son Yazılar", "Film", "Dizi", "Oyun", "Kitap", "Gezi"].map((cat, i) => (
+              <div className="mb-4 flex gap-1 overflow-x-auto border-b border-[var(--border-subtle)] pb-3 sm:mb-5 sm:gap-1.5">
+                {["Son Notlar", "Film", "Dizi", "Oyun", "Kitap", "Gezi"].map((cat, i) => (
                   <div
                     key={cat}
                     className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
-                      i === 0 ? "text-[#c4a24b]" : "text-[#2a2a2a]"
+                      i === 0 ? "text-[var(--gold)]" : "text-[var(--text-secondary)]"
                     }`}
                     style={
                       i === 0
                         ? {
-                            background: "rgba(201,168,76,0.1)",
-                            border: "1px solid rgba(201,168,76,0.25)",
+                            background: "color-mix(in srgb, var(--gold) 12%, transparent)",
+                            border:
+                              "1px solid color-mix(in srgb, var(--gold) 24%, transparent)",
                           }
-                        : { border: "1px solid transparent" }
+                        : { border: "1px solid transparent", background: "transparent" }
                     }
                   >
                     {cat}
@@ -323,7 +336,10 @@ export default function LandingPage() {
               {/* Sahte öne çıkan kart */}
               <div
                 className="relative mb-3 flex h-32 items-end overflow-hidden rounded-xl p-4 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
-                style={{ background: "linear-gradient(135deg, #1a1020, #0f1a2e, #151515)" }}
+                style={{
+                  background:
+                    "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
+                }}
               >
                 <div
                   className="absolute inset-0 opacity-30"
@@ -332,7 +348,7 @@ export default function LandingPage() {
                       "linear-gradient(135deg, rgba(255,107,53,0.15), rgba(201,168,76,0.08), rgba(129,140,248,0.1))",
                   }}
                 />
-                <div className="absolute inset-0 rounded-xl border border-white/[0.06] sm:rounded-2xl" />
+                <div className="absolute inset-0 rounded-xl border border-[var(--border-subtle)] sm:rounded-2xl" />
                 <div className="relative z-10 w-full">
                   <div className="mb-2 flex gap-2 sm:mb-2.5">
                     <div
@@ -342,10 +358,23 @@ export default function LandingPage() {
                           "linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.3))",
                       }}
                     />
-                    <div className="h-4 w-16 rounded-sm bg-white/10 sm:h-5 sm:w-20" />
+                    <div
+                      className="h-4 w-16 rounded-sm sm:h-5 sm:w-20"
+                      style={{
+                        background: "color-mix(in srgb, var(--bg-overlay) 68%, transparent)",
+                      }}
+                    />
                   </div>
-                  <div className="mb-1 h-5 w-40 rounded-md bg-white/25 sm:mb-1.5 sm:h-6 sm:w-56" />
-                  <div className="bg-white/12 mb-2 h-3 w-28 rounded-md sm:mb-3 sm:h-4 sm:w-36" />
+                  <div
+                    className="mb-1 h-5 w-40 rounded-md sm:mb-1.5 sm:h-6 sm:w-56"
+                    style={{ background: "var(--bg-overlay)" }}
+                  />
+                  <div
+                    className="mb-2 h-3 w-28 rounded-md sm:mb-3 sm:h-4 sm:w-36"
+                    style={{
+                      background: "color-mix(in srgb, var(--bg-overlay) 78%, transparent)",
+                    }}
+                  />
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <svg
@@ -372,18 +401,28 @@ export default function LandingPage() {
                   <div
                     key={i}
                     className="flex h-20 overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
-                    style={{ background: "#111", border: `1px solid ${c.border}` }}
+                    style={{ background: "var(--surface-strong)", border: `1px solid ${c.border}` }}
                   >
                     <div
                       className="w-12 flex-shrink-0 rounded-l-lg sm:w-16"
                       style={{
-                        background: `linear-gradient(135deg, ${c.color.replace("0.12", "0.25")}, rgba(30,30,30,0.8))`,
+                        background: `linear-gradient(135deg, ${c.color.replace("0.12", "0.25")}, color-mix(in srgb, var(--surface-strong) 84%, black 16%))`,
                       }}
                     />
                     <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3">
                       <div>
-                        <div className="mb-1 h-2 w-12 rounded-full bg-white/15 sm:mb-1.5 sm:h-2.5 sm:w-16" />
-                        <div className="bg-white/8 h-1.5 w-full rounded-full sm:h-2" />
+                        <div
+                          className="mb-1 h-2 w-12 rounded-full sm:mb-1.5 sm:h-2.5 sm:w-16"
+                          style={{
+                            background: "color-mix(in srgb, var(--bg-overlay) 88%, transparent)",
+                          }}
+                        />
+                        <div
+                          className="h-1.5 w-full rounded-full sm:h-2"
+                          style={{
+                            background: "color-mix(in srgb, var(--bg-overlay) 58%, transparent)",
+                          }}
+                        />
                       </div>
                       <div className="mt-auto flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((s) => (
@@ -415,13 +454,13 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           FEATURES
       ══════════════════════════════════════ */}
-      <section className="relative mx-auto w-full max-w-5xl px-4 pb-12 sm:px-6 sm:pb-24">
-        <div className="mb-10 text-center sm:mb-14">
+      <section className="relative mx-auto w-full max-w-5xl px-4 pb-16 pt-2 sm:px-6 sm:pb-24 sm:pt-4">
+        <div className="mb-12 text-center sm:mb-16">
           <h2 className="mb-3 text-2xl font-black text-[var(--text-primary)] sm:mb-4 sm:text-4xl">
             Her şey{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #c4a24b, #d7ba68)",
+                background: "linear-gradient(90deg, #c6972e, #dfba63)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -429,18 +468,17 @@ export default function LandingPage() {
               tek yerde
             </span>
           </h2>
-          <p
-            className="mx-auto max-w-sm text-base leading-relaxed"
-            style={{ color: "var(--text-secondary)" }}
-          >
+          <p className="mx-auto max-w-2xl text-base font-medium leading-[1.85] text-[var(--text-secondary)]">
             <span className="block text-balance">
               Film izle, dizi takip et, oyun oyna, kitap oku, gezi yap — not al.
             </span>
-            <span className="block text-balance">Yıldızla, etiketle, sosyal akışta keşfet.</span>
+            <span className="mt-3 block text-balance">
+              Kaydet, bildirim al, koleksiyon oluştur ve istatistiklerini gör.
+            </span>
           </p>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:mb-8 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
           {(
             [
               {
@@ -499,7 +537,7 @@ export default function LandingPage() {
               key={f.title}
               className="group relative overflow-hidden rounded-2xl p-5 transition-all duration-300 last:col-span-2 hover:-translate-y-1 sm:p-7 sm:last:col-span-1"
               style={{
-                background: `linear-gradient(145deg, ${f.gradientFrom}, rgba(14,14,14,1))`,
+                background: `linear-gradient(145deg, ${f.gradientFrom}, var(--surface-strong))`,
                 border: `1px solid ${f.border}`,
               }}
             >
@@ -509,16 +547,10 @@ export default function LandingPage() {
               >
                 <f.Icon className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: f.iconColor }} />
               </div>
-              <h3
-                className="mb-1 text-base font-bold sm:mb-2 sm:text-lg"
-                style={{ color: "rgba(240,237,232,0.9)" }}
-              >
+              <h3 className="mb-1 text-base font-bold text-[var(--text-primary)] sm:mb-2 sm:text-lg">
                 {f.title}
               </h3>
-              <p
-                className="text-xs leading-relaxed sm:text-sm"
-                style={{ color: "rgba(240,237,232,0.42)" }}
-              >
+              <p className="text-[13px] leading-[1.8] text-[var(--text-secondary)] sm:text-sm">
                 {f.desc}
               </p>
             </div>
@@ -526,21 +558,21 @@ export default function LandingPage() {
         </div>
 
         {/* Özellik satırı */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
           {(
             [
-              { label: "Yıldızlı Puanlama", Icon: LuStar, color: "#c4a24b" },
-              { label: "Otomatik Medya Arama", Icon: LuSearch, color: "#8898b8" },
-              { label: "Tag & Kategori Sistemi", Icon: LuTag, color: "#a09080" },
-              { label: "Sosyal Akış & Keşfet", Icon: LuUsers, color: "#818cf8" },
+              { label: "Tam Metin Arama", Icon: LuSearch, color: "var(--gold)" },
+              { label: "Kaydet & Etiketle", Icon: LuTag, color: "#8d7d5e" },
+              { label: "Bildirimler & Keşfet", Icon: LuUsers, color: "#7a85d8" },
+              { label: "Kişisel İstatistikler", Icon: LuStar, color: "var(--gold)" },
             ] as const
           ).map((s) => (
             <div
               key={s.label}
-              className="flex flex-row items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3"
+              className="flex flex-row items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5"
             >
               <s.Icon size={15} style={{ color: s.color, flexShrink: 0 }} />
-              <span className="text-xs font-medium" style={{ color: "rgba(240,237,232,0.38)" }}>
+              <span className="text-[13px] font-medium text-[var(--text-secondary)]">
                 {s.label}
               </span>
             </div>
@@ -595,13 +627,13 @@ export default function LandingPage() {
         </p>
         <Link
           href="/register"
-          className="group relative w-full max-w-[260px] overflow-hidden rounded-2xl px-6 py-3.5 text-[14px] font-bold text-[var(--text-on-accent)] shadow-[0_4px_24px_rgba(201,168,76,0.3)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(201,168,76,0.45)] sm:w-auto sm:max-w-none sm:px-12 sm:py-4 sm:text-[15px]"
-          style={{ background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)" }}
+          className="group relative w-full max-w-[260px] overflow-hidden rounded-2xl px-6 py-3.5 text-[14px] font-bold text-[#1b1307] shadow-[0_6px_24px_rgba(198,151,46,0.32)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(198,151,46,0.45)] sm:w-auto sm:max-w-none sm:px-12 sm:py-4 sm:text-[15px]"
+          style={{ background: "linear-gradient(135deg, #e7bf5d, #c6972e, #b37a16, #cf9d2f)" }}
         >
           <span className="relative z-10">Hesap Oluştur →</span>
           <div
             className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            style={{ background: "linear-gradient(135deg, #e0b84c, #d4a030, #c89020, #dab040)" }}
+            style={{ background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)" }}
           />
         </Link>
       </section>
@@ -610,7 +642,7 @@ export default function LandingPage() {
           FOOTER
       ══════════════════════════════════════ */}
       <footer className="flex items-center justify-center border-t border-[var(--border)] px-6 py-6">
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.15)" }}>
+        <p className="text-xs text-[var(--text-muted)]">
           © {new Date().getFullYear()} DigyNotes · Kişisel kullanım için.
         </p>
       </footer>

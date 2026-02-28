@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
+import { getPostReadAccess } from "@/lib/post-access";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 import sanitizeHtml from "sanitize-html";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const sanitizeConfig: sanitizeHtml.IOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
@@ -21,6 +27,14 @@ function transformPostTags(
 }
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
+  const userId = (session?.user as { id?: string })?.id;
+  const access = await getPostReadAccess(params.id, userId);
+
+  if (!access.post || !access.canRead) {
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
+  }
+
   const post = await prisma.post.findUnique({
     where: { id: params.id },
     include: {
@@ -31,6 +45,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   if (!post) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
+
   return NextResponse.json(transformPostTags(post));
 }
 
@@ -43,9 +58,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 
   const body = await request.json();
+  const normalizedCategory = normalizeCategory(body.category);
   const {
     title,
-    category,
     image,
     excerpt,
     content,
@@ -53,6 +68,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     years,
     rating,
     status,
+    hasSpoiler,
+    lat,
+    lng,
     imagePosition,
     tags,
     externalRating,
@@ -88,7 +106,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     where: { id: params.id },
     data: {
       title,
-      category,
+      category: normalizedCategory,
       image,
       excerpt,
       content: sanitizedContent,
@@ -97,6 +115,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       rating,
       externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
+      hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,
+      lat: typeof lat === "number" ? lat : null,
+      lng: typeof lng === "number" ? lng : null,
       imagePosition: imagePosition || "center",
       tags: {
         create: upsertedTags.map((tag) => ({ tagId: tag.id })),
@@ -106,7 +127,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   });
 
   await prisma.activityLog.create({
-    data: { userId, action: "post.update", metadata: { postId: post.id, title: post.title, category: post.category } },
+    data: {
+      userId,
+      action: "post.update",
+      metadata: { postId: post.id, title: post.title, category: post.category },
+    },
   });
 
   return NextResponse.json(transformPostTags(post));
@@ -135,7 +160,11 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   }
 
   await prisma.activityLog.create({
-    data: { userId, action: "post.delete", metadata: { postId: params.id, title: postToDelete?.title, category: postToDelete?.category } },
+    data: {
+      userId,
+      action: "post.delete",
+      metadata: { postId: params.id, title: postToDelete?.title, category: postToDelete?.category },
+    },
   });
 
   return NextResponse.json({ success: true });

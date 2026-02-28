@@ -30,6 +30,10 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   }, [open]);
 
   useEffect(() => {
+    setQuery(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setUserResults([]);
@@ -40,8 +44,17 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
   const searchUsers = useCallback(async (q: string) => {
-    if (!q) { setUserResults([]); return; }
+    if (!q) {
+      setUserResults([]);
+      return;
+    }
     setLoadingUsers(true);
     try {
       const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
@@ -73,7 +86,15 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = query.trim();
-    if (q.startsWith("@")) return;
+    if (q.startsWith("@")) {
+      const username = q.slice(1).trim().replace(/^@+/, "");
+      if (username) {
+        router.push(`/profile/${encodeURIComponent(username)}`);
+      }
+      setOpen(false);
+      setUserResults([]);
+      return;
+    }
     if (q) {
       router.push(`/notes?q=${encodeURIComponent(q)}`);
     } else {
@@ -92,7 +113,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
 
   const selectUser = (username: string | null) => {
     if (!username) return;
-    router.push(`/profile/${username}`);
+    router.push(`/profile/${encodeURIComponent(username)}`);
     setQuery("");
     setUserResults([]);
     setOpen(false);
@@ -156,10 +177,14 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       </form>
 
       {/* User results dropdown */}
-      {isUserMode && query.length > 1 && (userResults.length > 0 || loadingUsers) && (
+      {isUserMode && query.length > 1 && (
         <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)]">
-          {loadingUsers && userResults.length === 0 ? (
+          {loadingUsers ? (
             <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Aranıyor...</div>
+          ) : userResults.length === 0 ? (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">
+              Kullanıcı bulunamadı. Enter ile profile gitmeyi yine deneyebilirsin.
+            </div>
           ) : (
             userResults.map((u) => (
               <button
@@ -168,7 +193,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                 onClick={() => selectUser(u.username)}
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-raised)] active:opacity-80"
               >
-                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)] border border-[var(--border)]">
+                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)]">
                   {u.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={u.avatarUrl} alt={u.name} className="h-full w-full object-cover" />
@@ -177,7 +202,9 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">{u.name}</p>
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">
+                    {u.name}
+                  </p>
                   {u.username && (
                     <p className="truncate text-xs text-[var(--text-muted)]">@{u.username}</p>
                   )}

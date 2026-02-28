@@ -1,11 +1,7 @@
-import { prisma } from "@/lib/prisma";
+import { getSiteSetting } from "@/lib/site-settings";
 
 export default async function MaintenancePage() {
-  const messageSetting = await prisma.siteSettings.findUnique({
-    where: { key: "maintenanceMessage" },
-  });
-  const message =
-    messageSetting?.value ?? "Site şu anda bakımda. Lütfen daha sonra tekrar deneyin.";
+  const message = await getSiteSetting("maintenanceMessage");
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg-base)] px-4 text-center">
