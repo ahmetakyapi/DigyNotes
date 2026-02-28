@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
+import { getCategoryLabel } from "@/lib/categories";
+import { getPostImageSrc } from "@/lib/post-image";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -45,9 +47,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
             {tagName}
           </h1>
           {!loading && (
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              {posts.length} public not
-            </p>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">{posts.length} public not</p>
           )}
         </div>
 
@@ -72,8 +72,18 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
       ) : posts.length === 0 ? (
         <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
-            <svg className="h-7 w-7 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            <svg
+              className="h-7 w-7 text-[var(--text-muted)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+              />
             </svg>
           </div>
           <p className="text-[var(--text-muted)]">Bu tag ile henüz public not yok.</p>
@@ -96,7 +106,7 @@ function PostCard({ post }: { post: Post }) {
       <div className="relative h-40 w-full overflow-hidden">
         <Image
           loader={customLoader}
-          src={post.image}
+          src={getPostImageSrc(post.image)}
           alt={post.title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -105,7 +115,7 @@ function PostCard({ post }: { post: Post }) {
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
           <span className="rounded-sm border border-[#c4a24b]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
-            {post.category}
+            {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}
         </div>
@@ -116,7 +126,9 @@ function PostCard({ post }: { post: Post }) {
         <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
           {post.title}
         </h3>
-        {post.creator && <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>}
+        {post.creator && (
+          <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>
+        )}
 
         {post.rating > 0 && (
           <div className="mb-2">

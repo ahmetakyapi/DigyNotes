@@ -1,0 +1,2 @@
+ALTER TABLE "posts"
+ADD COLUMN "hasSpoiler" BOOLEAN NOT NULL DEFAULT false;

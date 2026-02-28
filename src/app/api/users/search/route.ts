@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim();
@@ -23,6 +26,7 @@ export async function GET(request: NextRequest) {
       username: true,
       bio: true,
       avatarUrl: true,
+      lastLoginAt: true,
       _count: { select: { posts: true } },
     },
     orderBy: { posts: { _count: "desc" } },
@@ -36,6 +40,7 @@ export async function GET(request: NextRequest) {
       username: u.username,
       bio: u.bio,
       avatarUrl: u.avatarUrl,
+      lastSeenAt: u.lastLoginAt?.toISOString() ?? null,
       postCount: u._count.posts,
     }))
   );

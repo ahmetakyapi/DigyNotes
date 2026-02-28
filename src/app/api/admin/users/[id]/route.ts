@@ -19,10 +19,10 @@ const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
 function getRangeStart(range: RangeKey): Date {
   const now = new Date();
   const ms: Record<RangeKey, number> = {
-    "24h":  24 * 60 * 60 * 1000,
-    "7d":   7  * 24 * 60 * 60 * 1000,
-    "30d":  30 * 24 * 60 * 60 * 1000,
-    "90d":  90 * 24 * 60 * 60 * 1000,
+    "24h": 24 * 60 * 60 * 1000,
+    "7d": 7 * 24 * 60 * 60 * 1000,
+    "30d": 30 * 24 * 60 * 60 * 1000,
+    "90d": 90 * 24 * 60 * 60 * 1000,
     "365d": 365 * 24 * 60 * 60 * 1000,
   };
   return new Date(now.getTime() - ms[range]);
@@ -36,7 +36,11 @@ function buildBuckets(range: RangeKey, logs: { createdAt: Date }[]) {
     for (let i = 23; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 60 * 60 * 1000);
       d.setMinutes(0, 0, 0);
-      buckets.push({ key: d.toISOString(), label: `${String(d.getHours()).padStart(2, "0")}:00`, count: 0 });
+      buckets.push({
+        key: d.toISOString(),
+        label: `${String(d.getHours()).padStart(2, "0")}:00`,
+        count: 0,
+      });
     }
     logs.forEach((log) => {
       const h = new Date(log.createdAt);
@@ -91,7 +95,9 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   const { searchParams } = new URL(_req.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const rawRange = searchParams.get("range") || "24h";
-  const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey) ? (rawRange as RangeKey) : "24h";
+  const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey)
+    ? (rawRange as RangeKey)
+    : "24h";
   const limit = 30;
   const skip = (page - 1) * limit;
 
@@ -176,6 +182,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   if (typeof isAdmin === "boolean") updateData.isAdmin = isAdmin;
   if (typeof isBanned === "boolean") updateData.isBanned = isBanned;
 
+  const existingUser = await prisma.user.findUnique({
+    where: { id: params.id },
+    select: { id: true },
+  });
+
+  if (!existingUser) {
+    return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+  }
+
   const user = await prisma.user.update({
     where: { id: params.id },
     data: updateData,
@@ -193,6 +208,15 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
 
   if (params.id === adminId) {
     return NextResponse.json({ error: "Kendi hesabını silemezsin" }, { status: 400 });
+  }
+
+  const existingUser = await prisma.user.findUnique({
+    where: { id: params.id },
+    select: { id: true },
+  });
+
+  if (!existingUser) {
+    return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
   }
 
   await prisma.user.delete({ where: { id: params.id } });

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getSiteSetting } from "@/lib/site-settings";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
@@ -13,14 +14,17 @@ export async function MaintenanceGuard({ children }: { children: React.ReactNode
     return <>{children}</>;
   }
 
-  const setting = await prisma.siteSettings.findUnique({ where: { key: "maintenanceMode" } });
+  const maintenanceMode = await getSiteSetting("maintenanceMode");
 
-  if (setting?.value === "true") {
+  if (maintenanceMode === "true") {
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string })?.id;
 
     if (userId) {
-      const user = await prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } });
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { isAdmin: true },
+      });
       if (!user?.isAdmin) redirect("/maintenance");
     } else {
       redirect("/maintenance");

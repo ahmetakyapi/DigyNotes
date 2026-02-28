@@ -1,27 +1,16 @@
-import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { Metadata, Viewport } from "next";
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ConditionalAppShell from "@/components/ConditionalAppShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   themeColor: "#0f1117",
 };
-
-const manrope = Manrope({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const sora = Sora({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-display",
-  weight: ["500", "600", "700"],
-});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -70,7 +59,7 @@ export const metadata: Metadata = {
       { url: "/apple-touch-icon-167x167.png", sizes: "167x167" },
     ],
   },
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -97,11 +86,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className={`${manrope.variable} ${sora.variable} min-h-screen`}>
+      <body className="min-h-screen">
         <MaintenanceGuard>
           <ThemeProvider>
             <SessionProviderWrapper>
+              <ServiceWorkerRegistration />
               <ConditionalAppShell>{children}</ConditionalAppShell>
+              <PwaInstallPrompt />
             </SessionProviderWrapper>
           </ThemeProvider>
         </MaintenanceGuard>
