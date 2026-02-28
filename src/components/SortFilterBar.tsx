@@ -32,7 +32,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 const MIN_RATING_OPTIONS = [
-  { value: 0, label: "Min puan" },
+  { value: 0, label: "En az puan" },
   { value: 2, label: "2+" },
   { value: 3, label: "3+" },
   { value: 4, label: "4+" },
@@ -40,7 +40,7 @@ const MIN_RATING_OPTIONS = [
 ];
 
 const MAX_RATING_OPTIONS = [
-  { value: 0, label: "Max puan" },
+  { value: 0, label: "Maks. puan" },
   { value: 2.5, label: "2.5" },
   { value: 3, label: "3" },
   { value: 4, label: "4" },
@@ -129,9 +129,9 @@ export function SortFilterBar({
 }: SortFilterBarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const selectClass =
-    "h-10 min-w-[112px] rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#c4a24b]/30 focus:border-[#c4a24b]/40 cursor-pointer";
+    "h-10 min-w-[112px] rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#c4a24b]/30 focus:border-[#c4a24b]/40 cursor-pointer";
   const inputClass =
-    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#c4a24b]/30 focus:border-[#c4a24b]/40";
+    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#c4a24b]/30 focus:border-[#c4a24b]/40";
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (value.minRating > 0) count += 1;
@@ -267,7 +267,7 @@ export function SortFilterBar({
                   max={2099}
                   value={value.yearFrom}
                   onChange={(e) => onChange({ ...value, yearFrom: e.target.value })}
-                  placeholder="Yıl min"
+                  placeholder="Yıl (en az)"
                   className={inputClass}
                 />
                 <input
@@ -277,7 +277,7 @@ export function SortFilterBar({
                   max={2099}
                   value={value.yearTo}
                   onChange={(e) => onChange({ ...value, yearTo: e.target.value })}
-                  placeholder="Yıl max"
+                  placeholder="Yıl (en çok)"
                   className={inputClass}
                 />
               </div>

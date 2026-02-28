@@ -12,6 +12,7 @@ import StarRating from "@/components/StarRating";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 
 const customLoader = ({ src }: { src: string }) => src;
 
@@ -266,7 +267,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     maxLength={80}
-                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
                   />
                 </label>
                 <label className="space-y-2">
@@ -276,7 +277,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     onChange={(event) => setDescription(event.target.value)}
                     rows={3}
                     maxLength={400}
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
                   />
                 </label>
               </div>
@@ -395,7 +396,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={postQuery}
                 onChange={(event) => setPostQuery(event.target.value)}
                 placeholder="Eklemek için not ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
               />
               <p className="mt-2 text-[11px] text-[var(--text-faint)]">
                 {availablePosts.length} uygun not bulundu
@@ -502,7 +503,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={collectionQuery}
                 onChange={(event) => setCollectionQuery(event.target.value)}
                 placeholder="Koleksiyon içinde ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
               />
               {collectionQuery.trim() && (
                 <button
@@ -574,9 +575,11 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       </p>
                     )}
                   </div>
-                  <p className="line-clamp-3 text-sm leading-6 text-[var(--text-secondary)]">
-                    {formatDisplaySentence(post.excerpt)}
-                  </p>
+                  {!(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
+                    <p className="line-clamp-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      {formatDisplaySentence(post.excerpt)}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between border-t border-[var(--border)] pt-3">
                     <StarRating rating={post.rating} size={12} />
                     <span className="text-xs text-[var(--text-faint)]">{post.date}</span>

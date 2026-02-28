@@ -1,7 +1,9 @@
 # DigyNotes — Claude Code Project Rules
 
 ## Self-Improvement Protocol
+
 **CRITICAL: Claude MUST follow these rules every session:**
+
 1. Before starting any task → read `ERRORS.md` to check for known solutions
 2. When an error is encountered and solved → append it to `ERRORS.md` immediately
 3. When the same error appears again → consult `ERRORS.md` first, apply known fix, do NOT repeat the investigation
@@ -11,6 +13,7 @@
 ---
 
 ## Stack
+
 - **Framework**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
 - **DB**: PostgreSQL (Homebrew v16) via Prisma ORM v7
 - **Prisma adapter**: `@prisma/adapter-pg` (required — plain `new PrismaClient()` will NOT work)
@@ -20,45 +23,53 @@
 ---
 
 ## Key Files
-| File | Purpose |
-|------|---------|
-| `ERRORS.md` | Known error log — check here FIRST before debugging |
-| `src/lib/prisma.ts` | Prisma singleton with PrismaPg adapter |
-| `src/lib/auth.ts` | NextAuth config |
-| `src/middleware.ts` | Route protection |
-| `src/types/index.ts` | Shared Post, Category, Tag interfaces |
-| `src/types/next-auth.d.ts` | Session type augmentation (user.id) |
-| `prisma/schema.prisma` | DB schema (datasource has NO `url` field) |
-| `prisma.config.ts` | Prisma v7 config — DB URL lives here |
+
+| File                       | Purpose                                             |
+| -------------------------- | --------------------------------------------------- |
+| `ERRORS.md`                | Known error log — check here FIRST before debugging |
+| `src/lib/prisma.ts`        | Prisma singleton with PrismaPg adapter              |
+| `src/lib/auth.ts`          | NextAuth config                                     |
+| `src/middleware.ts`        | Route protection                                    |
+| `src/types/index.ts`       | Shared Post, Category, Tag interfaces               |
+| `src/types/next-auth.d.ts` | Session type augmentation (user.id)                 |
+| `prisma/schema.prisma`     | DB schema (datasource has NO `url` field)           |
+| `prisma.config.ts`         | Prisma v7 config — DB URL lives here                |
 
 ---
 
 ## Full Component Inventory
-| Component | File | Notes |
-|-----------|------|-------|
-| `AppShell` | `src/components/AppShell.tsx` | Main nav shell |
-| `ConditionalAppShell` | `src/components/ConditionalAppShell.tsx` | Hides shell on `/`, `/login`, `/register` |
-| `SessionProviderWrapper` | `src/components/SessionProviderWrapper.tsx` | NextAuth client wrapper |
-| `FollowButton` | `src/components/FollowButton.tsx` | Follow/unfollow by username |
-| `FollowListModal` | `src/components/FollowListModal.tsx` | Followers/following modal |
-| `MediaSearch` | `src/components/MediaSearch.tsx` | TMDB/RAWG/OpenLibrary search, `onSelect` cb |
-| `TagInput` | `src/components/TagInput.tsx` | Debounced autocomplete, Enter/comma to add |
-| `TagBadge` | `src/components/TagBadge.tsx` | Clickable filter badge, removable |
-| `StarRating` | `src/components/StarRating.tsx` | 0–5 stars, 0.5 step |
-| `StatusBadge` | `src/components/StatusBadge.tsx` | Post status display |
-| `PostsList` | `src/components/PostsList.tsx` | Posts grid/list |
-| `UserCard` | `src/components/UserCard.tsx` | User card for discover/profile |
-| `SearchBar` | `src/components/SearchBar.tsx` | Search input |
-| `SortFilterBar` | `src/components/SortFilterBar.tsx` | Sort/filter controls |
-| `StatsPanel` | `src/components/StatsPanel.tsx` | User stats |
-| `CommunityStatsCard` | `src/components/CommunityStatsCard.tsx` | Community stats |
-| `AddCategoryModal` | `src/components/AddCategoryModal.tsx` | Category creation modal |
-| `ConfirmModal` | `src/components/ConfirmModal.tsx` | Generic confirm dialog |
-| `FullScreenLoader` | `src/components/FullScreenLoader.tsx` | Loading overlay |
+
+| Component                | File                                        | Notes                                       |
+| ------------------------ | ------------------------------------------- | ------------------------------------------- |
+| `AppShell`               | `src/components/AppShell.tsx`               | Main nav shell                              |
+| `ConditionalAppShell`    | `src/components/ConditionalAppShell.tsx`    | Hides shell on `/`, `/login`, `/register`   |
+| `SessionProviderWrapper` | `src/components/SessionProviderWrapper.tsx` | NextAuth client wrapper                     |
+| `FollowButton`           | `src/components/FollowButton.tsx`           | Follow/unfollow by username                 |
+| `FollowListModal`        | `src/components/FollowListModal.tsx`        | Followers/following modal                   |
+| `MediaSearch`            | `src/components/MediaSearch.tsx`            | TMDB/RAWG/OpenLibrary search, `onSelect` cb |
+| `TagInput`               | `src/components/TagInput.tsx`               | Debounced autocomplete, Enter/comma to add  |
+| `TagBadge`               | `src/components/TagBadge.tsx`               | Clickable filter badge, removable           |
+| `StarRating`             | `src/components/StarRating.tsx`             | 0–5 stars, 0.5 step                         |
+| `StatusBadge`            | `src/components/StatusBadge.tsx`            | Post status display                         |
+| `PostsList`              | `src/components/PostsList.tsx`              | Posts grid/list                             |
+| `UserCard`               | `src/components/UserCard.tsx`               | User card for discover/profile              |
+| `SearchBar`              | `src/components/SearchBar.tsx`              | Search input                                |
+| `SortFilterBar`          | `src/components/SortFilterBar.tsx`          | Sort/filter controls                        |
+| `StatsPanel`             | `src/components/StatsPanel.tsx`             | User stats                                  |
+| `CommunityStatsCard`     | `src/components/CommunityStatsCard.tsx`     | Community stats                             |
+| `AddCategoryModal`       | `src/components/AddCategoryModal.tsx`       | Category creation modal                     |
+| `ConfirmModal`           | `src/components/ConfirmModal.tsx`           | Generic confirm dialog                      |
+| `FullScreenLoader`       | `src/components/FullScreenLoader.tsx`       | Loading overlay                             |
+| `KeyboardShortcuts`      | `src/components/KeyboardShortcuts.tsx`      | Global keyboard shortcuts (N/S/H/F/D/?)     |
+| `ShortcutHelpModal`      | `src/components/ShortcutHelpModal.tsx`      | Keyboard shortcut help overlay              |
+| `ScrollToTop`            | `src/components/ScrollToTop.tsx`            | Scroll-to-top floating button               |
+| `RecentlyViewed`         | `src/components/RecentlyViewed.tsx`         | Recently viewed posts (localStorage)        |
+| `PasswordStrength`       | `src/components/PasswordStrength.tsx`       | Password strength indicator                 |
 
 ---
 
 ## API Routes
+
 ```
 GET/POST        /api/posts
 GET/PUT/DELETE  /api/posts/[id]
@@ -76,11 +87,13 @@ GET             /api/users/search
 GET             /api/feed
 GET             /api/recommendations
 GET             /api/community/stats
+GET             /api/users/me/year-in-review?year=YYYY
 ```
 
 ---
 
 ## Page Routes
+
 ```
 /              — Landing (public, no AppShell)
 /login         — Login
@@ -101,6 +114,7 @@ GET             /api/community/stats
 ---
 
 ## Design System (Dark Premium)
+
 ```
 bg-base:   #0c0c0c
 bg-card:   #161616
@@ -109,6 +123,7 @@ gold:      #c9a84c  (hover: #e0c068)
 text:      #f0ede8  (secondary: #888888, muted: #555555)
 danger:    #e53e3e
 ```
+
 Profile/social pages: `#0c0e16` / `#0d0f1a` / `#1a1e2e` (blue-tinted dark).
 
 ---
@@ -116,23 +131,28 @@ Profile/social pages: `#0c0e16` / `#0d0f1a` / `#1a1e2e` (blue-tinted dark).
 ## Frontend UI Rules (Vibe Coding)
 
 ### Önce Yapı, Sonra Kod
+
 - Yeni bir sayfa/section yazmadan önce layout'u bir comment bloğu olarak tanımla
 - `/* LAYOUT: İki kolon desktop, sol sidebar w-64, sağ flex-1, gap-6 */`
 - Yapı netleştikten sonra JSX yaz — asla rastgele başlama
 
 ### Mevcut Componenti Referans Al
+
 Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/border/hover stilini takip et:
+
 - İçerik kartı → `PostsList.tsx`
 - Kullanıcı satırı → `UserCard.tsx`
 - Modal → `ConfirmModal.tsx` veya `FollowListModal.tsx`
 - Form sayfası → `src/app/profile/settings/page.tsx`
 
 ### Renk Kuralları
+
 - Tailwind default renk isimleri (`blue-500`, `gray-800`) **yasak** — anında "AI yaptı" teli
 - Sadece DigyNotes hex paleti kullanılır (bkz. Design System bölümü)
 - Palette dışına çıkma — referans görseldeki renkler bile olsa
 
 ### Yasaklı Kalıplar
+
 - `from-purple-500 to-blue-600` tipi jenerik AI gradyanları
 - `shadow-lg` / `shadow-xl` — DigyNotes gölge değil border kullanır
 - `bg-white`, `text-gray-*`, `rounded-full` (avatar dışında)
@@ -140,6 +160,7 @@ Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/bor
 - `p-2` kart padding'i — minimum `p-4`, standart `p-6`
 
 ### Tipografi Skalası
+
 - Sayfa başlığı: `text-2xl font-bold text-[#f0ede8]`
 - Bölüm başlığı: `text-xl font-semibold text-[#f0ede8]`
 - Kart başlığı: `text-base font-medium text-[#f0ede8]`
@@ -147,21 +168,25 @@ Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/bor
 - Meta/tarih: `text-xs text-[#555555]`
 
 ### Tıklanabilir Her Element
+
 - Mutlaka: `transition-colors duration-200 cursor-pointer`
 - Hover state, `active:scale-95`, `disabled:opacity-50 disabled:cursor-not-allowed`
 - Hiçbir interaktif element geçişsiz bırakılmaz
 
 ### İkon Kütüphanesi
+
 - Lucide **kullanma** — Phosphor kullan: `npm install @phosphor-icons/react`
 - `import { Star, House, BookOpen } from '@phosphor-icons/react'`
 - Phosphor kurulu değilse inline SVG yaz, Lucide kurma
 
 ### Referans Görsel Geldiğinde
+
 - Yapısını al (kolon sayısı, hiyerarşi, boşluk ritmi)
 - Renklerini alma — her zaman DigyNotes paleti geçerli
 - "Bu stili kopyala" = yapı + spacing + hiyerarşiyi al, renkleri çevir
 
 ### Font
+
 - Şu an: `Inter` (global AI teli — `src/app/layout.tsx`)
 - Upgrade adayları: `DM Sans`, `Plus Jakarta Sans`, `Sora` (onay alarak değiştir)
 
@@ -170,38 +195,45 @@ Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/bor
 ## Architecture Patterns
 
 ### Database
+
 - All API routes use `prisma` from `src/lib/prisma.ts`
 - **After `prisma db push` + `prisma generate`, ALWAYS restart dev server** — new models are undefined until restart
 - DB: host=localhost, db=digynotes, user=digynotes, pw=digynotes_secret (port 5432)
 - Docker NOT installed — use Homebrew PostgreSQL
 
 ### Prisma v7 Rules
+
 - `schema.prisma` datasource has NO `url` field — URL lives in `prisma.config.ts`
 - PrismaClient MUST use PrismaPg adapter (see `src/lib/prisma.ts`)
 - `_count.select` with new relation fields fails until server restart → use `prisma.modelName.count()` separately
 
 ### Auth
+
 - Protected routes: `/notes/**`, `/new-post`, `/posts/**`, `/category/**`, `/api/posts/**`, `/api/categories/**`
 - Session has `user.id` (augmented in `src/types/next-auth.d.ts`)
 - Get userId in API: `(session.user as { id: string }).id`
 
 ### Data
+
 - `Post.userId` and `Category.userId` are nullable `String?` (legacy)
 - Category routing: `/category/[id]` uses category **name**, not DB id
 - Tags: global (shared), max 10 per post, lowercase unique name
 - Posts API includes: `{ tags: { include: { tag: true } } }` → transform to flat `tags: Tag[]`
 
 ### MediaSearch Component
+
 - After selection: set `skipNextSearchRef.current = true` + `setResults([])` to prevent dropdown re-opening
 - Props: `onSelect` callback receives selected media object
 
 ### External Images
+
 - Always use `next/image` with `unoptimized` prop for external URLs
 - Or provide a custom loader function
 
 ---
 
 ## Coding Conventions
+
 - `"use client"` at top of every client component (forget this → hydration errors)
 - Tailwind classes only — no CSS modules or inline styles
 - Turkish UI text throughout the app
@@ -212,6 +244,7 @@ Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/bor
 ---
 
 ## Local Dev Commands
+
 ```bash
 # Start dev server
 npm run dev
@@ -229,6 +262,7 @@ brew services stop postgresql@16
 ---
 
 ## Common Gotchas (quick reference — details in ERRORS.md)
+
 1. `prisma.follow undefined` → restart dev server after schema push → **ERR-001**
 2. `_count.select` fails with new relations → restart first → **ERR-002**
 3. react-quill SSR crash → use `dynamic(..., { ssr: false })` → **ERR-003**

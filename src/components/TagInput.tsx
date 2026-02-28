@@ -124,7 +124,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
               placeholder={
                 value.length === 0 ? "Etiket ekle (örn: bilim-kurgu, şehir-kaçamağı)..." : ""
               }
-              className="w-full bg-transparent py-0.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
+              className="w-full bg-transparent py-0.5 text-[16px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] sm:text-sm"
               maxLength={30}
             />
             {showSuggestions && suggestions.length > 0 && (

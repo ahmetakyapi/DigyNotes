@@ -4,6 +4,9 @@ import { useSession } from "next-auth/react";
 import AppShell from "./AppShell";
 import { FullScreenLoader } from "./FullScreenLoader";
 import { RouteProgressBar } from "./RouteProgressBar";
+import KeyboardShortcuts from "./KeyboardShortcuts";
+import ShortcutHelpModal from "./ShortcutHelpModal";
+import ScrollToTop from "./ScrollToTop";
 
 // These paths never get AppShell
 const ALWAYS_PUBLIC = ["/", "/login", "/register", "/offline"];
@@ -41,6 +44,9 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
     return (
       <>
         <RouteProgressBar />
+        <KeyboardShortcuts />
+        <ShortcutHelpModal />
+        <ScrollToTop />
         <AppShell>{children}</AppShell>
       </>
     );
@@ -50,6 +56,9 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
     <>
       <RouteProgressBar />
       <FullScreenLoader show={status === "loading"} />
+      <KeyboardShortcuts />
+      <ShortcutHelpModal />
+      <ScrollToTop />
       <AppShell>{children}</AppShell>
     </>
   );

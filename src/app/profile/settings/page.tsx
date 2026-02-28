@@ -2,10 +2,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import toast from "react-hot-toast";
+import { useTheme } from "@/components/ThemeProvider";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-sm";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-[16px] sm:text-sm";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
@@ -23,6 +25,7 @@ interface UserProfile {
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -250,6 +253,124 @@ export default function ProfileSettingsPage() {
                   }`}
                 />
               </button>
+            </div>
+          </div>
+
+          {/* ── Mobilde Görünüm & Bildirimler ── */}
+          <div className={`${sectionClass} sm:hidden`}>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              Uygulama Ayarları
+            </p>
+            <div className="space-y-3">
+              {/* Tema değiştirme */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    {theme === "dark" ? "Koyu Tema" : "Açık Tema"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">Tema geçişi</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    theme === "dark" ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      theme === "dark" ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Bildirimler link */}
+              <Link
+                href="/notifications"
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                    Bildirimlerini görüntüle
+                  </p>
+                </div>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-[var(--text-muted)]"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Verilerini İndir ── */}
+          <div className={sectionClass}>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              Verilerini İndir
+            </p>
+            <div className="space-y-2.5">
+              <a
+                href="/api/users/me/export?format=csv"
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                    Tüm notlarını CSV formatında indir
+                  </p>
+                </div>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-[var(--text-muted)]"
+                >
+                  <path d="M12 3v12" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M5 21h14" />
+                </svg>
+              </a>
+              <a
+                href="/api/users/me/export?format=json"
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                    Tüm notlarını JSON formatında indir
+                  </p>
+                </div>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-[var(--text-muted)]"
+                >
+                  <path d="M12 3v12" />
+                  <path d="m7 10 5 5 5-5" />
+                  <path d="M5 21h14" />
+                </svg>
+              </a>
             </div>
           </div>
         </div>

@@ -14,11 +14,14 @@ import TagBadge from "@/components/TagBadge";
 import CommunityStatsCard from "@/components/CommunityStatsCard";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ActionTooltip } from "@/components/ActionTooltip";
+import ShareButton from "@/components/ShareButton";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { buildOpenStreetMapEmbedUrl, buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
+import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
+import { addRecentView } from "@/components/RecentlyViewed";
 import toast from "react-hot-toast";
 
 const customLoader = ({ src }: { src: string }) => src;
@@ -139,6 +142,19 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       })
       .catch(() => setLoading(false));
   }, [params.id]);
+
+  // Son görüntülenen notlara ekle
+  useEffect(() => {
+    if (post) {
+      addRecentView({
+        id: post.id,
+        title: post.title,
+        category: post.category,
+        image: post.image,
+        rating: post.rating,
+      });
+    }
+  }, [post]);
 
   useEffect(() => {
     if (!post?.title) return;
@@ -265,10 +281,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       router.push("/login");
       return;
     }
-    if (isOwnPost) {
-      toast.error("Kendi notuna yorum veya yanıt ekleyemezsin.");
-      return;
-    }
     const text = (parentId ? replyText : commentText).trim();
     if (!text) return;
 
@@ -385,7 +397,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   }
 
   const isOwnPost = !!currentUserId && currentUserId === post.user?.id;
-  const canCommentOnPost = Boolean(session?.user) && !isOwnPost;
+  const canCommentOnPost = Boolean(session?.user);
   const supportsSpoiler = categorySupportsSpoiler(post.category);
   const categorySlug = normalizeCategory(post.category);
   const categoryLabel = getCategoryLabel(post.category);
@@ -398,10 +410,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const toggleReply = (commentId: string) => {
     if (!session?.user) {
       router.push("/login");
-      return;
-    }
-    if (isOwnPost) {
-      toast.error("Kendi notuna yanıt ekleyemezsin.");
       return;
     }
 
@@ -488,7 +496,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 placeholder="Yanıtınızı yazın..."
                 rows={3}
                 maxLength={1000}
-                className="bg-[var(--bg-card)]/70 min-h-[88px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[13px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45"
+                className="bg-[var(--bg-card)]/70 min-h-[88px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-[13px]"
               />
               <div className="mt-3 flex items-center justify-between gap-3">
                 <span className="text-[10px] text-[var(--text-faint)]">
@@ -587,6 +595,12 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="absolute left-0 right-0 top-0 flex items-center justify-end gap-2 px-4 pt-4 sm:px-5">
             {isOwnPost && (
               <>
+                <ShareButton
+                  title={post.title}
+                  text={`${post.title} — DigyNotes`}
+                  size="sm"
+                  className="border-[var(--media-control-border)] bg-[var(--media-control-bg)] text-[var(--media-control-text)] backdrop-blur-md hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)]"
+                />
                 <Link
                   href={`/posts/${post.id}/edit`}
                   className="flex items-center gap-1.5 rounded-lg border px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -668,6 +682,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     <span className="text-xs">{post.date}</span>
                   </>
                 )}
+                {post.content && estimateReadingTime(post.content) > 0 && (
+                  <>
+                    <span className="text-white/35">•</span>
+                    <span className="text-xs opacity-75">
+                      {formatReadingTime(estimateReadingTime(post.content))}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -688,6 +710,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {!isOwnPost && (
             <div className="flex shrink-0 items-center gap-2">
               <BookmarkButton postId={post.id} ownerId={post.user?.id} />
+              <ShareButton title={post.title} text={`${post.title} — DigyNotes`} size="sm" />
               <ActionTooltip label={likeData.liked ? "Beğeniyi kaldır" : "Beğen"}>
                 <button
                   type="button"
@@ -769,12 +792,66 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         )}
 
         {supportsSpoiler && post.hasSpoiler && (
-          <div className="border-[#e53e3e]/18 bg-[#e53e3e]/6 mb-4 rounded-2xl border px-4 py-3 text-sm text-[var(--text-secondary)]">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-semibold text-[var(--text-primary)]">Spoiler uyarısı</p>
-                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-                  Bu not açık detaylar içerebilir. Devam etmek için içeriği açman gerekiyor.
+          <div
+            className={`mb-5 overflow-hidden rounded-2xl border transition-all duration-300 ${
+              shouldBlurSpoiler
+                ? "border-[#e53e3e]/20 bg-gradient-to-r from-[#e53e3e]/[0.06] via-[#e53e3e]/[0.03] to-transparent"
+                : "border-[var(--gold)]/20 from-[var(--gold)]/[0.06] via-[var(--gold)]/[0.03] bg-gradient-to-r to-transparent"
+            }`}
+          >
+            <div className="flex items-center gap-3 px-4 py-3">
+              <div
+                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                  shouldBlurSpoiler
+                    ? "border border-[#e53e3e]/25 bg-[#e53e3e]/10 text-[#ffb2b2]"
+                    : "border-[var(--gold)]/25 bg-[var(--gold)]/10 border text-[var(--gold)]"
+                }`}
+              >
+                {shouldBlurSpoiler ? (
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p
+                  className={`text-[13px] font-semibold ${shouldBlurSpoiler ? "text-[#ffb2b2]" : "text-[var(--gold)]"}`}
+                >
+                  {shouldBlurSpoiler ? "Spoiler içerik gizlendi" : "İçerik gösteriliyor"}
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-[var(--text-muted)]">
+                  {shouldBlurSpoiler
+                    ? "Bu not açık detaylar içerebilir."
+                    : "Spoiler içeriği görebiliyorsun."}
                 </p>
               </div>
               <button
@@ -783,9 +860,13 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   markSpoilerOverlayDismissed();
                   setIsSpoilerRevealed((prev) => !prev);
                 }}
-                className="hover:bg-[#e53e3e]/16 inline-flex items-center justify-center rounded-lg border border-[#e53e3e]/25 bg-[#e53e3e]/10 px-3 py-2 text-xs font-semibold text-[#ffb2b2] transition-colors"
+                className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
+                  shouldBlurSpoiler
+                    ? "bg-[var(--gold)] text-[var(--text-on-accent)] hover:bg-[var(--gold-light)]"
+                    : "hover:border-[var(--gold)]/30 border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                }`}
               >
-                {shouldBlurSpoiler ? "Spoiler'i Göster" : "Spoiler'i Gizle"}
+                {shouldBlurSpoiler ? "Spoiler'ı Göster" : "Gizle"}
               </button>
             </div>
           </div>
@@ -800,32 +881,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           >
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </article>
-
-          {shouldShowSpoilerOverlay && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-3xl">
-              <div className="bg-[var(--bg-card)]/96 pointer-events-auto max-w-sm rounded-2xl border border-[var(--border)] p-5 text-center shadow-[var(--shadow-soft)] backdrop-blur-xl">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#e53e3e]/25 bg-[#e53e3e]/10 text-[#ffb2b2]">
-                  !
-                </div>
-                <p className="text-base font-semibold text-[var(--text-primary)]">
-                  Spoiler filtresi aktif
-                </p>
-                <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                  İçeriği okumadan önce spoiler riskini kabul etmen gerekiyor.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    markSpoilerOverlayDismissed();
-                    setIsSpoilerRevealed(true);
-                  }}
-                  className="mt-4 inline-flex rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
-                >
-                  Spoiler'i Gör
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ─── Yorumlar ─── */}
@@ -871,56 +926,48 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           )}
 
           {session?.user ? (
-            canCommentOnPost ? (
-              <div className="bg-[var(--surface-strong)]/85 rounded-2xl border border-[var(--surface-strong-border)] p-3.5 shadow-[var(--shadow-soft)] sm:p-4">
-                {replyingToId && (
-                  <div className="bg-[#c4a24b]/8 mb-3 flex items-center justify-between rounded-xl border border-[#c4a24b]/20 px-3 py-2 text-[11px] text-[var(--gold)]">
-                    <span>Şu anda bir yoruma yanıt yazıyorsun.</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setReplyingToId(null);
-                        setReplyText("");
-                      }}
-                      className="font-semibold transition-colors hover:text-[var(--gold-light)]"
-                    >
-                      İptal et
-                    </button>
-                  </div>
-                )}
-                <textarea
-                  ref={commentInputRef}
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Yorumunuzu yazın..."
-                  rows={3}
-                  maxLength={1000}
-                  className="bg-[var(--bg-card)]/70 min-h-[96px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[13px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm sm:leading-relaxed"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.metaKey) submitComment();
-                  }}
-                />
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <span className="text-[10px] text-[var(--text-faint)]">
-                    {commentText.length}/1000 karakter
-                  </span>
+            <div className="bg-[var(--surface-strong)]/85 rounded-2xl border border-[var(--surface-strong-border)] p-3.5 shadow-[var(--shadow-soft)] sm:p-4">
+              {replyingToId && (
+                <div className="bg-[#c4a24b]/8 mb-3 flex items-center justify-between rounded-xl border border-[#c4a24b]/20 px-3 py-2 text-[11px] text-[var(--gold)]">
+                  <span>Şu anda bir yoruma yanıt yazıyorsun.</span>
                   <button
                     type="button"
-                    onClick={() => submitComment()}
-                    disabled={isSubmittingComment || !commentText.trim()}
-                    className="h-11 w-full rounded-lg bg-[var(--gold)] px-4 text-xs font-bold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:py-1.5"
+                    onClick={() => {
+                      setReplyingToId(null);
+                      setReplyText("");
+                    }}
+                    className="font-semibold transition-colors hover:text-[var(--gold-light)]"
                   >
-                    {isSubmittingComment ? "Gönderiliyor..." : "Yorum Yap"}
+                    İptal et
                   </button>
                 </div>
+              )}
+              <textarea
+                ref={commentInputRef}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Yorumunuzu yazın..."
+                rows={3}
+                maxLength={1000}
+                className="bg-[var(--bg-card)]/70 min-h-[96px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-[13px] sm:leading-relaxed"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.metaKey) submitComment();
+                }}
+              />
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-[10px] text-[var(--text-faint)]">
+                  {commentText.length}/1000 karakter
+                </span>
+                <button
+                  type="button"
+                  onClick={() => submitComment()}
+                  disabled={isSubmittingComment || !commentText.trim()}
+                  className="h-11 w-full rounded-lg bg-[var(--gold)] px-4 text-xs font-bold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:py-1.5"
+                >
+                  {isSubmittingComment ? "Gönderiliyor..." : "Yorum Yap"}
+                </button>
               </div>
-            ) : (
-              <div className="rounded-2xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-5 text-center shadow-[var(--shadow-soft)]">
-                <p className="text-sm text-[var(--text-dim)]">
-                  Kendi notuna yorum veya yanıt ekleyemezsin.
-                </p>
-              </div>
-            )
+            </div>
           ) : (
             <div className="rounded-2xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-5 text-center shadow-[var(--shadow-soft)]">
               <p className="mb-2 text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yapın.</p>

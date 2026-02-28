@@ -160,7 +160,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 href="/notifications"
                 title="Bildirimler"
-                className={`relative flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgba(3,8,20,0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-10 sm:rounded-lg sm:border-transparent sm:bg-transparent sm:shadow-none ${
+                className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[var(--gold)] sm:flex ${
                   isNotifications ? "text-[var(--gold)]" : ""
                 }`}
               >
@@ -175,11 +175,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 )}
               </Link>
 
-              {/* Theme toggle */}
+              {/* Theme toggle — hidden on mobile, moved to settings */}
               <button
                 onClick={toggleTheme}
                 title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgba(3,8,20,0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-10 sm:rounded-lg sm:border-transparent sm:bg-transparent sm:shadow-none"
+                className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[var(--gold)] sm:flex"
               >
                 {theme === "dark" ? (
                   /* Sun icon */
@@ -237,14 +237,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   aria-label="Yeni not ekle"
                   aria-describedby={showNewNoteHint ? "new-note-mobile-hint" : undefined}
                   title="Yeni not ekle"
-                  className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 w-10 items-center justify-center rounded-xl border border-[#e6c976]/45 text-[var(--text-on-accent)] transition-all duration-150 active:scale-[0.97] sm:h-auto sm:w-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:bg-[var(--gold)] sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-semibold sm:hover:bg-[var(--gold-light)]"
+                  className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 items-center justify-center gap-1 rounded-xl border border-[#e6c976]/45 px-3 text-[var(--text-on-accent)] transition-all duration-150 active:scale-[0.97] sm:h-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:bg-[var(--gold)] sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-medium sm:hover:bg-[var(--gold-light)]"
                   style={{
                     background:
                       "linear-gradient(145deg, var(--gold-light) 0%, var(--gold) 64%, #a98030 100%)",
                   }}
                 >
                   {/* Plus icon */}
-                  <span className="flex h-full items-center justify-center sm:h-auto sm:w-auto">
+                  <span className="flex items-center justify-center">
                     <svg
                       width="14"
                       height="14"
@@ -255,7 +255,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       <path d="M6.75 1.25a.75.75 0 0 0-1.5 0V5.25H1.25a.75.75 0 0 0 0 1.5H5.25v4a.75.75 0 0 0 1.5 0V6.75h4a.75.75 0 0 0 0-1.5H6.75V1.25Z" />
                     </svg>
                   </span>
-                  <span className="hidden sm:inline">Yeni Not</span>
+                  <span className="text-[12px] font-medium sm:text-[13px]">
+                    <span className="sm:hidden">Not</span>
+                    <span className="hidden sm:inline">Yeni Not</span>
+                  </span>
                 </Link>
               </div>
 
@@ -334,8 +337,76 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                             <circle cx="12" cy="12" r="3" />
                           </svg>
-                          Profil Ayarları
+                          Ayarlar
                         </Link>
+                      </div>
+
+                      {/* Mobile-only: Bildirimler & Tema — compact row */}
+                      <div className="flex items-center border-b border-t border-[var(--border-header)] sm:hidden">
+                        <Link
+                          href="/notifications"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex flex-1 items-center justify-center gap-2 py-2.5 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          <span className="relative">
+                            <Bell size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
+                            {notificationCount > 0 && (
+                              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[var(--gold)] px-0.5 text-[8px] font-bold leading-[14px] text-[var(--text-on-accent)]">
+                                {notificationCount > 9 ? "9+" : notificationCount}
+                              </span>
+                            )}
+                          </span>
+                          Bildirimler
+                        </Link>
+                        <div className="h-5 w-px bg-[var(--border-header)]" />
+                        <button
+                          onClick={() => {
+                            toggleTheme();
+                            setShowUserMenu(false);
+                          }}
+                          className="flex flex-1 items-center justify-center gap-2 py-2.5 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+                        >
+                          {theme === "dark" ? (
+                            <svg
+                              width="15"
+                              height="15"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="4" />
+                              <line x1="12" y1="2" x2="12" y2="4" />
+                              <line x1="12" y1="20" x2="12" y2="22" />
+                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                              <line x1="2" y1="12" x2="4" y2="12" />
+                              <line x1="20" y1="12" x2="22" y2="12" />
+                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                            </svg>
+                          ) : (
+                            <svg
+                              width="15"
+                              height="15"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                            </svg>
+                          )}
+                          {theme === "dark" ? "Açık Tema" : "Koyu Tema"}
+                        </button>
+                      </div>
+
+                      {/* Nav items continued */}
+                      <div className="py-1">
                         <Link
                           href="/collections"
                           onClick={() => setShowUserMenu(false)}
@@ -397,8 +468,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           </svg>
                           İstatistikler
                         </Link>
-                        <a
-                          href="/api/users/me/export?format=csv"
+                        <Link
+                          href="/stats/year-in-review"
                           onClick={() => setShowUserMenu(false)}
                           className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                         >
@@ -412,33 +483,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <path d="M12 3v12" />
-                            <path d="m7 10 5 5 5-5" />
-                            <path d="M5 21h14" />
+                            <rect x="3" y="4" width="18" height="18" rx="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
                           </svg>
-                          CSV Dışa Aktar
-                        </a>
-                        <a
-                          href="/api/users/me/export?format=json"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M12 3v12" />
-                            <path d="m7 10 5 5 5-5" />
-                            <path d="M5 21h14" />
-                          </svg>
-                          JSON Dışa Aktar
-                        </a>
+                          Yılın Özeti
+                        </Link>
                       </div>
 
                       {isAdmin && (
@@ -505,11 +556,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
           {/* ── Mobile: yatay kategori chipleri ── */}
           {(pathname === "/notes" || pathname.startsWith("/category/")) && (
-            <div className="pb-2.5 pt-1.5 sm:hidden">
-              <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto px-1.5">
+            <div className="pb-3 pt-2.5 sm:hidden">
+              <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto px-2 py-0.5">
                 <button
                   onClick={() => router.push("/notes")}
-                  className={`dn-display flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-4 text-[13px] font-medium tracking-[0.01em] transition-all duration-150 active:scale-95 ${
+                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-4 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                     activeCategory === "all"
                       ? "bg-[var(--gold)] text-[var(--text-on-accent)] shadow-[0_3px_14px_rgba(196,162,75,0.28)]"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
@@ -523,7 +574,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     <button
                       key={cat}
                       onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                      className={`dn-display flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-3.5 text-[13px] font-medium tracking-[0.01em] transition-all duration-150 active:scale-95 ${
+                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-3.5 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                         isActive
                           ? "bg-[var(--gold)] text-[var(--text-on-accent)] shadow-[0_3px_14px_rgba(196,162,75,0.28)]"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"

@@ -6,6 +6,7 @@ import { Compass, Sparkle, Stack, UsersThree } from "@phosphor-icons/react";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -175,7 +176,7 @@ function RecommendedCard({ post }: { post: Post }) {
             )}
           </div>
 
-          {post.excerpt && (
+          {post.excerpt && !(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
             <p className="line-clamp-3 text-sm leading-6 text-[var(--text-secondary)]">
               {displayExcerpt}
             </p>
