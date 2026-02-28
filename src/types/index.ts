@@ -15,10 +15,14 @@ export interface Post {
   rating: number;
   externalRating?: number | null;
   status: string | null;
+  hasSpoiler?: boolean;
+  lat?: number | null;
+  lng?: number | null;
   imagePosition: string | null;
   date: string;
   createdAt: string;
   updatedAt: string;
+  savedAt?: string;
   tags?: Tag[];
   user?: {
     id: string;
@@ -26,6 +30,36 @@ export interface Post {
     username: string | null;
     avatarUrl: string | null;
   };
+}
+
+export interface Collection {
+  id: string;
+  title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+  postCount: number;
+  posts: Post[];
+  owner?: {
+    id: string;
+    name: string;
+    username: string | null;
+    avatarUrl: string | null;
+  };
+}
+
+export interface WishlistItem {
+  id: string;
+  category: string;
+  title: string;
+  creator: string | null;
+  years: string | null;
+  image: string | null;
+  excerpt: string | null;
+  externalRating?: number | null;
+  externalId: string;
+  addedAt: string;
+  updatedAt: string;
 }
 
 export interface Category {

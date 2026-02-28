@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { FIXED_CATEGORIES, normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
-
-const DEFAULT_CATEGORIES = ["Film", "Dizi", "Kitap"];
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -13,7 +12,7 @@ export async function GET() {
     const count = await prisma.category.count({ where: { userId } });
     if (count === 0) {
       await prisma.category.createMany({
-        data: DEFAULT_CATEGORIES.map((name) => ({ name, userId })),
+        data: FIXED_CATEGORIES.map((name) => ({ name, userId })),
       });
     }
   }
@@ -34,13 +33,14 @@ export async function POST(request: NextRequest) {
   }
 
   const { name } = await request.json();
+  const normalizedName = normalizeCategory(name);
 
-  if (!name?.trim()) {
+  if (!normalizedName) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
 
   const existing = await prisma.category.findFirst({
-    where: { name: name.trim(), userId },
+    where: { name: normalizedName, userId },
   });
 
   if (existing) {
@@ -48,11 +48,15 @@ export async function POST(request: NextRequest) {
   }
 
   const category = await prisma.category.create({
-    data: { name: name.trim(), userId },
+    data: { name: normalizedName, userId },
   });
 
   await prisma.activityLog.create({
-    data: { userId, action: "category.create", metadata: { categoryId: category.id, name: category.name } },
+    data: {
+      userId,
+      action: "category.create",
+      metadata: { categoryId: category.id, name: category.name },
+    },
   });
 
   return NextResponse.json(category, { status: 201 });

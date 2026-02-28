@@ -6,9 +6,9 @@ import { FullScreenLoader } from "./FullScreenLoader";
 import { RouteProgressBar } from "./RouteProgressBar";
 
 // These paths never get AppShell
-const ALWAYS_PUBLIC = ["/", "/login", "/register"];
+const ALWAYS_PUBLIC = ["/", "/login", "/register", "/offline"];
 // These paths are publicly accessible but get AppShell when logged in
-const SEMI_PUBLIC_PREFIXES = ["/discover", "/profile"];
+const SEMI_PUBLIC_PREFIXES = ["/discover", "/profile", "/collections"];
 
 export default function ConditionalAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

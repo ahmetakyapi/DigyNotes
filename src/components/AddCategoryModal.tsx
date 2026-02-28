@@ -54,7 +54,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors focus:border-[#c4a24b] focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/20"
+            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[#c4a24b] focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/20"
             placeholder="Kategori adı (örn: Film, Kitap…)"
             autoFocus
             required

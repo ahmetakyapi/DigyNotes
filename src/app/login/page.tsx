@@ -4,7 +4,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { FormStatusMessage } from "@/components/FormStatusMessage";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,24 +17,35 @@ export default function LoginPage() {
   const [redirecting, setRedirecting] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
+  const publishError = (message: string) => {
+    setError(message);
+    toast.error(message);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email: email.toLowerCase(),
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: email.toLowerCase(),
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setLoading(false);
-      setError("E-posta veya şifre hatalı.");
-    } else {
+      if (result?.error) {
+        publishError("E-posta veya şifre hatalı.");
+        return;
+      }
+
       setRedirecting(true);
       router.push("/notes");
       router.refresh();
+    } catch {
+      publishError("Giriş şu anda tamamlanamadı. Lütfen tekrar deneyin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,7 +101,7 @@ export default function LoginPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
               />
             </div>
 
@@ -105,7 +118,7 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition-all duration-200 focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-sm text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10"
                 />
                 <button
                   type="button"
@@ -149,23 +162,7 @@ export default function LoginPage() {
             </div>
 
             {/* Error */}
-            {error && (
-              <div className="bg-[#e53e3e]/8 flex items-center gap-2 rounded-xl border border-[#e53e3e]/20 px-4 py-3 text-sm text-[#e53e3e]">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" strokeLinecap="round" />
-                </svg>
-                {error}
-              </div>
-            )}
+            {error && <FormStatusMessage message={error} />}
 
             {/* Submit */}
             <button
@@ -214,7 +211,10 @@ export default function LoginPage() {
 
         {/* Back link */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]">
+          <Link
+            href="/"
+            className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+          >
             ← Ana sayfaya dön
           </Link>
         </div>

@@ -3,17 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import TagBadge from "./TagBadge";
 
-const TR_MAP: Record<string, string> = {
-  ğ: "g", ü: "u", ş: "s", ı: "i", ö: "o", ç: "c",
-  Ğ: "g", Ü: "u", Ş: "s", İ: "i", Ö: "o", Ç: "c",
-};
-
 function normalizeTag(raw: string): string {
-  return raw
-    .replace(/[ğüşıöçĞÜŞİÖÇ]/g, (c) => TR_MAP[c] ?? c)
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-");
+  return raw.toLocaleLowerCase("tr-TR").trim().replace(/\s+/g, "-");
+}
+
+function isValidTag(tag: string) {
+  return /^[a-z0-9çğıöşüâîû-]{1,30}$/.test(tag);
 }
 
 interface TagInputProps {
@@ -64,7 +59,7 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
   const addTag = (name: string) => {
     const normalized = normalizeTag(name);
     if (!normalized || value.includes(normalized) || value.length >= 10) return;
-    if (!/^[a-z0-9\-]{1,30}$/.test(normalized)) return;
+    if (!isValidTag(normalized)) return;
     onChange([...value, normalized]);
     setInput("");
     setSuggestions([]);
@@ -126,7 +121,9 @@ export default function TagInput({ value, onChange, disabled }: TagInputProps) {
               onKeyDown={handleKeyDown}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              placeholder={value.length === 0 ? "Etiket ekle (örn: sci-fi, drama)..." : ""}
+              placeholder={
+                value.length === 0 ? "Etiket ekle (örn: bilim-kurgu, şehir-kaçamağı)..." : ""
+              }
               className="w-full bg-transparent py-0.5 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
               maxLength={30}
             />
