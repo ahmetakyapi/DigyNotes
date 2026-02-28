@@ -140,6 +140,19 @@ body {
   letter-spacing: -0.012em;
 }
 
+/* ─── Mobile search scroll lock ─── */
+html.dn-scroll-locked {
+  overflow: hidden !important;
+}
+html.dn-scroll-locked body {
+  overflow: hidden !important;
+  position: fixed;
+  top: var(--scroll-lock-top, 0);
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
 html.light body,
 html[data-theme="light"] body {
   background-image:
@@ -372,6 +385,20 @@ html[data-theme="light"] body {
   overflow: hidden;
 }
 
+html.light .dn-badge-sheen,
+html[data-theme="light"] .dn-badge-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(192, 138, 30, 0.14),
+    rgba(192, 138, 30, 0.08),
+    rgba(180, 120, 40, 0.12)
+  ) !important;
+  border-color: rgba(192, 138, 30, 0.4) !important;
+  box-shadow:
+    0 0 16px rgba(192, 138, 30, 0.12),
+    inset 0 0 12px rgba(192, 138, 30, 0.06);
+}
+
 .dn-badge-sheen::after {
   content: "";
   pointer-events: none;
@@ -384,6 +411,11 @@ html[data-theme="light"] body {
   animation: dn-badge-sheen 4.6s ease-in-out infinite;
 }
 
+html.light .dn-badge-sheen::after,
+html[data-theme="light"] .dn-badge-sheen::after {
+  background: linear-gradient(90deg, transparent, rgba(192, 138, 30, 0.22), transparent);
+}
+
 .dn-dot-pulse {
   animation: dn-dot-pulse 2.1s ease-in-out infinite;
 }
@@ -394,6 +426,61 @@ html[data-theme="light"] body {
 
 .dn-cta-ghost {
   animation: dn-ghost-glow 5.2s ease-in-out infinite;
+}
+
+/* ─── Light theme: Landing page card & button visibility ─── */
+@keyframes dn-ghost-glow-light {
+  0%,
+  100% {
+    border-color: rgba(180, 140, 80, 0.35);
+    box-shadow: 0 2px 12px rgba(140, 100, 50, 0.08);
+  }
+  50% {
+    border-color: rgba(180, 140, 80, 0.48);
+    box-shadow: 0 4px 18px rgba(140, 100, 50, 0.14);
+  }
+}
+
+@keyframes dn-cta-breathe-light {
+  0%,
+  100% {
+    box-shadow: 0 6px 20px rgba(180, 120, 30, 0.24);
+  }
+  50% {
+    box-shadow: 0 10px 32px rgba(180, 120, 30, 0.38);
+  }
+}
+
+html.light .dn-cta-ghost,
+html[data-theme="light"] .dn-cta-ghost {
+  border-color: rgba(180, 140, 80, 0.35) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 2px 12px rgba(140, 100, 50, 0.08);
+  animation: dn-ghost-glow-light 5.2s ease-in-out infinite;
+}
+
+html.light .dn-cta-gold,
+html[data-theme="light"] .dn-cta-gold {
+  box-shadow:
+    0 6px 20px rgba(180, 120, 30, 0.28),
+    0 2px 6px rgba(180, 120, 30, 0.12);
+  animation: dn-cta-breathe-light 4.6s ease-in-out infinite;
+}
+
+/* ─── Light theme: Landing cards & preview visibility ─── */
+html.light .dn-landing-card,
+html[data-theme="light"] .dn-landing-card {
+  box-shadow:
+    0 2px 10px rgba(120, 90, 50, 0.08),
+    0 0 0 1px rgba(180, 150, 100, 0.12);
+}
+
+html.light .dn-landing-preview,
+html[data-theme="light"] .dn-landing-preview {
+  box-shadow:
+    0 24px 80px rgba(100, 70, 30, 0.18),
+    0 8px 24px rgba(100, 70, 30, 0.1) !important;
+  border-color: rgba(180, 150, 100, 0.3) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -544,7 +631,7 @@ select option {
 
   .ql-container.ql-snow {
     min-height: 208px;
-    font-size: 0.93rem;
+    font-size: 16px;
   }
 
   .ql-editor {

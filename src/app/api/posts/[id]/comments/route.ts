@@ -63,13 +63,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
   }
 
-  if (access.post.userId === userId) {
-    return NextResponse.json(
-      { error: "Kendi notunuza yorum veya yanıt ekleyemezsiniz" },
-      { status: 403 }
-    );
-  }
-
   if (!content?.trim()) {
     return NextResponse.json({ error: "Yorum boş olamaz" }, { status: 400 });
   }

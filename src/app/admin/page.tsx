@@ -1219,7 +1219,7 @@ export default function AdminPage() {
                     setUsersPage(1);
                   }}
                   placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1602,7 +1602,7 @@ export default function AdminPage() {
                     setPostsPage(1);
                   }}
                   placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -2243,7 +2243,7 @@ export default function AdminPage() {
                             saveSettings({ maintenanceMessage: e.target.value });
                           }
                         }}
-                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15"
+                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
                         placeholder="Bakım mesajı..."
                       />
                     </div>
