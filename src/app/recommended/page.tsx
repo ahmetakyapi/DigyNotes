@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Compass, Sparkle, Stack, UsersThree } from "@phosphor-icons/react";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
@@ -8,24 +7,38 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { Post } from "@/types";
+import { ResilientImage } from "@/components/ResilientImage";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
 
-const customLoader = ({ src }: { src: string }) => src;
-
 export default function RecommendedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [requiresLogin, setRequiresLogin] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     fetch("/api/recommendations")
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (r.status === 401) {
+          setRequiresLogin(true);
+          return [];
+        }
+        if (!r.ok) {
+          setLoadFailed(true);
+          return [];
+        }
+        return r.json();
+      })
       .then((data) => {
         setPosts(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoadFailed(true);
+        setLoading(false);
+      });
   }, []);
 
   const categoryCount = useMemo(
@@ -49,6 +62,32 @@ export default function RecommendedPage() {
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
           Notlarındaki etiketlere göre topluluktan eşleşen içerikleri tek akışta gör.
         </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Buradaki mantık
+            </p>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              Senin etiket ve ilgi alanlarına benzeyen notlar.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Ne zaman kullanılır?
+            </p>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              Yeni ama sana yakın içerik ararken.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Sonraki aksiyon
+            </p>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              Detayı aç, profili incele, notu kaydetmeye karar ver.
+            </p>
+          </div>
+        </div>
       </header>
 
       {loading ? (
@@ -60,6 +99,33 @@ export default function RecommendedPage() {
             />
           ))}
         </div>
+      ) : requiresLogin ? (
+        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
+            <Sparkle size={28} weight="duotone" />
+          </div>
+          <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
+            Önerileri görmek için giriş yap
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
+            Bu yüzey senin arşivine bakarak çalışır. Giriş yaptığında etiketlerin ve notların
+            üzerinden daha kişisel öneriler gösterilir.
+          </p>
+          <Link
+            href="/login"
+            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+          >
+            Giriş yap
+          </Link>
+        </div>
+      ) : loadFailed ? (
+        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Öneriler yüklenemedi</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
+            Öneri motorundan şu anda cevap alamadık. Notlarına geri dönüp yeni etiketler
+            ekleyebilir veya biraz sonra tekrar deneyebilirsin.
+          </p>
+        </div>
       ) : posts.length === 0 ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
@@ -69,7 +135,8 @@ export default function RecommendedPage() {
             Henüz öneri görünmüyor
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Etiketli notların arttıkça sana daha isabetli öneriler göstermeye başlayacağız.
+            Etiketli notların arttıkça sana daha isabetli öneriler göstermeye başlayacağız. Bu
+            yüzey, notlarındaki temaları okuyarak çalışır.
           </p>
           <Link
             href="/notes"
@@ -149,8 +216,7 @@ function RecommendedCard({ post }: { post: Post }) {
     <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#c4a24b]/20 hover:shadow-[var(--shadow-card)]">
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-48 overflow-hidden bg-[var(--bg-raised)]">
-          <Image
-            loader={customLoader}
+          <ResilientImage
             src={getPostImageSrc(post.image)}
             alt={displayTitle}
             fill
@@ -167,6 +233,11 @@ function RecommendedCard({ post }: { post: Post }) {
         </div>
 
         <div className="space-y-3 p-5">
+          {post.user?.username && (
+            <div className="inline-flex rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+              Benzer ilgi alanı
+            </div>
+          )}
           <div>
             <h2 className="line-clamp-2 text-xl font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
               {displayTitle}
@@ -194,7 +265,7 @@ function RecommendedCard({ post }: { post: Post }) {
           </div>
 
           <div className="flex items-center justify-between border-t border-[var(--border)] pt-4 text-xs text-[var(--text-faint)]">
-            <span>{post.user?.username ? `@${post.user.username}` : "Topluluk önerisi"}</span>
+            <span>{post.user?.username ? `Kaynak: @${post.user.username}` : "Topluluk önerisi"}</span>
             <span className="font-medium text-[var(--gold)]">Aç →</span>
           </div>
         </div>

@@ -75,6 +75,13 @@ export async function GET(request: NextRequest) {
           include: {
             user: { select: { id: true, name: true, username: true, avatarUrl: true } },
             post: { select: { id: true, title: true } },
+            parent: {
+              select: {
+                id: true,
+                userId: true,
+                user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+              },
+            },
           },
         })
       : Promise.resolve([]),
@@ -96,6 +103,9 @@ export async function GET(request: NextRequest) {
         href: actor?.username ? `/profile/${actor.username}` : "/discover",
         actor,
         text: actor ? `${actor.name} seni takip etti` : "Yeni bir takipçin var",
+        kindLabel: "Takip",
+        contextTitle: actor?.username ? `@${actor.username}` : null,
+        preview: null,
       };
     }
 
@@ -112,21 +122,40 @@ export async function GET(request: NextRequest) {
         actor: actor ?? undefined,
         text:
           actor && post ? `${actor.name} "${post.title}" notunu beğendi` : "Bir notun beğenildi",
+        kindLabel: "Beğeni",
+        contextTitle: post?.title ?? null,
+        preview: null,
       };
     }
 
     const comment = commentMap.get(notification.referenceId);
+    const isReplyToRecipient = Boolean(
+      comment?.parentId &&
+        comment.parent?.userId === notification.userId &&
+        comment.user.id !== notification.userId
+    );
+    const href = comment?.post
+      ? `/posts/${comment.post.id}?comment=${comment.id}#comment-${comment.id}`
+      : "/notes";
+    const text =
+      comment?.user && comment.post
+        ? isReplyToRecipient
+          ? `${comment.user.name} yorumuna yanıt verdi`
+          : comment.parentId
+            ? `${comment.user.name} "${comment.post.title}" notundaki sohbete katıldı`
+            : `${comment.user.name} "${comment.post.title}" notuna yorum yaptı`
+        : "Bir notuna yorum yapıldı";
     return {
       id: notification.id,
       type: notification.type,
       read: notification.read,
       createdAt: notification.createdAt.toISOString(),
-      href: comment?.post ? `/posts/${comment.post.id}` : "/notes",
+      href,
       actor: comment?.user,
-      text:
-        comment?.user && comment.post
-          ? `${comment.user.name} "${comment.post.title}" notuna yorum yaptı`
-          : "Bir notuna yorum yapıldı",
+      text,
+      kindLabel: isReplyToRecipient ? "Yanıt" : "Yorum",
+      contextTitle: comment?.post?.title ?? null,
+      preview: comment?.content ?? null,
     };
   });
 

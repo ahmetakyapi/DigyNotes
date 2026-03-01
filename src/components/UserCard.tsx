@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface UserCardProps {
   user: {
@@ -29,20 +29,14 @@ export default function UserCard({ user }: UserCardProps) {
     <>
       <div className="flex items-start gap-4">
         <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)]">
-          {user.avatarUrl ? (
-            <Image
-              src={user.avatarUrl}
-              alt={user.name}
-              width={56}
-              height={56}
-              className="h-full w-full object-cover"
-              unoptimized
-            />
-          ) : (
-            <span className="text-xl font-semibold text-[#c4a24b]">
-              {user.name.charAt(0).toUpperCase()}
-            </span>
-          )}
+          <AvatarImage
+            src={user.avatarUrl}
+            alt={user.name}
+            name={user.name}
+            size={56}
+            className="h-full w-full object-cover"
+            textClassName="text-xl font-semibold text-[#c4a24b]"
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
@@ -72,6 +66,10 @@ export default function UserCard({ user }: UserCardProps) {
             <span className="px-3 py-1.5 font-medium text-[var(--gold)]">{lastSeenLabel}</span>
           </span>
         )}
+      </div>
+      <div className="mt-3 flex items-center justify-between text-xs text-[var(--text-faint)]">
+        <span>Profili açıp arşivi incele</span>
+        <span className="font-medium text-[var(--gold)]">Git →</span>
       </div>
     </>
   );

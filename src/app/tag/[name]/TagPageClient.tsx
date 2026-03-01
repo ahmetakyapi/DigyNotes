@@ -6,9 +6,10 @@ import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCategoryLabel } from "@/lib/categories";
+import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
-
-const customLoader = ({ src }: { src: string }) => src;
+import { categorySupportsSpoiler } from "@/lib/post-config";
 
 type SortOption = "newest" | "oldest" | "rating";
 
@@ -31,35 +32,57 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="mb-2 flex items-center gap-2">
-            <Link
-              href="/discover"
-              className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]"
-            >
-              ← Keşfet
-            </Link>
+      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(12,18,31,0.94),rgba(104,136,192,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2">
+              <Link
+                href="/discover"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]"
+              >
+                ← Keşfet
+              </Link>
+              <span className="text-[var(--border)]">•</span>
+              <Link
+                href="/notes"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#c4a24b]"
+              >
+                Notlar
+              </Link>
+            </div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--gold)]">
+              Etiket yüzeyi
+            </p>
+            <h1 className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
+              <span className="text-[#c4a24b]">#</span>
+              {tagName}
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+              Bu etiket, farklı profiller ve kategoriler arasında aynı hafıza izini taşıyan herkese
+              açık notları bir araya getirir.
+            </p>
+            {!loading && (
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1">
+                  {posts.length} herkese açık not
+                </span>
+                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1">
+                  Detail, etiket ve public akış
+                </span>
+              </div>
+            )}
           </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            <span className="text-[#c4a24b]">#</span>
-            {tagName}
-          </h1>
-          {!loading && (
-            <p className="mt-1 text-sm text-[var(--text-muted)]">{posts.length} herkese açık not</p>
-          )}
-        </div>
 
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as SortOption)}
-          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/40 sm:text-sm"
-        >
-          <option value="newest">En Yeni</option>
-          <option value="oldest">En Eski</option>
-          <option value="rating">Puana Göre</option>
-        </select>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortOption)}
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/40 sm:text-sm"
+          >
+            <option value="newest">En Yeni</option>
+            <option value="oldest">En Eski</option>
+            <option value="rating">Puana Göre</option>
+          </select>
+        </div>
       </div>
 
       {/* İçerik */}
@@ -87,6 +110,10 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
             </svg>
           </div>
           <p className="text-[var(--text-muted)]">Bu etiketle henüz herkese açık not yok.</p>
+          <p className="mt-2 max-w-md text-sm text-[var(--text-muted)]">
+            Not detaylarından gelen etiket tıklamaları burada ortak bağlam oluşturur. Aynı etiketi
+            kullanan ilk herkese açık not bu yüzeyi başlatır.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -100,17 +127,23 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 }
 
 function PostCard({ post }: { post: Post }) {
+  const displayTitle = formatDisplayTitle(post.title);
+  const displayCreator = formatDisplayTitle(post.creator);
+  const displayExcerpt = formatDisplaySentence(post.excerpt);
+  const shouldHideExcerpt = Boolean(post.hasSpoiler && categorySupportsSpoiler(post.category));
+
   return (
-    <div className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30">
+    <article className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30 hover:shadow-[var(--shadow-soft)]">
       {/* Image */}
-      <div className="relative h-40 w-full overflow-hidden">
+      <Link href={`/posts/${post.id}`} className="relative block h-40 w-full overflow-hidden">
         <Image
           loader={customLoader}
           src={getPostImageSrc(post.image)}
-          alt={post.title}
+          alt={displayTitle}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           style={{ objectPosition: post.imagePosition ?? "center" }}
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
@@ -119,15 +152,25 @@ function PostCard({ post }: { post: Post }) {
           </span>
           {post.status && <StatusBadge status={post.status} />}
         </div>
-      </div>
+      </Link>
 
       {/* Body */}
       <div className="p-4">
-        <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
-          {post.title}
-        </h3>
+        <Link href={`/posts/${post.id}`} className="block">
+          <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
+            {displayTitle}
+          </h3>
+        </Link>
         {post.creator && (
-          <p className="mb-2 text-xs text-[var(--text-secondary)]">{post.creator}</p>
+          <p className="mb-2 text-xs text-[var(--text-secondary)]">{displayCreator}</p>
+        )}
+
+        {!shouldHideExcerpt && post.excerpt && (
+          <Link href={`/posts/${post.id}`} className="block">
+            <p className="mb-3 line-clamp-3 text-xs leading-6 text-[var(--text-muted)]">
+              {displayExcerpt}
+            </p>
+          </Link>
         )}
 
         {post.rating > 0 && (
@@ -166,6 +209,6 @@ function PostCard({ post }: { post: Post }) {
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

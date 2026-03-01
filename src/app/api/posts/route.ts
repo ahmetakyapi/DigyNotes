@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
@@ -26,6 +27,35 @@ function transformPostTags(
   return { ...rest, tags: tags.map((pt) => pt.tag) };
 }
 
+function encodePostsCursor(post: { createdAt: Date; id: string }) {
+  return Buffer.from(
+    JSON.stringify({
+      createdAt: post.createdAt.toISOString(),
+      id: post.id,
+    })
+  ).toString("base64url");
+}
+
+function decodePostsCursor(cursor?: string | null) {
+  if (!cursor) return null;
+
+  try {
+    const parsed = JSON.parse(Buffer.from(cursor, "base64url").toString("utf8")) as {
+      createdAt?: string;
+      id?: string;
+    };
+
+    if (!parsed.createdAt || !parsed.id) return null;
+
+    const createdAt = new Date(parsed.createdAt);
+    if (Number.isNaN(createdAt.getTime())) return null;
+
+    return { createdAt, id: parsed.id };
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
@@ -44,7 +74,7 @@ export async function GET(request: NextRequest) {
         .filter(Boolean)
     : [];
 
-  const where: Record<string, unknown> = {};
+  const where: Prisma.PostWhereInput = {};
   if (userId) where.userId = userId;
   const categoryVariants = getCategoryVariants(category);
   if (categoryVariants.length > 0) {
@@ -60,25 +90,41 @@ export async function GET(request: NextRequest) {
   if (!paginate) {
     const posts = await prisma.post.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include,
     });
 
     return NextResponse.json(posts.map(transformPostTags));
   }
 
+  const decodedCursor = decodePostsCursor(cursor);
+  const paginatedWhere: Prisma.PostWhereInput = decodedCursor
+    ? {
+        AND: [
+          where,
+          {
+            OR: [
+              { createdAt: { lt: decodedCursor.createdAt } },
+              {
+                AND: [{ createdAt: decodedCursor.createdAt }, { id: { lt: decodedCursor.id } }],
+              },
+            ],
+          },
+        ],
+      }
+    : where;
+
   const posts = await prisma.post.findMany({
-    where,
+    where: paginatedWhere,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: limit + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     include,
   });
 
   let nextCursor: string | null = null;
   if (posts.length > limit) {
     posts.pop();
-    nextCursor = posts[posts.length - 1]?.id ?? null;
+    nextCursor = posts[posts.length - 1] ? encodePostsCursor(posts[posts.length - 1]) : null;
   }
 
   return NextResponse.json({

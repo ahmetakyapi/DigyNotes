@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ClockCounterClockwise, X, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import { getCategoryLabel } from "@/lib/categories";
 
@@ -17,8 +18,6 @@ export interface RecentViewItem {
   rating: number;
   viewedAt: number;
 }
-
-const customLoader = ({ src }: { src: string }) => src;
 
 /**
  * Bir notu "son görüntülenen" listesine ekler.

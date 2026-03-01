@@ -25,9 +25,14 @@ import {
   Cell,
 } from "recharts";
 import { getCategoryLabel } from "@/lib/categories";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
-
-const customLoader = ({ src }: { src: string }) => src;
+import {
+  getActiveMonthCount,
+  getShareLabel,
+  getSparseDataLabel,
+  getTopItem,
+} from "@/lib/stats-insights";
 
 interface YearData {
   year: number;
@@ -147,8 +152,20 @@ export default function YearInReviewPage() {
             {year} yılında henüz not eklenmemiş
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-secondary)]">
-            Not eklemeye başladığında burada yıllık özetin görünecek.
+            Not eklemeye başladığında burada yıllık özetin görünecek. Farklı aylara yayılan notlar,
+            puanlar ve etiketler yıl hikayesini daha anlamlı hale getirir.
           </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-xs text-[var(--text-muted)]">
+              Farklı aylarda not ekle
+            </span>
+            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-xs text-[var(--text-muted)]">
+              Puan ve etiket kullan
+            </span>
+            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-xs text-[var(--text-muted)]">
+              Yıl içi ritmi biriktir
+            </span>
+          </div>
         </div>
       </main>
     );
@@ -156,6 +173,11 @@ export default function YearInReviewPage() {
 
   const favoriteCategory = data.categories[0];
   const favoriteCatColor = CATEGORY_COLORS[favoriteCategory?.name] ?? "var(--gold)";
+  const activeMonths = getActiveMonthCount(data.monthlySeries);
+  const topTag = getTopItem(data.topTags);
+  const ratedCount = data.ratingDistribution.reduce((sum, item) => sum + item.count, 0);
+  const ratedShare = data.totalPosts > 0 ? Math.round((ratedCount / data.totalPosts) * 100) : 0;
+  const sparseDataLabel = getSparseDataLabel(data.totalPosts, activeMonths);
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
@@ -166,8 +188,67 @@ export default function YearInReviewPage() {
             Yıllık Özet
           </p>
           <h1 className="text-3xl font-black text-[var(--text-primary)]">{year}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+            {favoriteCategory
+              ? `${year} içinde arşivin en çok ${getCategoryLabel(favoriteCategory.name).toLowerCase()} etrafında yoğunlaşmış.`
+              : `${year} yılına ait notların burada bir araya geliyor.`}{" "}
+            {data.busiestMonth
+              ? `${data.busiestMonth.month} ayı en hareketli dönem olmuş.`
+              : "Yıl içi ritim için daha fazla aya yayılan veri gerekiyor."}
+          </p>
         </div>
         <YearSelector year={year} onChange={setYear} max={currentYear} />
+      </div>
+
+      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(129,140,248,0.08),rgba(12,18,31,0.94))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+        <div className="grid gap-3 md:grid-cols-3">
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.44)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Yılın odağı
+            </p>
+            <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+              {favoriteCategory
+                ? `${getCategoryLabel(favoriteCategory.name)} ${getShareLabel(favoriteCategory.count, data.totalPosts)}`
+                : "-"}
+            </p>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+              {favoriteCategory
+                ? `${favoriteCategory.count} not ile yılın baskın teması olmuş.`
+                : "Kategori yorumu için yeterli veri yok."}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.44)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Yılın ritmi
+            </p>
+            <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+              {activeMonths}/12 ay aktif
+            </p>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+              {data.maxStreak > 1
+                ? `En uzun seri ${data.maxStreak} gün sürmüş.`
+                : "Henüz seri davranışı belirginleşmemiş."}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.44)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Yılın izi
+            </p>
+            <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+              {topTag ? `#${topTag.name}` : `%${ratedShare} puanlı`}
+            </p>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+              {topTag
+                ? `${topTag.count} kullanım ile tekrar eden temayı gösteriyor.`
+                : `Notlarının %${ratedShare}'i puanlanmış durumda.`}
+            </p>
+          </div>
+        </div>
+        {sparseDataLabel && (
+          <div className="mt-4 rounded-2xl border border-dashed border-[var(--border)] px-4 py-3 text-xs leading-5 text-[var(--text-muted)]">
+            {sparseDataLabel}
+          </div>
+        )}
       </div>
 
       {/* KPI Grid */}

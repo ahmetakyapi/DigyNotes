@@ -2,13 +2,20 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { BookmarkSimple, MagnifyingGlass, UserCircle } from "@phosphor-icons/react";
 import CollectionCard from "@/components/CollectionCard";
+import { OrganizationGuide } from "@/components/OrganizationGuide";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
 import { Collection } from "@/types";
 
 export default function CollectionsPage() {
+  const router = useRouter();
   const { status } = useSession();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,28 +51,28 @@ export default function CollectionsPage() {
 
     setIsCreating(true);
     try {
-      const res = await fetch("/api/collections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim(),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error || "Koleksiyon oluşturulamadı");
-        return;
-      }
+      const data = await requestJson<Collection>(
+        "/api/collections",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: title.trim(),
+            description: description.trim(),
+          }),
+        },
+        "Koleksiyon oluşturulamadı."
+      );
 
       setCollections((prev) => [data, ...prev]);
       setTitle("");
       setDescription("");
       toast.success("Koleksiyon oluşturuldu");
-    } catch {
-      toast.error("Koleksiyon oluşturulamadı");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Koleksiyon oluşturulamadı."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setIsCreating(false);
     }
@@ -102,30 +109,12 @@ export default function CollectionsPage() {
     [collections]
   );
 
-  const insightCards = [
-    {
-      icon: BookmarkSimple,
-      title: "Topla",
-      description: "Benzer notları tek başlık altında bir araya getir.",
-    },
-    {
-      icon: UserCircle,
-      title: "Öne çıkar",
-      description: "Beğendiğin seçkileri profilinde daha düzenli sergile.",
-    },
-    {
-      icon: MagnifyingGlass,
-      title: "Hızlı bul",
-      description: "Aradığın notlara tema ve başlık üzerinden daha kolay dön.",
-    },
-  ];
-
   if (status === "unauthenticated") {
     return (
       <main className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-4">
         <div className="w-full rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-soft)]">
           <p className="text-sm text-[var(--text-secondary)]">
-            Koleksiyon Oluşturmak Ve Notlarını Listeler Halinde Düzenlemek İçin Giriş Yap.
+            Koleksiyon oluşturmak ve notlarını daha düzenli gruplamak için giriş yap.
           </p>
           <Link
             href="/login"
@@ -140,51 +129,59 @@ export default function CollectionsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-2xl">
-          <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
-            Koleksiyonlar
-          </span>
-          <h1 className="mt-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
-            Notlarını Koleksiyonlarda Düzenle
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-            Benzer notları aynı yerde topla, profilinde öne çıkar ve daha hızlı geri dön.
-          </p>
-        </div>
-        <Link
-          href="/notes"
-          className="inline-flex rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
-        >
-          Notlarıma Dön
-        </Link>
-      </div>
-
-      <section className="mb-8 grid gap-3 md:grid-cols-3">
-        {insightCards.map((card) => (
-          <div
-            key={card.title}
-            className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[linear-gradient(135deg,rgba(18,26,45,0.9),rgba(10,17,31,0.72))] px-4 py-4 shadow-[var(--shadow-soft)]"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#c4a24b]/20 bg-[#c4a24b]/10 text-[var(--gold)]">
-              <card.icon size={20} weight="duotone" />
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">{card.title}</h2>
-              <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{card.description}</p>
+      <section
+        className="mb-6 rounded-[32px] border border-[var(--border)] p-5 shadow-[var(--shadow-soft)] sm:p-6"
+        style={{
+          background:
+            "radial-gradient(circle at top left, rgba(196,162,75,0.12), transparent 32%), var(--bg-card)",
+        }}
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+              Koleksiyonlar
+            </span>
+            <h1 className="mt-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+              Notlarını koleksiyonlarda düzenle
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+              Buradaki ana iş koleksiyon açmak ya da mevcut seçkine geri dönmek. Uzun açıklamalar
+              aşağıda, aksiyon alanı ise hemen burada.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+                {collections.length} koleksiyon
+              </span>
+              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+                {totalPostCount} not
+              </span>
+              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+                {activeCollectionCount} aktif seçki
+              </span>
             </div>
           </div>
-        ))}
+          <Link
+            href="/notes"
+            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+          >
+            Notlarıma dön
+          </Link>
+        </div>
       </section>
 
       <section className="mb-8 rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Yeni Bir Koleksiyon Oluştur
-          </h2>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Başlık ve kısa bir açıklama ekle. Sonrasında notlarını içine yerleştirebilirsin.
-          </p>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              Yeni koleksiyon oluştur
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Önce başlık ve kısa açıklamayı ver. Not ekleme işi sonra detay sayfasında devam eder.
+            </p>
+          </div>
+          <span className="inline-flex w-fit rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+            İlk aksiyon burada
+          </span>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -199,7 +196,7 @@ export default function CollectionsPage() {
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
-              placeholder="Örn. 2024'te İzlediklerim"
+              placeholder="Örn. 2024'te izlediklerim"
               className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
             />
           </label>
@@ -221,30 +218,9 @@ export default function CollectionsPage() {
             disabled={isCreating || loading || title.trim() === ""}
             className="h-11 rounded-xl bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isCreating ? "Oluşturuluyor..." : "Koleksiyon Oluştur"}
+            {isCreating ? "Oluşturuluyor..." : "Koleksiyon oluştur"}
           </button>
         </form>
-      </section>
-
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-            Koleksiyon
-          </p>
-          <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">{collections.length}</p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-            Toplam not
-          </p>
-          <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">{totalPostCount}</p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">Aktif</p>
-          <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
-            {activeCollectionCount}
-          </p>
-        </div>
       </section>
 
       {!loading && collections.length > 0 && (
@@ -317,6 +293,14 @@ export default function CollectionsPage() {
           ))}
         </div>
       )}
+
+      <section className="mt-8">
+        <OrganizationGuide
+          current="collections"
+          title="Koleksiyon ne zaman doğru seçim?"
+          description="Hızlı geri dönüş için Kaydettiklerim'i, henüz nota dönüşmeyen içerikler için İstek Listesi'ni kullan. Koleksiyonlar ise bitmiş notları daha kalıcı bir seçkide toplar."
+        />
+      </section>
     </main>
   );
 }

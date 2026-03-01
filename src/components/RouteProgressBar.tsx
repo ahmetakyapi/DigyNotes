@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 /**
@@ -16,7 +16,7 @@ export function RouteProgressBar() {
   const pathnameRef = useRef(pathname);
   const widthRef = useRef(0);
 
-  const startProgress = () => {
+  const startProgress = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     widthRef.current = 0;
     setWidth(0);
@@ -27,9 +27,9 @@ export function RouteProgressBar() {
       widthRef.current = Math.min(widthRef.current + Math.random() * 10 + 3, 85);
       setWidth(widthRef.current);
     }, 120);
-  };
+  }, []);
 
-  const completeProgress = () => {
+  const completeProgress = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     setWidth(100);
     setTimeout(() => {
@@ -37,7 +37,7 @@ export function RouteProgressBar() {
       setWidth(0);
       widthRef.current = 0;
     }, 350);
-  };
+  }, []);
 
   // Pathname değişince navigasyon tamamlandı
   useEffect(() => {
@@ -45,7 +45,7 @@ export function RouteProgressBar() {
       pathnameRef.current = pathname;
       completeProgress();
     }
-  }, [pathname]);
+  }, [pathname, completeProgress]);
 
   // Sayfa içi link tıklamalarını dinle
   useEffect(() => {
@@ -81,8 +81,7 @@ export function RouteProgressBar() {
       document.removeEventListener("click", handleClick);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, startProgress]);
 
   if (!active && width === 0) return null;
 

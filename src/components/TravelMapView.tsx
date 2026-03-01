@@ -11,9 +11,8 @@ import {
   formatCoordinate,
   hasCoordinates,
 } from "@/lib/maps";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
-
-const customLoader = ({ src }: { src: string }) => src;
 
 interface PositionedPost extends Post {
   left: number;

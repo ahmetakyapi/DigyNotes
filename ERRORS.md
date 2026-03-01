@@ -276,6 +276,26 @@ const userId = (session.user as { id: string }).id;
 
 ---
 
+## ERR-013: BMAD installer creates literal `{output_folder}` directory
+
+**First seen**: 2026-03-01
+**Symptom**: After running `npx bmad-method install`, empty folders are created under a literal `{output_folder}/` path and BMAD config points planning/implementation artifacts to unresolved placeholder paths.
+**Root cause**: BMAD v6 installer generated `planning_artifacts` and `implementation_artifacts` paths from `{output_folder}` without assigning a concrete default output folder.
+**Fix**:
+1. Set `_bmad/bmm/config.yaml` paths explicitly:
+
+```yaml
+planning_artifacts: "{project-root}/planning-artifacts"
+implementation_artifacts: "{project-root}/implementation-artifacts"
+```
+
+2. Add `output_folder: planning-artifacts` to `_bmad/_memory/config.yaml`
+3. Create real `planning-artifacts/` and `implementation-artifacts/` directories in the repo root
+4. Remove the empty literal `{output_folder}` directory if it was created
+
+**Prevention**: After every BMAD installation, verify `_bmad/bmm/config.yaml` and `_bmad/_memory/config.yaml` before using the workflows.
+**Files**: `_bmad/bmm/config.yaml`, `_bmad/_memory/config.yaml`
+
 ---
 
 ## TypeScript Errors

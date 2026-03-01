@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import {
   BookmarkSimple,
-  ClockCounterClockwise,
   MagnifyingGlass,
   Sparkle,
-  Star,
 } from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
@@ -18,13 +16,20 @@ import {
   getSearchTabForCategory,
   normalizeCategory,
 } from "@/lib/categories";
+import { ORGANIZATION_SURFACES } from "@/lib/organization";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
+import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { MediaSearch, MediaSearchResult } from "@/components/MediaSearch";
+import { ResilientImage } from "@/components/ResilientImage";
 import { StatusBadge, getStatusOptions } from "@/components/StatusBadge";
 import { WishlistItem } from "@/types";
-
-const customLoader = ({ src }: { src: string }) => src;
 const WATCHLIST_CATEGORIES = FIXED_CATEGORIES.filter((category) => category !== "other");
 type WatchlistSort = "recent" | "title" | "rating";
+const WATCHLIST_LABEL = ORGANIZATION_SURFACES.watchlist.label;
 
 function getPlannedLabel(category: string) {
   const options = getStatusOptions(category);
@@ -40,6 +45,7 @@ function formatDate(value: string) {
 }
 
 export default function WatchlistPage() {
+  const router = useRouter();
   const { status } = useSession();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [activeCategory, setActiveCategory] =
@@ -138,27 +144,6 @@ export default function WatchlistPage() {
     )
   );
 
-  const summaryCards = [
-    {
-      icon: BookmarkSimple,
-      label: "Toplam kayıt",
-      value: items.length,
-      detail: "Tüm liste",
-    },
-    {
-      icon: Star,
-      label: `${getCategoryLabel(activeCategory)} seçkisi`,
-      value: countsByCategory[activeCategory] ?? 0,
-      detail: "Aktif kategori",
-    },
-    {
-      icon: ClockCounterClockwise,
-      label: "Dolu kategori",
-      value: populatedCategoryCount,
-      detail: "Aktif alanlar",
-    },
-  ];
-
   const addToWatchlist = async (result: MediaSearchResult) => {
     const externalId = getResultExternalId(result);
 
@@ -169,41 +154,42 @@ export default function WatchlistPage() {
       )
     ) {
       setSelectedResult(result);
-      toast("Bu içerik zaten istek listesinde");
+      toast(`Bu içerik zaten ${WATCHLIST_LABEL.toLocaleLowerCase("tr-TR")}nde`);
       return;
     }
     setPendingExternalId(externalId);
 
     try {
-      const res = await fetch("/api/watchlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category: activeCategory,
-          title: result.title,
-          creator: result.creator,
-          years: result.years,
-          image: result.image,
-          excerpt: result.excerpt,
-          externalRating: result.externalRating ?? null,
-          externalId,
-        }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error || "İstek listesine eklenemedi");
-        return;
-      }
+      const data = await requestJson<WishlistItem>(
+        "/api/watchlist",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            category: activeCategory,
+            title: result.title,
+            creator: result.creator,
+            years: result.years,
+            image: result.image,
+            excerpt: result.excerpt,
+            externalRating: result.externalRating ?? null,
+            externalId,
+          }),
+        },
+        `${WATCHLIST_LABEL} kaydı eklenemedi.`
+      );
 
       setItems((prev) => {
         const next = prev.filter((item) => item.id !== data.id);
         return [data, ...next];
       });
       setSelectedResult(result);
-      toast.success("İstek listesine eklendi");
-    } catch {
-      toast.error("İstek listesine eklenemedi");
+      toast.success(`${WATCHLIST_LABEL}ne eklendi`);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, `${WATCHLIST_LABEL} kaydı eklenemedi.`));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setPendingExternalId(null);
     }
@@ -212,15 +198,18 @@ export default function WatchlistPage() {
   const removeItem = async (id: string) => {
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/watchlist/${id}`, { method: "DELETE" });
-      if (!res.ok) {
-        toast.error("İstek listesi kaydı silinemedi");
-        return;
-      }
+      await requestJson<{ success: boolean }>(
+        `/api/watchlist/${id}`,
+        { method: "DELETE" },
+        `${WATCHLIST_LABEL} kaydı silinemedi.`
+      );
       setItems((prev) => prev.filter((item) => item.id !== id));
-      toast.success("İstek listesinden kaldırıldı");
-    } catch {
-      toast.error("İstek listesi kaydı silinemedi");
+      toast.success(`${WATCHLIST_LABEL}nden kaldırıldı`);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, `${WATCHLIST_LABEL} kaydı silinemedi.`));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setDeletingId(null);
     }
@@ -246,7 +235,13 @@ export default function WatchlistPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <header className="mb-8 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
+      <header
+        className="mb-6 rounded-[32px] border border-[var(--border)] p-6 shadow-[var(--shadow-soft)] sm:p-7"
+        style={{
+          background:
+            "radial-gradient(circle at top left, rgba(196,162,75,0.12), transparent 30%), var(--bg-card)",
+        }}
+      >
         <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
           İstek Listesi
         </span>
@@ -257,45 +252,48 @@ export default function WatchlistPage() {
           Film, dizi, kitap, oyun ve gezi planlarını tek yerde topla. Kategori seçip ara, sonra
           gerektiğinde kolayca geri dön.
         </p>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          {summaryCards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.52)] px-4 py-4"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <card.icon size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    {card.label}
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {card.value}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-3 text-xs text-[var(--text-muted)]">{card.detail}</p>
-            </div>
-          ))}
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            {items.length} kayıt
+          </span>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            {getCategoryLabel(activeCategory)}: {countsByCategory[activeCategory] ?? 0}
+          </span>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            {populatedCategoryCount} dolu kategori
+          </span>
         </div>
       </header>
 
       <section className="rounded-[32px] border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">İçerik Ara ve Ekle</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
+              İlk aksiyon
+            </p>
+            <h2 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">
+              Kategori seç, ara ve ekle
+            </h2>
             <p className="mt-1 text-sm text-[var(--text-muted)]">
-              Aktif kategoriye göre arama yap. Yeni kayıtlar otomatik olarak{" "}
-              {getPlannedLabel(activeCategory).toLowerCase()} etiketiyle eklenir.
+              Önce kategoriyi belirle, sonra arama sonucunu tek dokunuşla istek listesine ekle.
             </p>
           </div>
           <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1.5 text-xs text-[var(--text-secondary)]">
             <Sparkle size={14} weight="duotone" className="text-[var(--gold)]" />
-            Aktif kategori: {getCategoryLabel(activeCategory)}
+            Şu an: {getCategoryLabel(activeCategory)}
           </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+            1. Kategori
+          </span>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
+            2. Ara
+          </span>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
+            3. Listeye ekle
+          </span>
         </div>
 
         <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
@@ -327,23 +325,21 @@ export default function WatchlistPage() {
             lockedTab={getSearchTabForCategory(activeCategory) ?? "film"}
             onSelect={setSelectedResult}
             onAction={addToWatchlist}
-            actionLabel={pendingExternalId ? "Ekleniyor..." : "Listeye Ekle"}
+            actionLabel={pendingExternalId ? "Ekleniyor..." : "İstek listesine ekle"}
           />
         </div>
 
         {selectedResult && (
-          <div className="mt-4 rounded-[28px] border border-[var(--border)] bg-[rgba(7,12,22,0.52)] p-4 sm:p-5">
+          <div className="mt-4 rounded-[28px] border border-[var(--border)] bg-[var(--bg-raised)] p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {selectedResult.image ? (
                 <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-2xl border border-[var(--border)]">
-                  <Image
-                    loader={customLoader}
+                  <ResilientImage
                     src={selectedResult.image}
                     alt={selectedResult.title}
                     fill
                     sizes="96px"
                     className="object-cover"
-                    unoptimized
                   />
                 </div>
               ) : (
@@ -379,10 +375,10 @@ export default function WatchlistPage() {
                 className="rounded-xl bg-[var(--gold)] px-4 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)] disabled:opacity-50"
               >
                 {isSelectedResultSaved
-                  ? "Zaten Listede"
+                  ? "İstek listesinde"
                   : pendingExternalId !== null
                     ? "Ekleniyor..."
-                    : "Listeye Ekle"}
+                    : "İstek listesine ekle"}
               </button>
             </div>
           </div>
@@ -470,29 +466,36 @@ export default function WatchlistPage() {
               >
                 <div className="relative h-52 bg-[var(--bg-raised)]">
                   {item.image ? (
-                    <Image
-                      loader={customLoader}
+                    <ResilientImage
                       src={item.image}
                       alt={item.title}
                       fill
                       sizes="420px"
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                      unoptimized
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(196,162,75,0.14),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
                       {item.title.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.84)] via-[rgba(7,12,22,0.08)] to-transparent" />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, transparent 10%, var(--media-overlay-mid) 68%, var(--media-overlay-strong) 100%)",
+                    }}
+                  />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span className="border-[#c4a24b]/18 rounded-full border bg-[rgba(7,10,18,0.62)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+                    <span className="border-[#c4a24b]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm" style={{ background: "var(--bg-overlay)" }}>
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
                   </div>
                   {typeof item.externalRating === "number" && item.externalRating > 0 && (
-                    <div className="absolute right-4 top-4 rounded-full bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-primary)]">
+                    <div
+                      className="absolute right-4 top-4 rounded-full px-2.5 py-1 text-[11px] font-semibold text-[var(--media-text-primary)] backdrop-blur-sm"
+                      style={{ background: "var(--bg-overlay)" }}
+                    >
                       {item.externalRating.toFixed(1)}
                     </div>
                   )}
@@ -523,13 +526,21 @@ export default function WatchlistPage() {
                     disabled={deletingId === item.id}
                     className="border-[#e53e3e]/18 hover:bg-[#e53e3e]/8 w-full rounded-xl border px-3 py-2.5 text-xs font-semibold text-[#e67a7a] transition-colors disabled:opacity-50"
                   >
-                    {deletingId === item.id ? "Kaldırılıyor..." : "Listeden Kaldır"}
+                    {deletingId === item.id ? "Kaldırılıyor..." : "İstek listesinden kaldır"}
                   </button>
                 </div>
               </article>
             ))}
           </div>
         )}
+      </section>
+
+      <section className="mt-8">
+        <OrganizationGuide
+          current="watchlist"
+          title="İstek listesi ne zaman doğru yer?"
+          description="Henüz nota dönüştürmediğin içerikler burada bekler. Hızlı geri dönüş için Kaydettiklerim'i, bitmiş notları kalıcı seçkilerde toplamak için Koleksiyonlar'ı kullan."
+        />
       </section>
     </main>
   );

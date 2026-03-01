@@ -76,6 +76,13 @@ interface SiteSettings {
   maintenanceMessage: string;
 }
 
+interface AdminFeedback {
+  tone: "success" | "warning" | "error";
+  title: string;
+  detail: string;
+  followUp?: string;
+}
+
 type RangeKey = "24h" | "7d" | "30d" | "90d" | "365d";
 type SeriesKey = "7d" | "30d" | "90d" | "365d";
 
@@ -211,6 +218,78 @@ function Card({
   );
 }
 
+function WorkspaceGuide({
+  eyebrow,
+  title,
+  description,
+  cards,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  cards: { label: string; text: string }[];
+}) {
+  return (
+    <section className="rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.9),rgba(10,16,30,0.76))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+      <span className="inline-flex rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c4a24b]">
+        {eyebrow}
+      </span>
+      <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-[28px]">
+        {title}
+      </h2>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
+        {description}
+      </p>
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              {card.label}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{card.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ActionFeedbackBanner({ feedback }: { feedback: AdminFeedback }) {
+  const palette =
+    feedback.tone === "success"
+      ? {
+          border: "border-[#34d399]/20",
+          bg: "bg-[#34d399]/10",
+          title: "text-[#34d399]",
+        }
+      : feedback.tone === "warning"
+        ? {
+            border: "border-[#fb923c]/20",
+            bg: "bg-[#fb923c]/10",
+            title: "text-[#fb923c]",
+          }
+        : {
+            border: "border-[#e53e3e]/20",
+            bg: "bg-[#e53e3e]/10",
+            title: "text-[#e53e3e]",
+          };
+
+  return (
+    <div className={`rounded-2xl border px-4 py-3 ${palette.border} ${palette.bg}`}>
+      <p className={`text-sm font-semibold ${palette.title}`}>{feedback.title}</p>
+      <p className="mt-1 text-sm text-[var(--text-secondary)]">{feedback.detail}</p>
+      {feedback.followUp && (
+        <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+          Sonraki adım: {feedback.followUp}
+        </p>
+      )}
+    </div>
+  );
+}
+
 const DarkTooltip = ({
   active,
   payload,
@@ -280,6 +359,7 @@ export default function AdminPage() {
   const [tab, setTab] = useState<"overview" | "users" | "content" | "activity" | "settings">(
     "overview"
   );
+  const [adminFeedback, setAdminFeedback] = useState<AdminFeedback | null>(null);
 
   /* stats */
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -446,6 +526,10 @@ export default function AdminPage() {
     if (tab === "settings") fetchSettings();
   }, [tab, fetchSettings]);
 
+  useEffect(() => {
+    setAdminFeedback(null);
+  }, [tab]);
+
   /* ── toggle admin ── */
   async function toggleAdmin(user: UserRow) {
     try {
@@ -461,9 +545,24 @@ export default function AdminPage() {
       toast.success(
         updated.isAdmin ? `${updated.name} artık admin` : `${updated.name} admin değil`
       );
+      setAdminFeedback({
+        tone: "success",
+        title: updated.isAdmin ? "Admin yetkisi verildi" : "Admin yetkisi kaldırıldı",
+        detail: updated.isAdmin
+          ? `${updated.name} artık admin ekranlarına erişebilir.`
+          : `${updated.name} artık admin işlemleri yapamaz.`,
+        followUp: "Gerekirse kullanıcı detayına gidip son aktivitelerini kontrol et.",
+      });
       await fetchUsers(usersPage, userSearch);
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Rol güncellenemedi."));
+      const message = getClientErrorMessage(error, "Rol güncellenemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Rol güncellenemedi",
+        detail: message,
+        followUp: "Değişiklik uygulanmadı; kullanıcı satırını yenileyip tekrar dene.",
+      });
     }
   }
 
@@ -482,9 +581,26 @@ export default function AdminPage() {
       toast.success(
         updated.isBanned ? `${updated.name} banlandı` : `${updated.name} banlı durumdan çıkarıldı`
       );
+      setAdminFeedback({
+        tone: updated.isBanned ? "warning" : "success",
+        title: updated.isBanned ? "Kullanıcı banlandı" : "Ban kaldırıldı",
+        detail: updated.isBanned
+          ? `${updated.name} artık giriş yapamaz ve hesabı kısıtlandı.`
+          : `${updated.name} yeniden normal erişime döndü.`,
+        followUp: updated.isBanned
+          ? "Gerekirse ilgili notları içerik sekmesinden ayrıca gözden geçir."
+          : "Kullanıcının profil görünürlüğünü ve son hareketlerini doğrula.",
+      });
       await fetchUsers(usersPage, userSearch);
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Kullanıcı durumu güncellenemedi."));
+      const message = getClientErrorMessage(error, "Kullanıcı durumu güncellenemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Kullanıcı durumu güncellenemedi",
+        detail: message,
+        followUp: "İşlem uygulanmadı; kullanıcı hâlâ önceki durumda.",
+      });
     }
   }
 
@@ -494,9 +610,22 @@ export default function AdminPage() {
       await requestJson(`/api/admin/users/${id}`, { method: "DELETE" }, "Kullanıcı silinemedi.");
       setConfirmDelete(null);
       toast.success("Kullanıcı silindi");
+      setAdminFeedback({
+        tone: "warning",
+        title: "Kullanıcı silindi",
+        detail: "Hesap ve ilişkili içerikleri kalıcı olarak kaldırıldı.",
+        followUp: "Arama sonucundan düştüğünü ve gerekirse aktivite geçmişini gözden geçir.",
+      });
       await fetchUsers(usersPage, userSearch);
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Kullanıcı silinemedi."));
+      const message = getClientErrorMessage(error, "Kullanıcı silinemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Kullanıcı silinemedi",
+        detail: message,
+        followUp: "Kullanıcı kaydı yerinde kaldı; tekrar denemeden önce detay sayfasını kontrol et.",
+      });
     }
   }
 
@@ -514,9 +643,22 @@ export default function AdminPage() {
       );
       setConfirmDeletePost(null);
       toast.success("Not silindi");
+      setAdminFeedback({
+        tone: "warning",
+        title: "Not kaldırıldı",
+        detail: "İçerik yayından alındı ve admin log'una işlendi.",
+        followUp: "Gerekirse not sahibini kullanıcı sekmesinden ayrıca incele.",
+      });
       await fetchPosts(postsPage, postSearch);
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Not silinemedi."));
+      const message = getClientErrorMessage(error, "Not silinemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Not silinemedi",
+        detail: message,
+        followUp: "İçerik listede kalır; moderasyon kararını yeniden doğrula.",
+      });
     }
   }
 
@@ -542,11 +684,27 @@ export default function AdminPage() {
           delete: "Silindi",
         };
         toast.success(`${res.affected} kullanıcı — ${labels[action]}`);
+        setAdminFeedback({
+          tone: action === "delete" ? "warning" : "success",
+          title: `Toplu işlem tamamlandı: ${labels[action]}`,
+          detail: `${res.affected} kullanıcı üzerinde ${labels[action].toLowerCase()} işlemi uygulandı.`,
+          followUp:
+            action === "delete"
+              ? "Arama ve toplam sayının beklendiği gibi güncellendiğini doğrula."
+              : "Seçili kullanıcıları tekrar filtreleyip kalan istisnaları kontrol et.",
+        });
       }
       await fetchUsers(1, userSearch);
       setUsersPage(1);
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Toplu işlem uygulanamadı."));
+      const message = getClientErrorMessage(error, "Toplu işlem uygulanamadı.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Toplu işlem başarısız",
+        detail: message,
+        followUp: "Seçimi koruyup tekrar deneyebilir veya kullanıcıları tek tek yönetebilirsin.",
+      });
     } finally {
       setBulkLoading(false);
     }
@@ -567,8 +725,44 @@ export default function AdminPage() {
       );
       setSettings(data);
       toast.success("Ayarlar kaydedildi");
+      const updatedKeys = Object.keys(patch);
+      const primaryKey = updatedKeys[0];
+      const followUp =
+        primaryKey === "maintenanceMode"
+          ? data.maintenanceMode === "true"
+            ? "Admin olmayan bir oturumda bakım ekranını kontrol et."
+            : "Normal kullanıcı akışının yeniden açıldığını doğrula."
+          : primaryKey === "registrationEnabled"
+            ? data.registrationEnabled === "true"
+              ? "Kayıt ekranında yeni kullanıcı akışını test et."
+              : "Kayıt formunun erişimi kapattığını doğrula."
+            : "Bakım mesajı metninin bakım sayfasında beklendiği gibi göründüğünü kontrol et.";
+      setAdminFeedback({
+        tone: primaryKey === "maintenanceMode" && data.maintenanceMode === "true"
+          ? "warning"
+          : "success",
+        title: "Ayar kaydedildi",
+        detail:
+          primaryKey === "maintenanceMode"
+            ? data.maintenanceMode === "true"
+              ? "Bakım modu etkinleştirildi."
+              : "Bakım modu kapatıldı."
+            : primaryKey === "registrationEnabled"
+              ? data.registrationEnabled === "true"
+                ? "Yeni kullanıcı kaydı tekrar açıldı."
+                : "Yeni kullanıcı kaydı kapatıldı."
+              : "Bakım mesajı güncellendi.",
+        followUp,
+      });
     } catch (error) {
-      toast.error(getClientErrorMessage(error, "Ayarlar kaydedilemedi."));
+      const message = getClientErrorMessage(error, "Ayarlar kaydedilemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Ayar kaydedilemedi",
+        detail: message,
+        followUp: "Form alanı eski duruma dönmüş olabilir; tekrar yükleyip doğrula.",
+      });
     } finally {
       setSavingSettings(false);
     }
@@ -686,6 +880,112 @@ export default function AdminPage() {
     },
   ];
 
+  const currentGuide =
+    tab === "overview"
+      ? {
+          eyebrow: "Genel Bakış",
+          title: "Paneli önce oku, sonra ilgili sekmede aksiyon al",
+          description:
+            "Bu alan yön bulmak için var. Trend, yoğunluk ve dağılımlar karar desteği sağlar; gerçek moderasyon ve ayar değişiklikleri alt sekmelerde yapılır.",
+          cards: [
+            {
+              label: "Aksiyon alınabilir",
+              text: "Buradan kullanıcılar, içerikler ve ayarlar sekmesine hangi sırayla ineceğine karar ver.",
+            },
+            {
+              label: "Bilgilendirme",
+              text: "Grafikler ve KPI kartları yalnızca yön gösterir; tek başına moderasyon kararı değildir.",
+            },
+            {
+              label: "Dikkat noktası",
+              text: "Ani artış veya düşüş gördüğünde ilgili sekmede örnek kayıtları tek tek doğrula.",
+            },
+          ],
+        }
+      : tab === "users"
+        ? {
+            eyebrow: "Kullanıcı Yönetimi",
+            title: "Kullanıcı kararları burada aksiyonel, metrikler yalnızca bağlam",
+            description:
+              "Admin yetkisi, ban ve silme işlemleri doğrudan etkili olur. Takipçi, not sayısı ve katılım tarihi ise karar verirken kullanacağın destek bilgisidir.",
+            cards: [
+              {
+                label: "Aksiyon alınabilir",
+                text: `${selectedUsers.size > 0 ? `${selectedUsers.size} seçili kullanıcı üzerinde toplu işlem yapabilirsin.` : "Satır bazında admin, ban ve silme işlemleri yapabilirsin."}`,
+              },
+              {
+                label: "Bilgilendirme",
+                text: `${usersTotal} toplam kullanıcı içinde bu sayfada ${users.filter((u) => u.isAdmin).length} admin ve ${users.filter((u) => u.isBanned).length} banlı kullanıcı görünüyor.`,
+              },
+              {
+                label: "Hassas veri",
+                text: `${users.filter((u) => !u.isPublic).length} gizli profil var. Ban ve gizlilik etiketlerini birlikte okuyup yanlış pozitiften kaçın.`,
+              },
+            ],
+          }
+        : tab === "content"
+          ? {
+              eyebrow: "İçerik Moderasyonu",
+              title: "İçerik ekranı silme kararı için bağlam toplar",
+              description:
+                "Buradaki ana aksiyon not silmektir. Başlık, kategori, yazar ve durum alanları kararı destekler; durumsuz kayıtlar özellikle ayrıca gözden geçirilmelidir.",
+              cards: [
+                {
+                  label: "Aksiyon alınabilir",
+                  text: "Notu açabilir, düzenleme ekranına geçebilir veya doğrudan kaldırabilirsin.",
+                },
+                {
+                  label: "Bilgilendirme",
+                  text: `${postsTotal} not içinde bu sayfada ${posts.filter((post) => post.status).length} durumlu kayıt ve ${posts.filter((post) => !post.status).length} durum bilgisi eksik kayıt var.`,
+                },
+                {
+                  label: "Hassas veri",
+                  text: "Durum etiketi olmayan veya yazarı belirsiz görünen kayıtları silmeden önce detay sayfasında doğrula.",
+                },
+              ],
+            }
+          : tab === "activity"
+            ? {
+                eyebrow: "Aktivite Görünürlüğü",
+                title: "Aktivite sekmesi bilgilendiricidir; aksiyon başka sekmede alınır",
+                description:
+                  "Log kayıtları ne olduğunu ve ne zaman olduğunu gösterir. Buradan doğrudan moderasyon yapılmaz; yalnızca doğru kullanıcı ya da içerik yüzeyine yönlenilir.",
+                cards: [
+                  {
+                    label: "Aksiyon alınabilir",
+                    text: "Şüpheli kayıt gördüğünde ilgili kullanıcıyı veya içeriği başka sekmede açıp karar ver.",
+                  },
+                  {
+                    label: "Bilgilendirme",
+                    text: `${logsTotal} kayıt ${logsFilter ? `"${ACTION_META[logsFilter]?.label ?? logsFilter}"` : "tüm aksiyonlar"} filtresiyle izleniyor.`,
+                  },
+                  {
+                    label: "Dikkat noktası",
+                    text: "Loglar bağlam verir ama nihai moderasyon kararı için ilgili kaynağı ayrıca incelemek gerekir.",
+                  },
+                ],
+              }
+            : {
+                eyebrow: "Operasyon Ayarları",
+                title: "Ayar değişiklikleri canlı davranışı etkiler",
+                description:
+                  "Bu sekmedeki işlemler doğrudan kullanıcı deneyimini değiştirir. Özellikle kayıt ve bakım modu kararlarında sonucu ayrı bir oturumla doğrulamak gerekir.",
+                cards: [
+                  {
+                    label: "Aksiyon alınabilir",
+                    text: "Kayıt akışını ve bakım modunu açıp kapatabilir, bakım mesajını güncelleyebilirsin.",
+                  },
+                  {
+                    label: "Bilgilendirme",
+                    text: `Şu an kayıt ${settings?.registrationEnabled === "true" ? "açık" : "kapalı"}, bakım modu ${settings?.maintenanceMode === "true" ? "aktif" : "pasif"}.`,
+                  },
+                  {
+                    label: "Dikkat noktası",
+                    text: "Ayarı kaydettikten sonra admin olmayan deneyimi ayrı bir oturumda doğrulamak güvenlidir.",
+                  },
+                ],
+              };
+
   return (
     <main className="min-h-screen bg-[var(--bg-base)] pb-20">
       {/* ── sticky header ── */}
@@ -739,6 +1039,16 @@ export default function AdminPage() {
             {panelError}
           </div>
         )}
+
+        <div className="mb-5 space-y-4">
+          <WorkspaceGuide
+            eyebrow={currentGuide.eyebrow}
+            title={currentGuide.title}
+            description={currentGuide.description}
+            cards={currentGuide.cards}
+          />
+          {adminFeedback && <ActionFeedbackBanner feedback={adminFeedback} />}
+        </div>
 
         {/* ══════════════ OVERVIEW ══════════════ */}
         {tab === "overview" && (
@@ -1318,6 +1628,15 @@ export default function AdminPage() {
                                 ban
                               </span>
                             )}
+                            <span
+                              className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                u.isPublic
+                                  ? "bg-[#34d399]/15 text-[#34d399]"
+                                  : "bg-[var(--bg-raised)] text-[var(--text-muted)]"
+                              }`}
+                            >
+                              {u.isPublic ? "açık profil" : "gizli profil"}
+                            </span>
                           </div>
                           {u.username && (
                             <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>
@@ -1474,6 +1793,15 @@ export default function AdminPage() {
                                       ban
                                     </span>
                                   )}
+                                  <span
+                                    className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                      u.isPublic
+                                        ? "bg-[#34d399]/15 text-[#34d399]"
+                                        : "bg-[var(--bg-raised)] text-[var(--text-muted)]"
+                                    }`}
+                                  >
+                                    {u.isPublic ? "açık" : "gizli"}
+                                  </span>
                                 </div>
                                 {u.username && (
                                   <p className="text-[10px] text-[var(--text-muted)]">
@@ -1662,6 +1990,11 @@ export default function AdminPage() {
                               {p.status}
                             </span>
                           )}
+                          {!p.status && (
+                            <span className="inline-flex rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
+                              Durum yok
+                            </span>
+                          )}
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
                           <button
@@ -1744,7 +2077,7 @@ export default function AdminPage() {
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-xs text-[var(--text-muted)]">—</span>
+                              <span className="text-xs text-[var(--text-muted)]">Durum yok</span>
                             )}
                           </td>
                           <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">

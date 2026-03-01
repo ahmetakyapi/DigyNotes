@@ -5,10 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/types";
 import { getCategoryLabel } from "@/lib/categories";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import StarRating from "@/components/StarRating";
-
-const customLoader = ({ src }: { src: string }) => src;
 
 const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
   movies: { fill: "#c4a24b", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },

@@ -1,0 +1,61 @@
+# generated: 2026-03-01
+# project: DigyNotes
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to in-progress when its first story begins
+# - Stories should generally move backlog -> ready-for-dev -> in-progress -> review -> done
+# - Story files will live under implementation-artifacts when created
+
+generated: 2026-03-01
+project: DigyNotes
+project_key: NOKEY
+tracking_system: file-system
+story_location: implementation-artifacts
+
+development_status:
+  epic-1: in-progress
+  1-1-guided-note-composer-entry: review
+  1-2-reliable-edit-flow-with-unsaved-change-protection: review
+  1-3-category-aware-media-enrichment: review
+  1-4-search-and-filter-foundations-for-personal-notes: review
+  epic-1-retrospective: optional
+
+  epic-2: in-progress
+  2-1-unified-organization-layer-across-bookmarks-collections-and-watchlist: review
+  2-2-more-useful-stats-and-year-in-review-experience: review
+  2-3-better-revisitability-through-note-detail-tags-and-public-surfaces: review
+  epic-2-retrospective: optional
+
+  epic-3: in-progress
+  3-1-profile-and-follow-clarity: review
+  3-2-distinct-feed-recommended-and-discover-behaviors: review
+  3-3-consistent-comments-likes-and-notifications-loop: review
+  epic-3-retrospective: optional
+
+  epic-4: in-progress
+  4-1-admin-moderation-and-visibility-workspace: review
+  4-2-export-maintenance-and-recovery-confidence: review
+  4-3-safer-session-media-and-fallback-handling: review
+  epic-4-retrospective: optional

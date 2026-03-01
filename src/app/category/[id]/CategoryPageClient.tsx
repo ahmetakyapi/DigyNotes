@@ -18,10 +18,9 @@ import toast from "react-hot-toast";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import { getCategoryLabel, isTravelCategory, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
+import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-
-const customLoader = ({ src }: { src: string }) => src;
 
 export default function CategoryPageClient({ params }: { params: { id: string } }) {
   const categoryName = normalizeCategory(decodeURIComponent(params.id));
@@ -126,7 +125,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       {/* ── Header ── */}
-      <div className="mb-6">
+      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(12,18,31,0.94),rgba(96,168,138,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
           <Link href="/notes" className="transition-colors hover:text-[#c4a24b]">
             Notlar
@@ -137,6 +136,10 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
         <div>
           <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryLabel}</h1>
+          <p className="max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+            Bu yüzey, aynı kategoriye ait notları tekrar okunabilir bir arşiv yolu olarak toplar.
+            Note detail, tag ve profil ekranlarından döndüğünde aynı ürün dili burada devam eder.
+          </p>
           <div className="flex flex-wrap items-center gap-3">
             <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
             <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
@@ -147,6 +150,9 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                 {mappedPosts.length} harita pini
               </span>
             )}
+            <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+              Detail ve kategori akışı
+            </span>
           </div>
         </div>
       </div>

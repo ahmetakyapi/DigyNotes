@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Compass,
@@ -25,8 +24,7 @@ import {
 } from "@/components/SortFilterBar";
 import { getPostImageSrc } from "@/lib/post-image";
 import { Post } from "@/types";
-
-const customLoader = ({ src }: { src: string }) => src;
+import { ResilientImage } from "@/components/ResilientImage";
 
 interface PublicUser {
   id: string;
@@ -229,6 +227,32 @@ export default function DiscoverPage() {
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
             En yüksek puanlı içerikleri incele, popüler etiketlere göz at ve yeni profiller bul.
           </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Buradaki mantık
+              </p>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                Takipten bağımsız, public yüzeylerde gezinme.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Ne zaman kullanılır?
+              </p>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                Yeni insanlar ve beklenmedik içerikler ararken.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Sonraki aksiyon
+              </p>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                Profili aç, etikete dal veya öne çıkan nota geç.
+              </p>
+            </div>
+          </div>
 
           <div className="mt-6 inline-flex rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.52)] p-1">
             <button
@@ -462,6 +486,9 @@ export default function DiscoverPage() {
                   <p className="mt-2 text-sm text-[var(--text-muted)]">
                     İsim veya kullanıcı adı ile herkese açık profilleri bul.
                   </p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--text-faint)]">
+                    Buradaki amaç takip ettiğin kişilere dönmek değil, yeni biriyle karşılaşmak.
+                  </p>
                 </div>
                 <label className="relative block w-full lg:max-w-sm">
                   <MagnifyingGlass
@@ -493,6 +520,11 @@ export default function DiscoverPage() {
               <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
                 <p className="text-sm text-[var(--text-secondary)]">
                   {query ? "Kullanıcı bulunamadı." : "Henüz herkese açık profil yok."}
+                </p>
+                <p className="mt-2 text-sm text-[var(--text-muted)]">
+                  {query
+                    ? "Farklı bir isim ya da kullanıcı adı deneyebilirsin."
+                    : "Kullanıcılar profillerini herkese açık hale getirdikçe burada görünür."}
                 </p>
               </div>
             ) : (
@@ -529,8 +561,7 @@ function TopPostCard({ post }: { post: Post }) {
     <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#c4a24b]/20 hover:shadow-[var(--shadow-card)]">
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-44 overflow-hidden bg-[var(--bg-raised)]">
-          <Image
-            loader={customLoader}
+          <ResilientImage
             src={getPostImageSrc(post.image)}
             alt={displayTitle}
             fill

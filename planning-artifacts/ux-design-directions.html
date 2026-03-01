@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DigyNotes UX Design Directions</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        background: #09111d;
+        color: #edf3ff;
+      }
+      main { max-width: 1240px; margin: 0 auto; padding: 40px 20px 64px; }
+      h1 { margin: 0 0 12px; font-size: 34px; }
+      p { color: #a4b2ce; line-height: 1.6; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-top: 24px; }
+      .dir {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,.08);
+        background: #10192b;
+      }
+      .hero { height: 180px; padding: 18px; display: flex; align-items: end; font-size: 28px; font-weight: 800; }
+      .body { padding: 18px; }
+      .selected { outline: 2px solid #c6972e; box-shadow: 0 0 0 1px rgba(198,151,46,.45), 0 18px 42px rgba(198,151,46,.15); }
+      .tag { display:inline-block; margin-bottom: 10px; padding: 7px 10px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+      ul { padding-left: 18px; color: #c7d2eb; line-height: 1.7; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DigyNotes Tasarım Yönleri</h1>
+      <p>BMAD UX çalışması için üç görsel yön tartıldı. Seçilen yön, yoğun bilgiyi sakinleştiren ve ürünün “kişisel kültür hafızası” kimliğini en iyi taşıyan seçenek oldu.</p>
+
+      <div class="grid">
+        <section class="dir selected">
+          <div class="hero" style="background:linear-gradient(135deg,#14203a,#0d1424 55%,#7a5817)">Collected Night Ledger</div>
+          <div class="body">
+            <span class="tag" style="background:rgba(198,151,46,.14); color:#e3c170; border:1px solid rgba(198,151,46,.28)">Seçilen Yön</span>
+            <ul>
+              <li>Derin gece mavisi taban, altın vurgu</li>
+              <li>Kütüphane ve arşiv duygusu</li>
+              <li>Yoğun ama düzenli bilgi panelleri</li>
+              <li>Not, profil ve istatistik ekranları için en uygun ton</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="dir">
+          <div class="hero" style="background:linear-gradient(135deg,#1f2430,#39404f 60%,#9a6c37)">Warm Editorial Shelf</div>
+          <div class="body">
+            <span class="tag" style="background:rgba(255,255,255,.08); color:#d6dfef; border:1px solid rgba(255,255,255,.12)">Alternatif</span>
+            <ul>
+              <li>Daha editoryal ve sıcak</li>
+              <li>Okuma ve uzun içerik deneyiminde güçlü</li>
+              <li>Sosyal keşif ekranlarında ağır kalma riski var</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="dir">
+          <div class="hero" style="background:linear-gradient(135deg,#1a2c25,#17383f 58%,#3a8f95)">Atlas Memory Studio</div>
+          <div class="body">
+            <span class="tag" style="background:rgba(255,255,255,.08); color:#d6dfef; border:1px solid rgba(255,255,255,.12)">Alternatif</span>
+            <ul>
+              <li>Gezi ve harita odaklı yüzeyler için güçlü</li>
+              <li>Film/dizi/oyun tarafında ürün kimliğini dağıtabilir</li>
+              <li>Tüm ürüne genellenmesi zor</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+  </html>

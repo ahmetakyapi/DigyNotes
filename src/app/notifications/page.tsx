@@ -12,6 +12,9 @@ interface NotificationItem {
   href: string;
   read: boolean;
   createdAt: string;
+  kindLabel?: string | null;
+  contextTitle?: string | null;
+  preview?: string | null;
   actor?: {
     id: string;
     name: string;
@@ -134,6 +137,41 @@ export default function NotificationsPage() {
   const unreadNotifications = filteredNotifications.filter((item) => !item.read);
   const readNotifications = filteredNotifications.filter((item) => item.read);
   const lastActivity = notifications[0]?.createdAt ? formatDate(notifications[0].createdAt) : "-";
+
+  const markNotificationRead = async (notificationId: string) => {
+    let shouldRequest = false;
+
+    setNotifications((prev) =>
+      prev.map((item) => {
+        if (item.id !== notificationId || item.read) {
+          return item;
+        }
+        shouldRequest = true;
+        return { ...item, read: true };
+      })
+    );
+
+    if (!shouldRequest) return;
+
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+    window.dispatchEvent(new Event("notifications:refresh"));
+
+    try {
+      const response = await fetch(`/api/notifications/${notificationId}/read`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error();
+      }
+    } catch {
+      setNotifications((prev) =>
+        prev.map((item) => (item.id === notificationId ? { ...item, read: false } : item))
+      );
+      setUnreadCount((prev) => prev + 1);
+      window.dispatchEvent(new Event("notifications:refresh"));
+    }
+  };
 
   if (status === "unauthenticated") {
     return (
@@ -259,7 +297,11 @@ export default function NotificationsPage() {
               </div>
               <div className="space-y-3">
                 {unreadNotifications.map((notification) => (
-                  <NotificationCard key={notification.id} notification={notification} />
+                  <NotificationCard
+                    key={notification.id}
+                    notification={notification}
+                    onOpen={markNotificationRead}
+                  />
                 ))}
               </div>
             </section>
@@ -277,7 +319,11 @@ export default function NotificationsPage() {
               </div>
               <div className="space-y-3">
                 {readNotifications.map((notification) => (
-                  <NotificationCard key={notification.id} notification={notification} />
+                  <NotificationCard
+                    key={notification.id}
+                    notification={notification}
+                    onOpen={markNotificationRead}
+                  />
                 ))}
               </div>
             </section>
@@ -294,10 +340,21 @@ export default function NotificationsPage() {
   );
 }
 
-function NotificationCard({ notification }: { notification: NotificationItem }) {
+function NotificationCard({
+  notification,
+  onOpen,
+}: {
+  notification: NotificationItem;
+  onOpen: (notificationId: string) => Promise<void>;
+}) {
   return (
     <Link
       href={notification.href}
+      onClick={() => {
+        if (!notification.read) {
+          void onOpen(notification.id);
+        }
+      }}
       className={`block rounded-2xl border px-4 py-4 transition-colors ${
         notification.read
           ? "border-[var(--border)] bg-[var(--bg-card)]"
@@ -319,6 +376,25 @@ function NotificationCard({ notification }: { notification: NotificationItem }) 
             {!notification.read && <span className="h-2 w-2 rounded-full bg-[var(--gold)]" />}
             <p className="text-sm text-[var(--text-primary)]">{notification.text}</p>
           </div>
+          {(notification.kindLabel || notification.contextTitle) && (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {notification.kindLabel && (
+                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                  {notification.kindLabel}
+                </span>
+              )}
+              {notification.contextTitle && (
+                <span className="rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
+                  {notification.contextTitle}
+                </span>
+              )}
+            </div>
+          )}
+          {notification.preview && (
+            <p className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--text-secondary)]">
+              {notification.preview}
+            </p>
+          )}
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             {formatDate(notification.createdAt)}
           </p>
