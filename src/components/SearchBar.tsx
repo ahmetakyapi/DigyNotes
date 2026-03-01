@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { MagnifyingGlass, X, UserCircle, ArrowLeft } from "@phosphor-icons/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { MagnifyingGlass, X, ArrowLeft, UserCircle } from "@phosphor-icons/react";
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface UserResult {
   id: string;
@@ -16,6 +17,7 @@ interface SearchBarProps {
 
 export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
@@ -121,6 +123,25 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
     setUserResults([]);
   };
 
+  const buildNotesHref = useCallback(
+    (q: string) => {
+      const params =
+        pathname === "/notes"
+          ? new URLSearchParams(searchParams.toString())
+          : new URLSearchParams();
+
+      if (q.trim()) {
+        params.set("q", q.trim());
+      } else {
+        params.delete("q");
+      }
+
+      const nextQuery = params.toString();
+      return nextQuery ? `/notes?${nextQuery}` : "/notes";
+    },
+    [pathname, searchParams]
+  );
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = query.trim();
@@ -133,9 +154,9 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       return;
     }
     if (q) {
-      router.push(`/notes?q=${encodeURIComponent(q)}`);
+      router.push(buildNotesHref(q));
     } else {
-      router.push("/notes");
+      router.push(buildNotesHref(""));
     }
     closeSearch();
   };
@@ -143,7 +164,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const clear = () => {
     setQuery("");
     setUserResults([]);
-    router.push("/notes");
+    router.push(buildNotesHref(""));
     closeSearch();
   };
 
@@ -197,12 +218,14 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-raised)] active:opacity-80"
               >
                 <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)]">
-                  {u.avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={u.avatarUrl} alt={u.name} className="h-full w-full object-cover" />
-                  ) : (
-                    u.name.charAt(0).toUpperCase()
-                  )}
+                  <AvatarImage
+                    src={u.avatarUrl}
+                    alt={u.name}
+                    name={u.name}
+                    size={28}
+                    className="h-full w-full object-cover"
+                    textClassName="text-xs font-bold text-[var(--gold)]"
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">

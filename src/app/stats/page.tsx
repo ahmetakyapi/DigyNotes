@@ -4,6 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getCategoryLabel } from "@/lib/categories";
 import {
+  getActiveMonthCount,
+  getRecentMomentum,
+  getShareLabel,
+  getSparseDataLabel,
+  getTopItem,
+} from "@/lib/stats-insights";
+import {
   ResponsiveContainer,
   AreaChart,
   Area,
@@ -77,6 +84,10 @@ export default function PersonalStatsPage() {
       ? data.monthlySeries.reduce((best, item) => (item.count > best.count ? item : best))
       : null;
   const topStatus = data?.statuses[0];
+  const activeMonths = data ? getActiveMonthCount(data.monthlySeries) : 0;
+  const recentMomentum = data ? getRecentMomentum(data.monthlySeries) : null;
+  const topTag = data ? getTopItem(data.topTags) : null;
+  const sparseDataLabel = data ? getSparseDataLabel(data.kpis.totalPosts, activeMonths) : null;
 
   if (loading) {
     return (
@@ -149,7 +160,8 @@ export default function PersonalStatsPage() {
             Henüz analiz edilecek not yok.
           </p>
           <p className="mt-2 text-sm text-[var(--text-muted)]">
-            İlk notunu eklediğinde kategori, puan ve ritim trendleri burada görünür.
+            İlk notunu eklediğinde kategori, puan ve ritim trendleri burada görünür. Notlara puan,
+            durum ve etiket ekledikçe özetler daha anlamlı hale gelir.
           </p>
           <Link
             href="/new-post"
@@ -160,6 +172,74 @@ export default function PersonalStatsPage() {
         </div>
       ) : (
         <>
+          <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(104,136,192,0.08),rgba(12,18,31,0.92))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+            <div className="max-w-3xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
+                Arşiv okuması
+              </p>
+              <h2 className="mt-3 text-xl font-semibold text-[var(--text-primary)] sm:text-2xl">
+                Arşivin şu anda en çok{" "}
+                {topCategory ? getCategoryLabel(topCategory.name).toLowerCase() : "tek bir alana"}{" "}
+                yaslanıyor.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                {strongestMonth
+                  ? `${strongestMonth.month} döneminde ${strongestMonth.count} notla en yüksek üretim ritmine ulaşmışsın.`
+                  : "Aylık ritim için daha fazla veriye ihtiyaç var."}{" "}
+                {topTag
+                  ? `En sık döndüğün etiket ise #${topTag.name}.`
+                  : "Etiket kullanımı arttıkça tematik desenler burada daha net görünür."}
+              </p>
+            </div>
+            <div className="mt-5 grid gap-3 lg:grid-cols-3">
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.45)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Ritim
+                </p>
+                <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                  {activeMonths}/12 ay aktif
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+                  {recentMomentum?.label ??
+                    "Aylık seri uzadıkça tempo değişimi daha okunur hale gelir."}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.45)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Fokus
+                </p>
+                <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                  {topCategory
+                    ? `${getCategoryLabel(topCategory.name)} ${getShareLabel(topCategory.count, data.kpis.totalPosts)}`
+                    : "-"}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+                  {topCategory
+                    ? `${topCategory.count} not ile arşivin baskın yönünü oluşturuyor.`
+                    : "Kategori trendi için yeterli veri yok."}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.45)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Alışkanlık
+                </p>
+                <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                  %{ratedShare} puanlı
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+                  {topStatus
+                    ? `En sık durum ${topStatus.name.toLowerCase()}.`
+                    : "Durum ve puan bilgisi arşivin değerlendirme alışkanlığını gösterir."}
+                </p>
+              </div>
+            </div>
+            {sparseDataLabel && (
+              <div className="mt-4 rounded-2xl border border-dashed border-[var(--border)] px-4 py-3 text-xs leading-5 text-[var(--text-muted)]">
+                {sparseDataLabel}
+              </div>
+            )}
+          </div>
+
           <div className="mb-6 grid gap-3 lg:grid-cols-3">
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
@@ -327,9 +407,11 @@ export default function PersonalStatsPage() {
                     En Aktif Etiketler
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {data.topTags.length === 0 ? (
-                      <span className="text-xs text-[var(--text-muted)]">Henüz etiket yok</span>
-                    ) : (
+                {data.topTags.length === 0 ? (
+                      <span className="text-xs text-[var(--text-muted)]">
+                        Henüz etiket yok. Etiket ekledikçe tekrar eden temalar burada görünür.
+                      </span>
+                ) : (
                       data.topTags.map((tag) => (
                         <span
                           key={tag.name}

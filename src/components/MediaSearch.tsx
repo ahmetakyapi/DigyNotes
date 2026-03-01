@@ -297,23 +297,25 @@ export function MediaSearch({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const skipNextSearchRef = useRef(false);
+  const requestSequenceRef = useRef(0);
 
-  const handleTabChange = (tab: SearchTab) => {
+  const handleTabChange = useCallback((tab: SearchTab) => {
+    requestSequenceRef.current += 1;
     setActiveTab(tab);
     setQuery("");
     setResults([]);
     setIsOpen(false);
     setHighlighted(-1);
+    setIsLoading(false);
     setTimeout(() => inputRef.current?.focus(), 50);
-  };
+  }, []);
 
   // lockedTab değişince tab'i güncelle
   useEffect(() => {
     if (lockedTab) {
       handleTabChange(lockedTab);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lockedTab]);
+  }, [lockedTab, handleTabChange]);
 
   // Kategori değişince (lockedTab yoksa) uygun tabı aç
   useEffect(() => {
@@ -322,13 +324,14 @@ export function MediaSearch({
     if (newTab !== activeTab) {
       handleTabChange(newTab);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
+  }, [category, lockedTab, activeTab, handleTabChange]);
 
   useEffect(() => {
     if (!query.trim() || query.length < 2) {
+      requestSequenceRef.current += 1;
       setResults([]);
       setIsOpen(false);
+      setIsLoading(false);
       return;
     }
 
@@ -338,19 +341,30 @@ export function MediaSearch({
     }
 
     // Gezi için Nominatim: min 3 karakter
-    if (activeTab === "gezi" && query.trim().length < 3) return;
+    if (activeTab === "gezi" && query.trim().length < 3) {
+      requestSequenceRef.current += 1;
+      setResults([]);
+      setIsOpen(false);
+      setIsLoading(false);
+      return;
+    }
 
+    const nextRequestId = requestSequenceRef.current + 1;
+    requestSequenceRef.current = nextRequestId;
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
         const found = await searchMedia(query, activeTab);
+        if (requestSequenceRef.current !== nextRequestId) return;
         setResults(found);
         setIsOpen(found.length > 0);
         setHighlighted(-1);
       } catch {
+        if (requestSequenceRef.current !== nextRequestId) return;
         setResults([]);
         setIsOpen(false);
       } finally {
+        if (requestSequenceRef.current !== nextRequestId) return;
         setIsLoading(false);
       }
     }, 400);
@@ -370,7 +384,9 @@ export function MediaSearch({
 
   const handleSelect = useCallback(
     async (item: MediaSearchResult) => {
+      requestSequenceRef.current += 1;
       setIsSelecting(true);
+      setIsLoading(false);
       setIsOpen(false);
       setResults([]);
       skipNextSearchRef.current = true;
@@ -499,7 +515,7 @@ export function MediaSearch({
           >
             {results.map((item, i) => (
               <div
-                key={i}
+                key={item.externalId ?? `${item.title}-${item.years}-${i}`}
                 onMouseEnter={() => setHighlighted(i)}
                 className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${
                   highlighted === i ? "bg-[var(--bg-raised)]" : "hover:bg-[var(--bg-raised)]"

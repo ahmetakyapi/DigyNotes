@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -17,12 +17,18 @@ import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import TagInput from "@/components/TagInput";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import toast from "react-hot-toast";
-import { ClientApiError, getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { customLoader } from "@/lib/image";
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { CATEGORY_EXAMPLE_TAGS, categorySupportsSpoiler } from "@/lib/post-config";
+import {
+  detectImagePosition,
+  getPostCategoryFormConfig,
+  syncPostCategoryDependentFields,
+} from "@/lib/post-form";
+import { stripHtml } from "@/lib/text";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-const customLoader = ({ src }: { src: string }) => src;
 
 const inputBase =
   "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[#c4a24b]/20";
@@ -31,73 +37,30 @@ const labelClass =
 const sectionClass =
   "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5 sm:p-4 xl:p-5";
 
-const CATEGORY_CONFIG: Record<
-  string,
-  {
-    showCreator: boolean;
-    creatorLabel: string;
-    yearsLabel: string;
-    yearsPlaceholder: string;
-    yearsRequired: boolean;
-    creatorRequired: boolean;
-  }
-> = {
-  movies: {
-    showCreator: true,
-    creatorLabel: "Yönetmen",
-    yearsLabel: "Yıl",
-    yearsPlaceholder: "2024",
-    yearsRequired: true,
-    creatorRequired: true,
-  },
-  series: {
-    showCreator: true,
-    creatorLabel: "Yönetmen / Yapımcı",
-    yearsLabel: "Yayın Yılları",
-    yearsPlaceholder: "2020-2023",
-    yearsRequired: true,
-    creatorRequired: true,
-  },
-  game: {
-    showCreator: true,
-    creatorLabel: "Geliştirici",
-    yearsLabel: "Yıl",
-    yearsPlaceholder: "2024",
-    yearsRequired: true,
-    creatorRequired: true,
-  },
-  book: {
-    showCreator: true,
-    creatorLabel: "Yazar",
-    yearsLabel: "Yıl",
-    yearsPlaceholder: "2024",
-    yearsRequired: true,
-    creatorRequired: true,
-  },
-  travel: {
-    showCreator: false,
-    creatorLabel: "",
-    yearsLabel: "Ziyaret Tarihi",
-    yearsPlaceholder: "2024",
-    yearsRequired: false,
-    creatorRequired: false,
-  },
-  other: {
-    showCreator: true,
-    creatorLabel: "Kaynak / Kişi",
-    yearsLabel: "Yıl",
-    yearsPlaceholder: "2024",
-    yearsRequired: false,
-    creatorRequired: false,
-  },
-};
-
-function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, "").trim();
+function createEditSnapshot(input: {
+  title: string;
+  category: string;
+  rating: number;
+  status: string;
+  hasSpoiler: boolean;
+  lat: number | null;
+  lng: number | null;
+  image: string;
+  content: string;
+  creator: string;
+  years: string;
+  locationLabel: string;
+  tags: string[];
+  externalRating: number | null;
+  imagePosition: string;
+}) {
+  return JSON.stringify(input);
 }
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const initialSnapshotRef = useRef("");
   const [loading, setLoading] = useState(true);
   const [originalCategory, setOriginalCategory] = useState("");
 
@@ -121,7 +84,24 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [isDirty, setIsDirty] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
-  const config = CATEGORY_CONFIG[category] ?? CATEGORY_CONFIG["other"];
+  const config = getPostCategoryFormConfig(category);
+  const currentSnapshot = createEditSnapshot({
+    title,
+    category,
+    rating,
+    status,
+    hasSpoiler,
+    lat,
+    lng,
+    image,
+    content,
+    creator,
+    years,
+    locationLabel,
+    tags,
+    externalRating,
+    imagePosition,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -140,11 +120,30 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         if (cancelled) return;
 
         const normalizedCategory = normalizeCategory(post.category);
+        const nextStatus = post.status ?? getStatusOptions(normalizedCategory)[0];
+        const nextSnapshot = createEditSnapshot({
+          title: post.title,
+          category: normalizedCategory,
+          rating: post.rating ?? 0,
+          status: nextStatus,
+          hasSpoiler: Boolean(post.hasSpoiler) && categorySupportsSpoiler(normalizedCategory),
+          lat: post.lat ?? null,
+          lng: post.lng ?? null,
+          image: post.image,
+          content: post.content,
+          creator: post.creator ?? "",
+          years: post.years ?? "",
+          locationLabel: post.title,
+          tags: (post.tags ?? []).map((tag) => tag.name),
+          externalRating: post.externalRating ?? null,
+          imagePosition: post.imagePosition ?? "center",
+        });
+
         setTitle(post.title);
         setCategory(normalizedCategory);
         setOriginalCategory(normalizedCategory);
         setRating(post.rating ?? 0);
-        setStatus(post.status ?? getStatusOptions(normalizedCategory)[0]);
+        setStatus(nextStatus);
         setHasSpoiler(Boolean(post.hasSpoiler) && categorySupportsSpoiler(normalizedCategory));
         setLat(post.lat ?? null);
         setLng(post.lng ?? null);
@@ -156,6 +155,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setImagePosition(post.imagePosition ?? "center");
         setTags((post.tags ?? []).map((t) => t.name));
         setExternalRating(post.externalRating ?? null);
+        initialSnapshotRef.current = nextSnapshot;
+        setIsDirty(false);
       } catch (error) {
         if (!cancelled) {
           setLoadError(getClientErrorMessage(error, "İçerik yüklenemedi."));
@@ -174,10 +175,30 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     };
   }, [params.id]);
 
-  // Kaydedilmemiş değişiklik uyarısı
+  useEffect(() => {
+    if (loading || !initialSnapshotRef.current) return;
+    setIsDirty(initialSnapshotRef.current !== currentSnapshot);
+  }, [currentSnapshot, loading]);
+
+  const confirmDiscardChanges = useCallback(() => {
+    if (!isDirty || isSubmitting) return true;
+
+    return window.confirm(
+      "Kaydedilmemiş değişikliklerin var. Sayfadan çıkarsan düzenlemelerin kaybolacak. Devam etmek istiyor musun?"
+    );
+  }, [isDirty, isSubmitting]);
+
+  const navigateWithDirtyCheck = useCallback(
+    (navigate: () => void) => {
+      if (!confirmDiscardChanges()) return;
+      navigate();
+    },
+    [confirmDiscardChanges]
+  );
+
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
+      if (isDirty && !isSubmitting) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -187,17 +208,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   }, [isDirty]);
 
   // Auto-detect image position based on aspect ratio
-  function detectImagePosition(url: string, cb: (pos: string, landscape: boolean) => void) {
-    const img = new window.Image();
-    img.onload = () => {
-      const ratio = img.naturalWidth / img.naturalHeight;
-      const landscape = ratio > 1.35;
-      cb(landscape ? "center 25%" : "center", landscape);
-    };
-    img.onerror = () => cb("center", false);
-    img.src = url;
-  }
-
   useEffect(() => {
     if (!image) return;
     const timer = setTimeout(() => {
@@ -209,25 +219,76 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     return () => clearTimeout(timer);
   }, [image]);
 
-  const markDirty = () => {
-    if (!isDirty) setIsDirty(true);
-  };
+  useEffect(() => {
+    if (!isDirty || isSubmitting) return;
+
+    const handleClickCapture = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const target = event.target as HTMLElement | null;
+      const link = target?.closest("a[href]") as HTMLAnchorElement | null;
+      if (!link) return;
+      if (link.target && link.target !== "_self") return;
+
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
+        return;
+      }
+
+      const nextUrl = new URL(link.href, window.location.href);
+      const currentUrl = new URL(window.location.href);
+      if (nextUrl.origin !== currentUrl.origin) return;
+      if (nextUrl.pathname === currentUrl.pathname && nextUrl.search === currentUrl.search) return;
+
+      if (!confirmDiscardChanges()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    const handleSubmitCapture = (event: Event) => {
+      const submittedForm = event.target as HTMLFormElement | null;
+      if (!submittedForm || submittedForm === formRef.current) return;
+
+      if (!confirmDiscardChanges()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    const handlePopState = () => {
+      if (confirmDiscardChanges()) return;
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    document.addEventListener("click", handleClickCapture, true);
+    document.addEventListener("submit", handleSubmitCapture, true);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      document.removeEventListener("click", handleClickCapture, true);
+      document.removeEventListener("submit", handleSubmitCapture, true);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [confirmDiscardChanges, isDirty, isSubmitting]);
 
   const handleCategoryChange = (cat: string) => {
+    const nextFields = syncPostCategoryDependentFields(cat, {
+      creator,
+      hasSpoiler,
+      lat,
+      lng,
+      locationLabel,
+    });
+
     setCategory(cat);
-    const opts = getStatusOptions(cat);
-    setStatus(opts[0]);
-    if (!categorySupportsSpoiler(cat)) {
-      setHasSpoiler(false);
-    }
-    if (isTravelCategory(cat)) {
-      setCreator("");
-    } else {
-      setLat(null);
-      setLng(null);
-      setLocationLabel("");
-    }
-    markDirty();
+    setStatus(getStatusOptions(cat)[0]);
+    setHasSpoiler(nextFields.hasSpoiler);
+    setCreator(nextFields.creator);
+    setLat(nextFields.lat);
+    setLng(nextFields.lng);
+    setLocationLabel(nextFields.locationLabel);
   };
 
   const handlePlaceSelect = (place: PlaceResult) => {
@@ -243,7 +304,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setLat(Number.parseFloat(place.lat));
     setLng(Number.parseFloat(place.lon));
     setLocationLabel(place.display_name);
-    markDirty();
     toast.success("Konum güncellendi");
   };
 
@@ -290,17 +350,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         },
         "Değişiklikler kaydedilemedi."
       );
+      initialSnapshotRef.current = currentSnapshot;
       setIsDirty(false);
       toast.success("Değişiklikler kaydedildi!");
-      router.push(`/posts/${params.id}`);
+      navigateWithDirtyCheck(() => router.push(`/posts/${params.id}`));
     } catch (error) {
       const message = getClientErrorMessage(error, "Değişiklikler kaydedilemedi.");
       setSubmitError(message);
       toast.error(message);
-
-      if (error instanceof ClientApiError && error.status === 401) {
-        router.push("/login");
-      }
     } finally {
       setIsSubmitting(false);
     }
@@ -395,7 +452,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </div>
             <button
               type="button"
-              onClick={() => router.push(`/category/${encodeURIComponent(originalCategory)}`)}
+              onClick={() =>
+                navigateWithDirtyCheck(() =>
+                  router.push(`/category/${encodeURIComponent(originalCategory)}`)
+                )
+              }
               className="flex-shrink-0 whitespace-nowrap text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
             >
               ← {originalCategory ? getCategoryLabel(originalCategory) : "Geri"}
@@ -409,7 +470,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           </div>
         )}
 
-        <form className="grid items-start gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]">
+        <form
+          ref={formRef}
+          className="grid items-start gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]"
+        >
           {/* ── Sol kolon: meta + etiketler + içerik ── */}
           <div className="min-w-0 space-y-3.5 sm:space-y-4">
             <div className={sectionClass}>
@@ -419,10 +483,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   <input
                     type="text"
                     value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                      markDirty();
-                    }}
+                    onChange={(e) => setTitle(e.target.value)}
                     className={inputClass}
                     required
                   />
@@ -445,10 +506,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   <label className={labelClass}>Durum</label>
                   <select
                     value={status}
-                    onChange={(e) => {
-                      setStatus(e.target.value);
-                      markDirty();
-                    }}
+                    onChange={(e) => setStatus(e.target.value)}
                     className={inputClass}
                   >
                     {statusOptions.map((s) => (
@@ -467,10 +525,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                     <input
                       type="text"
                       value={creator}
-                      onChange={(e) => {
-                        setCreator(e.target.value);
-                        markDirty();
-                      }}
+                      onChange={(e) => setCreator(e.target.value)}
                       className={inputClass}
                       placeholder="—"
                       required={config.creatorRequired}
@@ -485,10 +540,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   <input
                     type="text"
                     value={years}
-                    onChange={(e) => {
-                      setYears(e.target.value);
-                      markDirty();
-                    }}
+                    onChange={(e) => setYears(e.target.value)}
                     className={inputClass}
                     placeholder={config.yearsPlaceholder}
                     required={config.yearsRequired}
@@ -543,7 +595,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           onClick={() => {
                             if (isAdded || tags.length >= 10) return;
                             setTags((prev) => [...prev, tagName]);
-                            markDirty();
                           }}
                           disabled={isAdded || tags.length >= 10}
                           className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
@@ -557,13 +608,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                       );
                     })}
                   </div>
-                  <TagInput
-                    value={tags}
-                    onChange={(t) => {
-                      setTags(t);
-                      markDirty();
-                    }}
-                  />
+                  <TagInput value={tags} onChange={setTags} />
                 </div>
               </div>
             </div>
@@ -571,14 +616,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <div className={sectionClass}>
               <label className={labelClass}>İçerik</label>
               <div className="dn-compose-editor overflow-hidden rounded-lg border border-[var(--border)]">
-                <ReactQuill
-                  theme="snow"
-                  value={content}
-                  onChange={(v) => {
-                    setContent(v);
-                    markDirty();
-                  }}
-                />
+                <ReactQuill theme="snow" value={content} onChange={setContent} />
               </div>
             </div>
           </div>
@@ -622,10 +660,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               <input
                 type="url"
                 value={image}
-                onChange={(e) => {
-                  setImage(e.target.value);
-                  markDirty();
-                }}
+                onChange={(e) => setImage(e.target.value)}
                 className={inputClass}
               />
               {image && (
@@ -689,25 +724,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <div className={sectionClass}>
               <label className={labelClass}>Puan</label>
               <div className="mt-1 flex flex-wrap items-center gap-3">
-                <StarRating
-                  rating={rating}
-                  interactive
-                  onRate={(r) => {
-                    setRating(r);
-                    markDirty();
-                  }}
-                  size={24}
-                />
+                <StarRating rating={rating} interactive onRate={setRating} size={24} />
                 <span className="text-sm text-[var(--text-secondary)]">
                   {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setRating(0);
-                      markDirty();
-                    }}
+                    onClick={() => setRating(0)}
                     className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
                   >
                     Sıfırla
@@ -723,10 +747,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   <input
                     type="checkbox"
                     checked={hasSpoiler}
-                    onChange={(e) => {
-                      setHasSpoiler(e.target.checked);
-                      markDirty();
-                    }}
+                    onChange={(e) => setHasSpoiler(e.target.checked)}
                     className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--gold)] focus:ring-[var(--gold)]"
                   />
                   <span className="min-w-0">
@@ -762,7 +783,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           <div className="flex w-full flex-shrink-0 items-center gap-2 sm:w-auto">
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={() => navigateWithDirtyCheck(() => router.back())}
               className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
             >
               İptal

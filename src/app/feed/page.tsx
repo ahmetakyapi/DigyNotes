@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowsClockwise,
@@ -14,20 +13,32 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { Post } from "@/types";
+import { AvatarImage } from "@/components/AvatarImage";
+import { ResilientImage } from "@/components/ResilientImage";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
-
-const customLoader = ({ src }: { src: string }) => src;
 
 export default function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [empty, setEmpty] = useState(false);
+  const [requiresLogin, setRequiresLogin] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     fetch("/api/feed")
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (r.status === 401) {
+          setRequiresLogin(true);
+          return [];
+        }
+        if (!r.ok) {
+          setLoadFailed(true);
+          return [];
+        }
+        return r.json();
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setPosts(data);
@@ -35,7 +46,10 @@ export default function FeedPage() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoadFailed(true);
+        setLoading(false);
+      });
   }, []);
 
   const uniqueAuthors = new Set(posts.map((post) => post.user?.id).filter(Boolean)).size;
@@ -55,6 +69,33 @@ export default function FeedPage() {
               className="h-48 animate-pulse rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
+        </div>
+      ) : requiresLogin ? (
+        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
+            <UsersThree size={28} weight="duotone" />
+          </div>
+          <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
+            Akışı görmek için giriş yap
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
+            Burası takip ettiğin kişilerin en yeni notları için ayrıldı. Giriş yaptığında akış,
+            kronolojik olarak kimden ne geldiğini gösterecek.
+          </p>
+          <Link
+            href="/login"
+            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+          >
+            Giriş yap
+          </Link>
+        </div>
+      ) : loadFailed ? (
+        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Akış yüklenemedi</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
+            Takip akışını şu anda getiremedik. Biraz sonra yeniden deneyebilir veya Keşfet
+            yüzeyinden yeni içeriklere dönebilirsin.
+          </p>
         </div>
       ) : empty ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
@@ -88,6 +129,32 @@ export default function FeedPage() {
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
               Takip ettiğin kişilerden gelen en yeni notlar burada görünür.
             </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Buradaki mantık
+                </p>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                  Takip ilişkisine göre kronolojik akış.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Ne zaman kullanılır?
+                </p>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                  Kimleri takip ettiğini zaten biliyorsan.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Sonraki aksiyon
+                </p>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                  Notu aç, profili ziyaret et, sonra Keşfet'e genişle.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -160,18 +227,14 @@ function FeedCard({ post }: { post: Post }) {
       {post.user && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-4">
           <div className="bg-[#c4a24b]/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-[#c4a24b]">
-            {post.user.avatarUrl ? (
-              <Image
-                loader={customLoader}
-                src={post.user.avatarUrl}
-                alt={post.user.name}
-                width={40}
-                height={40}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              post.user.name.charAt(0).toUpperCase()
-            )}
+            <AvatarImage
+              src={post.user.avatarUrl}
+              alt={post.user.name}
+              name={post.user.name}
+              size={40}
+              className="h-full w-full object-cover"
+              textClassName="text-sm font-bold text-[#c4a24b]"
+            />
           </div>
           <div className="min-w-0">
             <span className="block truncate text-sm font-semibold text-[var(--text-primary)]">
@@ -193,8 +256,7 @@ function FeedCard({ post }: { post: Post }) {
       <Link href={`/posts/${post.id}`} className="block p-5">
         <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
           <div className="relative h-52 overflow-hidden rounded-[24px] bg-[var(--bg-raised)]">
-            <Image
-              loader={customLoader}
+            <ResilientImage
               src={getPostImageSrc(post.image)}
               alt={displayTitle}
               fill
@@ -235,7 +297,7 @@ function FeedCard({ post }: { post: Post }) {
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-              <p className="text-xs text-[var(--text-faint)]">Not detayına git</p>
+              <p className="text-xs text-[var(--text-faint)]">Takip akışından nota geç</p>
               <span className="text-xs font-medium text-[var(--gold)]">Aç →</span>
             </div>
           </div>

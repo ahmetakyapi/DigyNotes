@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Collection } from "@/types";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
-
-const customLoader = ({ src }: { src: string }) => src;
+import { ResilientImage } from "@/components/ResilientImage";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR", {
@@ -39,14 +37,12 @@ export default function CollectionCard({
           <div className="grid h-full grid-cols-3 gap-px bg-[var(--border)]">
             {previewPosts.map((post) => (
               <div key={post.id} className="relative h-full overflow-hidden bg-[var(--bg-raised)]">
-                <Image
-                  loader={customLoader}
+                <ResilientImage
                   src={getPostImageSrc(post.image)}
                   alt={formatDisplayTitle(post.title)}
                   fill
                   sizes="240px"
                   className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  unoptimized
                 />
               </div>
             ))}

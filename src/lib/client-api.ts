@@ -10,6 +10,10 @@ export class ClientApiError extends Error {
   }
 }
 
+function isStatusMatch(status: number, expected: number | number[]) {
+  return Array.isArray(expected) ? expected.includes(status) : status === expected;
+}
+
 function normalizeApiMessage(message: string, status: number, fallbackMessage: string) {
   const trimmed = message.trim();
   if (!trimmed) return fallbackMessage;
@@ -84,6 +88,21 @@ export async function requestJson<T>(
   }
 
   return payload as T;
+}
+
+export function isClientApiError(
+  error: unknown,
+  expectedStatus?: number | number[]
+): error is ClientApiError {
+  if (!(error instanceof ClientApiError)) {
+    return false;
+  }
+
+  return expectedStatus === undefined ? true : isStatusMatch(error.status, expectedStatus);
+}
+
+export function isAuthenticationError(error: unknown) {
+  return isClientApiError(error, 401);
 }
 
 export function getClientErrorMessage(error: unknown, fallbackMessage = "Bir hata oluştu.") {

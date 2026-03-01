@@ -40,7 +40,37 @@ async function fetchPaginated(url: string): Promise<PaginatedPostsResponse> {
   };
 }
 
-export default function NotesPageClient({ initialQuery }: { initialQuery: string }) {
+interface NotesPageClientProps {
+  initialQuery: string;
+  initialCategory: string;
+  initialTags: string[];
+  initialTab: "notlar" | "kaydedilenler";
+}
+
+function buildPostsUrl(query: string, category: string, tags: string[], cursor?: string | null) {
+  const params = new URLSearchParams({
+    paginate: "1",
+    limit: String(PAGE_SIZE),
+  });
+
+  const trimmedQuery = query.trim();
+  const trimmedCategory = category.trim();
+  const normalizedTags = tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean);
+
+  if (trimmedQuery) params.set("q", trimmedQuery);
+  if (trimmedCategory) params.set("category", trimmedCategory);
+  if (normalizedTags.length > 0) params.set("tags", normalizedTags.join(","));
+  if (cursor) params.set("cursor", cursor);
+
+  return `/api/posts?${params.toString()}`;
+}
+
+export default function NotesPageClient({
+  initialQuery,
+  initialCategory,
+  initialTags,
+  initialTab,
+}: NotesPageClientProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [postsCursor, setPostsCursor] = useState<string | null>(null);
@@ -61,10 +91,8 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
       setPostsError(null);
       setSavedError(null);
 
-      const queryParam = initialQuery.trim() ? `&q=${encodeURIComponent(initialQuery.trim())}` : "";
-
       const [postsResult, savedResult] = await Promise.allSettled([
-        fetchPaginated(`/api/posts?paginate=1&limit=${PAGE_SIZE}${queryParam}`),
+        fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags)),
         fetchPaginated(`/api/bookmarks?paginate=1&limit=${PAGE_SIZE}`),
       ]);
 
@@ -98,16 +126,15 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
     return () => {
       cancelled = true;
     };
-  }, [initialQuery]);
+  }, [initialCategory, initialQuery, initialTags]);
 
   const loadMorePosts = async () => {
     if (!postsCursor || loadingMorePosts) return;
 
     setLoadingMorePosts(true);
     try {
-      const queryParam = initialQuery.trim() ? `&q=${encodeURIComponent(initialQuery.trim())}` : "";
       const data = await fetchPaginated(
-        `/api/posts?paginate=1&limit=${PAGE_SIZE}&cursor=${encodeURIComponent(postsCursor)}${queryParam}`
+        buildPostsUrl(initialQuery, initialCategory, initialTags, postsCursor)
       );
 
       setPosts((prev) => mergePosts(prev, data.items));
@@ -157,6 +184,9 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
 
   if (posts.length === 0 && savedPosts.length === 0) {
     const hasQuery = initialQuery.trim().length > 0;
+    const hasCategory = initialCategory.trim().length > 0;
+    const hasTags = initialTags.length > 0;
+    const hasFilterPath = hasQuery || hasCategory || hasTags;
 
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
@@ -174,15 +204,15 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
           </svg>
         </div>
         <p className="mb-2 text-base text-[var(--text-muted)]">
-          {hasQuery ? `"${initialQuery}" için sonuç bulunamadı.` : "Henüz not eklenmemiş."}
+          {hasFilterPath ? "Aradığın filtre yolunda sonuç bulunamadı." : "Henüz not eklenmemiş."}
         </p>
         <p className="mb-4 max-w-md text-sm text-[var(--text-muted)]">
-          {hasQuery
+          {hasFilterPath
             ? "Aramayı sadeleştirip tekrar deneyebilir veya yeni bir not oluşturabilirsin."
             : "İlk notunu oluşturarak akışı başlatabilirsin."}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          {hasQuery && (
+          {hasFilterPath && (
             <Link
               href="/notes"
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:text-[var(--gold)]"
@@ -194,7 +224,7 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
             href="/new-post"
             className="rounded-lg bg-[#c4a24b] px-5 py-2.5 text-sm font-semibold text-[#0f1117] transition-colors hover:bg-[#d7ba68]"
           >
-            {hasQuery ? "Yeni not ekle" : "İlk notu ekle"}
+            {hasFilterPath ? "Yeni not ekle" : "İlk notu ekle"}
           </Link>
         </div>
       </div>
@@ -216,7 +246,11 @@ export default function NotesPageClient({ initialQuery }: { initialQuery: string
       </div>
 
       <PostsList
+        initialActiveCategory={initialCategory}
+        initialActiveTab={initialTab}
+        initialActiveTags={initialTags}
         allPosts={posts}
+        searchQuery={initialQuery}
         savedPosts={savedPosts}
         hasMorePosts={postsCursor !== null}
         hasMoreSavedPosts={savedCursor !== null}

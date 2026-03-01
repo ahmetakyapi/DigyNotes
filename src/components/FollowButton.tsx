@@ -1,46 +1,70 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
 
 interface Props {
   username: string;
   initialIsFollowing: boolean;
   onFollowChange?: (isFollowing: boolean) => void;
+  size?: "md" | "sm";
 }
 
-export default function FollowButton({ username, initialIsFollowing, onFollowChange }: Props) {
+export default function FollowButton({
+  username,
+  initialIsFollowing,
+  onFollowChange,
+  size = "md",
+}: Props) {
+  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setIsFollowing(initialIsFollowing);
+  }, [initialIsFollowing]);
 
   const handleClick = async () => {
     setLoading(true);
     try {
       const method = isFollowing ? "DELETE" : "POST";
-      const res = await fetch("/api/follows", {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-      });
-      if (res.ok) {
-        const next = !isFollowing;
-        setIsFollowing(next);
-        onFollowChange?.(next);
-        toast.success(isFollowing ? "Takip bırakıldı" : "Takip edildi");
-      } else {
-        toast.error("Bir hata oluştu");
+      await requestJson<{ success: boolean }>(
+        "/api/follows",
+        {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        },
+        "Takip işlemi tamamlanamadı."
+      );
+
+      const next = !isFollowing;
+      setIsFollowing(next);
+      onFollowChange?.(next);
+      toast.success(next ? `@${username} takip edildi` : `@${username} takipten çıkarıldı`);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Takip işlemi tamamlanamadı."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
       }
-    } catch {
-      toast.error("Bir hata oluştu");
     } finally {
       setLoading(false);
     }
   };
 
+  const sizeClassName = size === "sm" ? "px-3 py-1.5 text-xs" : "px-5 py-2 text-sm";
+
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
-      className={`rounded-lg border px-5 py-2 text-sm font-semibold transition-all disabled:opacity-50 ${
+      className={`rounded-lg border font-semibold transition-all disabled:opacity-50 ${sizeClassName} ${
         isFollowing
           ? "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#e53e3e]/60 hover:text-[#e53e3e]"
           : "border-[#c4a24b]/60 bg-[#c4a24b]/10 text-[#c4a24b] hover:bg-[#c4a24b]/20"
@@ -66,7 +90,7 @@ export default function FollowButton({ username, initialIsFollowing, onFollowCha
           {isFollowing ? "Bırakılıyor..." : "Takip ediliyor..."}
         </span>
       ) : isFollowing ? (
-        "Takip Ediliyor"
+        "Takipte"
       ) : (
         "Takip Et"
       )}

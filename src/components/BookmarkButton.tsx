@@ -6,6 +6,12 @@ import { useSession } from "next-auth/react";
 import { BookmarkSimple } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 import { ActionTooltip } from "@/components/ActionTooltip";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
+import { ORGANIZATION_SURFACES } from "@/lib/organization";
 
 interface BookmarkButtonProps {
   postId: string;
@@ -47,6 +53,7 @@ export function BookmarkButton({
 
   const handleToggle = async () => {
     if (!currentUserId) {
+      toast.error("Bu işlem için giriş yapman gerekiyor.");
       router.push("/login");
       return;
     }
@@ -58,27 +65,36 @@ export function BookmarkButton({
     setLoading(true);
 
     try {
-      const response = await fetch("/api/bookmarks", {
-        method: nextState ? "POST" : "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postId }),
-      });
+      await requestJson<{ bookmarked: boolean }>(
+        "/api/bookmarks",
+        {
+          method: nextState ? "POST" : "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postId }),
+        },
+        `${ORGANIZATION_SURFACES.bookmarks.label} işlemi tamamlanamadı.`
+      );
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => null);
-        throw new Error(error?.error || "İşlem başarısız");
-      }
-
-      toast.success(nextState ? "Kaydedildi" : "Kayıttan kaldırıldı");
+      toast.success(
+        nextState
+          ? `${ORGANIZATION_SURFACES.bookmarks.label} alanına eklendi`
+          : `${ORGANIZATION_SURFACES.bookmarks.label} alanından çıkarıldı`
+      );
     } catch (error) {
       setBookmarked(!nextState);
-      toast.error(error instanceof Error ? error.message : "İşlem başarısız");
+      const fallbackMessage = `${ORGANIZATION_SURFACES.bookmarks.label} işlemi tamamlanamadı.`;
+      toast.error(getClientErrorMessage(error, fallbackMessage));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const tooltipLabel = bookmarked ? "Kaydedilenlerden kaldır" : "Kaydet";
+  const tooltipLabel = bookmarked
+    ? `${ORGANIZATION_SURFACES.bookmarks.label} alanından çıkar`
+    : `${ORGANIZATION_SURFACES.bookmarks.label} alanına ekle`;
 
   return (
     <ActionTooltip label={tooltipLabel}>
@@ -95,7 +111,13 @@ export function BookmarkButton({
         } ${className}`}
       >
         <BookmarkSimple size={16} weight={bookmarked ? "fill" : "regular"} />
-        {showLabel && <span>{bookmarked ? "Kaydedildi" : "Kaydet"}</span>}
+        {showLabel && (
+          <span>
+            {bookmarked
+              ? `${ORGANIZATION_SURFACES.bookmarks.label}de`
+              : ORGANIZATION_SURFACES.bookmarks.label}
+          </span>
+        )}
       </button>
     </ActionTooltip>
   );

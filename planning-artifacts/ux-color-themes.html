@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DigyNotes UX Color Themes</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07101d;
+        --panel: #10192b;
+        --raised: #1a2540;
+        --border: #273553;
+        --gold: #c6972e;
+        --gold-light: #dfba63;
+        --text: #ecf2ff;
+        --muted: #9aaacd;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(198,151,46,0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(96,128,188,0.14), transparent 30%),
+          var(--bg);
+        color: var(--text);
+      }
+      main { max-width: 1180px; margin: 0 auto; padding: 40px 20px 64px; }
+      h1 { margin: 0 0 10px; font-size: 32px; }
+      p { color: var(--muted); line-height: 1.6; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 28px; }
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(16, 25, 43, 0.92);
+        padding: 20px;
+      }
+      .swatches { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+      .swatch { width: 54px; height: 54px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); }
+      .sample {
+        margin-top: 18px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--panel);
+        padding: 16px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(198,151,46,0.12);
+        border: 1px solid rgba(198,151,46,0.3);
+        color: var(--gold-light);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+      .button {
+        margin-top: 14px;
+        display: inline-block;
+        border-radius: 14px;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, #e7bf5d, #c6972e);
+        color: #1b1307;
+        font-weight: 800;
+      }
+      code { color: var(--gold-light); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DigyNotes Renk Yönleri</h1>
+      <p>
+        Seçilen ana yön: koyu lacivert taban + altın vurgu. Açık tema varyantı aynı kimliği
+        korumalı; ayrı ürün gibi görünmemeli.
+      </p>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Ana Koyu Tema</h2>
+          <p>Varsayılan ürün kimliği. Arşiv, sosyal keşif ve detay ekranları için ana referans.</p>
+          <div class="swatches">
+            <div class="swatch" style="background:#0b1120"></div>
+            <div class="swatch" style="background:#121a2d"></div>
+            <div class="swatch" style="background:#1a2540"></div>
+            <div class="swatch" style="background:#c6972e"></div>
+            <div class="swatch" style="background:#ecf2ff"></div>
+          </div>
+          <div class="sample">
+            <span class="badge">Yeni Not</span>
+            <h3>Yoğun ama sakin arşiv yüzeyi</h3>
+            <p>Not kartları, meta bilgi, puan ve etiketler aynı görsel dilde çalışır.</p>
+            <span class="button">Notu Kaydet</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Açık Tema Varyantı</h2>
+          <p>Kâğıt hissi, sıcak tonlar ve aynı altın vurgu. Kimlik korunur, kontrast yükselir.</p>
+          <div class="swatches">
+            <div class="swatch" style="background:#f5ede0"></div>
+            <div class="swatch" style="background:#fdf7ee"></div>
+            <div class="swatch" style="background:#f1e5d3"></div>
+            <div class="swatch" style="background:#c08a1e"></div>
+            <div class="swatch" style="background:#332415"></div>
+          </div>
+          <div class="sample" style="background:#fdf7ee; color:#332415; border-color:#cfba9b">
+            <span class="badge" style="background:rgba(192,138,30,0.14); border-color:rgba(192,138,30,0.26); color:#8e5e06">Arşiv</span>
+            <h3>Hafif, sıcak ve okunabilir</h3>
+            <p style="color:#674e31">Özellikle gündüz kullanımında yormayan ama karakterli görünüm.</p>
+            <span class="button">Koleksiyona Ekle</span>
+          </div>
+        </section>
+      </div>
+
+      <p style="margin-top:28px">
+        Uygulama kuralı: yeni ekranlarda <code>tailwind default color names</code> yerine ürün
+        değişkenleri veya aynı paletteki özel renkler kullanılmalı.
+      </p>
+    </main>
+  </body>
+  </html>

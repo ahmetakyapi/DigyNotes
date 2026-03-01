@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { stripHtml } from "@/lib/text";
 
 function escapeCsv(value: unknown) {
   const text = String(value ?? "");
@@ -11,11 +12,8 @@ function escapeCsv(value: unknown) {
   return text;
 }
 
-function stripHtml(html: string) {
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+function toReadableText(value: string | null | undefined) {
+  return stripHtml(value ?? "");
 }
 
 export async function GET(request: Request) {
@@ -76,6 +74,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  const safeUsername = user.username?.trim() || user.id;
+  const exportedAt = new Date().toISOString();
+
   if (format === "csv") {
     const header = [
       "id",
@@ -103,8 +104,8 @@ export async function GET(request: Request) {
         post.rating,
         post.status ?? "",
         post.date,
-        post.excerpt,
-        stripHtml(post.content),
+        toReadableText(post.excerpt),
+        toReadableText(post.content),
         post.tags.map((item) => item.tag.name).join("|"),
         post.createdAt.toISOString(),
         post.updatedAt.toISOString(),
@@ -113,23 +114,47 @@ export async function GET(request: Request) {
         .join(",")
     );
 
-    return new NextResponse([header.join(","), ...rows].join("\n"), {
+    return new NextResponse(`\uFEFF${[header.join(","), ...rows].join("\n")}`, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="digynotes-export-${user.username}.csv"`,
+        "Content-Disposition": `attachment; filename="digynotes-export-${safeUsername}.csv"`,
       },
     });
   }
 
   return NextResponse.json(
     {
-      exportedAt: new Date().toISOString(),
+      exportedAt,
+      formatVersion: 2,
+      summary: {
+        noteCount: posts.length,
+        collectionCount: collections.length,
+        wishlistCount: wishlist.length,
+      },
       user: {
         ...user,
         createdAt: user.createdAt.toISOString(),
+        bio: toReadableText(user.bio),
       },
       posts: posts.map((post) => ({
-        ...post,
+        id: post.id,
+        title: post.title,
+        category: post.category,
+        creator: post.creator,
+        years: post.years,
+        rating: post.rating,
+        status: post.status,
+        date: post.date,
+        excerpt: toReadableText(post.excerpt),
+        content: toReadableText(post.content),
+        coverImage: post.image,
+        imagePosition: post.imagePosition,
+        hasSpoiler: post.hasSpoiler,
+        externalRating: post.externalRating,
+        location:
+          typeof post.lat === "number" && typeof post.lng === "number"
+            ? { lat: post.lat, lng: post.lng }
+            : null,
         createdAt: post.createdAt.toISOString(),
         updatedAt: post.updatedAt.toISOString(),
         tags: post.tags.map((item) => item.tag),
@@ -156,7 +181,7 @@ export async function GET(request: Request) {
     },
     {
       headers: {
-        "Content-Disposition": `attachment; filename="digynotes-export-${user.username}.json"`,
+        "Content-Disposition": `attachment; filename="digynotes-export-${safeUsername}.json"`,
       },
     }
   );

@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Heart } from "@phosphor-icons/react";
@@ -22,9 +21,14 @@ import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { addRecentView } from "@/components/RecentlyViewed";
+import { ResilientImage } from "@/components/ResilientImage";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
 import toast from "react-hot-toast";
 
-const customLoader = ({ src }: { src: string }) => src;
 const SPOILER_OVERLAY_STORAGE_KEY = "dn_spoiler_overlay_seen";
 
 interface CommentUser {
@@ -100,6 +104,7 @@ function collectCommentBranchIds(items: Comment[], rootId: string) {
 
 export default function PostDetailClient({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const currentUserId = session?.user ? (session.user as { id: string }).id : null;
 
@@ -123,8 +128,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
+  const [highlightedCommentId, setHighlightedCommentId] = useState<string | null>(null);
+  const [interactionMessage, setInteractionMessage] = useState<{
+    tone: "like" | "comment";
+    text: string;
+  } | null>(null);
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   const replyInputRef = useRef<HTMLTextAreaElement>(null);
+  const interactionTimerRef = useRef<number | null>(null);
 
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -187,6 +198,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   }, [replyingToId]);
 
   useEffect(() => {
+    return () => {
+      if (interactionTimerRef.current) {
+        window.clearTimeout(interactionTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     setIsSpoilerRevealed(false);
     setHasDismissedSpoilerOverlay(false);
 
@@ -228,22 +247,59 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   };
 
   const threadedComments = useMemo(() => buildCommentTree(comments), [comments]);
+  const commentsById = useMemo(() => new Map(comments.map((comment) => [comment.id, comment])), [comments]);
+  const targetCommentId = searchParams.get("comment");
+
+  const showInteractionMessage = (tone: "like" | "comment", text: string) => {
+    setInteractionMessage({ tone, text });
+    if (interactionTimerRef.current) {
+      window.clearTimeout(interactionTimerRef.current);
+    }
+    interactionTimerRef.current = window.setTimeout(() => {
+      setInteractionMessage(null);
+    }, 2600);
+  };
+
+  useEffect(() => {
+    if (!targetCommentId || comments.length === 0) return;
+
+    const element = document.getElementById(`comment-${targetCommentId}`);
+    if (!element) return;
+
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightedCommentId(targetCommentId);
+
+    const timer = window.setTimeout(() => {
+      setHighlightedCommentId((current) => (current === targetCommentId ? null : current));
+    }, 3200);
+
+    return () => window.clearTimeout(timer);
+  }, [comments.length, targetCommentId]);
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
-    const res = await fetch(`/api/posts/${params.id}`, { method: "DELETE" });
-    setIsDeleting(false);
-    setIsModalOpen(false);
-    if (res.ok) {
+    try {
+      await requestJson<{ success: boolean }>(
+        `/api/posts/${params.id}`,
+        { method: "DELETE" },
+        "Not silinemedi."
+      );
+      setIsModalOpen(false);
       toast.success("Not silindi");
       router.push("/notes");
-    } else {
-      toast.error("Silme başarısız");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Not silinemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const toggleLike = async () => {
     if (!session?.user) {
+      toast.error("Beğenmek için giriş yapman gerekiyor.");
       router.push("/login");
       return;
     }
@@ -255,22 +311,22 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       liked: !prev.liked,
     }));
     try {
-      const res = await fetch(`/api/posts/${params.id}/likes`, { method: "POST" });
-      if (res.ok) {
-        const data = await res.json();
-        setLikeData(data);
-      } else {
-        // Revert on error
-        setLikeData((prev) => ({
-          count: prev.liked ? prev.count - 1 : prev.count + 1,
-          liked: !prev.liked,
-        }));
-      }
-    } catch {
+      const data = await requestJson<LikeData>(
+        `/api/posts/${params.id}/likes`,
+        { method: "POST" },
+        "Beğeni güncellenemedi."
+      );
+      setLikeData(data);
+      showInteractionMessage("like", data.liked ? "Beğeni kaydedildi" : "Beğeni kaldırıldı");
+    } catch (error) {
       setLikeData((prev) => ({
         count: prev.liked ? prev.count - 1 : prev.count + 1,
         liked: !prev.liked,
       }));
+      toast.error(getClientErrorMessage(error, "Beğeni güncellenemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setIsLiking(false);
     }
@@ -278,6 +334,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
   const submitComment = async (parentId?: string | null) => {
     if (!session?.user) {
+      toast.error("Yorum yapmak için giriş yapman gerekiyor.");
       router.push("/login");
       return;
     }
@@ -286,28 +343,29 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
     setIsSubmittingComment(true);
     try {
-      const res = await fetch(`/api/posts/${params.id}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: text, parentId: parentId ?? null }),
-      });
-      if (res.ok) {
-        const newComment: Comment = await res.json();
-        setComments((prev) => [...prev, newComment]);
-        if (parentId) {
-          setReplyText("");
-          setReplyingToId(null);
-          toast.success("Yanıt eklendi");
-        } else {
-          setCommentText("");
-          toast.success("Yorum eklendi");
-        }
+      const newComment = await requestJson<Comment>(
+        `/api/posts/${params.id}/comments`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: text, parentId: parentId ?? null }),
+        },
+        "Yorum eklenemedi."
+      );
+      setComments((prev) => [...prev, newComment]);
+      if (parentId) {
+        setReplyText("");
+        setReplyingToId(null);
+        showInteractionMessage("comment", "Yanıt konuşmaya eklendi");
       } else {
-        const err = await res.json();
-        toast.error(err.error || "Yorum eklenemedi");
+        setCommentText("");
+        showInteractionMessage("comment", "Yorum konuşmaya eklendi");
       }
-    } catch {
-      toast.error("Yorum eklenemedi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Yorum eklenemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setIsSubmittingComment(false);
     }
@@ -316,24 +374,27 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const deleteComment = async (commentId: string) => {
     setDeletingCommentId(commentId);
     try {
-      const res = await fetch(`/api/posts/${params.id}/comments/${commentId}`, {
-        method: "DELETE",
+      await requestJson<{ success: boolean }>(
+        `/api/posts/${params.id}/comments/${commentId}`,
+        {
+          method: "DELETE",
+        },
+        "Yorum silinemedi."
+      );
+      setComments((prev) => {
+        const branchIds = collectCommentBranchIds(prev, commentId);
+        if (replyingToId && branchIds.has(replyingToId)) {
+          setReplyingToId(null);
+          setReplyText("");
+        }
+        return prev.filter((comment) => !branchIds.has(comment.id));
       });
-      if (res.ok) {
-        setComments((prev) => {
-          const branchIds = collectCommentBranchIds(prev, commentId);
-          if (replyingToId && branchIds.has(replyingToId)) {
-            setReplyingToId(null);
-            setReplyText("");
-          }
-          return prev.filter((comment) => !branchIds.has(comment.id));
-        });
-        toast.success("Yorum silindi");
-      } else {
-        toast.error("Yorum silinemedi");
+      toast.success("Yorum silindi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Yorum silinemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
       }
-    } catch {
-      toast.error("Yorum silinemedi");
     } finally {
       setDeletingCommentId(null);
     }
@@ -404,6 +465,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const displayTitle = formatDisplayTitle(post.title);
   const displayCreator = formatDisplayTitle(post.creator);
   const displayExcerpt = formatDisplaySentence(post.excerpt);
+  const createdLabel = formatDate(post.createdAt);
+  const authorProfileHref = post.user?.username ? `/profile/${post.user.username}` : null;
+  const tagCount = post.tags?.length ?? 0;
   const shouldBlurSpoiler = Boolean(supportsSpoiler && post.hasSpoiler && !isSpoilerRevealed);
   const shouldShowSpoilerOverlay = shouldBlurSpoiler && !hasDismissedSpoilerOverlay;
 
@@ -424,17 +488,27 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     const isOwn = comment.user.id === currentUserId;
     const isReplying = replyingToId === comment.id;
     const hasReplies = comment.replies.length > 0;
+    const parentComment = comment.parentId ? commentsById.get(comment.parentId) : null;
+    const isPostAuthorComment = comment.user.id === post.user?.id;
+    const isHighlighted = highlightedCommentId === comment.id;
 
     return (
       <div
         key={comment.id}
+        id={`comment-${comment.id}`}
         className={
           depth > 0
-            ? "ml-4 border-l border-[var(--surface-strong-border)] pl-4 sm:ml-6 sm:pl-5"
-            : ""
+            ? "scroll-mt-24 ml-4 border-l border-[var(--surface-strong-border)] pl-4 sm:ml-6 sm:pl-5"
+            : "scroll-mt-24"
         }
       >
-        <div className="rounded-2xl border border-[var(--surface-strong-border)] bg-gradient-to-br from-[var(--surface-strong)] to-[var(--surface-strong-hover)] p-3 shadow-[var(--shadow-soft)] sm:p-4">
+        <div
+          className={`rounded-2xl border bg-gradient-to-br from-[var(--surface-strong)] to-[var(--surface-strong-hover)] p-3 shadow-[var(--shadow-soft)] transition-colors sm:p-4 ${
+            isHighlighted
+              ? "border-[#c4a24b]/45 shadow-[0_0_0_1px_rgba(196,162,75,0.18)]"
+              : "border-[var(--surface-strong-border)]"
+          }`}
+        >
           <div className="mb-2.5 flex items-start justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="bg-[#c4a24b]/12 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c4a24b]/20 text-[11px] font-bold text-[var(--gold)]">
@@ -453,6 +527,24 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   {depth > 0 && (
                     <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] text-[var(--text-faint)]">
                       Yanıt
+                    </span>
+                  )}
+                  {isPostAuthorComment && (
+                    <span className="rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+                      Not sahibi
+                    </span>
+                  )}
+                  {isOwn && !isPostAuthorComment && (
+                    <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                      Sen
+                    </span>
+                  )}
+                  {parentComment?.user && (
+                    <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] text-[var(--text-faint)]">
+                      Yanıt:{" "}
+                      {parentComment.user.username
+                        ? `@${parentComment.user.username}`
+                        : parentComment.user.name}
                     </span>
                   )}
                 </div>
@@ -552,8 +644,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         >
           {/* Blur backdrop */}
           {imgOrientation !== "landscape" && (
-            <Image
-              loader={customLoader}
+            <ResilientImage
               src={getPostImageSrc(post.image)}
               alt=""
               fill
@@ -569,8 +660,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 "linear-gradient(135deg, var(--media-panel-sheen) 0%, transparent 58%, var(--media-panel-sheen) 100%)",
             }}
           />
-          <Image
-            loader={customLoader}
+          <ResilientImage
             src={getPostImageSrc(post.image)}
             alt={displayTitle}
             fill
@@ -646,7 +736,17 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 {displayTitle}
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--media-text-secondary)] sm:gap-3">
-                {post.creator && <span>{displayCreator}</span>}
+                {post.creator &&
+                  (authorProfileHref ? (
+                    <Link
+                      href={authorProfileHref}
+                      className="transition-colors hover:text-[var(--gold)]"
+                    >
+                      {displayCreator}
+                    </Link>
+                  ) : (
+                    <span>{displayCreator}</span>
+                  ))}
                 {post.years && (
                   <>
                     <span className="text-white/35">•</span>
@@ -703,7 +803,13 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="flex flex-wrap gap-1.5">
             {post.tags &&
               post.tags.length > 0 &&
-              post.tags.map((tag) => <TagBadge key={tag.id} tag={tag} />)}
+              post.tags.map((tag) => (
+                <TagBadge
+                  key={tag.id}
+                  tag={tag}
+                  href={`/tag/${encodeURIComponent(tag.name)}`}
+                />
+              ))}
           </div>
 
           {/* Like butonu — kendi notuna like yapamaz */}
@@ -745,6 +851,103 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         </div>
 
         <CommunityStatsCard title={displayTitle} creator={displayCreator} />
+
+        <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)] sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--gold)]">
+                Arşiv bağlamı
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                Bu not tek başına değil; kategori, etiket ve profil yüzeylerine bağlı.
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                Aynı başlık etrafındaki diğer notlara, bu kategorideki arşiv diline ve etiketin
+                geçtiği herkese açık notlara buradan dönebilirsin.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[360px] lg:max-w-[420px]">
+              <Link
+                href={`/category/${encodeURIComponent(categorySlug)}`}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Kategori
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                  {categoryLabel}
+                </p>
+              </Link>
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                  Arşive giriş
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                  {createdLabel}
+                </p>
+              </div>
+              {authorProfileHref ? (
+                <Link
+                  href={authorProfileHref}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                    Profil
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    @{post.user?.username}
+                  </p>
+                </Link>
+              ) : (
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                    Etiket
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                    {tagCount > 0 ? `${tagCount} bağlantı noktası` : "Etiket yok"}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {post.tags && post.tags.length > 0 && (
+            <div className="mt-4 border-t border-[var(--border)] pt-4">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Etiket yolları
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {post.tags.map((tag) => (
+                  <TagBadge
+                    key={tag.id}
+                    tag={tag}
+                    href={`/tag/${encodeURIComponent(tag.name)}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+            {likeData.count} beğeni
+          </span>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+            {comments.length} yorum
+          </span>
+          {interactionMessage && (
+            <span
+              className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                interactionMessage.tone === "like"
+                  ? "border-[#e53e3e]/20 bg-[#e53e3e]/8 text-[#ffb2b2]"
+                  : "border-[#c4a24b]/20 bg-[#c4a24b]/8 text-[var(--gold)]"
+              }`}
+            >
+              {interactionMessage.text}
+            </span>
+          )}
+        </div>
 
         {typeof post.lat === "number" && typeof post.lng === "number" && (
           <section className="mb-6 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
@@ -852,6 +1055,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   {shouldBlurSpoiler
                     ? "Bu not açık detaylar içerebilir."
                     : "Spoiler içeriği görebiliyorsun."}
+                </p>
+                <p className="mt-1 text-[11px] leading-4 text-[var(--text-faint)]">
+                  Etiketler, kategori ve topluluk bağlamı görünür kalır; yalnızca metin gizlenir.
                 </p>
               </div>
               <button
@@ -1008,6 +1214,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 {communityPosts.length}
               </span>
             </div>
+            <p className="mb-4 text-sm leading-6 text-[var(--text-muted)]">
+              Aynı başlık etrafında oluşan diğer yorum yolları. Buradan farklı kullanıcıların aynı
+              içerik için nasıl hafıza izleri bıraktığına dönebilirsin.
+            </p>
             <div className="space-y-3">
               {communityPosts.map((cp) => (
                 <Link
@@ -1042,20 +1252,38 @@ export default function PostDetailClient({ params }: { params: { id: string } })
 
         {/* Alt Navigasyon */}
         <div className="mt-12 border-t border-[var(--border)] pt-6">
-          <Link
-            href={`/category/${encodeURIComponent(categorySlug)}`}
-            className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            {categoryLabel}
-          </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              href={`/category/${encodeURIComponent(categorySlug)}`}
+              className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              {categoryLabel}
+            </Link>
+            {post.tags?.[0] && (
+              <Link
+                href={`/tag/${encodeURIComponent(post.tags[0].name)}`}
+                className="text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
+              >
+                #{post.tags[0].name}
+              </Link>
+            )}
+            {authorProfileHref && (
+              <Link
+                href={authorProfileHref}
+                className="text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
+              >
+                @{post.user?.username}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 

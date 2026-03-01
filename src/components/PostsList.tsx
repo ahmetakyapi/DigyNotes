@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -16,14 +15,20 @@ import {
 } from "@/components/SortFilterBar";
 
 import TagBadge from "@/components/TagBadge";
-import { getCategoryLabel } from "@/lib/categories";
+import { OrganizationGuide } from "@/components/OrganizationGuide";
+import { FIXED_CATEGORIES, getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
+import { ResilientImage } from "@/components/ResilientImage";
 
 interface PostsListProps {
   allPosts: Post[];
+  initialActiveCategory?: string;
+  initialActiveTab?: "notlar" | "kaydedilenler";
+  initialActiveTags?: string[];
+  searchQuery?: string;
   savedPosts?: Post[];
   hasMorePosts?: boolean;
   hasMoreSavedPosts?: boolean;
@@ -68,6 +73,10 @@ function shouldHideExcerpt(post: Post) {
 
 export function PostsList({
   allPosts,
+  initialActiveCategory = "",
+  initialActiveTab,
+  initialActiveTags = [],
+  searchQuery = "",
   savedPosts = [],
   hasMorePosts = false,
   hasMoreSavedPosts = false,
@@ -76,25 +85,62 @@ export function PostsList({
   onLoadMorePosts,
   onLoadMoreSavedPosts,
 }: PostsListProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlQuery = searchParams.get("q") ?? "";
-  const initialTab =
-    urlQuery.trim() === "" && allPosts.length === 0 && savedPosts.length > 0
+  const urlQuery = searchQuery || searchParams.get("q") || "";
+  const resolvedInitialTab =
+    initialActiveTab ??
+    (urlQuery.trim() === "" && allPosts.length === 0 && savedPosts.length > 0
       ? "kaydedilenler"
-      : "notlar";
+      : "notlar");
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const defaultSortFilter = useMemo(() => createSortFilterState(), []);
 
   const [sortFilter, setSortFilter] = useState<SortFilterState>(defaultSortFilter);
   const [localQuery, setLocalQuery] = useState(urlQuery);
-  const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [activeCategory, setActiveCategory] = useState(initialActiveCategory);
+  const [activeTags, setActiveTags] = useState<string[]>(initialActiveTags);
   const [viewMode, setViewMode] = useState<PostsViewMode>("grid");
-  const [activeTab, setActiveTab] = useState<"notlar" | "kaydedilenler">(initialTab);
+  const [activeTab, setActiveTab] = useState<"notlar" | "kaydedilenler">(resolvedInitialTab);
+
+  const updateNotesUrl = (updates: {
+    category?: string;
+    q?: string;
+    tab?: "notlar" | "kaydedilenler";
+    tags?: string[];
+  }) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    const nextQuery = updates.q ?? localQuery;
+    const nextCategory = updates.category ?? activeCategory;
+    const nextTags = updates.tags ?? activeTags;
+    const nextTab = updates.tab ?? activeTab;
+
+    if (nextQuery.trim()) nextParams.set("q", nextQuery.trim());
+    else nextParams.delete("q");
+
+    if (nextCategory.trim()) nextParams.set("category", nextCategory.trim());
+    else nextParams.delete("category");
+
+    if (nextTags.length > 0) nextParams.set("tags", nextTags.join(","));
+    else nextParams.delete("tags");
+
+    if (nextTab === "kaydedilenler") nextParams.set("tab", nextTab);
+    else nextParams.delete("tab");
+
+    const nextQueryString = nextParams.toString();
+    router.replace(nextQueryString ? `${pathname}?${nextQueryString}` : pathname, {
+      scroll: false,
+    });
+  };
 
   const toggleTag = (name: string) => {
-    setActiveTags((prev) =>
-      prev.includes(name) ? prev.filter((t) => t !== name) : [...prev, name]
-    );
+    const nextTags = activeTags.includes(name)
+      ? activeTags.filter((tag) => tag !== name)
+      : [...activeTags, name];
+
+    setActiveTags(nextTags);
+    updateNotesUrl({ tags: nextTags });
   };
 
   useEffect(() => {
@@ -102,8 +148,16 @@ export function PostsList({
   }, [urlQuery]);
 
   useEffect(() => {
-    setActiveTab(initialTab);
-  }, [initialTab]);
+    setActiveCategory(initialActiveCategory);
+  }, [initialActiveCategory]);
+
+  useEffect(() => {
+    setActiveTags(initialActiveTags);
+  }, [initialActiveTags]);
+
+  useEffect(() => {
+    setActiveTab(resolvedInitialTab);
+  }, [resolvedInitialTab]);
 
   useEffect(() => {
     const savedView =
@@ -141,6 +195,9 @@ export function PostsList({
   const filtered = useMemo(() => {
     const q = localQuery.trim();
     let result = q ? visiblePosts.filter((post) => matchesQuery(post, q)) : visiblePosts;
+    if (activeCategory.trim()) {
+      result = result.filter((post) => post.category === activeCategory.trim());
+    }
     result = result.filter((post) => matchesAdvancedFilters(post, sortFilter));
     if (activeTags.length > 0) {
       result = result.filter((p) =>
@@ -148,7 +205,7 @@ export function PostsList({
       );
     }
     return applySortFilter(result, sortFilter);
-  }, [visiblePosts, localQuery, activeTags, sortFilter]);
+  }, [visiblePosts, localQuery, activeCategory, activeTags, sortFilter]);
 
   const stats = useMemo(() => {
     const total = allPosts.length;
@@ -160,6 +217,7 @@ export function PostsList({
   const [featured, ...rest] = filtered;
   const hasSearch =
     localQuery.trim() !== "" ||
+    activeCategory.trim() !== "" ||
     hasActiveSortFilters(sortFilter, defaultSortFilter) ||
     activeTags.length > 0;
   const displayedPosts = hasSearch || viewMode === "list" ? filtered : rest;
@@ -194,7 +252,10 @@ export function PostsList({
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-1 shadow-[var(--shadow-soft)]">
             <button
-              onClick={() => setActiveTab("notlar")}
+              onClick={() => {
+                setActiveTab("notlar");
+                updateNotesUrl({ tab: "notlar" });
+              }}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
                 activeTab === "notlar"
                   ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
@@ -204,7 +265,10 @@ export function PostsList({
               Notlar
             </button>
             <button
-              onClick={() => setActiveTab("kaydedilenler")}
+              onClick={() => {
+                setActiveTab("kaydedilenler");
+                updateNotesUrl({ tab: "kaydedilenler" });
+              }}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
                 activeTab === "kaydedilenler"
                   ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
@@ -275,6 +339,52 @@ export function PostsList({
         )}
       </div>
 
+      {activeTab === "kaydedilenler" && (
+        <div className="mb-4">
+          <OrganizationGuide
+            current="bookmarks"
+            title="Kaydettiklerim ne için var?"
+            description="Bu alan hızlı geri dönüş içindir. Henüz nota dönüşmeyen şeyleri İstek Listesi'nde beklet, tamamlanmış notları ise Koleksiyonlar altında daha kalıcı biçimde grupla."
+          />
+        </div>
+      )}
+
+      {(activeTab === "notlar" || activeTab === "kaydedilenler") && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveCategory("");
+              updateNotesUrl({ category: "" });
+            }}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+              activeCategory.trim() === ""
+                ? "border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[var(--gold)]"
+                : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            }`}
+          >
+            Tümü
+          </button>
+          {FIXED_CATEGORIES.map((categoryKey) => (
+            <button
+              key={categoryKey}
+              type="button"
+              onClick={() => {
+                setActiveCategory(categoryKey);
+                updateNotesUrl({ category: categoryKey });
+              }}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                activeCategory === categoryKey
+                  ? "border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[var(--gold)]"
+                  : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              {getCategoryLabel(categoryKey)}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* ── Aktif tag filtreleri ── */}
       {(activeTab === "notlar" || activeTab === "kaydedilenler") && activeTags.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -283,7 +393,10 @@ export function PostsList({
             <TagBadge key={name} tag={{ id: name, name }} active onRemove={toggleTag} />
           ))}
           <button
-            onClick={() => setActiveTags([])}
+            onClick={() => {
+              setActiveTags([]);
+              updateNotesUrl({ tags: [] });
+            }}
             className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
           >
             Temizle
@@ -317,8 +430,10 @@ export function PostsList({
               <button
                 onClick={() => {
                   setLocalQuery("");
+                  setActiveCategory("");
                   setSortFilter(defaultSortFilter);
                   setActiveTags([]);
+                  updateNotesUrl({ category: "", q: "", tags: [] });
                 }}
                 className="text-xs text-[var(--gold)] hover:underline"
               >
@@ -341,8 +456,7 @@ export function PostsList({
             {featured && !hasSearch && viewMode === "grid" && (
               <Link href={`/posts/${featured.id}`} className="group mb-4 block">
                 <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c4a24b]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
-                  <Image
-                    unoptimized
+                  <ResilientImage
                     src={getPostImageSrc(featured.image)}
                     alt={featured.title}
                     fill
@@ -436,8 +550,7 @@ export function PostsList({
                         )}
 
                         <div className="relative h-48 min-h-[148px] flex-shrink-0 sm:h-auto sm:min-h-[160px] sm:w-[34%]">
-                          <Image
-                            unoptimized
+                          <ResilientImage
                             src={getPostImageSrc(post.image)}
                             alt={displayTitle}
                             fill
@@ -513,8 +626,7 @@ export function PostsList({
                     ) : (
                       <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:px-4">
                         <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
-                          <Image
-                            unoptimized
+                          <ResilientImage
                             src={getPostImageSrc(post.image)}
                             alt={displayTitle}
                             fill

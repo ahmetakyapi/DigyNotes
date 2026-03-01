@@ -5,13 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
+import { customLoader } from "@/lib/image";
 
 const inputBase =
   "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-[16px] sm:text-sm";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
-const customLoader = ({ src }: { src: string }) => src;
 
 interface UserProfile {
   id: string;
@@ -22,6 +22,8 @@ interface UserProfile {
   avatarUrl: string | null;
   isPublic: boolean;
 }
+
+type ExportFormat = "csv" | "json";
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -34,6 +36,11 @@ export default function ProfileSettingsPage() {
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null);
+  const [exportMessage, setExportMessage] = useState<{
+    tone: "success" | "error";
+    text: string;
+  } | null>(null);
   const [usernameStatus, setUsernameStatus] = useState<
     "idle" | "checking" | "ok" | "taken" | "invalid"
   >("idle");
@@ -122,6 +129,64 @@ export default function ProfileSettingsPage() {
       toast.error("Bir hata oluştu");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleExport = async (format: ExportFormat) => {
+    setExportingFormat(format);
+    setExportMessage(null);
+
+    try {
+      const response = await fetch(`/api/users/me/export?format=${format}`);
+
+      if (response.status === 401) {
+        setExportMessage({
+          tone: "error",
+          text: "Oturumun kapanmış olabilir. Lütfen tekrar giriş yapıp dışa aktarmayı yeniden dene.",
+        });
+        router.push("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(
+          payload?.error || "Dışa aktarma şu anda hazırlanamadı. Biraz sonra tekrar deneyin."
+        );
+      }
+
+      const blob = await response.blob();
+      const disposition = response.headers.get("Content-Disposition") || "";
+      const match = disposition.match(/filename="([^"]+)"/);
+      const fallbackName = `digynotes-export.${format}`;
+      const filename = match?.[1] || fallbackName;
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      setExportMessage({
+        tone: "success",
+        text:
+          format === "csv"
+            ? "CSV dışa aktarımı indirildi. Tablo görünümü için uygundur."
+            : "JSON dışa aktarımı indirildi. Arşivin tam yapısını korur.",
+      });
+    } catch (error) {
+      setExportMessage({
+        tone: "error",
+        text:
+          error instanceof Error && error.message.trim()
+            ? error.message
+            : "Dışa aktarma tamamlanamadı. Bağlantını kontrol edip tekrar dene.",
+      });
+    } finally {
+      setExportingFormat(null);
     }
   };
 
@@ -318,60 +383,64 @@ export default function ProfileSettingsPage() {
             <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
               Verilerini İndir
             </p>
+            <div className="mb-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
+              <p className="text-sm font-medium text-[var(--text-primary)]">
+                Notlar, koleksiyonlar ve watchlist tek pakette hazırlanır
+              </p>
+              <p className="mt-1 text-xs leading-6 text-[var(--text-muted)]">
+                CSV daha hızlı açılır ve düz metin içerir. JSON ise arşiv yapısını, sıralamayı ve
+                uzun içerikleri temiz metin olarak korur.
+              </p>
+            </div>
             <div className="space-y-2.5">
-              <a
-                href="/api/users/me/export?format=csv"
-                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+              <button
+                type="button"
+                onClick={() => handleExport("csv")}
+                disabled={exportingFormat !== null}
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#c4a24b]/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
                   <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                    Tüm notlarını CSV formatında indir
+                    Düz metinli CSV dışa aktarımı indir
                   </p>
                 </div>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-[var(--text-muted)]"
-                >
-                  <path d="M12 3v12" />
-                  <path d="m7 10 5 5 5-5" />
-                  <path d="M5 21h14" />
-                </svg>
-              </a>
-              <a
-                href="/api/users/me/export?format=json"
-                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+                <span className="text-xs font-semibold text-[var(--text-muted)]">
+                  {exportingFormat === "csv" ? "Hazırlanıyor..." : "CSV"}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExport("json")}
+                disabled={exportingFormat !== null}
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#c4a24b]/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
                   <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                    Tüm notlarını JSON formatında indir
+                    Tam arşivi okunur JSON formatında indir
                   </p>
                 </div>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-[var(--text-muted)]"
-                >
-                  <path d="M12 3v12" />
-                  <path d="m7 10 5 5 5-5" />
-                  <path d="M5 21h14" />
-                </svg>
-              </a>
+                <span className="text-xs font-semibold text-[var(--text-muted)]">
+                  {exportingFormat === "json" ? "Hazırlanıyor..." : "JSON"}
+                </span>
+              </button>
             </div>
+            {exportMessage && (
+              <div
+                className={`mt-3 rounded-xl border px-4 py-3 text-sm ${
+                  exportMessage.tone === "success"
+                    ? "border-[#34d399]/20 bg-[#34d399]/10 text-[#34d399]"
+                    : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"
+                }`}
+              >
+                {exportMessage.text}
+              </div>
+            )}
+            <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
+              İndirme tamamlanmazsa bağlantıyı yenileyip tekrar deneyebilir veya daha hafif olduğu
+              için önce CSV formatını kullanabilirsin.
+            </p>
           </div>
         </div>
       </div>

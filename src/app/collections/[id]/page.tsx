@@ -1,20 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { Collection, Post } from "@/types";
+import { OrganizationGuide } from "@/components/OrganizationGuide";
+import {
+  getClientErrorMessage,
+  isAuthenticationError,
+  requestJson,
+} from "@/lib/client-api";
 import { StatusBadge } from "@/components/StatusBadge";
 import StarRating from "@/components/StarRating";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-
-const customLoader = ({ src }: { src: string }) => src;
+import { ResilientImage } from "@/components/ResilientImage";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR", {
@@ -132,26 +136,26 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
     setIsSaving(true);
     try {
-      const res = await fetch(`/api/collections/${collection.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim(),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error || "Koleksiyon güncellenemedi");
-        return;
-      }
+      const data = await requestJson<Collection>(
+        `/api/collections/${collection.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: title.trim(),
+            description: description.trim(),
+          }),
+        },
+        "Koleksiyon güncellenemedi."
+      );
 
       syncCollection(data);
       toast.success("Koleksiyon güncellendi");
-    } catch {
-      toast.error("Koleksiyon güncellenemedi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Koleksiyon güncellenemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setIsSaving(false);
     }
@@ -182,15 +186,18 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/collections/${collection.id}`, { method: "DELETE" });
-      if (!res.ok) {
-        toast.error("Koleksiyon silinemedi");
-        return;
-      }
+      await requestJson<{ success: boolean }>(
+        `/api/collections/${collection.id}`,
+        { method: "DELETE" },
+        "Koleksiyon silinemedi."
+      );
       toast.success("Koleksiyon silindi");
       router.push("/collections");
-    } catch {
-      toast.error("Koleksiyon silinemedi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Koleksiyon silinemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setIsDeleting(false);
     }
@@ -201,22 +208,23 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
     setPendingPostId(postId);
     try {
-      const res = await fetch(`/api/collections/${collection.id}/posts`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ postId }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error || "Koleksiyon güncellenemedi");
-        return;
-      }
+      const data = await requestJson<Collection>(
+        `/api/collections/${collection.id}/posts`,
+        {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postId }),
+        },
+        "Koleksiyon güncellenemedi."
+      );
 
       syncCollection(data);
       toast.success(method === "POST" ? "Not koleksiyona eklendi" : "Not koleksiyondan çıkarıldı");
-    } catch {
-      toast.error("Koleksiyon güncellenemedi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Koleksiyon güncellenemedi."));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
     } finally {
       setPendingPostId(null);
     }
@@ -353,6 +361,14 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         </div>
       </section>
 
+      <section className="mt-6">
+        <OrganizationGuide
+          current="collections"
+          title="Bu koleksiyonun rolü"
+          description="Kaydettiklerim kısa yoldan geri dönmek, İstek Listesi henüz nota çevrilmemiş içerikleri tutmak içindir. Koleksiyonlar ise bitmiş notları aynı tema altında bir araya getirir."
+        />
+      </section>
+
       <section className="mt-6 grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
           <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
@@ -388,7 +404,8 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 Koleksiyona not ekle
               </h2>
               <p className="mt-1 text-sm text-[var(--text-muted)]">
-                Sadece kendi notlarını bu koleksiyona ekleyebilirsin.
+                Sadece kendi notlarını bu koleksiyona ekleyebilirsin. Bu alan, uzun vadeli bir tema
+                altında sergilemek istediğin notlar için tasarlandı.
               </p>
             </div>
             <div className="w-full lg:max-w-sm">
@@ -431,14 +448,12 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3"
                   >
                     <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-xl">
-                      <Image
-                        loader={customLoader}
+                      <ResilientImage
                         src={getPostImageSrc(post.image)}
                         alt={formatDisplayTitle(post.title)}
                         fill
                         sizes="96px"
                         className="object-cover"
-                        unoptimized
                       />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -463,7 +478,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       disabled={pendingPostId === post.id}
                       className="rounded-xl bg-[var(--gold)] px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:opacity-50"
                     >
-                      {pendingPostId === post.id ? "Ekleniyor..." : "Ekle"}
+                      {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona ekle"}
                     </button>
                   </div>
                 ))}
@@ -544,14 +559,12 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               >
                 <Link href={`/posts/${post.id}`} className="group block">
                   <div className="relative h-48 overflow-hidden">
-                    <Image
-                      loader={customLoader}
+                    <ResilientImage
                       src={getPostImageSrc(post.image)}
                       alt={formatDisplayTitle(post.title)}
                       fill
                       sizes="420px"
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                      unoptimized
                     />
                     <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[rgba(4,10,22,0.78)] to-transparent" />
                   </div>
@@ -591,7 +604,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       disabled={pendingPostId === post.id}
                       className="hover:bg-[#e53e3e]/8 w-full rounded-xl border border-[#e53e3e]/20 px-3 py-2 text-xs font-semibold text-[#e53e3e] transition-colors disabled:opacity-50"
                     >
-                      {pendingPostId === post.id ? "Çıkarılıyor..." : "Koleksiyondan Çıkar"}
+                      {pendingPostId === post.id ? "Çıkarılıyor..." : "Koleksiyondan çıkar"}
                     </button>
                   )}
                 </div>

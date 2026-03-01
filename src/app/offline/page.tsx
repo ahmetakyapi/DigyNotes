@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
+import { RetryButton } from "@/components/RetryButton";
 
 export const metadata: Metadata = {
   title: "Çevrimdışı",
@@ -42,7 +43,7 @@ export default function OfflinePage() {
         </div>
 
         <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--gold)]">
-          Offline Mod
+          Çevrimdışı mod
         </p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--text-primary)] sm:text-4xl">
           Bağlantı şu anda kullanılamıyor
@@ -52,10 +53,41 @@ export default function OfflinePage() {
           normal akışa dönecek.
         </p>
 
+        <div className="mt-8 grid gap-3 text-left sm:grid-cols-3">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Ne oldu?
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+              Ağ bağlantısı ya da servis erişimi şu anda kesildi.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Ne yapabilirsin?
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+              Yeniden dene, daha önce açtığın sayfalara dön veya bağlantının gelmesini bekle.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              Nasıl toparlanır?
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+              Bağlantı geri geldiğinde bu sayfayı yenilemen yeterli.
+            </p>
+          </div>
+        </div>
+
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <RetryButton
+            label="Yeniden dene"
+            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+          />
           <Link
             href="/notes"
-            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+            className="inline-flex min-w-[170px] justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-5 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
             Notlara Dön
           </Link>

@@ -1,16 +1,8 @@
+import { stripHtml, truncateText } from "@/lib/text";
+
 const DEFAULT_SITE_URL = "http://localhost:3000";
 
-export function stripHtml(html: string) {
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-export function truncateText(text: string, maxLength: number) {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, Math.max(0, maxLength - 1)).trimEnd()}...`;
-}
+export { stripHtml, truncateText };
 
 export function getSiteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXTAUTH_URL ?? DEFAULT_SITE_URL;
