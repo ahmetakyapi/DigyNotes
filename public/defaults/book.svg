@@ -1,0 +1,45 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0c0c0c"/>
+  <rect width="1200" height="800" fill="url(#bg)" opacity="0.5"/>
+  <!-- Open Book -->
+  <g transform="translate(600,400)" opacity="0.9">
+    <!-- Book spine -->
+    <rect x="-4" y="-120" width="8" height="240" rx="2" fill="#c9a84c" opacity="0.6"/>
+    <!-- Left page -->
+    <path d="M-4-120 C-4-120-180-110-180-90 L-180 100 C-180 120-4 120-4 120Z" fill="#161616" stroke="#2a2a2a" stroke-width="2"/>
+    <!-- Right page -->
+    <path d="M4-120 C4-120 180-110 180-90 L180 100 C180 120 4 120 4 120Z" fill="#161616" stroke="#2a2a2a" stroke-width="2"/>
+    <!-- Left page lines -->
+    <rect x="-150" y="-70" width="110" height="5" rx="2.5" fill="#888888" opacity="0.25"/>
+    <rect x="-150" y="-50" width="120" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="-150" y="-30" width="100" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="-150" y="-10" width="115" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="-150" y="10" width="90" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="-150" y="30" width="110" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="-150" y="50" width="80" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="-150" y="70" width="105" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <!-- Right page lines -->
+    <rect x="40" y="-70" width="110" height="5" rx="2.5" fill="#888888" opacity="0.25"/>
+    <rect x="40" y="-50" width="100" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="40" y="-30" width="120" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="40" y="-10" width="95" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="40" y="10" width="110" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="40" y="30" width="85" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="40" y="50" width="115" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="40" y="70" width="100" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <!-- Bookmark ribbon -->
+    <path d="M130-120 L130-40 L140-55 L150-40 L150-120Z" fill="#c9a84c" opacity="0.7"/>
+  </g>
+  <!-- Ambient glow -->
+  <circle cx="600" cy="380" r="240" fill="url(#bglow)" opacity="0.1"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="800">
+      <stop stop-color="#161616"/>
+      <stop offset="1" stop-color="#0c0c0c"/>
+    </linearGradient>
+    <radialGradient id="bglow" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#c9a84c"/>
+      <stop offset="1" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

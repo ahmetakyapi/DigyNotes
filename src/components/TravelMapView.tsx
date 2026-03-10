@@ -200,7 +200,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                 <div className="relative h-16 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
                   <Image
                     loader={customLoader}
-                    src={getPostImageSrc(post.image)}
+                    src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
                     className="object-cover"

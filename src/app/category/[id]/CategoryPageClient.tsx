@@ -136,23 +136,16 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
         <div>
           <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryLabel}</h1>
-          <p className="max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-            Bu yüzey, aynı kategoriye ait notları tekrar okunabilir bir arşiv yolu olarak toplar.
-            Note detail, tag ve profil ekranlarından döndüğünde aynı ürün dili burada devam eder.
-          </p>
           <div className="flex flex-wrap items-center gap-3">
             <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
-            <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+            <span className="text-xs text-[var(--text-muted)]">
               {posts.length} not
             </span>
             {travelCategory && (
-              <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
-                {mappedPosts.length} harita pini
+              <span className="text-xs text-[var(--text-muted)]">
+                · {mappedPosts.length} harita pini
               </span>
             )}
-            <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
-              Detail ve kategori akışı
-            </span>
           </div>
         </div>
       </div>
@@ -266,7 +259,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                   >
                     <Image
                       loader={customLoader}
-                      src={getPostImageSrc(post.image)}
+                      src={getPostImageSrc(post.image, post.category)}
                       alt={displayTitle}
                       fill
                       sizes="(max-width: 768px) 32vw, 200px"

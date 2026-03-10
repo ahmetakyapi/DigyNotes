@@ -1,0 +1,42 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0c0c0c"/>
+  <rect width="1200" height="800" fill="url(#og)" opacity="0.5"/>
+  <!-- Notebook / Note icon -->
+  <g transform="translate(600,390)" opacity="0.9">
+    <!-- Notebook body -->
+    <rect x="-120" y="-150" width="240" height="300" rx="12" fill="#161616" stroke="#2a2a2a" stroke-width="2.5"/>
+    <!-- Binding rings -->
+    <circle cx="-120" cy="-100" r="8" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <circle cx="-120" cy="-40" r="8" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <circle cx="-120" cy="20" r="8" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <circle cx="-120" cy="80" r="8" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+    <!-- Page lines -->
+    <rect x="-70" y="-110" width="150" height="5" rx="2.5" fill="#c9a84c" opacity="0.5"/>
+    <rect x="-70" y="-85" width="130" height="5" rx="2.5" fill="#888888" opacity="0.25"/>
+    <rect x="-70" y="-60" width="145" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="-70" y="-35" width="110" height="5" rx="2.5" fill="#888888" opacity="0.2"/>
+    <rect x="-70" y="-10" width="140" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="-70" y="15" width="120" height="5" rx="2.5" fill="#888888" opacity="0.15"/>
+    <rect x="-70" y="40" width="135" height="5" rx="2.5" fill="#888888" opacity="0.12"/>
+    <rect x="-70" y="65" width="100" height="5" rx="2.5" fill="#888888" opacity="0.12"/>
+    <!-- Pen accent -->
+    <g transform="translate(80,80) rotate(-45)">
+      <rect x="-4" y="-60" width="8" height="80" rx="3" fill="#c9a84c" opacity="0.5"/>
+      <polygon points="-4,20 4,20 0,32" fill="#c9a84c" opacity="0.5"/>
+    </g>
+    <!-- DigyNotes star -->
+    <path d="M60-120 L64-108 L76-108 L66-100 L70-88 L60-96 L50-88 L54-100 L44-108 L56-108Z" fill="#c9a84c" opacity="0.6"/>
+  </g>
+  <!-- Ambient glow -->
+  <circle cx="600" cy="370" r="240" fill="url(#oglow)" opacity="0.1"/>
+  <defs>
+    <linearGradient id="og" x1="0" y1="0" x2="1200" y2="800">
+      <stop stop-color="#161616"/>
+      <stop offset="1" stop-color="#0c0c0c"/>
+    </linearGradient>
+    <radialGradient id="oglow" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#c9a84c"/>
+      <stop offset="1" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

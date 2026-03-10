@@ -138,7 +138,7 @@ function PostCard({ post }: { post: Post }) {
       <Link href={`/posts/${post.id}`} className="relative block h-40 w-full overflow-hidden">
         <Image
           loader={customLoader}
-          src={getPostImageSrc(post.image)}
+          src={getPostImageSrc(post.image, post.category)}
           alt={displayTitle}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"

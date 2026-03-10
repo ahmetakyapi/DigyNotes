@@ -101,23 +101,6 @@ export default function ProfilePageClient({ username }: { username: string }) {
     return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   }, [posts]);
   const normalizedProfileQuery = searchQuery.trim().toLowerCase();
-  const recentPosts = posts.slice(0, 3);
-  const archiveSummary = useMemo(() => {
-    if (!user) return "";
-    if (posts.length === 0 && collections.length === 0) {
-      return "Henüz herkese açık bir arşiv izi görünmüyor.";
-    }
-    if (topCategory && collections.length > 0) {
-      return `${topCategory} odağında notlar yazıyor ve bunları ${collections.length} koleksiyonla daha okunur hale getiriyor.`;
-    }
-    if (topCategory) {
-      return `Arşivinin ağırlığı ${topCategory} tarafında. Son notlar bu kişinin nasıl düşündüğünü hızlıca gösterir.`;
-    }
-    if (collections.length > 0) {
-      return `${collections.length} koleksiyon ile arşivini temalara ayırıyor.`;
-    }
-    return `${posts.length} not ile kişisel arşivini kamuya açmış durumda.`;
-  }, [collections.length, posts.length, topCategory, user]);
   const filteredPosts = useMemo(
     () =>
       posts.filter((post) => {
@@ -262,9 +245,6 @@ export default function ProfilePageClient({ username }: { username: string }) {
                   {user.bio}
                 </p>
               )}
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-                {archiveSummary}
-              </p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1 text-xs text-[var(--text-muted)]">
                   {posts.length} herkese açık not
@@ -316,39 +296,10 @@ export default function ProfilePageClient({ username }: { username: string }) {
                 )}
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                    Katıldı
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                    {joinedDate}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                    Son Aktivite
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                    {lastLoginDate}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                    Koleksiyon
-                  </p>
-                  <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">
-                    {collections.length}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                    Güçlü Alan
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                    {topCategory ?? "Henüz yok"}
-                  </p>
-                </div>
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
+                <span>Katıldı: {joinedDate}</span>
+                <span className="text-[var(--text-faint)]">·</span>
+                <span>Son aktivite: {lastLoginDate}</span>
               </div>
             </div>
           </div>
@@ -373,64 +324,6 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
       {/* Tabs */}
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="mb-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-              Son notlar neden önemli?
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Bu alan kullanıcının en güncel düşünce izlerini gösterir. Yeni biri için en hızlı
-              keşif yolu genelde burasıdır.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-              Koleksiyonlar neden ayrı?
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Koleksiyonlar kullanıcının uzun vadeli seçkilerini gösterir. Burada neyi bir araya
-              getirmeyi önemsediğini daha net okursun.
-            </p>
-          </div>
-        </div>
-
-        {recentPosts.length > 0 && collections.length > 0 && (
-          <div className="mb-6 grid gap-3 lg:grid-cols-2">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                Hızlı başlangıç
-              </p>
-              <div className="mt-3 space-y-2">
-                {recentPosts.slice(0, 2).map((post) => (
-                  <Link
-                    key={post.id}
-                    href={`/posts/${post.id}`}
-                    className="block rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
-                  >
-                    {formatDisplayTitle(post.title)}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-                Kürasyon izi
-              </p>
-              <div className="mt-3 space-y-2">
-                {collections.slice(0, 2).map((collection) => (
-                  <Link
-                    key={collection.id}
-                    href={`/collections/${collection.id}`}
-                    className="block rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
-                  >
-                    {collection.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="mb-6 flex items-center gap-2 overflow-x-auto border-b border-[var(--border)] pb-1">
           <button
             type="button"
@@ -503,7 +396,7 @@ export default function ProfilePageClient({ username }: { username: string }) {
                     >
                       <Image
                         loader={customLoader}
-                        src={getPostImageSrc(post.image)}
+                        src={getPostImageSrc(post.image, post.category)}
                         alt={formatDisplayTitle(post.title)}
                         fill
                         sizes="200px"

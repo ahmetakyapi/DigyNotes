@@ -449,7 +449,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   >
                     <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-xl">
                       <ResilientImage
-                        src={getPostImageSrc(post.image)}
+                        src={getPostImageSrc(post.image, post.category)}
                         alt={formatDisplayTitle(post.title)}
                         fill
                         sizes="96px"
@@ -560,7 +560,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 <Link href={`/posts/${post.id}`} className="group block">
                   <div className="relative h-48 overflow-hidden">
                     <ResilientImage
-                      src={getPostImageSrc(post.image)}
+                      src={getPostImageSrc(post.image, post.category)}
                       alt={formatDisplayTitle(post.title)}
                       fill
                       sizes="420px"

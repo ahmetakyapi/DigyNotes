@@ -548,7 +548,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-md">
                   <Image
                     loader={customLoader}
-                    src={getPostImageSrc(post.image)}
+                    src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
                     className="object-cover"

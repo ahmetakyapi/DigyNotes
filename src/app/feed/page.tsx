@@ -2,13 +2,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowsClockwise,
   Compass,
-  NewspaperClipping,
   Sparkle,
   UsersThree,
 } from "@phosphor-icons/react";
-import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
+import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
@@ -53,7 +51,6 @@ export default function FeedPage() {
   }, []);
 
   const uniqueAuthors = new Set(posts.map((post) => post.user?.id).filter(Boolean)).size;
-  const categoriesCount = new Set(posts.map((post) => normalizeCategory(post.category))).size;
   const thisWeekCount = posts.filter((post) => {
     const createdAt = new Date(post.createdAt).getTime();
     return Number.isFinite(createdAt) && Date.now() - createdAt < 1000 * 60 * 60 * 24 * 7;
@@ -129,32 +126,6 @@ export default function FeedPage() {
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
               Takip ettiğin kişilerden gelen en yeni notlar burada görünür.
             </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Buradaki mantık
-                </p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                  Takip ilişkisine göre kronolojik akış.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Ne zaman kullanılır?
-                </p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                  Kimleri takip ettiğini zaten biliyorsan.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Sonraki aksiyon
-                </p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                  Notu aç, profili ziyaret et, sonra Keşfet'e genişle.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="space-y-4">
@@ -163,53 +134,12 @@ export default function FeedPage() {
             ))}
           </div>
 
-          <div className="grid gap-3 pt-2 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <NewspaperClipping size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Yeni Notlar
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {posts.length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <UsersThree size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Aktif Kişiler
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {uniqueAuthors}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <ArrowsClockwise size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Bu hafta
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {thisWeekCount}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-3 text-xs text-[var(--text-muted)]">{categoriesCount} kategori</p>
-            </div>
+          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-[var(--text-muted)]">
+            <span>{posts.length} not</span>
+            <span className="text-[var(--text-faint)]">·</span>
+            <span>{uniqueAuthors} kişi</span>
+            <span className="text-[var(--text-faint)]">·</span>
+            <span>Bu hafta {thisWeekCount}</span>
           </div>
         </section>
       )}
@@ -257,7 +187,7 @@ function FeedCard({ post }: { post: Post }) {
         <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
           <div className="relative h-52 overflow-hidden rounded-[24px] bg-[var(--bg-raised)]">
             <ResilientImage
-              src={getPostImageSrc(post.image)}
+              src={getPostImageSrc(post.image, post.category)}
               alt={displayTitle}
               fill
               className="object-cover"

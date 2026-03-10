@@ -457,7 +457,7 @@ export function PostsList({
               <Link href={`/posts/${featured.id}`} className="group mb-4 block">
                 <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c4a24b]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
                   <ResilientImage
-                    src={getPostImageSrc(featured.image)}
+                    src={getPostImageSrc(featured.image, featured.category)}
                     alt={featured.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 1024px"
@@ -551,7 +551,7 @@ export function PostsList({
 
                         <div className="relative h-48 min-h-[148px] flex-shrink-0 sm:h-auto sm:min-h-[160px] sm:w-[34%]">
                           <ResilientImage
-                            src={getPostImageSrc(post.image)}
+                            src={getPostImageSrc(post.image, post.category)}
                             alt={displayTitle}
                             fill
                             sizes="(max-width: 768px) 36vw, 200px"
@@ -627,7 +627,7 @@ export function PostsList({
                       <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:px-4">
                         <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
                           <ResilientImage
-                            src={getPostImageSrc(post.image)}
+                            src={getPostImageSrc(post.image, post.category)}
                             alt={displayTitle}
                             fill
                             sizes="64px"
