@@ -46,10 +46,18 @@ export async function PUT(request: NextRequest) {
 
   const body = await request.json();
   const { username, bio, avatarUrl, isPublic } = body;
+  const normalizedUsername =
+    typeof username === "string" ? username.trim().toLowerCase() : undefined;
+  const normalizedBio = typeof bio === "string" ? bio.trim() : undefined;
+  const normalizedAvatarUrl = typeof avatarUrl === "string" ? avatarUrl.trim() : undefined;
 
-  if (username !== undefined && username !== null && username !== "") {
+  if (normalizedUsername !== undefined) {
+    if (!normalizedUsername) {
+      return NextResponse.json({ error: "Kullanıcı adı boş bırakılamaz" }, { status: 400 });
+    }
+
     const usernameRegex = /^[a-z0-9_]{3,20}$/;
-    if (!usernameRegex.test(username)) {
+    if (!usernameRegex.test(normalizedUsername)) {
       return NextResponse.json(
         {
           error:
@@ -60,7 +68,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const existing = await prisma.user.findFirst({
-      where: { username, id: { not: userId } },
+      where: { username: normalizedUsername, id: { not: userId } },
     });
 
     if (existing) {
@@ -71,9 +79,9 @@ export async function PUT(request: NextRequest) {
   const updated = await prisma.user.update({
     where: { id: userId },
     data: {
-      username: username === "" ? null : username,
-      bio: bio === "" ? null : bio,
-      avatarUrl: avatarUrl === "" ? null : avatarUrl,
+      ...(normalizedUsername !== undefined ? { username: normalizedUsername } : {}),
+      bio: normalizedBio === undefined ? undefined : normalizedBio || null,
+      avatarUrl: normalizedAvatarUrl === undefined ? undefined : normalizedAvatarUrl || null,
       isPublic: typeof isPublic === "boolean" ? isPublic : undefined,
     },
     select: {

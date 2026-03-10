@@ -9,7 +9,7 @@
      - Right: Tarih/zaman kartı + eylem dağılımı
 */
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -194,32 +194,35 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const [range, setRange] = useState<RangeKey>("24h");
   const [error, setError] = useState("");
 
-  async function load(p: number, replace = false, r?: RangeKey) {
-    const activeRange = r ?? range;
-    if (p === 1) setLoading(true);
-    else setLoadingMore(true);
+  const load = useCallback(
+    async (p: number, replace = false, r?: RangeKey) => {
+      const activeRange = r ?? range;
+      if (p === 1) setLoading(true);
+      else setLoadingMore(true);
 
-    try {
-      const res = await requestJson<ApiResponse>(
-        `/api/admin/users/${params.id}?page=${p}&range=${activeRange}`,
-        undefined,
-        "Kullanıcı detayı yüklenemedi."
-      );
-      setData((prev) => (replace || !prev ? res : { ...res, logs: [...prev.logs, ...res.logs] }));
-      setError("");
-    } catch (error) {
-      const message = getClientErrorMessage(error, "Kullanıcı detayı yüklenemedi.");
-      setError(message);
-      toast.error(message);
-    } finally {
-      if (p === 1) setLoading(false);
-      else setLoadingMore(false);
-    }
-  }
+      try {
+        const res = await requestJson<ApiResponse>(
+          `/api/admin/users/${params.id}?page=${p}&range=${activeRange}`,
+          undefined,
+          "Kullanıcı detayı yüklenemedi."
+        );
+        setData((prev) => (replace || !prev ? res : { ...res, logs: [...prev.logs, ...res.logs] }));
+        setError("");
+      } catch (error) {
+        const message = getClientErrorMessage(error, "Kullanıcı detayı yüklenemedi.");
+        setError(message);
+        toast.error(message);
+      } finally {
+        if (p === 1) setLoading(false);
+        else setLoadingMore(false);
+      }
+    },
+    [params.id, range]
+  );
 
   useEffect(() => {
-    load(1, true);
-  }, [params.id]);
+    void load(1, true);
+  }, [load]);
 
   function handleRangeChange(r: RangeKey) {
     setRange(r);

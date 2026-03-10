@@ -1,6 +1,7 @@
 import { normalizeFixedCategory, type FixedCategory } from "./categories";
 
 export const DEFAULT_POST_IMAGE = "/default-post-cover.svg";
+export const DEFAULT_POST_IMAGE_WIDE = "/default-post-cover-wide.svg";
 
 const CATEGORY_DEFAULT_IMAGES: Record<FixedCategory, string> = {
   movies: "/defaults/movies.svg",
@@ -19,4 +20,12 @@ export function getCategoryDefaultImage(category?: string | null): string {
 export function getPostImageSrc(image?: string | null, category?: string | null) {
   const normalized = image?.trim();
   return normalized ? normalized : getCategoryDefaultImage(category);
+}
+
+/**
+ * Bozuk veya eksik görseller için yatay (landscape) placeholder döner.
+ * Kart ve liste görünümlerinde kullanılmak üzere tasarlanmıştır.
+ */
+export function getWideFallbackSrc(): string {
+  return DEFAULT_POST_IMAGE_WIDE;
 }

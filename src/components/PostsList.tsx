@@ -554,6 +554,7 @@ export function PostsList({
                             src={getPostImageSrc(post.image, post.category)}
                             alt={displayTitle}
                             fill
+                            variant="wide"
                             sizes="(max-width: 768px) 36vw, 200px"
                             className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                           />
@@ -630,6 +631,7 @@ export function PostsList({
                             src={getPostImageSrc(post.image, post.category)}
                             alt={displayTitle}
                             fill
+                            variant="tall"
                             sizes="64px"
                             className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                           />

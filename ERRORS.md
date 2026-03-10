@@ -477,4 +477,31 @@ await prisma.follow.deleteMany({ where: { ... } });
 
 ---
 
-*Last updated: 2026-02-24*
+### ERR-DB-004: `prisma migrate deploy` fails because older brownfield tables already exist
+**First seen**: 2026-03-11
+**Symptom**:
+- `npx prisma migrate deploy` fails on an older migration such as `20260227113000_add_bookmarks`
+- Database error looks like `ERROR: relation "bookmarks" already exists`
+- `npx prisma migrate status` may also return a generic `Schema engine error` while history is inconsistent
+**Root cause**:
+- The database schema was advanced outside the tracked migration chain in the brownfield phase
+- `_prisma_migrations` no longer matched the real schema state
+- The original migration set was missing an early baseline step for core brownfield tables such as `users`, `follows`, `comments`, `tags`, `post_likes`, `activity_logs`, and `site_settings`
+**Fix**:
+1. Add a baseline sync migration before later feature migrations:
+   `prisma/migrations/20260220000000_brownfield_baseline_sync/migration.sql`
+2. Mark already-existing historical migrations as applied with `prisma migrate resolve --applied ...`
+3. Re-run `npx prisma migrate deploy`
+4. If `migrate status` stays unreliable, validate the chain by replaying all migration files into a temporary database with `psql`
+**Prevention**:
+- Do not use `db push` or manual schema edits on top of a migration-managed environment without creating a matching migration
+- If the project starts as brownfield, create a baseline sync migration as soon as the migration chain is formalized
+- Keep `_prisma_migrations` aligned with the real database before adding new migrations
+**Files**:
+- `prisma/migrations/20260220000000_brownfield_baseline_sync/migration.sql`
+- `prisma/migrations/20260311120000_enforce_category_uniqueness/migration.sql`
+- `prisma/schema.prisma`
+
+---
+
+*Last updated: 2026-03-11*

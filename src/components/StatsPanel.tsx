@@ -2,12 +2,11 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Post } from "@/types";
 import { getCategoryLabel } from "@/lib/categories";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import StarRating from "@/components/StarRating";
+import { ResilientImage } from "@/components/ResilientImage";
 
 const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
   movies: { fill: "#c4a24b", glow: "rgba(201,168,76,0.25)", bg: "rgba(201,168,76,0.08)" },
@@ -546,13 +545,12 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
 
                 {/* Image */}
                 <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-md">
-                  <Image
-                    loader={customLoader}
+                  <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
+                    variant="tall"
                     className="object-cover"
-                    unoptimized
                   />
                 </div>
 

@@ -11,8 +11,17 @@ type SiteSettingKey = keyof typeof DEFAULT_SITE_SETTINGS;
 
 function isTransientPrismaError(error: unknown) {
   return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    ["P1001", "P1008", "P1017"].includes(error.code)
+    error instanceof Prisma.PrismaClientKnownRequestError ||
+    error instanceof Prisma.PrismaClientInitializationError ||
+    error instanceof Prisma.PrismaClientUnknownRequestError ||
+    error instanceof Prisma.PrismaClientRustPanicError ||
+    (typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string" &&
+      ["P1001", "P1008", "P1017", "EPERM", "EACCES", "ECONNREFUSED", "ETIMEDOUT"].includes(
+        error.code
+      ))
   );
 }
 

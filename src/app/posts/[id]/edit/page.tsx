@@ -205,7 +205,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [isDirty]);
+  }, [isDirty, isSubmitting]);
 
   // Auto-detect image position based on aspect ratio
   useEffect(() => {
