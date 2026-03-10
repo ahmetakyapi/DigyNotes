@@ -1,0 +1,43 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#0c0c0c"/>
+  <rect width="1200" height="800" fill="url(#tg)" opacity="0.5"/>
+  <!-- Compass -->
+  <g transform="translate(600,380)" opacity="0.9">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="140" fill="none" stroke="#2a2a2a" stroke-width="3"/>
+    <circle cx="0" cy="0" r="130" fill="#161616" stroke="#2a2a2a" stroke-width="1.5"/>
+    <!-- Tick marks -->
+    <rect x="-2" y="-126" width="4" height="16" rx="2" fill="#c9a84c" opacity="0.8"/>
+    <rect x="-2" y="110" width="4" height="16" rx="2" fill="#888888" opacity="0.5"/>
+    <rect x="-126" y="-2" width="16" height="4" rx="2" fill="#888888" opacity="0.5"/>
+    <rect x="110" y="-2" width="16" height="4" rx="2" fill="#888888" opacity="0.5"/>
+    <!-- Direction letters -->
+    <text x="0" y="-96" text-anchor="middle" fill="#c9a84c" font-size="20" font-weight="bold" font-family="sans-serif" opacity="0.9">N</text>
+    <text x="0" y="110" text-anchor="middle" fill="#888888" font-size="16" font-family="sans-serif" opacity="0.5">S</text>
+    <text x="-100" y="6" text-anchor="middle" fill="#888888" font-size="16" font-family="sans-serif" opacity="0.5">W</text>
+    <text x="100" y="6" text-anchor="middle" fill="#888888" font-size="16" font-family="sans-serif" opacity="0.5">E</text>
+    <!-- Compass needle -->
+    <polygon points="0,-80 -10,0 0,-10 10,0" fill="#c9a84c" opacity="0.85"/>
+    <polygon points="0,80 -10,0 0,10 10,0" fill="#888888" opacity="0.4"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="8" fill="#2a2a2a" stroke="#c9a84c" stroke-width="2" opacity="0.8"/>
+    <circle cx="0" cy="0" r="3" fill="#c9a84c" opacity="0.6"/>
+  </g>
+  <!-- Map pin accent -->
+  <g transform="translate(820,240)" opacity="0.4">
+    <path d="M0-30 C-16-30-30-16-30 0 C-30 20 0 50 0 50 C0 50 30 20 30 0 C30-16 16-30 0-30Z" fill="#c9a84c"/>
+    <circle cx="0" cy="0" r="10" fill="#161616"/>
+  </g>
+  <!-- Ambient glow -->
+  <circle cx="600" cy="360" r="260" fill="url(#tglow)" opacity="0.1"/>
+  <defs>
+    <linearGradient id="tg" x1="0" y1="0" x2="1200" y2="800">
+      <stop stop-color="#161616"/>
+      <stop offset="1" stop-color="#0c0c0c"/>
+    </linearGradient>
+    <radialGradient id="tglow" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#c9a84c"/>
+      <stop offset="1" stop-color="#c9a84c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

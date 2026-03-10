@@ -417,7 +417,7 @@ export default function YearInReviewPage() {
                 <div className="relative h-10 w-7 flex-shrink-0 overflow-hidden rounded-md border border-[var(--border)]">
                   <Image
                     loader={customLoader}
-                    src={getPostImageSrc(post.image)}
+                    src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
                     className="object-cover"

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Compass, Sparkle, Stack, UsersThree } from "@phosphor-icons/react";
+import { Compass, Sparkle } from "@phosphor-icons/react";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -62,32 +62,6 @@ export default function RecommendedPage() {
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
           Notlarındaki etiketlere göre topluluktan eşleşen içerikleri tek akışta gör.
         </p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Buradaki mantık
-            </p>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Senin etiket ve ilgi alanlarına benzeyen notlar.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Ne zaman kullanılır?
-            </p>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Yeni ama sana yakın içerik ararken.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Sonraki aksiyon
-            </p>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Detayı aç, profili incele, notu kaydetmeye karar ver.
-            </p>
-          </div>
-        </div>
       </header>
 
       {loading ? (
@@ -154,52 +128,12 @@ export default function RecommendedPage() {
             ))}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <Sparkle size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Gösterilen Öneri
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {posts.length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <Stack size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Kategori
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {categoryCount}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
-                  <UsersThree size={18} weight="duotone" />
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Kaynak Profil
-                  </p>
-                  <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
-                    {authorCount}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)]">
+            <span>{posts.length} öneri</span>
+            <span className="text-[var(--text-faint)]">·</span>
+            <span>{categoryCount} kategori</span>
+            <span className="text-[var(--text-faint)]">·</span>
+            <span>{authorCount} profil</span>
           </div>
         </section>
       )}
@@ -217,7 +151,7 @@ function RecommendedCard({ post }: { post: Post }) {
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-48 overflow-hidden bg-[var(--bg-raised)]">
           <ResilientImage
-            src={getPostImageSrc(post.image)}
+            src={getPostImageSrc(post.image, post.category)}
             alt={displayTitle}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"

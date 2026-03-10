@@ -645,7 +645,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {/* Blur backdrop */}
           {imgOrientation !== "landscape" && (
             <ResilientImage
-              src={getPostImageSrc(post.image)}
+              src={getPostImageSrc(post.image, post.category)}
               alt=""
               fill
               aria-hidden
@@ -661,7 +661,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             }}
           />
           <ResilientImage
-            src={getPostImageSrc(post.image)}
+            src={getPostImageSrc(post.image, post.category)}
             alt={displayTitle}
             fill
             className={imgOrientation === "portrait" ? "object-contain" : "object-cover"}
@@ -853,62 +853,48 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <CommunityStatsCard title={displayTitle} creator={displayCreator} />
 
         <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)] sm:p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--gold)]">
-                Arşiv bağlamı
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Link
+              href={`/category/${encodeURIComponent(categorySlug)}`}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Kategori
               </p>
-              <h2 className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
-                Bu not tek başına değil; kategori, etiket ve profil yüzeylerine bağlı.
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                Aynı başlık etrafındaki diğer notlara, bu kategorideki arşiv diline ve etiketin
-                geçtiği herkese açık notlara buradan dönebilirsin.
+              <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                {categoryLabel}
+              </p>
+            </Link>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Arşive giriş
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                {createdLabel}
               </p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[360px] lg:max-w-[420px]">
+            {authorProfileHref ? (
               <Link
-                href={`/category/${encodeURIComponent(categorySlug)}`}
+                href={authorProfileHref}
                 className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
               >
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Kategori
+                  Profil
                 </p>
                 <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                  {categoryLabel}
+                  @{post.user?.username}
                 </p>
               </Link>
+            ) : (
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Arşive giriş
+                  Etiket
                 </p>
                 <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                  {createdLabel}
+                  {tagCount > 0 ? `${tagCount} bağlantı noktası` : "Etiket yok"}
                 </p>
               </div>
-              {authorProfileHref ? (
-                <Link
-                  href={authorProfileHref}
-                  className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
-                >
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Profil
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                    @{post.user?.username}
-                  </p>
-                </Link>
-              ) : (
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Etiket
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                    {tagCount > 0 ? `${tagCount} bağlantı noktası` : "Etiket yok"}
-                  </p>
-                </div>
-              )}
-            </div>
+            )}
           </div>
 
           {post.tags && post.tags.length > 0 && (

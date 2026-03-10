@@ -38,7 +38,7 @@ export default function CollectionCard({
             {previewPosts.map((post) => (
               <div key={post.id} className="relative h-full overflow-hidden bg-[var(--bg-raised)]">
                 <ResilientImage
-                  src={getPostImageSrc(post.image)}
+                  src={getPostImageSrc(post.image, post.category)}
                   alt={formatDisplayTitle(post.title)}
                   fill
                   sizes="240px"
