@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { FIXED_CATEGORIES, normalizeCategory } from "@/lib/categories";
@@ -9,10 +10,17 @@ export async function GET() {
   const userId = (session?.user as { id?: string })?.id;
 
   if (userId) {
-    const count = await prisma.category.count({ where: { userId } });
-    if (count === 0) {
+    const existingCategories = await prisma.category.findMany({
+      where: { userId },
+      select: { name: true },
+    });
+    const existingNames = new Set(existingCategories.map((category) => category.name));
+    const missingCategories = FIXED_CATEGORIES.filter((name) => !existingNames.has(name));
+
+    if (missingCategories.length > 0) {
       await prisma.category.createMany({
-        data: FIXED_CATEGORIES.map((name) => ({ name, userId })),
+        data: missingCategories.map((name) => ({ name, userId })),
+        skipDuplicates: true,
       });
     }
   }
@@ -39,17 +47,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
 
-  const existing = await prisma.category.findFirst({
-    where: { name: normalizedName, userId },
-  });
+  let category;
+  try {
+    category = await prisma.category.create({
+      data: { name: normalizedName, userId },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return NextResponse.json({ error: "Category already exists" }, { status: 409 });
+    }
 
-  if (existing) {
-    return NextResponse.json({ error: "Category already exists" }, { status: 409 });
+    throw error;
   }
-
-  const category = await prisma.category.create({
-    data: { name: normalizedName, userId },
-  });
 
   await prisma.activityLog.create({
     data: {

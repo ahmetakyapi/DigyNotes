@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ClockCounterClockwise, X, CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
+import { ResilientImage } from "@/components/ResilientImage";
 import { getCategoryLabel } from "@/lib/categories";
 
 const STORAGE_KEY = "dn_recent_views";
@@ -231,14 +230,12 @@ export default function RecentlyViewed() {
               <div className="hover:border-[var(--gold)]/25 w-[calc(25%-6px)] min-w-[180px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgba(201,168,76,0.06)]">
                 {/* Poster */}
                 <div className="relative h-16 w-full overflow-hidden sm:h-20">
-                  <Image
-                    loader={customLoader}
+                  <ResilientImage
                     src={getPostImageSrc(item.image, item.category)}
                     alt={item.title}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="260px"
-                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-1">

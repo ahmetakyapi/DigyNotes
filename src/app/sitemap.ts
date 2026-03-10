@@ -7,13 +7,13 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
-    const [posts, categories] = await Promise.all([
-      prisma.post.findMany({
-        select: { id: true, updatedAt: true },
-        orderBy: { updatedAt: "desc" },
-      }),
-      prisma.category.findMany({ select: { name: true } }),
-    ]);
+    const posts = await prisma.post.findMany({
+      where: {
+        OR: [{ userId: null }, { user: { isPublic: true } }],
+      },
+      select: { id: true, updatedAt: true },
+      orderBy: { updatedAt: "desc" },
+    });
 
     return [
       {
@@ -22,12 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "daily",
         priority: 1,
       },
-      ...categories.map((cat) => ({
-        url: `${siteUrl}/category/${encodeURIComponent(cat.name)}`,
+      {
+        url: `${siteUrl}/discover`,
         lastModified: new Date(),
-        changeFrequency: "weekly" as const,
+        changeFrequency: "daily",
         priority: 0.8,
-      })),
+      },
       ...posts.map((post) => ({
         url: `${siteUrl}/posts/${post.id}`,
         lastModified: post.updatedAt,
@@ -42,6 +42,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
         changeFrequency: "daily",
         priority: 1,
+      },
+      {
+        url: `${siteUrl}/discover`,
+        lastModified: new Date(),
+        changeFrequency: "daily",
+        priority: 0.8,
       },
     ];
   }

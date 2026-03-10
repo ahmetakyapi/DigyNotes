@@ -60,6 +60,10 @@ export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
 
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");
   const tagsParam = searchParams.get("tags");
@@ -75,7 +79,7 @@ export async function GET(request: NextRequest) {
     : [];
 
   const where: Prisma.PostWhereInput = {};
-  if (userId) where.userId = userId;
+  where.userId = userId;
   const categoryVariants = getCategoryVariants(category);
   if (categoryVariants.length > 0) {
     where.category = { in: categoryVariants };

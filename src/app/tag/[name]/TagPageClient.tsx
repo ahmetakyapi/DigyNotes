@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
+import { ResilientImage } from "@/components/ResilientImage";
+import { AvatarImage } from "@/components/AvatarImage";
 
 type SortOption = "newest" | "oldest" | "rating";
 
@@ -136,14 +136,13 @@ function PostCard({ post }: { post: Post }) {
     <article className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#c4a24b]/30 hover:shadow-[var(--shadow-soft)]">
       {/* Image */}
       <Link href={`/posts/${post.id}`} className="relative block h-40 w-full overflow-hidden">
-        <Image
-          loader={customLoader}
+        <ResilientImage
           src={getPostImageSrc(post.image, post.category)}
           alt={displayTitle}
           fill
+          variant="wide"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           style={{ objectPosition: post.imagePosition ?? "center" }}
-          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
@@ -182,19 +181,15 @@ function PostCard({ post }: { post: Post }) {
         {/* User */}
         {post.user && (
           <div className="mt-3 flex items-center gap-2 border-t border-[var(--border)] pt-3">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#c4a24b]/20 text-[9px] font-bold text-[#c4a24b]">
-              {post.user.avatarUrl ? (
-                <Image
-                  loader={customLoader}
-                  src={post.user.avatarUrl}
-                  alt={post.user.name}
-                  width={24}
-                  height={24}
-                  className="rounded-full object-cover"
-                />
-              ) : (
-                post.user.name.charAt(0).toUpperCase()
-              )}
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-[#c4a24b]/20 text-[9px] font-bold text-[#c4a24b]">
+              <AvatarImage
+                src={post.user.avatarUrl}
+                alt={post.user.name}
+                name={post.user.name}
+                size={24}
+                className="h-full w-full object-cover"
+                textClassName="text-[9px] font-bold text-[#c4a24b]"
+              />
             </div>
             {post.user.username ? (
               <Link

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   CalendarBlank,
   ChartBar,
@@ -25,7 +24,6 @@ import {
   Cell,
 } from "recharts";
 import { getCategoryLabel } from "@/lib/categories";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
 import {
   getActiveMonthCount,
@@ -33,6 +31,7 @@ import {
   getSparseDataLabel,
   getTopItem,
 } from "@/lib/stats-insights";
+import { ResilientImage } from "@/components/ResilientImage";
 
 interface YearData {
   year: number;
@@ -415,14 +414,13 @@ export default function YearInReviewPage() {
                   {idx + 1}
                 </span>
                 <div className="relative h-10 w-7 flex-shrink-0 overflow-hidden rounded-md border border-[var(--border)]">
-                  <Image
-                    loader={customLoader}
+                  <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
+                    variant="tall"
                     className="object-cover"
                     sizes="28px"
-                    unoptimized
                   />
                 </div>
                 <div className="min-w-0 flex-1">

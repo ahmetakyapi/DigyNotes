@@ -20,9 +20,9 @@ export const config = {
   matcher: [
     "/notes/:path*",
     "/new-post/:path*",
-    "/posts/:path*",
+    "/posts/:path*/edit",
     "/category/:path*",
-    "/api/posts/:path*",
+    "/api/posts",
     "/api/categories/:path*",
     "/profile/settings/:path*",
     "/profile/settings",

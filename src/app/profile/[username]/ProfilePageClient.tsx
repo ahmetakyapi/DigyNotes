@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Collection, Post, Tag } from "@/types";
@@ -12,8 +11,9 @@ import FollowListModal from "@/components/FollowListModal";
 import CollectionCard from "@/components/CollectionCard";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplayTitle } from "@/lib/display-text";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
+import { ResilientImage } from "@/components/ResilientImage";
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface PublicUser {
   id: string;
@@ -192,21 +192,14 @@ export default function ProfilePageClient({ username }: { username: string }) {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
             {/* Avatar */}
             <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
-              {user.avatarUrl ? (
-                <Image
-                  loader={customLoader}
-                  src={user.avatarUrl}
-                  alt={user.name}
-                  width={80}
-                  height={80}
-                  className="h-full w-full object-cover"
-                  unoptimized
-                />
-              ) : (
-                <span className="text-3xl font-semibold text-[#c4a24b]">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-              )}
+              <AvatarImage
+                src={user.avatarUrl}
+                alt={user.name}
+                name={user.name}
+                size={80}
+                className="h-full w-full object-cover"
+                textClassName="text-3xl font-semibold text-[#c4a24b]"
+              />
             </div>
 
             {/* Info */}
@@ -394,14 +387,13 @@ export default function ProfilePageClient({ username }: { username: string }) {
                       className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
                       style={{ minHeight: "160px" }}
                     >
-                      <Image
-                        loader={customLoader}
+                      <ResilientImage
                         src={getPostImageSrc(post.image, post.category)}
                         alt={formatDisplayTitle(post.title)}
                         fill
+                        variant="wide"
                         sizes="200px"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                        unoptimized
                       />
                       <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
                     </div>

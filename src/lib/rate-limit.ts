@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 type RateLimitStoreEntry = {
   count: number;
@@ -12,7 +12,7 @@ type GlobalRateLimitState = {
 
 type RateLimitInput = {
   action: string;
-  req: NextRequest;
+  req: Request;
   userId?: string | null;
   limit: number;
   windowMs: number;
@@ -65,7 +65,7 @@ function getState() {
   return globalThis.__digyNotesRateLimitState;
 }
 
-function getClientIp(req: NextRequest) {
+function getClientIp(req: Request) {
   const forwardedFor = req.headers.get("x-forwarded-for");
   if (forwardedFor) {
     return forwardedFor.split(",")[0]?.trim() || "unknown";
@@ -74,7 +74,7 @@ function getClientIp(req: NextRequest) {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
-function buildRateLimitKey(action: string, req: NextRequest, userId?: string | null) {
+function buildRateLimitKey(action: string, req: Request, userId?: string | null) {
   const actor = userId ? `user:${userId}` : `ip:${getClientIp(req)}`;
   return `ratelimit:${action}:${actor}`;
 }

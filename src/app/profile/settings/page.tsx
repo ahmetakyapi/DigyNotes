@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,7 +44,7 @@ export default function ProfileSettingsPage() {
   const [usernameStatus, setUsernameStatus] = useState<
     "idle" | "checking" | "ok" | "taken" | "invalid"
   >("idle");
-  const usernameCheckRef = { current: null as ReturnType<typeof setTimeout> | null };
+  const usernameCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetch("/api/users/me")
@@ -66,6 +66,14 @@ export default function ProfileSettingsPage() {
         toast.error("Profil yüklenemedi");
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (usernameCheckRef.current) {
+        clearTimeout(usernameCheckRef.current);
+      }
+    };
   }, []);
 
   const checkUsername = useCallback(
@@ -103,6 +111,10 @@ export default function ProfileSettingsPage() {
   };
 
   const handleSave = async () => {
+    if (!username.trim()) {
+      toast.error("Kullanıcı adı boş bırakılamaz");
+      return;
+    }
     if (usernameStatus === "taken") {
       toast.error("Bu kullanıcı adı zaten alınmış");
       return;

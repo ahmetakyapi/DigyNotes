@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -18,7 +17,7 @@ import toast from "react-hot-toast";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import { getCategoryLabel, isTravelCategory, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
-import { customLoader } from "@/lib/image";
+import { ResilientImage } from "@/components/ResilientImage";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 
@@ -257,11 +256,11 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                     className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[32%]"
                     style={{ minHeight: "140px" }}
                   >
-                    <Image
-                      loader={customLoader}
+                    <ResilientImage
                       src={getPostImageSrc(post.image, post.category)}
                       alt={displayTitle}
                       fill
+                      variant="wide"
                       sizes="(max-width: 768px) 32vw, 200px"
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                       priority={index === 0}

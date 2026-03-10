@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { MapPin } from "@phosphor-icons/react";
 import { Post } from "@/types";
@@ -11,8 +10,8 @@ import {
   formatCoordinate,
   hasCoordinates,
 } from "@/lib/maps";
-import { customLoader } from "@/lib/image";
 import { getPostImageSrc } from "@/lib/post-image";
+import { ResilientImage } from "@/components/ResilientImage";
 
 interface PositionedPost extends Post {
   left: number;
@@ -86,7 +85,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
           >
             <MapPin size={14} />
-            OpenStreetMap'te Aç
+            OpenStreetMap&apos;te Aç
           </a>
         </div>
 
@@ -198,13 +197,12 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             >
               <div className="flex items-start gap-3">
                 <div className="relative h-16 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-                  <Image
-                    loader={customLoader}
+                  <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
                     fill
+                    variant="tall"
                     className="object-cover"
-                    unoptimized
                   />
                 </div>
                 <div className="min-w-0 flex-1">
