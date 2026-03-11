@@ -46,7 +46,7 @@ export function AppPreviewSection() {
   ] as const;
 
   return (
-    <section ref={sectionRef} className="relative px-4 pb-20 pt-4 sm:pt-6">
+    <section ref={sectionRef} className="relative px-3 pb-16 pt-4 sm:px-4 sm:pb-20 sm:pt-6">
       <div className="relative mx-auto w-full max-w-4xl">
         {/* Üstten gelen glow çizgisi */}
         <div
@@ -65,7 +65,7 @@ export function AppPreviewSection() {
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={handleMouseLeave}
-          className="dn-landing-preview relative overflow-hidden rounded-2xl shadow-[0_40px_120px_rgba(0,0,0,0.8)]"
+          className="dn-landing-preview relative overflow-hidden rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] sm:rounded-2xl sm:shadow-[0_40px_120px_rgba(0,0,0,0.8)]"
           style={{
             border: "1px solid var(--border-subtle)",
             background: "linear-gradient(180deg, var(--bg-card), var(--surface-strong))",
@@ -80,14 +80,15 @@ export function AppPreviewSection() {
           <motion.div
             className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-700"
             style={{
-              background: "radial-gradient(ellipse at 50% 0%, rgba(196,162,75,0.06), transparent 60%)",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(196,162,75,0.06), transparent 60%)",
               opacity: isHovered ? 1 : 0,
             }}
           />
 
           {/* Tarayıcı çubuğu */}
           <div
-            className="flex items-center gap-2 border-b px-5 py-3.5"
+            className="flex items-center gap-2 border-b px-3 py-2.5 sm:px-5 sm:py-3.5"
             style={{
               borderColor: "var(--border-subtle)",
               background: "var(--bg-soft)",
@@ -95,15 +96,15 @@ export function AppPreviewSection() {
           >
             <div className="flex gap-1.5">
               <motion.div
-                className="h-3 w-3 rounded-full bg-[#ff5f57]"
+                className="h-2.5 w-2.5 rounded-full bg-[#ff5f57] sm:h-3 sm:w-3"
                 whileHover={{ scale: 1.3 }}
               />
               <motion.div
-                className="h-3 w-3 rounded-full bg-[#febc2e]"
+                className="h-2.5 w-2.5 rounded-full bg-[#febc2e] sm:h-3 sm:w-3"
                 whileHover={{ scale: 1.3 }}
               />
               <motion.div
-                className="h-3 w-3 rounded-full bg-[#28c840]"
+                className="h-2.5 w-2.5 rounded-full bg-[#28c840] sm:h-3 sm:w-3"
                 whileHover={{ scale: 1.3 }}
               />
             </div>
@@ -122,7 +123,7 @@ export function AppPreviewSection() {
           </div>
 
           {/* Uygulama önizleme içeriği */}
-          <div className="p-4 sm:p-6">
+          <div className="p-3 sm:p-6">
             {/* Sahte header */}
             <motion.div
               className="mb-4 flex items-center justify-between sm:mb-5"
@@ -184,7 +185,7 @@ export function AppPreviewSection() {
 
             {/* Sahte öne çıkan kart */}
             <motion.div
-              className="relative mb-3 flex h-32 items-end overflow-hidden rounded-xl p-4 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
+              className="relative mb-2.5 flex h-28 items-end overflow-hidden rounded-xl p-3 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
               style={{
                 background:
                   "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
@@ -207,7 +208,8 @@ export function AppPreviewSection() {
                   <div
                     className="h-4 w-12 rounded-sm sm:h-5 sm:w-14"
                     style={{
-                      background: "linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.3))",
+                      background:
+                        "linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.3))",
                     }}
                   />
                   <div
@@ -225,7 +227,12 @@ export function AppPreviewSection() {
                 />
                 <div className="flex gap-0.5">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <svg key={s} viewBox="0 0 24 24" className="h-2.5 w-2.5 sm:h-3 sm:w-3" fill={s <= 4 ? "#c4a24b" : "#1e1e1e"}>
+                    <svg
+                      key={s}
+                      viewBox="0 0 24 24"
+                      className="h-2.5 w-2.5 sm:h-3 sm:w-3"
+                      fill={s <= 4 ? "#c4a24b" : "#1e1e1e"}
+                    >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
                   ))}
@@ -234,11 +241,11 @@ export function AppPreviewSection() {
             </motion.div>
 
             {/* Sahte kart grid — stagger reveal */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-3">
               {mockCards.map((c, i) => (
                 <motion.div
                   key={c.id}
-                  className="flex h-20 overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
+                  className="flex h-[4.5rem] overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
                   style={{ background: "var(--surface-strong)", border: `1px solid ${c.border}` }}
                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -250,7 +257,7 @@ export function AppPreviewSection() {
                   }}
                 >
                   <div
-                    className="w-12 flex-shrink-0 rounded-l-lg sm:w-16"
+                    className="w-10 flex-shrink-0 rounded-l-lg sm:w-16"
                     style={{
                       background: `linear-gradient(135deg, ${c.color.replace("0.12", "0.25")}, color-mix(in srgb, var(--surface-strong) 84%, black 16%))`,
                     }}
@@ -259,16 +266,25 @@ export function AppPreviewSection() {
                     <div>
                       <div
                         className="mb-1 h-2 w-12 rounded-full sm:mb-1.5 sm:h-2.5 sm:w-16"
-                        style={{ background: "color-mix(in srgb, var(--bg-overlay) 88%, transparent)" }}
+                        style={{
+                          background: "color-mix(in srgb, var(--bg-overlay) 88%, transparent)",
+                        }}
                       />
                       <div
                         className="h-1.5 w-full rounded-full sm:h-2"
-                        style={{ background: "color-mix(in srgb, var(--bg-overlay) 58%, transparent)" }}
+                        style={{
+                          background: "color-mix(in srgb, var(--bg-overlay) 58%, transparent)",
+                        }}
                       />
                     </div>
                     <div className="mt-auto flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <svg key={s} viewBox="0 0 24 24" className="h-2 w-2 sm:h-2.5 sm:w-2.5" fill={s <= 4 ? "#c4a24b" : "#222"}>
+                        <svg
+                          key={s}
+                          viewBox="0 0 24 24"
+                          className="h-2 w-2 sm:h-2.5 sm:w-2.5"
+                          fill={s <= 4 ? "#c4a24b" : "#222"}
+                        >
                           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                         </svg>
                       ))}
@@ -283,7 +299,8 @@ export function AppPreviewSection() {
           <div
             className="pointer-events-none absolute inset-x-0 top-0 h-px"
             style={{
-              background: "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.06) 50%, transparent 90%)",
+              background:
+                "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.06) 50%, transparent 90%)",
             }}
           />
         </motion.div>

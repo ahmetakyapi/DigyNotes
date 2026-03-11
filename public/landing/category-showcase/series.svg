@@ -1,0 +1,41 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="seriesGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(860 218) rotate(90) scale(210 270)">
+      <stop stop-color="#F0C68F" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#F0C68F" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="seriesCard" x1="728" y1="110" x2="1060" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20150E" stop-opacity="0.94"/>
+      <stop offset="1" stop-color="#0D0907" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="850" cy="226" rx="248" ry="212" fill="url(#seriesGlow)"/>
+  <path d="M672 162C708 130 754 114 814 114C885 114 943 146 985 202" stroke="#F5D8AB" stroke-opacity="0.18" stroke-width="3" stroke-linecap="round"/>
+  <path d="M696 360C740 386 796 400 854 400C928 400 990 378 1030 334" stroke="#F5D8AB" stroke-opacity="0.14" stroke-width="3" stroke-linecap="round"/>
+
+  <g transform="translate(736 110) rotate(-7 164 64)">
+    <rect width="328" height="128" rx="34" fill="url(#seriesCard)" stroke="#6B4A27" stroke-opacity="0.4" stroke-width="2"/>
+    <rect x="34" y="28" width="70" height="10" rx="5" fill="#E4C08C" fill-opacity="0.9"/>
+    <rect x="34" y="86" width="208" height="16" rx="8" fill="#2B1D13"/>
+    <rect x="34" y="86" width="166" height="16" rx="8" fill="#E9C899"/>
+    <circle cx="278" cy="42" r="6" fill="#8E6640"/>
+    <circle cx="298" cy="42" r="6" fill="#8E6640" fill-opacity="0.5"/>
+  </g>
+
+  <g transform="translate(714 232)">
+    <rect width="348" height="136" rx="36" fill="url(#seriesCard)" stroke="#6B4A27" stroke-opacity="0.42" stroke-width="2"/>
+    <rect x="36" y="30" width="90" height="10" rx="5" fill="#E4C08C" fill-opacity="0.9"/>
+    <rect x="36" y="92" width="228" height="16" rx="8" fill="#2B1D13"/>
+    <rect x="36" y="92" width="196" height="16" rx="8" fill="#F0D0A5"/>
+    <circle cx="294" cy="44" r="7" fill="#8E6640"/>
+    <circle cx="316" cy="44" r="7" fill="#8E6640" fill-opacity="0.5"/>
+  </g>
+
+  <g transform="translate(756 376) rotate(-5 144 58)">
+    <rect width="288" height="116" rx="32" fill="url(#seriesCard)" stroke="#6B4A27" stroke-opacity="0.38" stroke-width="2"/>
+    <rect x="32" y="28" width="86" height="9" rx="4.5" fill="#E4C08C" fill-opacity="0.86"/>
+    <rect x="32" y="74" width="192" height="14" rx="7" fill="#2B1D13"/>
+    <rect x="32" y="74" width="168" height="14" rx="7" fill="#E1BB84"/>
+  </g>
+</svg>

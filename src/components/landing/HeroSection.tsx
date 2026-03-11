@@ -20,37 +20,34 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 pb-4 pt-[4.4rem] sm:px-4 sm:pt-16"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pb-4 pt-[4.4rem] sm:px-4 sm:pt-16"
     >
-      {/* ── Aurora arka plan katmanları ── */}
-      <motion.div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ y: bgY }}>
+      {/* ── Subtle background layers ── */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        style={{ y: bgY }}
+      >
+        {/* Tek merkezi altın glow — "Tek Yerde" hizasında, aşağıda */}
         <div
-          className="dn-aurora-float-1 absolute -left-20 -top-20 h-[400px] w-[400px] rounded-full opacity-[0.09] blur-[140px] sm:h-[700px] sm:w-[700px]"
-          style={{ background: "radial-gradient(circle, #c4902a 0%, #7a5010 50%, transparent 70%)" }}
+          className="dn-aurora-float-3 absolute bottom-[18%] left-1/2 h-[200px] w-[340px] -translate-x-1/2 rounded-full opacity-[0.10] blur-[120px] sm:h-[300px] sm:w-[600px] sm:opacity-[0.12]"
+          style={{
+            background: "radial-gradient(circle, #c4a24b 0%, #8a6820 50%, transparent 75%)",
+          }}
         />
-        <div
-          className="dn-aurora-float-2 absolute -right-20 -top-10 h-[350px] w-[350px] rounded-full opacity-[0.06] blur-[140px] sm:h-[600px] sm:w-[600px]"
-          style={{ background: "radial-gradient(circle, #6878a0 0%, #3a4a6a 50%, transparent 70%)" }}
-        />
-        <div
-          className="dn-aurora-float-3 absolute bottom-0 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full opacity-[0.07] blur-[160px] sm:h-[500px] sm:w-[900px]"
-          style={{ background: "radial-gradient(circle, #c4a24b 0%, #8a6820 60%, transparent 70%)" }}
-        />
-        <div
-          className="dn-aurora-core absolute left-1/2 top-1/2 h-[150px] w-[300px] -translate-x-1/2 -translate-y-1/2 opacity-[0.06] blur-[90px] sm:h-[250px] sm:w-[500px]"
-          style={{ background: "radial-gradient(circle, #c4a24b, transparent 70%)" }}
-        />
+        {/* Grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.016] sm:hidden"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
             backgroundSize: "78px 78px",
           }}
         />
         <div
           className="absolute inset-0 hidden opacity-[0.018] sm:block"
           style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }}
         />
@@ -88,7 +85,10 @@ export function HeroSection() {
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         >
           <div className="h-px w-5" style={{ background: "rgba(196,162,75,0.3)" }} />
-          <div className="absolute left-1/2 top-1/2 h-5 w-px -translate-x-1/2 -translate-y-1/2" style={{ background: "rgba(196,162,75,0.3)" }} />
+          <div
+            className="absolute left-1/2 top-1/2 h-5 w-px -translate-x-1/2 -translate-y-1/2"
+            style={{ background: "rgba(196,162,75,0.3)" }}
+          />
         </motion.div>
       </div>
 
@@ -106,7 +106,8 @@ export function HeroSection() {
           <div
             className="dn-badge-sheen relative mb-1 mt-2 flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-md sm:mb-1 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2 2xl:px-6 2xl:py-2.5"
             style={{
-              background: "linear-gradient(135deg, rgba(201,168,76,0.12), rgba(129,140,248,0.08), rgba(255,107,53,0.08))",
+              background:
+                "linear-gradient(135deg, rgba(201,168,76,0.12), rgba(129,140,248,0.08), rgba(255,107,53,0.08))",
               borderColor: "color-mix(in srgb, var(--gold) 28%, transparent)",
             }}
           >
@@ -131,8 +132,8 @@ export function HeroSection() {
         <div className="flex flex-col items-center">
           <h1 className="mb-4 w-full overflow-visible px-1 pb-[0.1em] text-center text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.14] tracking-[-0.038em] sm:mb-5 sm:px-0 sm:text-[clamp(3.35rem,6vw,5.25rem)] sm:leading-[1.12] xl:text-[clamp(4rem,5.4vw,5.8rem)] xl:leading-[1.1] 2xl:text-[clamp(4.5rem,4.8vw,6.4rem)]">
             <motion.span
-              className="mb-0.5 block px-[0.04em] pb-[0.04em] pt-[0.18em] sm:mb-1"
-              style={{ minHeight: "1.2em" }}
+              className="mb-0.5 block px-[0.04em] pb-[0.04em] pt-[0.12em] sm:mb-1"
+              style={{ lineHeight: 1.25 }}
               initial={{ opacity: 0, y: 28, filter: "blur(14px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.85, delay: 0.12, ease: [0.16, 0.8, 0.24, 1] }}
@@ -141,18 +142,21 @@ export function HeroSection() {
             </motion.span>
 
             <motion.span
-              className="mb-0.5 block px-[0.04em] py-[0.04em] sm:mb-1"
+              className="mb-0.5 block px-[0.04em] py-[0.08em] sm:mb-1"
               initial={{ opacity: 0, y: 28, filter: "blur(14px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.85, delay: 0.24, ease: [0.16, 0.8, 0.24, 1] }}
-              style={{
-                background: "linear-gradient(135deg, #f0cc98 0%, #d4a060 45%, #b87838 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 0 36px rgba(212, 152, 72, 0.36))",
-              }}
             >
-              ve Sana Kalanlar
+              <span
+                style={{
+                  background:
+                    "linear-gradient(135deg, #48c890 0%, #28a068 22%, #148850 44%, #0a7040 66%, #065830 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
+                Sana Kalanlar
+              </span>
             </motion.span>
 
             <motion.span
@@ -162,11 +166,12 @@ export function HeroSection() {
               transition={{ duration: 0.85, delay: 0.38, ease: [0.16, 0.8, 0.24, 1] }}
               style={{
                 fontSize: "1.08em",
-                background: "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f8d040 80%, #fff8c8 100%)",
+                background:
+                  "linear-gradient(90deg, #fff4b8 0%, #f8d038 16%, #e8a818 36%, #f0c028 56%, #fcd848 76%, #fff4b8 100%)",
                 backgroundSize: "200% 100%",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 0 40px rgba(248, 200, 40, 0.75)) drop-shadow(0 0 80px rgba(220, 160, 20, 0.4))",
+                filter: "drop-shadow(0 0 20px rgba(248, 208, 40, 0.35))",
               }}
             >
               Tek Yerde
@@ -204,7 +209,9 @@ export function HeroSection() {
               <span className="relative z-10">Hemen Başla →</span>
               <div
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{ background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)" }}
+                style={{
+                  background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)",
+                }}
               />
             </Link>
           </MagneticButton>
@@ -223,7 +230,7 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 sm:bottom-8"
+        className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 sm:bottom-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.6 }}

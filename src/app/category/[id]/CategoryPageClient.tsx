@@ -137,9 +137,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryLabel}</h1>
           <div className="flex flex-wrap items-center gap-3">
             <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
-            <span className="text-xs text-[var(--text-muted)]">
-              {posts.length} not
-            </span>
+            <span className="text-xs text-[var(--text-muted)]">{posts.length} not</span>
             {travelCategory && (
               <span className="text-xs text-[var(--text-muted)]">
                 · {mappedPosts.length} harita pini

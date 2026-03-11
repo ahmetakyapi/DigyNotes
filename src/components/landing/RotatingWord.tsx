@@ -7,95 +7,90 @@ const WORDS = ["İzlediklerin", "Oynadıkların", "Okudukların", "Gezdiklerin"]
 
 const WORD_STYLES = [
   {
-    gradient: "linear-gradient(135deg, #90aadc 0%, #5070c8 45%, #2848a0 100%)",
-    glow: "rgba(60, 100, 200, 0.45)",
+    // İzlediklerin — koyu indigo-mavi
+    gradient: "linear-gradient(135deg, #5c8ad0 0%, #3660b8 28%, #1c449c 56%, #0e3080 100%)",
   },
   {
-    gradient: "linear-gradient(135deg, #d4b4f4 0%, #a878e0 45%, #7848c0 100%)",
-    glow: "rgba(160, 90, 224, 0.4)",
+    // Oynadıkların — koyu mor
+    gradient: "linear-gradient(135deg, #a880d8 0%, #7c50c0 28%, #5c30a8 56%, #401890 100%)",
   },
   {
-    gradient: "linear-gradient(135deg, #f0cc98 0%, #d4a060 45%, #b87838 100%)",
-    glow: "rgba(212, 152, 72, 0.38)",
+    // Okudukların — koyu amber
+    gradient: "linear-gradient(135deg, #d4a050 0%, #b88028 28%, #9c6818 56%, #805010 100%)",
   },
   {
-    gradient: "linear-gradient(135deg, #9cdcbc 0%, #6cb898 45%, #409870 100%)",
-    glow: "rgba(80, 180, 130, 0.38)",
+    // Gezdiklerin — koyu zümrüt yeşil
+    gradient: "linear-gradient(135deg, #58b888 0%, #2e9468 28%, #1a7850 56%, #0c6040 100%)",
   },
 ];
 
-const EASE_IN: [number, number, number, number] = [0.22, 0.68, 0.32, 1];
-const EASE_OUT: [number, number, number, number] = [0.55, 0, 1, 0.45];
-
-const charVariants = {
-  initial: { opacity: 0, y: 24, rotateX: 90, filter: "blur(8px)" },
-  animate: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 0.4,
-      delay: i * 0.03,
-      ease: EASE_IN,
-    },
-  }),
-  exit: (i: number) => ({
-    opacity: 0,
-    y: -18,
-    rotateX: -60,
-    filter: "blur(6px)",
-    transition: {
-      duration: 0.28,
-      delay: i * 0.02,
-      ease: EASE_OUT,
-    },
-  }),
-};
+const INTERVAL = 2600;
 
 export function RotatingWord() {
   const [index, setIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
     const interval = setInterval(() => {
       setIndex((i) => (i + 1) % WORDS.length);
-    }, 2600);
+    }, INTERVAL);
     return () => clearInterval(interval);
-  }, []);
+  }, [isMounted]);
 
   const style = WORD_STYLES[index];
   const word = WORDS[index];
 
+  // SSR ve hydration sırasında sabit render
+  if (!isMounted) {
+    return (
+      <span
+        className="inline-block text-center"
+        style={{
+          background: WORD_STYLES[0].gradient,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        {WORDS[0]}
+      </span>
+    );
+  }
+
   return (
     <span
-      className="relative inline-flex justify-center"
-      style={{ minWidth: "min(320px, 80vw)", perspective: "600px" }}
+      className="relative inline-flex items-center justify-center"
+      style={{ minHeight: "1.15em" }}
     >
+      {/* Invisible sizer — en uzun kelimeye göre genişlik reserve et */}
+      <span className="pointer-events-none invisible select-none" aria-hidden="true">
+        {WORDS.reduce((a, b) => (a.length >= b.length ? a : b), WORDS[0])}
+      </span>
+
+      {/* Animated word — absolute overlay */}
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
-          className="inline-flex"
-          style={{
-            background: style.gradient,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            filter: `drop-shadow(0 0 36px ${style.glow})`,
-          }}
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+          transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
         >
-          {word.split("").map((char, i) => (
-            <motion.span
-              key={`${index}-${i}`}
-              className="inline-block"
-              variants={charVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              custom={i}
-              style={{ transformOrigin: "center bottom" }}
-            >
-              {char}
-            </motion.span>
-          ))}
+          <span
+            style={{
+              background: style.gradient,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {word}
+          </span>
         </motion.span>
       </AnimatePresence>
     </span>

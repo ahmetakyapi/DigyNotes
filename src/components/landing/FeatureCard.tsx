@@ -81,11 +81,11 @@ export function FeatureCard({
         transformPerspective: 800,
         transformStyle: "preserve-3d",
       }}
-      className="dn-landing-card group relative overflow-hidden rounded-2xl p-5 last:col-span-2 sm:p-7 sm:last:col-span-1"
+      className="dn-landing-card group relative overflow-hidden rounded-xl p-4 sm:rounded-2xl sm:p-7"
     >
       {/* Glassmorphism background */}
       <div
-        className="absolute inset-0 rounded-2xl"
+        className="absolute inset-0 rounded-xl sm:rounded-2xl"
         style={{
           background: `linear-gradient(145deg, ${gradientFrom}, color-mix(in srgb, var(--surface-strong) 85%, transparent))`,
           border: `1px solid ${border}`,
@@ -96,7 +96,7 @@ export function FeatureCard({
 
       {/* Mouse-follow spotlight */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl transition-opacity duration-500"
+        className="pointer-events-none absolute -inset-px rounded-xl transition-opacity duration-500 sm:rounded-2xl"
         style={{
           opacity: hovered ? 1 : 0,
           background: `radial-gradient(450px circle at ${mouseX.get()}px ${mouseY.get()}px, ${gradientFrom.replace("0.07", "0.18").replace("0.08", "0.2")}, transparent 40%)`,
@@ -105,7 +105,7 @@ export function FeatureCard({
 
       {/* Animated border glow on hover */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl"
+        className="pointer-events-none absolute -inset-px rounded-xl sm:rounded-2xl"
         style={{
           opacity: hovered ? 1 : 0,
           background: `radial-gradient(350px circle at ${mouseX.get()}px ${mouseY.get()}px, ${iconColor}33, transparent 40%)`,
@@ -128,7 +128,7 @@ export function FeatureCard({
 
       {/* İkon */}
       <div
-        className="relative z-10 mb-3 flex h-10 w-10 items-center justify-center rounded-xl sm:mb-5 sm:h-12 sm:w-12 sm:rounded-[14px]"
+        className="relative z-10 mb-2.5 flex h-9 w-9 items-center justify-center rounded-lg sm:mb-5 sm:h-12 sm:w-12 sm:rounded-[14px]"
         style={{
           background: iconBg,
           border: `1px solid ${iconBorder}`,
@@ -145,10 +145,10 @@ export function FeatureCard({
       </div>
 
       {/* Text */}
-      <h3 className="relative z-10 mb-1 text-base font-bold text-[var(--text-primary)] sm:mb-2 sm:text-lg">
+      <h3 className="relative z-10 mb-1 text-[15px] font-bold text-[var(--text-primary)] sm:mb-2 sm:text-lg">
         {title}
       </h3>
-      <p className="relative z-10 text-[13px] leading-[1.8] text-[var(--text-secondary)] sm:text-sm">
+      <p className="relative z-10 text-[12px] leading-[1.7] text-[var(--text-secondary)] sm:text-sm sm:leading-[1.8]">
         {desc}
       </p>
 

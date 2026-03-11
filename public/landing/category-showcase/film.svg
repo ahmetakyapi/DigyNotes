@@ -1,0 +1,55 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="filmGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(840 230) rotate(90) scale(220 280)">
+      <stop stop-color="#9BB8F3" stop-opacity="0.48"/>
+      <stop offset="1" stop-color="#9BB8F3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="filmPanel" x1="650" y1="120" x2="970" y2="340" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#13233A" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#07111B" stop-opacity="0.88"/>
+    </linearGradient>
+    <linearGradient id="filmPlanet" x1="720" y1="158" x2="870" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5C82C7"/>
+      <stop offset="1" stop-color="#0C1A2B"/>
+    </linearGradient>
+    <linearGradient id="filmCard" x1="644" y1="344" x2="816" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1A2A" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#08111A" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="830" cy="248" rx="252" ry="220" fill="url(#filmGlow)"/>
+
+  <rect x="648" y="118" width="326" height="232" rx="34" fill="url(#filmPanel)" stroke="#23456F" stroke-opacity="0.46" stroke-width="2"/>
+  <rect x="670" y="138" width="282" height="192" rx="28" fill="#050B12" fill-opacity="0.62"/>
+
+  <circle cx="790" cy="226" r="82" fill="url(#filmPlanet)"/>
+  <ellipse cx="792" cy="236" rx="126" ry="30" stroke="#8AA8E5" stroke-opacity="0.72" stroke-width="4"/>
+  <ellipse cx="792" cy="236" rx="126" ry="30" stroke="#D8E4FF" stroke-opacity="0.18" stroke-width="10"/>
+  <ellipse cx="790" cy="286" rx="108" ry="24" fill="#0A1119" fill-opacity="0.68"/>
+
+  <circle cx="726" cy="178" r="5" fill="#B3CBFF"/>
+  <circle cx="862" cy="168" r="7" fill="#B3CBFF"/>
+  <circle cx="910" cy="236" r="6" fill="#B3CBFF"/>
+  <circle cx="734" cy="264" r="5" fill="#B3CBFF"/>
+  <circle cx="850" cy="286" r="4" fill="#B3CBFF"/>
+  <circle cx="884" cy="208" r="3" fill="#B3CBFF"/>
+
+  <path d="M715 330C737 308 752 294 791 294C830 294 845 308 866 330" stroke="#DCE7FF" stroke-opacity="0.12" stroke-width="3" stroke-linecap="round"/>
+
+  <rect x="1000" y="92" width="74" height="324" rx="30" fill="#08111A" fill-opacity="0.76" stroke="#23456F" stroke-opacity="0.34" stroke-width="2"/>
+  <rect x="1022" y="120" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="160" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="200" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="240" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="280" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="320" width="30" height="18" rx="5" fill="#1D3552"/>
+  <rect x="1022" y="360" width="30" height="18" rx="5" fill="#1D3552"/>
+
+  <g transform="translate(640 350) rotate(-7 90 38)">
+    <rect width="180" height="76" rx="30" fill="url(#filmCard)" stroke="#23456F" stroke-opacity="0.42" stroke-width="2"/>
+    <rect x="28" y="24" width="54" height="10" rx="5" fill="#6F91D4" fill-opacity="0.88"/>
+    <rect x="94" y="24" width="56" height="10" rx="5" fill="#355178" fill-opacity="0.7"/>
+    <rect x="28" y="42" width="80" height="8" rx="4" fill="#DCE7FF" fill-opacity="0.16"/>
+  </g>
+</svg>

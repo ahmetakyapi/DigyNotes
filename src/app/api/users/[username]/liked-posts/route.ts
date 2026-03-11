@@ -47,7 +47,9 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       where: { userId: targetUser.id },
       orderBy: { createdAt: "desc" },
       take: limit + 1,
-      ...(cursor ? { skip: 1, cursor: { postId_userId: { postId: cursor, userId: targetUser.id } } } : {}),
+      ...(cursor
+        ? { skip: 1, cursor: { postId_userId: { postId: cursor, userId: targetUser.id } } }
+        : {}),
       include: {
         post: {
           include: {
@@ -67,13 +69,15 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
     });
 
     const hasMore = accessible.length > limit;
-    const items = (hasMore ? accessible.slice(0, limit) : accessible).map(({ post, createdAt }) => ({
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
-      likedAt: createdAt.toISOString(),
-      tags: post.tags.map((pt) => pt.tag),
-    }));
+    const items = (hasMore ? accessible.slice(0, limit) : accessible).map(
+      ({ post, createdAt }) => ({
+        ...post,
+        createdAt: post.createdAt.toISOString(),
+        updatedAt: post.updatedAt.toISOString(),
+        likedAt: createdAt.toISOString(),
+        tags: post.tags.map((pt) => pt.tag),
+      })
+    );
 
     const nextCursor = hasMore ? items[items.length - 1].id : null;
 
