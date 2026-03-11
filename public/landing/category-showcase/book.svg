@@ -1,0 +1,41 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bookGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(850 184) rotate(90) scale(196 250)">
+      <stop stop-color="#F0D89A" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#F0D89A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pageLeft" x1="706" y1="148" x2="860" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0DFC0"/>
+      <stop offset="1" stop-color="#CBAE69"/>
+    </linearGradient>
+    <linearGradient id="pageRight" x1="850" y1="138" x2="1012" y2="412" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4E5C5"/>
+      <stop offset="1" stop-color="#D0B26E"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="856" cy="184" rx="236" ry="184" fill="url(#bookGlow)"/>
+  <circle cx="976" cy="112" r="54" fill="#E7C86B" fill-opacity="0.14" stroke="#E7C86B" stroke-opacity="0.4" stroke-width="3"/>
+
+  <g transform="translate(708 150) rotate(-7 94 128)">
+    <rect width="188" height="256" rx="36" fill="url(#pageLeft)" fill-opacity="0.96" stroke="#ECD39A" stroke-opacity="0.4" stroke-width="2"/>
+    <rect x="44" y="44" width="84" height="18" rx="9" fill="#957A45" fill-opacity="0.22"/>
+    <rect x="42" y="104" width="96" height="4" rx="2" fill="#8C7440" fill-opacity="0.22"/>
+    <rect x="42" y="122" width="82" height="4" rx="2" fill="#8C7440" fill-opacity="0.18"/>
+    <rect x="42" y="140" width="104" height="4" rx="2" fill="#8C7440" fill-opacity="0.2"/>
+    <rect x="42" y="158" width="90" height="4" rx="2" fill="#8C7440" fill-opacity="0.16"/>
+    <rect x="42" y="176" width="98" height="4" rx="2" fill="#8C7440" fill-opacity="0.16"/>
+  </g>
+
+  <g transform="translate(884 136) rotate(6 92 132)">
+    <rect width="184" height="264" rx="36" fill="url(#pageRight)" fill-opacity="0.98" stroke="#ECD39A" stroke-opacity="0.42" stroke-width="2"/>
+    <rect x="110" y="0" width="24" height="100" rx="12" fill="#D5B351"/>
+    <rect x="48" y="54" width="68" height="6" rx="3" fill="#8C7440" fill-opacity="0.34"/>
+    <rect x="48" y="78" width="80" height="6" rx="3" fill="#8C7440" fill-opacity="0.22"/>
+    <rect x="48" y="102" width="74" height="6" rx="3" fill="#8C7440" fill-opacity="0.22"/>
+    <rect x="48" y="126" width="88" height="6" rx="3" fill="#8C7440" fill-opacity="0.2"/>
+    <rect x="48" y="150" width="64" height="6" rx="3" fill="#8C7440" fill-opacity="0.18"/>
+  </g>
+
+  <ellipse cx="880" cy="424" rx="170" ry="30" fill="#CFAF67" fill-opacity="0.14"/>
+</svg>

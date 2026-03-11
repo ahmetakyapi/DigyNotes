@@ -1,77 +1,134 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useSpring } from "framer-motion";
 
-interface CounterProps {
+/* ── Data ── */
+const STATS = [
+  { value: 5, label: "Kategori", suffix: "", color: "var(--gold)", glowColor: "rgba(201,168,76,0.35)" },
+  { value: 5, label: "Yıldız", suffix: "★", color: "#818cf8", glowColor: "rgba(129,140,248,0.35)" },
+  { value: 100, label: "Tamamen Ücretsiz", suffix: "%", color: "#60a88a", glowColor: "rgba(96,168,138,0.35)" },
+] as const;
+
+/* ── Animated Counter ── */
+function Counter({
+  value,
+  label,
+  suffix = "",
+  color = "var(--gold)",
+  glowColor = "rgba(201,168,76,0.35)",
+  delay = 0,
+}: {
   readonly value: number;
   readonly label: string;
   readonly suffix?: string;
   readonly color?: string;
+  readonly glowColor?: string;
   readonly delay?: number;
-}
-
-function Counter({ value, label, suffix = "+", color = "var(--gold)", delay = 0 }: CounterProps) {
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [count, setCount] = useState(0);
+  const [done, setDone] = useState(false);
+
+  const punchScale = useSpring(1, { damping: 12, stiffness: 300 });
 
   useEffect(() => {
     if (!isInView) return;
     const timeout = setTimeout(() => {
       let start = 0;
       const end = value;
-      const duration = 1200;
-      const stepTime = Math.max(Math.floor(duration / end), 30);
+      const duration = 1400;
+      const stepTime = Math.max(Math.floor(duration / end), 24);
       const timer = setInterval(() => {
         start += 1;
         setCount(start);
-        if (start >= end) clearInterval(timer);
+        if (start >= end) {
+          clearInterval(timer);
+          setDone(true);
+          punchScale.set(1.18);
+          setTimeout(() => punchScale.set(1), 200);
+        }
       }, stepTime);
       return () => clearInterval(timer);
     }, delay * 1000);
     return () => clearTimeout(timeout);
-  }, [isInView, value, delay]);
+  }, [isInView, value, delay, punchScale]);
 
   return (
     <motion.div
       ref={ref}
-      className="flex flex-col items-center gap-1.5"
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ duration: 0.6, delay, ease: [0.16, 0.8, 0.24, 1] }}
+      className="group relative flex flex-col items-center gap-2"
+      initial={{ opacity: 0, y: 30, scale: 0.85, filter: "blur(10px)" }}
+      animate={isInView ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.16, 0.8, 0.24, 1] }}
     >
-      <span
-        className="text-3xl font-black tabular-nums sm:text-4xl"
+      {/* Background glow pulse when done */}
+      <motion.div
+        className="pointer-events-none absolute -inset-4 rounded-full opacity-0"
+        style={{ background: `radial-gradient(circle, ${glowColor}, transparent 70%)` }}
+        animate={done ? { opacity: [0, 0.5, 0] } : {}}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+      />
+
+      <motion.span
+        className="relative text-3xl font-black tabular-nums sm:text-5xl"
         style={{
           color,
-          textShadow: `0 0 20px color-mix(in srgb, ${color} 30%, transparent)`,
+          scale: punchScale,
+          textShadow: `0 0 24px ${glowColor}, 0 0 48px ${glowColor.replace("0.35", "0.15")}`,
         }}
       >
         {count}
         {suffix}
-      </span>
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] sm:text-xs">
+      </motion.span>
+
+      <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-muted)] sm:text-xs">
         {label}
       </span>
     </motion.div>
   );
 }
 
+/* ── Animated Divider ── */
+function AnimatedDivider({ delay = 0 }: { readonly delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="mx-4 h-12 w-px sm:mx-8 sm:h-14"
+      initial={{ scaleY: 0, opacity: 0 }}
+      animate={isInView ? { scaleY: 1, opacity: 1 } : {}}
+      transition={{ duration: 0.6, delay, ease: [0.16, 0.8, 0.24, 1] }}
+    >
+      <div
+        className="h-full w-full rounded-full"
+        style={{
+          background: "linear-gradient(to bottom, transparent, var(--border), transparent)",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+/* ── Main Component ── */
 export function StatsRow() {
   return (
     <motion.div
-      className="mx-auto my-6 flex w-full max-w-lg items-center justify-around sm:my-10"
+      className="relative mx-auto my-6 flex w-full max-w-lg items-center justify-center px-4 sm:my-12 sm:max-w-xl sm:px-0"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.4 }}
     >
-      <Counter value={5} label="Kategori" suffix="" color="var(--gold)" delay={0} />
-      <div className="h-8 w-px rounded-full bg-[var(--border)]" style={{ opacity: 0.5 }} />
-      <Counter value={100} label="Limitsiz" suffix="%" color="#818cf8" delay={0.1} />
-      <div className="h-8 w-px rounded-full bg-[var(--border)]" style={{ opacity: 0.5 }} />
-      <Counter value={5} label="dk'da Başla" suffix="" color="#60a88a" delay={0.2} />
+      {STATS.map((stat, i) => (
+        <div key={stat.label} className="flex items-center">
+          {i > 0 && <AnimatedDivider delay={i * 0.12} />}
+          <Counter {...stat} delay={i * 0.15} />
+        </div>
+      ))}
     </motion.div>
   );
 }

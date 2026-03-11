@@ -77,10 +77,25 @@ const FEATURES = [
 ] as const;
 
 const SUB_FEATURES = [
-  { label: "Tam Metin Arama", Icon: LuSearch, color: "var(--gold)", accent: "rgba(196,162,75,0.1)" },
+  {
+    label: "Tam Metin Arama",
+    Icon: LuSearch,
+    color: "var(--gold)",
+    accent: "rgba(196,162,75,0.1)",
+  },
   { label: "Kaydet & Etiketle", Icon: LuTag, color: "#8d7d5e", accent: "rgba(141,125,94,0.1)" },
-  { label: "Bildirimler & Keşfet", Icon: LuUsers, color: "#7a85d8", accent: "rgba(122,133,216,0.1)" },
-  { label: "Kişisel İstatistikler", Icon: LuStar, color: "var(--gold)", accent: "rgba(196,162,75,0.1)" },
+  {
+    label: "Bildirimler & Keşfet",
+    Icon: LuUsers,
+    color: "#7a85d8",
+    accent: "rgba(122,133,216,0.1)",
+  },
+  {
+    label: "Kişisel İstatistikler",
+    Icon: LuStar,
+    color: "var(--gold)",
+    accent: "rgba(196,162,75,0.1)",
+  },
 ] as const;
 
 /* ────────────────────────────────────────────
@@ -90,22 +105,33 @@ export function FeaturesSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
+  /* Scroll-linked parallax for the heading */
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 0.3], [40, 0]);
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+
   return (
-    <section ref={sectionRef} className="relative mx-auto w-full max-w-5xl px-4 pb-16 pt-2 sm:px-6 sm:pb-24 sm:pt-4">
-      {/* Section decorative line */}
-      <div
-        className="absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2"
+    <section
+      ref={sectionRef}
+      className="relative mx-auto w-full max-w-5xl px-3 pb-14 pt-2 sm:px-6 sm:pb-24 sm:pt-4"
+    >
+      {/* Section decorative line — animated width */}
+      <motion.div
+        className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
+        animate={isInView ? { width: "66%" } : {}}
+        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
         }}
       />
 
-      {/* Heading */}
+      {/* Heading — scroll-linked parallax */}
       <motion.div
-        className="mb-12 text-center sm:mb-16"
-        initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
-        animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-        transition={{ duration: 0.8, ease: [0.16, 0.8, 0.24, 1] }}
+        className="mb-10 text-center sm:mb-16"
+        style={{ y: headingY, opacity: headingOpacity }}
       >
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
@@ -115,15 +141,25 @@ export function FeaturesSection() {
               background: "rgba(196,162,75,0.06)",
               color: "var(--gold)",
             }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
+            animate={isInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <LuSparkles size={12} />
+            <motion.span
+              animate={isInView ? { rotate: [0, 15, -15, 0] } : {}}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <LuSparkles size={12} />
+            </motion.span>
             Özellikler
           </motion.div>
         </div>
-        <h2 className="mb-3 text-2xl font-black text-[var(--text-primary)] sm:mb-4 sm:text-4xl xl:text-5xl">
+        <motion.h2
+          className="mb-3 text-[1.35rem] font-black text-[var(--text-primary)] sm:mb-4 sm:text-4xl xl:text-5xl"
+          initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 0.8, 0.24, 1] }}
+        >
           Her şey{" "}
           <span
             className="dn-shimmer-text"
@@ -136,43 +172,60 @@ export function FeaturesSection() {
           >
             tek yerde
           </span>
-        </h2>
-        <p className="mx-auto max-w-2xl text-[15px] font-medium leading-[1.85] text-[var(--text-secondary)] sm:text-base">
+        </motion.h2>
+        <motion.p
+          className="mx-auto max-w-2xl text-[13px] font-medium leading-[1.85] text-[var(--text-secondary)] sm:text-base"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.25 }}
+        >
           <span className="block text-balance">
             Film izle, dizi takip et, oyun oyna, kitap oku, gezi yap — not al.
           </span>
           <span className="mt-3 block text-balance">
             Kaydet, bildirim al, koleksiyon oluştur ve istatistiklerini gör.
           </span>
-        </p>
+        </motion.p>
       </motion.div>
 
       {/* Büyük özellik kartları — grid */}
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:mb-10 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:mb-10 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
         {FEATURES.map((f, i) => (
-          <FeatureCard key={f.title} {...f} index={i} />
+          <div key={f.title} className={i === FEATURES.length - 1 ? "col-span-2 mx-auto w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1" : ""}>
+            <FeatureCard {...f} index={i} />
+          </div>
         ))}
       </div>
 
       {/* Alt özellik satırı — bento pills */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
         {SUB_FEATURES.map((s, i) => (
           <motion.div
             key={s.label}
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.5, delay: 0.3 + i * 0.08, ease: [0.16, 0.8, 0.24, 1] }}
-            whileHover={{ y: -3, scale: 1.03, transition: { duration: 0.2 } }}
-            className="dn-landing-card group flex flex-row items-center gap-3 rounded-xl border border-[var(--border)] px-4 py-3.5 backdrop-blur-sm"
-            style={{ cursor: "default", background: "color-mix(in srgb, var(--bg-card) 80%, transparent)" }}
+            transition={{ duration: 0.55, delay: 0.3 + i * 0.1, ease: [0.16, 0.8, 0.24, 1] }}
+            whileHover={{
+              y: -4,
+              scale: 1.04,
+              borderColor: "rgba(196,162,75,0.25)",
+              transition: { duration: 0.2 },
+            }}
+            className="dn-landing-card group flex flex-row items-center gap-2.5 rounded-xl border border-[var(--border)] px-3 py-3 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-3.5"
+            style={{
+              cursor: "default",
+              background: "color-mix(in srgb, var(--bg-card) 80%, transparent)",
+            }}
           >
-            <div
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-shadow duration-300 group-hover:shadow-[0_0_12px_rgba(196,162,75,0.2)]"
+            <motion.div
+              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-shadow duration-300 group-hover:shadow-[0_0_16px_rgba(196,162,75,0.25)]"
               style={{ background: s.accent }}
+              whileHover={{ scale: 1.15, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
               <s.Icon size={13} style={{ color: s.color, flexShrink: 0 }} />
-            </div>
+            </motion.div>
             <span className="text-[12px] font-semibold text-[var(--text-secondary)] sm:text-[13px]">
               {s.label}
             </span>
@@ -229,17 +282,17 @@ function TimelineStep({
     <motion.div
       ref={ref}
       className="relative flex flex-col items-center text-center"
-      initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
+      initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
       animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
       transition={{
-        duration: 0.7,
-        delay: index * 0.18,
+        duration: 0.8,
+        delay: index * 0.2,
         ease: [0.16, 0.8, 0.24, 1],
       }}
     >
       {/* Step number circle with pulse */}
       <motion.div
-        className="relative z-10 mb-5 flex h-16 w-16 items-center justify-center rounded-2xl sm:mb-6 sm:h-[72px] sm:w-[72px]"
+        className="relative z-10 mb-4 flex h-14 w-14 items-center justify-center rounded-2xl sm:mb-6 sm:h-[72px] sm:w-[72px]"
         style={{
           background: step.accentBg,
           border: `1px solid ${step.accent}30`,
@@ -247,39 +300,43 @@ function TimelineStep({
         whileInView={{
           boxShadow: [
             `0 0 0 0 ${step.accent}30`,
-            `0 0 0 12px ${step.accent}00`,
+            `0 0 0 16px ${step.accent}00`,
             `0 0 0 0 ${step.accent}00`,
           ],
         }}
         viewport={{ once: true }}
         transition={{
-          boxShadow: { duration: 2, delay: 0.5 + index * 0.18, repeat: 2 },
+          boxShadow: { duration: 2, delay: 0.6 + index * 0.2, repeat: 2 },
         }}
         whileHover={{
-          scale: 1.08,
+          scale: 1.12,
           borderColor: `${step.accent}60`,
-          transition: { duration: 0.2 },
+          boxShadow: `0 0 24px ${step.accent}30`,
+          transition: { duration: 0.25, type: "spring", stiffness: 300 },
         }}
       >
         <motion.div
-          initial={{ scale: 0 }}
-          animate={isInView ? { scale: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 + index * 0.18, type: "spring", stiffness: 200 }}
+          initial={{ scale: 0, rotate: -30 }}
+          animate={isInView ? { scale: 1, rotate: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.25 + index * 0.2, type: "spring", stiffness: 200 }}
         >
           <step.icon size={24} style={{ color: step.accent }} />
         </motion.div>
 
         {/* Step number badge */}
-        <div
+        <motion.div
           className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-black sm:h-6 sm:w-6 sm:text-[10px]"
           style={{
             background: step.accent,
             color: "#0a0a0a",
-            boxShadow: `0 2px 8px ${step.accent}40`,
+            boxShadow: `0 2px 12px ${step.accent}50`,
           }}
+          initial={{ scale: 0 }}
+          animate={isInView ? { scale: 1 } : {}}
+          transition={{ delay: 0.4 + index * 0.2, type: "spring", stiffness: 400, damping: 15 }}
         >
           {step.step}
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Connector line (between steps, desktop only) */}
@@ -292,17 +349,27 @@ function TimelineStep({
           }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 + index * 0.18, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 1, delay: 0.5 + index * 0.2, ease: [0.16, 0.8, 0.24, 1] }}
         />
       )}
 
-      {/* Text */}
-      <h3 className="mb-1.5 text-base font-bold text-[var(--text-primary)] sm:text-lg">
+      {/* Text with staggered reveal */}
+      <motion.h3
+        className="mb-1.5 text-[15px] font-bold text-[var(--text-primary)] sm:text-lg"
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.3 + index * 0.2, duration: 0.5 }}
+      >
         {step.title}
-      </h3>
-      <p className="mx-auto max-w-[220px] text-[13px] leading-relaxed text-[var(--text-secondary)] sm:text-sm">
+      </motion.h3>
+      <motion.p
+        className="mx-auto max-w-[200px] text-[12px] leading-relaxed text-[var(--text-secondary)] sm:max-w-[220px] sm:text-[13px]"
+        initial={{ opacity: 0, y: 10 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
+      >
         {step.desc}
-      </p>
+      </motion.p>
     </motion.div>
   );
 }
@@ -311,23 +378,29 @@ export function HowItWorksSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const headingY = useTransform(scrollYProgress, [0, 0.3], [50, 0]);
+
   return (
-    <section ref={sectionRef} className="relative mx-auto w-full max-w-4xl px-4 pb-20 pt-8 sm:px-6 sm:pb-28 sm:pt-12">
-      {/* Section divider glow */}
-      <div
-        className="absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2"
+    <section
+      ref={sectionRef}
+      className="relative mx-auto w-full max-w-4xl px-3 pb-16 pt-6 sm:px-6 sm:pb-28 sm:pt-12"
+    >
+      {/* Section divider glow — animated */}
+      <motion.div
+        className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
+        animate={isInView ? { width: "66%" } : {}}
+        transition={{ duration: 1.2, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
         }}
       />
 
-      {/* Heading */}
-      <motion.div
-        className="mb-14 text-center sm:mb-16"
-        initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
-        animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-        transition={{ duration: 0.8, ease: [0.16, 0.8, 0.24, 1] }}
-      >
+      {/* Heading — parallax */}
+      <motion.div className="mb-10 text-center sm:mb-16" style={{ y: headingY }}>
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
             className="flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
@@ -336,15 +409,25 @@ export function HowItWorksSection() {
               background: "rgba(196,162,75,0.06)",
               color: "var(--gold)",
             }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
+            animate={isInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <LuZap size={12} />
+            <motion.span
+              animate={isInView ? { rotate: [0, 360] } : {}}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            >
+              <LuZap size={12} />
+            </motion.span>
             Nasıl Çalışır
           </motion.div>
         </div>
-        <h2 className="mb-3 text-2xl font-black text-[var(--text-primary)] sm:text-4xl xl:text-5xl">
+        <motion.h2
+          className="mb-3 text-[1.35rem] font-black text-[var(--text-primary)] sm:text-4xl xl:text-5xl"
+          initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 0.8, 0.24, 1] }}
+        >
           Üç adımda{" "}
           <span
             className="dn-shimmer-text"
@@ -357,10 +440,15 @@ export function HowItWorksSection() {
           >
             başla
           </span>
-        </h2>
-        <p className="text-sm font-medium text-[var(--text-secondary)] sm:text-base">
+        </motion.h2>
+        <motion.p
+          className="text-sm font-medium text-[var(--text-secondary)] sm:text-base"
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.25 }}
+        >
           Hızlıca kaydol, notlarını oluştur ve geçmişe dön.
-        </p>
+        </motion.p>
       </motion.div>
 
       {/* Timeline grid */}
@@ -385,15 +473,19 @@ export function BottomCtaSection() {
   });
   const glowScale = useTransform(scrollYProgress, [0, 0.5], [0.6, 1.2]);
   const glowOpacity = useTransform(scrollYProgress, [0, 0.4, 0.8], [0, 0.14, 0.06]);
+  const contentY = useTransform(scrollYProgress, [0.1, 0.5], [60, 0]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative flex flex-col items-center overflow-hidden px-4 pb-24 pt-4 text-center sm:pt-8"
+      className="relative flex flex-col items-center overflow-hidden px-3 pb-20 pt-4 text-center sm:px-4 sm:pb-24 sm:pt-8"
     >
-      {/* Top separator line */}
-      <div
+      {/* Top separator line — animated */}
+      <motion.div
         className="absolute inset-x-0 top-0 h-px"
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 1 }}
         style={{
           background:
             "linear-gradient(90deg, transparent, rgba(201,168,76,0.3), rgba(129,140,248,0.2), transparent)",
@@ -402,39 +494,47 @@ export function BottomCtaSection() {
 
       {/* Animated parallax glow */}
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[700px] sm:w-[700px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[350px] w-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[700px] sm:w-[700px]"
         style={{
-          background: "radial-gradient(circle, rgba(196,162,75,0.3), rgba(196,162,75,0.05) 50%, transparent 70%)",
+          background:
+            "radial-gradient(circle, rgba(196,162,75,0.3), rgba(196,162,75,0.05) 50%, transparent 70%)",
           scale: glowScale,
           opacity: glowOpacity,
           filter: "blur(60px)",
         }}
       />
 
-      {/* Floating orbs */}
+      {/* Floating orbs — desktop only, enhanced */}
       <motion.div
-        className="pointer-events-none absolute left-[20%] top-[30%] h-32 w-32 rounded-full opacity-[0.06] blur-[50px]"
+        className="pointer-events-none absolute left-[20%] top-[30%] hidden h-32 w-32 rounded-full opacity-[0.08] blur-[50px] sm:block"
         style={{ background: "radial-gradient(circle, #818cf8, transparent 70%)" }}
-        animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+        animate={{ y: [0, -25, 0], x: [0, 12, 0], scale: [1, 1.15, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="pointer-events-none absolute right-[15%] top-[40%] h-24 w-24 rounded-full opacity-[0.06] blur-[40px]"
+        className="pointer-events-none absolute right-[15%] top-[40%] hidden h-24 w-24 rounded-full opacity-[0.08] blur-[40px] sm:block"
         style={{ background: "radial-gradient(circle, #60a88a, transparent 70%)" }}
-        animate={{ y: [0, 15, 0], x: [0, -8, 0] }}
+        animate={{ y: [0, 18, 0], x: [0, -10, 0], scale: [1, 1.2, 1] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
+      <motion.div
+        className="pointer-events-none absolute left-[40%] top-[20%] hidden h-20 w-20 rounded-full opacity-[0.05] blur-[35px] sm:block"
+        style={{ background: "radial-gradient(circle, var(--gold), transparent 70%)" }}
+        animate={{ y: [0, -15, 0], x: [0, -8, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      />
 
-      {/* Content */}
+      {/* Content — scroll-linked entrance */}
       <motion.div
         className="relative z-10"
-        initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
-        animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-        transition={{ duration: 0.9, ease: [0.16, 0.8, 0.24, 1] }}
+        style={{ y: contentY }}
+        initial={{ opacity: 0, filter: "blur(14px)" }}
+        animate={isInView ? { opacity: 1, filter: "blur(0px)" } : {}}
+        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
       >
-        {/* Decorative sparkle */}
+        {/* Decorative sparkle with enhanced pulse */}
         <motion.div
-          className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl sm:mb-6 sm:h-14 sm:w-14"
+          className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-6 sm:h-14 sm:w-14 sm:rounded-2xl"
           style={{
             background: "rgba(196,162,75,0.08)",
             border: "1px solid rgba(196,162,75,0.15)",
@@ -442,21 +542,33 @@ export function BottomCtaSection() {
           animate={{
             boxShadow: [
               "0 0 0 0 rgba(196,162,75,0.2)",
-              "0 0 0 14px rgba(196,162,75,0)",
+              "0 0 0 18px rgba(196,162,75,0)",
               "0 0 0 0 rgba(196,162,75,0)",
             ],
           }}
           transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+          whileHover={{ scale: 1.15, rotate: 15, transition: { duration: 0.3 } }}
         >
-          <LuSparkles size={22} style={{ color: "var(--gold)" }} />
+          <motion.div
+            animate={isInView ? { rotate: [0, 360] } : {}}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 0.8, 0.24, 1] }}
+          >
+            <LuSparkles size={22} style={{ color: "var(--gold)" }} />
+          </motion.div>
         </motion.div>
 
-        <h2 className="relative mb-4 text-2xl font-black sm:mb-5 sm:text-4xl xl:text-5xl">
+        <motion.h2
+          className="relative mb-4 text-[1.4rem] font-black sm:mb-5 sm:text-3xl xl:text-4xl"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.1 }}
+        >
           <span style={{ color: "var(--text-primary)" }}>Notlarını almaya </span>
           <span
             className="dn-shimmer-text"
             style={{
-              background: "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f8d040 80%, #fff8c8 100%)",
+              background:
+                "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f0c028 80%, #fff8c8 100%)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -465,36 +577,41 @@ export function BottomCtaSection() {
           >
             başla.
           </span>
-        </h2>
+        </motion.h2>
 
         <motion.p
-          className="mb-8 max-w-md text-[13px] leading-relaxed text-[var(--text-secondary)] sm:mb-10 sm:text-[15px]"
-          initial={{ opacity: 0, y: 16 }}
+          className="mb-6 max-w-[300px] px-2 text-[13px] leading-relaxed text-[var(--text-secondary)] sm:mb-9 sm:max-w-md sm:px-0 sm:text-sm"
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 0.8, 0.24, 1] }}
         >
           Kayıt ol, kategorilerini oluştur ve ilk notunu ekle.
           <br />
           Beş dakika yeterli.
         </motion.p>
 
-        {/* CTA Button */}
+        {/* CTA Button — enhanced */}
         <motion.div
-          initial={{ opacity: 0, y: 16, scale: 0.95 }}
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
           animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 0.8, 0.24, 1] }}
         >
-          <MagneticButton className="mx-auto w-full max-w-[280px] sm:w-auto sm:max-w-none">
+          <MagneticButton className="mx-auto w-auto">
             <Link
               href="/register"
-              className="dn-cta-gold group relative mx-auto flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-8 py-3.5 text-[14px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-[0_8px_28px_rgba(198,151,46,0.34)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_44px_rgba(198,151,46,0.5)] sm:w-auto sm:px-12 sm:py-4 sm:text-[15px]"
+              className="dn-cta-gold group relative mx-auto flex items-center justify-center gap-2 overflow-hidden rounded-xl px-7 py-3 text-[13px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-[0_6px_20px_rgba(198,151,46,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(198,151,46,0.5)] sm:rounded-2xl sm:px-9 sm:py-3.5 sm:text-[14px]"
               style={{ background: "linear-gradient(135deg, #e7bf5d, #c6972e, #b37a16, #cf9d2f)" }}
             >
               <span className="relative z-10">Hesap Oluştur</span>
-              <LuArrowRight className="relative z-10 transition-transform duration-300 group-hover:translate-x-1" size={16} />
+              <LuArrowRight
+                className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"
+                size={16}
+              />
               <div
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{ background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)" }}
+                style={{
+                  background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)",
+                }}
               />
             </Link>
           </MagneticButton>

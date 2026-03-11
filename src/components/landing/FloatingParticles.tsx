@@ -17,8 +17,11 @@ export function FloatingParticles({ count = 24 }: { readonly count?: number }) {
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
+    // Mobilde particle sayısını azalt (performans)
+    const isMobile = globalThis.window !== undefined && globalThis.window.innerWidth < 640;
+    const actualCount = isMobile ? Math.min(count, 10) : count;
     setParticles(
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: actualCount }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         y: Math.random() * 100,

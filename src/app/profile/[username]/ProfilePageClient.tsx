@@ -185,7 +185,16 @@ export default function ProfilePageClient({ username }: { readonly username: str
         : `${filteredLikedPosts.length} / ${likedPosts.length} beğenilen not`,
       placeholder: "Beğenilen notlarda ara...",
     };
-  }, [activeTab, filteredPosts.length, posts.length, filteredCollections.length, collections.length, likedLoading, filteredLikedPosts.length, likedPosts.length]);
+  }, [
+    activeTab,
+    filteredPosts.length,
+    posts.length,
+    filteredCollections.length,
+    collections.length,
+    likedLoading,
+    filteredLikedPosts.length,
+    likedPosts.length,
+  ]);
 
   if (loading) {
     return (
@@ -285,7 +294,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 {!currentUser?.id && (
                   <Link
                     href="/login"
-                    className="rounded-lg border border-[#c4a24b]/35 bg-[#c4a24b]/10 px-4 py-2 text-sm font-semibold text-[#c4a24b] transition-colors hover:bg-[#c4a24b]/18"
+                    className="hover:bg-[#c4a24b]/18 rounded-lg border border-[#c4a24b]/35 bg-[#c4a24b]/10 px-4 py-2 text-sm font-semibold text-[#c4a24b] transition-colors"
                   >
                     Takip etmek için giriş yap
                   </Link>
@@ -516,7 +525,9 @@ export default function ProfilePageClient({ username }: { readonly username: str
             </div>
           ) : filteredCollections.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-              <p className="text-sm text-[var(--text-muted)]">Aramana uyan koleksiyon bulunamadı.</p>
+              <p className="text-sm text-[var(--text-muted)]">
+                Aramana uyan koleksiyon bulunamadı.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
