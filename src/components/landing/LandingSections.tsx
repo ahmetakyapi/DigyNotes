@@ -135,7 +135,7 @@ export function FeaturesSection() {
       >
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
-            className="flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
               borderColor: "rgba(196,162,75,0.2)",
               background: "rgba(196,162,75,0.06)",
@@ -174,7 +174,7 @@ export function FeaturesSection() {
           </span>
         </motion.h2>
         <motion.p
-          className="mx-auto max-w-2xl text-[13px] font-medium leading-[1.85] text-[var(--text-secondary)] sm:text-base"
+          className="mx-auto max-w-2xl text-[14px] font-medium leading-[1.82] text-[var(--text-secondary)] sm:text-base"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.25 }}
@@ -191,7 +191,14 @@ export function FeaturesSection() {
       {/* Büyük özellik kartları — grid */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:mb-10 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5">
         {FEATURES.map((f, i) => (
-          <div key={f.title} className={i === FEATURES.length - 1 ? "col-span-2 mx-auto w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1" : ""}>
+          <div
+            key={f.title}
+            className={
+              i === FEATURES.length - 1
+                ? "col-span-2 mx-auto w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1"
+                : ""
+            }
+          >
             <FeatureCard {...f} index={i} />
           </div>
         ))}
@@ -226,7 +233,7 @@ export function FeaturesSection() {
             >
               <s.Icon size={13} style={{ color: s.color, flexShrink: 0 }} />
             </motion.div>
-            <span className="text-[12px] font-semibold text-[var(--text-secondary)] sm:text-[13px]">
+            <span className="text-[13px] font-semibold text-[var(--text-secondary)] sm:text-[13px]">
               {s.label}
             </span>
           </motion.div>
@@ -237,11 +244,11 @@ export function FeaturesSection() {
 }
 
 /* ────────────────────────────────────────────
-   HOW IT WORKS — Animated Timeline
+    HOW IT WORKS — Animated Timeline
    ──────────────────────────────────────────── */
 const STEPS = [
   {
-    step: "01",
+    step: "1",
     title: "Hesap Oluştur",
     desc: "E-posta ve kullanıcı adınla kayıt ol. Beş saniye yeterli.",
     accent: "#6888c0",
@@ -249,7 +256,7 @@ const STEPS = [
     icon: LuZap,
   },
   {
-    step: "02",
+    step: "2",
     title: "Notlarını Ekle",
     desc: "Film, dizi, oyun, kitap veya gezi — kategorini seç, notunu yaz.",
     accent: "#c4a24b",
@@ -257,7 +264,7 @@ const STEPS = [
     icon: LuTag,
   },
   {
-    step: "03",
+    step: "3",
     title: "Keşfet & Hatırla",
     desc: "Puanla, etiketle ve yıllar sonra aynı duyguyla geri dön.",
     accent: "#60a88a",
@@ -355,7 +362,7 @@ function TimelineStep({
 
       {/* Text with staggered reveal */}
       <motion.h3
-        className="mb-1.5 text-[15px] font-bold text-[var(--text-primary)] sm:text-lg"
+        className="mb-1.5 text-[16px] font-bold text-[var(--text-primary)] sm:text-lg"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.3 + index * 0.2, duration: 0.5 }}
@@ -363,7 +370,7 @@ function TimelineStep({
         {step.title}
       </motion.h3>
       <motion.p
-        className="mx-auto max-w-[200px] text-[12px] leading-relaxed text-[var(--text-secondary)] sm:max-w-[220px] sm:text-[13px]"
+        className="mx-auto max-w-[220px] text-[13px] leading-relaxed text-[var(--text-secondary)] sm:max-w-[220px] sm:text-[13px]"
         initial={{ opacity: 0, y: 10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
@@ -403,7 +410,7 @@ export function HowItWorksSection() {
       <motion.div className="mb-10 text-center sm:mb-16" style={{ y: headingY }}>
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
-            className="flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
               borderColor: "rgba(196,162,75,0.2)",
               background: "rgba(196,162,75,0.06)",
@@ -442,7 +449,7 @@ export function HowItWorksSection() {
           </span>
         </motion.h2>
         <motion.p
-          className="text-sm font-medium text-[var(--text-secondary)] sm:text-base"
+          className="text-[15px] font-medium text-[var(--text-secondary)] sm:text-base"
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.25 }}
@@ -580,7 +587,7 @@ export function BottomCtaSection() {
         </motion.h2>
 
         <motion.p
-          className="mb-6 max-w-[300px] px-2 text-[13px] leading-relaxed text-[var(--text-secondary)] sm:mb-9 sm:max-w-md sm:px-0 sm:text-sm"
+          className="mb-6 max-w-[320px] px-2 text-[14px] leading-relaxed text-[var(--text-secondary)] sm:mb-9 sm:max-w-md sm:px-0 sm:text-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 0.8, 0.24, 1] }}
@@ -599,7 +606,7 @@ export function BottomCtaSection() {
           <MagneticButton className="mx-auto w-auto">
             <Link
               href="/register"
-              className="dn-cta-gold group relative mx-auto flex items-center justify-center gap-2 overflow-hidden rounded-xl px-7 py-3 text-[13px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-[0_6px_20px_rgba(198,151,46,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(198,151,46,0.5)] sm:rounded-2xl sm:px-9 sm:py-3.5 sm:text-[14px]"
+              className="dn-cta-gold group relative mx-auto flex items-center justify-center gap-2 overflow-hidden rounded-xl px-7 py-3 text-[14px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-[0_6px_20px_rgba(198,151,46,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(198,151,46,0.5)] sm:rounded-2xl sm:px-9 sm:py-3.5 sm:text-[14px]"
               style={{ background: "linear-gradient(135deg, #e7bf5d, #c6972e, #b37a16, #cf9d2f)" }}
             >
               <span className="relative z-10">Hesap Oluştur</span>

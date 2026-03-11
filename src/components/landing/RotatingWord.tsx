@@ -19,8 +19,8 @@ const WORD_STYLES = [
     gradient: "linear-gradient(135deg, #d4a050 0%, #b88028 28%, #9c6818 56%, #805010 100%)",
   },
   {
-    // Gezdiklerin — koyu zümrüt yeşil
-    gradient: "linear-gradient(135deg, #58b888 0%, #2e9468 28%, #1a7850 56%, #0c6040 100%)",
+    // Gezdiklerin — turkuaz-mavi, "Sana Kalanlar" yeşilinden ayrışsın
+    gradient: "linear-gradient(135deg, #6fd6eb 0%, #35b8d8 28%, #1f8fb5 56%, #156c8f 100%)",
   },
 ];
 
