@@ -31,7 +31,7 @@ interface PublicUser {
   isFollowing: boolean;
 }
 
-export default function ProfilePageClient({ username }: { username: string }) {
+export default function ProfilePageClient({ username }: { readonly username: string }) {
   const { data: session } = useSession();
   const currentUser = session?.user as { id?: string; name?: string } | undefined;
   const [user, setUser] = useState<PublicUser | null>(null);
@@ -42,8 +42,11 @@ export default function ProfilePageClient({ username }: { username: string }) {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
-  const [activeTab, setActiveTab] = useState<"posts" | "collections">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "collections" | "liked">("posts");
   const [searchQuery, setSearchQuery] = useState("");
+  const [likedPosts, setLikedPosts] = useState<Post[]>([]);
+  const [likedLoading, setLikedLoading] = useState(false);
+  const [likedLoaded, setLikedLoaded] = useState(false);
 
   useEffect(() => {
     fetch(`/api/users/${username}`)
@@ -73,6 +76,20 @@ export default function ProfilePageClient({ username }: { username: string }) {
   useEffect(() => {
     setSearchQuery("");
   }, [activeTab, username]);
+
+  // Beğenilen postları yalnızca "liked" tab'a ilk geçişte yükle
+  useEffect(() => {
+    if (activeTab !== "liked" || likedLoaded) return;
+    setLikedLoading(true);
+    fetch(`/api/users/${username}/liked-posts?limit=50`)
+      .then((r) => r.json())
+      .then((data) => {
+        setLikedPosts(Array.isArray(data.posts) ? data.posts : []);
+        setLikedLoaded(true);
+      })
+      .catch(() => setLikedLoaded(true))
+      .finally(() => setLikedLoading(false));
+  }, [activeTab, username, likedLoaded]);
 
   const joinedDate = user
     ? new Date(user.createdAt).toLocaleString("tr-TR", {
@@ -128,6 +145,47 @@ export default function ProfilePageClient({ username }: { username: string }) {
       }),
     [collections, normalizedProfileQuery]
   );
+
+  const filteredLikedPosts = useMemo(
+    () =>
+      likedPosts.filter((post) => {
+        if (!normalizedProfileQuery) return true;
+        return (
+          post.title.toLowerCase().includes(normalizedProfileQuery) ||
+          (post.creator?.toLowerCase().includes(normalizedProfileQuery) ?? false) ||
+          post.category.toLowerCase().includes(normalizedProfileQuery) ||
+          getCategoryLabel(post.category).toLowerCase().includes(normalizedProfileQuery) ||
+          (post.tags?.some((tag) => tag.name.toLowerCase().includes(normalizedProfileQuery)) ??
+            false)
+        );
+      }),
+    [likedPosts, normalizedProfileQuery]
+  );
+
+  // Tab-dependent computed values (avoids nested ternary in JSX)
+  const tabMeta = useMemo(() => {
+    if (activeTab === "posts") {
+      return {
+        label: "Profil Notları",
+        count: `${filteredPosts.length} / ${posts.length} not`,
+        placeholder: "Not, kategori veya etiket ara...",
+      };
+    }
+    if (activeTab === "collections") {
+      return {
+        label: "Profil Koleksiyonları",
+        count: `${filteredCollections.length} / ${collections.length} koleksiyon`,
+        placeholder: "Koleksiyon veya not ara...",
+      };
+    }
+    return {
+      label: "Beğenilen Notlar",
+      count: likedLoading
+        ? "Yükleniyor…"
+        : `${filteredLikedPosts.length} / ${likedPosts.length} beğenilen not`,
+      placeholder: "Beğenilen notlarda ara...",
+    };
+  }, [activeTab, filteredPosts.length, posts.length, filteredCollections.length, collections.length, likedLoading, filteredLikedPosts.length, likedPosts.length]);
 
   if (loading) {
     return (
@@ -317,7 +375,8 @@ export default function ProfilePageClient({ username }: { username: string }) {
 
       {/* Tabs */}
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="mb-6 flex items-center gap-2 overflow-x-auto border-b border-[var(--border)] pb-1">
+        {/* ── Tab bar ── */}
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab("posts")}
@@ -340,29 +399,41 @@ export default function ProfilePageClient({ username }: { username: string }) {
           >
             Koleksiyonlar
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("liked")}
+            className={`shrink-0 rounded-t-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+              activeTab === "liked"
+                ? "border border-b-0 border-[var(--border)] bg-[var(--bg-card)] text-[var(--gold)]"
+                : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            }`}
+          >
+            Beğenilenler
+          </button>
         </div>
 
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-              {activeTab === "posts" ? "Profil Notları" : "Profil Koleksiyonları"}
+              {tabMeta.label}
             </p>
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              {activeTab === "posts"
-                ? `${filteredPosts.length} / ${posts.length} not`
-                : `${filteredCollections.length} / ${collections.length} koleksiyon`}
-            </p>
+            <p className="mt-1 text-xs text-[var(--text-muted)]">{tabMeta.count}</p>
+            <div className="relative mt-3 w-full sm:hidden">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={tabMeta.placeholder}
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none"
+              />
+            </div>
           </div>
-          <div className="relative w-full sm:max-w-xs">
+          <div className="relative hidden w-full sm:block sm:max-w-xs">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={
-                activeTab === "posts"
-                  ? "Not, kategori veya etiket ara..."
-                  : "Koleksiyon veya not ara..."
-              }
+              placeholder={tabMeta.placeholder}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none sm:text-sm"
             />
           </div>
@@ -438,22 +509,134 @@ export default function ProfilePageClient({ username }: { username: string }) {
               ))}
             </div>
           )
-        ) : collections.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-sm text-[var(--text-muted)]">Henüz koleksiyon yok.</p>
+        ) : activeTab === "collections" ? (
+          collections.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-sm text-[var(--text-muted)]">Henüz koleksiyon yok.</p>
+            </div>
+          ) : filteredCollections.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
+              <p className="text-sm text-[var(--text-muted)]">Aramana uyan koleksiyon bulunamadı.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {filteredCollections.map((collection) => (
+                <CollectionCard
+                  key={collection.id}
+                  collection={collection}
+                  href={`/collections/${collection.id}`}
+                />
+              ))}
+            </div>
+          )
+        ) : /* ── Beğenilenler tab ── */ likedLoading ? (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-40 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
+              />
+            ))}
           </div>
-        ) : filteredCollections.length === 0 ? (
+        ) : likedPosts.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
+              <svg
+                className="h-5 w-5 text-[var(--text-muted)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </div>
+            <p className="text-sm text-[var(--text-muted)]">Henüz beğenilen not yok.</p>
+          </div>
+        ) : filteredLikedPosts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-            <p className="text-sm text-[var(--text-muted)]">Aramana uyan koleksiyon bulunamadı.</p>
+            <p className="text-sm text-[var(--text-muted)]">Aramana uyan not bulunamadı.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {filteredCollections.map((collection) => (
-              <CollectionCard
-                key={collection.id}
-                collection={collection}
-                href={`/collections/${collection.id}`}
-              />
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {filteredLikedPosts.map((post) => (
+              <Link key={post.id} href={`/posts/${post.id}`} className="group block">
+                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30 sm:flex-row">
+                  {/* Cover */}
+                  <div
+                    className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
+                    style={{ minHeight: "160px" }}
+                  >
+                    <ResilientImage
+                      src={getPostImageSrc(post.image, post.category)}
+                      alt={formatDisplayTitle(post.title)}
+                      fill
+                      variant="wide"
+                      sizes="200px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
+                    <div>
+                      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                        <span className="rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c4a24b]">
+                          {getCategoryLabel(post.category)}
+                        </span>
+                        {post.status && <StatusBadge status={post.status} />}
+                        {/* Beğenilen postun sahibini göster */}
+                        {post.user && (
+                          <Link
+                            href={`/profile/${post.user.username}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[9px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                          >
+                            <AvatarImage
+                              src={post.user.avatarUrl}
+                              alt={post.user.name}
+                              name={post.user.name}
+                              size={14}
+                              className="rounded-full"
+                              textClassName="text-[6px]"
+                            />
+                            <span>{post.user.name}</span>
+                          </Link>
+                        )}
+                      </div>
+                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c4a24b]">
+                        {formatDisplayTitle(post.title)}
+                      </h2>
+                      {post.creator && (
+                        <p className="mb-1.5 text-xs text-[var(--text-muted)]">
+                          {formatDisplayTitle(post.creator)}
+                        </p>
+                      )}
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="mb-1.5 flex flex-wrap gap-1">
+                          {(post.tags as Tag[]).slice(0, 2).map((tag) => (
+                            <TagBadge key={tag.id} tag={tag} />
+                          ))}
+                          {post.tags.length > 2 && (
+                            <span className="self-center text-[10px] text-[var(--text-muted)]">
+                              +{post.tags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
+                      <StarRating rating={post.rating} size={11} />
+                      <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
+                    </div>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         )}

@@ -263,6 +263,50 @@ html[data-theme="light"] body {
   }
 }
 
+@keyframes dn-shimmer-text {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+@keyframes dn-gradient-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dn-timeline-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 162, 75, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(196, 162, 75, 0);
+  }
+}
+
+@keyframes dn-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.dn-shimmer-text {
+  animation: dn-shimmer-text 4s ease-in-out infinite;
+}
+
 @keyframes dn-badge-sheen {
   0% {
     transform: translateX(-210%) skewX(-22deg);
@@ -382,7 +426,8 @@ html[data-theme="light"] body {
 }
 
 .dn-badge-sheen {
-  overflow: hidden;
+  overflow: clip;
+  overflow-clip-margin: 0px;
 }
 
 html.light .dn-badge-sheen,
