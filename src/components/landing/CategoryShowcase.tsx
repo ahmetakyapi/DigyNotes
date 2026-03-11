@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 import {
   LuBookOpen,
   LuCalendar,
@@ -269,7 +270,7 @@ function CoverBackground({ cat }: { readonly cat: Category }) {
             {coverTags.map((tag) => (
               <span
                 key={tag}
-                className="max-w-full rounded-full border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/84 sm:px-3 sm:py-1.5 sm:text-[10px]"
+                className="max-w-full rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/84 sm:px-3 sm:py-1.5 sm:text-[10px]"
                 style={{
                   borderColor: `${cat.color}2e`,
                   background: "rgba(7, 10, 15, 0.28)",
@@ -293,17 +294,25 @@ function CoverBackground({ cat }: { readonly cat: Category }) {
 }
 
 function MockNoteCard({ cat }: { readonly cat: Category }) {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(8px)" }}
       animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       exit={{ opacity: 0, y: -16, scale: 0.97, filter: "blur(6px)" }}
       transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
-      className="overflow-hidden rounded-[1.6rem] border shadow-[0_30px_80px_rgba(0,0,0,0.22)]"
+      className="dn-category-showcase-card overflow-hidden rounded-[1.6rem] border"
       style={{
         borderColor: cat.border,
         background:
-          "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 92%, transparent), color-mix(in srgb, var(--surface-strong) 94%, transparent))",
+          isLight
+            ? "linear-gradient(135deg, rgba(255,250,243,0.98), rgba(245,237,224,0.98))"
+            : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 92%, transparent), color-mix(in srgb, var(--surface-strong) 94%, transparent))",
+        boxShadow: isLight
+          ? "0 26px 70px rgba(117,89,55,0.12), 0 8px 24px rgba(117,89,55,0.06)"
+          : "0 30px 80px rgba(0,0,0,0.22)",
       }}
     >
       <div className="relative h-44 w-full overflow-hidden sm:h-56">
@@ -312,13 +321,13 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
         <div
           className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 backdrop-blur-md sm:left-4 sm:top-4"
           style={{
-            background: "rgba(8,10,14,0.56)",
+            background: isLight ? "rgba(255,248,239,0.78)" : "rgba(8,10,14,0.56)",
             border: `1px solid ${cat.border}`,
           }}
         >
           <cat.Icon size={12} style={{ color: cat.color }} />
           <span
-            className="text-[10px] font-bold uppercase tracking-[0.22em]"
+            className="text-[11px] font-bold uppercase tracking-[0.22em]"
             style={{ color: cat.colorLight }}
           >
             {cat.label}
@@ -333,7 +342,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
             <h4 className="text-base font-bold text-[var(--text-primary)] sm:text-lg">
               {cat.mockTitle}
             </h4>
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[12px] text-[var(--text-secondary)]">
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-[var(--text-secondary)]">
               {cat.mockCreator && (
                 <span className="flex items-center gap-1">
                   <LuUser size={10} style={{ color: cat.color, opacity: 0.6 }} />
@@ -349,7 +358,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
           <Stars count={cat.mockRating} color={cat.color} />
         </div>
 
-        <p className="mb-3 text-[13px] leading-[1.7] text-[var(--text-secondary)]">
+        <p className="mb-3 text-[14px] leading-[1.7] text-[var(--text-secondary)]">
           {cat.mockExcerpt}
         </p>
 
@@ -360,7 +369,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
             background: `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`,
           }}
         >
-          <p className="text-[12px] italic leading-[1.65] text-[var(--text-secondary)]">
+          <p className="text-[13px] italic leading-[1.65] text-[var(--text-secondary)]">
             {cat.mockHighlight}
           </p>
         </div>
@@ -369,7 +378,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
           {cat.mockTags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full px-2.5 py-1 text-[10px] font-medium"
+              className="rounded-full px-2.5 py-1 text-[11px] font-medium"
               style={{
                 background: "color-mix(in srgb, var(--bg-card) 68%, transparent)",
                 color: "var(--text-muted)",
@@ -413,7 +422,7 @@ export function CategoryShowcase() {
       >
         <div className="mb-4 flex items-center justify-center sm:mb-5">
           <motion.div
-            className="flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
               borderColor: "rgba(196,162,75,0.2)",
               background: "rgba(196,162,75,0.06)",
@@ -449,7 +458,7 @@ export function CategoryShowcase() {
         </motion.h2>
 
         <motion.p
-          className="mx-auto max-w-md text-[13px] font-medium text-[var(--text-secondary)] sm:text-base"
+          className="mx-auto max-w-md text-[14px] font-medium text-[var(--text-secondary)] sm:text-base"
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -475,7 +484,8 @@ export function CategoryShowcase() {
               <motion.button
                 key={cat.key}
                 onClick={() => setActiveIdx(index)}
-                className="group relative flex flex-shrink-0 items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left transition-colors duration-200 sm:w-44 sm:px-4 sm:py-3"
+                data-active={isActive ? "true" : "false"}
+                className="dn-category-tab group relative flex flex-shrink-0 items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left transition-colors duration-200 sm:w-44 sm:px-4 sm:py-3"
                 style={{
                   background: isActive
                     ? `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`
@@ -500,7 +510,7 @@ export function CategoryShowcase() {
                 </div>
 
                 <span
-                  className="text-[13px] font-semibold transition-colors duration-200 sm:text-sm"
+                  className="text-[14px] font-semibold transition-colors duration-200 sm:text-sm"
                   style={{ color: isActive ? cat.colorLight : "var(--text-secondary)" }}
                 >
                   {cat.label}

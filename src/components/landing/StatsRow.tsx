@@ -2,12 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useSpring } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 /* ── Data ── */
 const STATS = [
-  { value: 5, label: "Kategori", suffix: "", color: "var(--gold)", glowColor: "rgba(201,168,76,0.35)" },
+  {
+    value: 6,
+    label: "Kategori",
+    suffix: "",
+    color: "var(--gold)",
+    glowColor: "rgba(201,168,76,0.35)",
+  },
   { value: 5, label: "Yıldız", suffix: "★", color: "#818cf8", glowColor: "rgba(129,140,248,0.35)" },
-  { value: 100, label: "Tamamen Ücretsiz", suffix: "%", color: "#60a88a", glowColor: "rgba(96,168,138,0.35)" },
+  {
+    value: 100,
+    label: "Tamamen Ücretsiz",
+    suffix: "%",
+    color: "#60a88a",
+    glowColor: "rgba(96,168,138,0.35)",
+  },
 ] as const;
 
 /* ── Animated Counter ── */
@@ -26,6 +39,8 @@ function Counter({
   readonly glowColor?: string;
   readonly delay?: number;
 }) {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
   const [count, setCount] = useState(0);
@@ -76,14 +91,16 @@ function Counter({
         style={{
           color,
           scale: punchScale,
-          textShadow: `0 0 24px ${glowColor}, 0 0 48px ${glowColor.replace("0.35", "0.15")}`,
+          textShadow: isLight
+            ? `0 6px 18px ${glowColor.replace("0.35", "0.16")}, 0 1px 0 rgba(255,255,255,0.38)`
+            : `0 0 24px ${glowColor}, 0 0 48px ${glowColor.replace("0.35", "0.15")}`,
         }}
       >
         {count}
         {suffix}
       </motion.span>
 
-      <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-muted)] sm:text-xs">
+      <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--text-muted)] sm:text-xs">
         {label}
       </span>
     </motion.div>

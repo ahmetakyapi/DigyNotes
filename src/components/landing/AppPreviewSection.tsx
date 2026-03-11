@@ -3,8 +3,11 @@
 import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useSpring, useScroll, useTransform } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 export function AppPreviewSection() {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +55,9 @@ export function AppPreviewSection() {
         <div
           className="absolute -top-px left-1/2 h-px w-3/4 -translate-x-1/2"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent)",
+            background: isLight
+              ? "linear-gradient(90deg, transparent, rgba(192,138,30,0.48), rgba(111,145,216,0.22), transparent)"
+              : "linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent)",
           }}
         />
 
@@ -65,10 +70,15 @@ export function AppPreviewSection() {
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={handleMouseLeave}
-          className="dn-landing-preview relative overflow-hidden rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] sm:rounded-2xl sm:shadow-[0_40px_120px_rgba(0,0,0,0.8)]"
+          className="dn-landing-preview dn-app-preview-shell relative overflow-hidden rounded-xl sm:rounded-2xl"
           style={{
             border: "1px solid var(--border-subtle)",
-            background: "linear-gradient(180deg, var(--bg-card), var(--surface-strong))",
+            background: isLight
+              ? "linear-gradient(180deg, rgba(255,250,243,0.98), rgba(246,237,222,0.98))"
+              : "linear-gradient(180deg, var(--bg-card), var(--surface-strong))",
+            boxShadow: isLight
+              ? "0 24px 70px rgba(125,92,50,0.14), 0 8px 22px rgba(125,92,50,0.08)"
+              : undefined,
             rotateX,
             rotateY,
             y: parallaxY,
@@ -81,7 +91,9 @@ export function AppPreviewSection() {
             className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-700"
             style={{
               background:
-                "radial-gradient(ellipse at 50% 0%, rgba(196,162,75,0.06), transparent 60%)",
+                isLight
+                  ? "radial-gradient(ellipse at 50% 0%, rgba(192,138,30,0.12), rgba(111,145,216,0.06), transparent 65%)"
+                  : "radial-gradient(ellipse at 50% 0%, rgba(196,162,75,0.06), transparent 60%)",
               opacity: isHovered ? 1 : 0,
             }}
           />
@@ -91,7 +103,9 @@ export function AppPreviewSection() {
             className="flex items-center gap-2 border-b px-3 py-2.5 sm:px-5 sm:py-3.5"
             style={{
               borderColor: "var(--border-subtle)",
-              background: "var(--bg-soft)",
+              background: isLight
+                ? "linear-gradient(180deg, rgba(247,239,228,0.98), rgba(239,228,210,0.96))"
+                : "var(--bg-soft)",
             }}
           >
             <div className="flex gap-1.5">
@@ -112,11 +126,11 @@ export function AppPreviewSection() {
               className="ml-3 flex h-7 max-w-xs flex-1 items-center justify-center gap-2 rounded-lg border"
               style={{
                 borderColor: "var(--border-subtle)",
-                background: "var(--bg-card)",
+                background: isLight ? "rgba(255,252,247,0.92)" : "var(--bg-card)",
               }}
             >
               <div className="h-2 w-2 rounded-full bg-[#28c840] opacity-60" />
-              <span className="text-[11px] font-medium text-[var(--text-muted)]">
+              <span className="text-[12px] font-medium text-[var(--text-muted)]">
                 digynotes.app/notes
               </span>
             </div>
@@ -166,7 +180,7 @@ export function AppPreviewSection() {
               {["Son Notlar", "Film", "Dizi", "Oyun", "Kitap", "Gezi"].map((cat, i) => (
                 <div
                   key={cat}
-                  className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
+                  className={`flex-shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-[11px] ${
                     i === 0 ? "text-[var(--gold)]" : "text-[var(--text-secondary)]"
                   }`}
                   style={
@@ -188,7 +202,9 @@ export function AppPreviewSection() {
               className="relative mb-2.5 flex h-28 items-end overflow-hidden rounded-xl p-3 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
               style={{
                 background:
-                  "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
+                  isLight
+                    ? "linear-gradient(135deg, color-mix(in srgb, var(--surface-strong) 86%, #f2e6d3 14%), color-mix(in srgb, var(--bg-card) 82%, #dae5f8 18%), color-mix(in srgb, var(--bg-soft) 88%, #efe0ca 12%))"
+                    : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
               }}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}

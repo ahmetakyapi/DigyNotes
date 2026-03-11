@@ -77,7 +77,7 @@ export function TestimonialsSection() {
       >
         <div className="mb-4 flex items-center justify-center sm:mb-5">
           <motion.div
-            className="flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
               borderColor: "rgba(196,162,75,0.2)",
               background: "rgba(196,162,75,0.06)",
@@ -111,7 +111,7 @@ export function TestimonialsSection() {
           </span>
         </motion.h2>
         <motion.p
-          className="mx-auto max-w-lg text-[13px] font-medium text-[var(--text-secondary)] sm:text-base"
+          className="mx-auto max-w-lg text-[14px] font-medium text-[var(--text-secondary)] sm:text-base"
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -125,7 +125,7 @@ export function TestimonialsSection() {
         {REASONS.map((r, i) => (
           <motion.div
             key={r.title}
-            className="group relative rounded-xl border border-[var(--border)] p-4 sm:rounded-2xl sm:p-6"
+            className="dn-landing-card group relative rounded-xl border border-[var(--border)] p-4 sm:rounded-2xl sm:p-6"
             style={{
               background: "color-mix(in srgb, var(--bg-card) 85%, transparent)",
             }}
@@ -155,10 +155,10 @@ export function TestimonialsSection() {
             </div>
 
             {/* Text */}
-            <h3 className="mb-1 text-[13px] font-bold text-[var(--text-primary)] sm:mb-2 sm:text-base">
+            <h3 className="mb-1 text-[14px] font-bold text-[var(--text-primary)] sm:mb-2 sm:text-base">
               {r.title}
             </h3>
-            <p className="text-[11px] leading-[1.7] text-[var(--text-secondary)] sm:text-[13px] sm:leading-[1.75]">
+            <p className="text-[12px] leading-[1.72] text-[var(--text-secondary)] sm:text-[13px] sm:leading-[1.75]">
               {r.desc}
             </p>
           </motion.div>

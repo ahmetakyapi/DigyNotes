@@ -11,7 +11,7 @@ export function LandingThemeToggle() {
       onClick={toggleTheme}
       title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
       aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition-colors duration-200 hover:text-[var(--gold)]"
+      className="dn-landing-toggle flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition-colors duration-200 hover:text-[var(--gold)]"
     >
       {theme === "dark" ? (
         <svg

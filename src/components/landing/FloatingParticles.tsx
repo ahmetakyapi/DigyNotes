@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface Particle {
   id: number;
@@ -14,6 +15,8 @@ interface Particle {
 }
 
 export function FloatingParticles({ count = 24 }: { readonly count?: number }) {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
@@ -46,8 +49,12 @@ export function FloatingParticles({ count = 24 }: { readonly count?: number }) {
             top: `${p.y}%`,
             width: p.size,
             height: p.size,
-            background: `radial-gradient(circle, rgba(196,162,75,${p.opacity * 2}) 0%, rgba(196,162,75,0) 70%)`,
-            boxShadow: `0 0 ${p.size * 4}px rgba(196,162,75,${p.opacity})`,
+            background: isLight
+              ? `radial-gradient(circle, rgba(191,139,37,${p.opacity * 1.6}) 0%, rgba(115,159,193,${p.opacity * 1.1}) 38%, rgba(191,139,37,0) 72%)`
+              : `radial-gradient(circle, rgba(196,162,75,${p.opacity * 2}) 0%, rgba(196,162,75,0) 70%)`,
+            boxShadow: isLight
+              ? `0 0 ${p.size * 5}px rgba(191,139,37,${p.opacity * 0.7})`
+              : `0 0 ${p.size * 4}px rgba(196,162,75,${p.opacity})`,
           }}
           animate={{
             y: [0, -30 - Math.random() * 40, 0],

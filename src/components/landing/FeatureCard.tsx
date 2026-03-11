@@ -145,10 +145,10 @@ export function FeatureCard({
       </div>
 
       {/* Text */}
-      <h3 className="relative z-10 mb-1 text-[15px] font-bold text-[var(--text-primary)] sm:mb-2 sm:text-lg">
+      <h3 className="relative z-10 mb-1 text-[16px] font-bold text-[var(--text-primary)] sm:mb-2 sm:text-lg">
         {title}
       </h3>
-      <p className="relative z-10 text-[12px] leading-[1.7] text-[var(--text-secondary)] sm:text-sm sm:leading-[1.8]">
+      <p className="relative z-10 text-[13px] leading-[1.72] text-[var(--text-secondary)] sm:text-sm sm:leading-[1.8]">
         {desc}
       </p>
 
