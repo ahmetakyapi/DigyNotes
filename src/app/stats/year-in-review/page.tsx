@@ -61,7 +61,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   movies: "#6888c0",
   series: "#c8b090",
   game: "#818cf8",
-  book: "#c4a24b",
+  book: "#6366f1",
   travel: "#60a88a",
   other: "#9aaacd",
 };
@@ -333,8 +333,8 @@ export default function YearInReviewPage() {
             >
               <defs>
                 <linearGradient id="yirGold" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#c4a24b" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#c4a24b" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -353,7 +353,7 @@ export default function YearInReviewPage() {
                 type="monotone"
                 dataKey="count"
                 name="Not"
-                stroke="#c4a24b"
+                stroke="#6366f1"
                 strokeWidth={2}
                 fill="url(#yirGold)"
               />
@@ -388,7 +388,7 @@ export default function YearInReviewPage() {
               />
               <Bar dataKey="count" name="Not" radius={[6, 6, 0, 0]}>
                 {data.categories.map((c, idx) => (
-                  <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "#c4a24b"} />
+                  <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "#6366f1"} />
                 ))}
               </Bar>
             </BarChart>
@@ -506,7 +506,7 @@ export default function YearInReviewPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} />
-              <Bar dataKey="count" name="Not" fill="#c4a24b" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" name="Not" fill="#6366f1" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

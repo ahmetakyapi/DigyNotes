@@ -84,7 +84,7 @@ const CATEGORIES = [
     key: "kitap",
     label: "Kitap",
     Icon: LuBookOpen,
-    color: "#c4a24b",
+    color: "#6366f1",
     colorLight: "#e6c87a",
     bg: "rgba(201,168,76,0.10)",
     border: "rgba(201,168,76,0.25)",

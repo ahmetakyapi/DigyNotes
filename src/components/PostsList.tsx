@@ -258,7 +258,7 @@ export function PostsList({
               }}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
                 activeTab === "notlar"
-                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+                  ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -271,7 +271,7 @@ export function PostsList({
               }}
               className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
                 activeTab === "kaydedilenler"
-                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+                  ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -281,7 +281,7 @@ export function PostsList({
 
           {(activeTab === "notlar" || activeTab === "kaydedilenler") && (
             <div className="hidden items-center gap-3 sm:flex">
-              <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#c4a24b] to-transparent" />
+              <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#6366f1] to-transparent" />
               <span className="text-xs text-[var(--text-muted)]">
                 {activeTab === "notlar" ? stats.total : savedPosts.length}{" "}
                 {activeTab === "notlar" ? "not" : "kayıt"}
@@ -315,7 +315,7 @@ export function PostsList({
                     aria-label="Grid görünüm"
                     className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                       viewMode === "grid"
-                        ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+                        ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white"
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
@@ -326,7 +326,7 @@ export function PostsList({
                     aria-label="Liste görünümü"
                     className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                       viewMode === "list"
-                        ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+                        ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white"
                         : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
@@ -444,7 +444,7 @@ export function PostsList({
               <button
                 onClick={() => currentLoadMore()}
                 disabled={currentIsLoadingMore}
-                className="mt-3 rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)] disabled:opacity-50"
+                className="mt-3 rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)] disabled:opacity-50"
               >
                 {currentIsLoadingMore ? "Yükleniyor..." : "Daha fazla yükle"}
               </button>
@@ -455,7 +455,7 @@ export function PostsList({
             {/* ── Featured card (sadece arama/filtre yokken) ── */}
             {featured && !hasSearch && viewMode === "grid" && (
               <Link href={`/posts/${featured.id}`} className="group mb-4 block">
-                <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#c4a24b]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
+                <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#6366f1]/40 hover:shadow-[0_16px_56px_rgba(201,168,76,0.12)] sm:h-[340px] lg:h-[420px]">
                   <ResilientImage
                     src={getPostImageSrc(featured.image, featured.category)}
                     alt={featured.title}
@@ -481,7 +481,7 @@ export function PostsList({
 
                   <div className="absolute left-5 top-5 flex items-center gap-2">
                     <span
-                      className="rounded-full border border-[#c4a24b]/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
+                      className="rounded-full border border-[#6366f1]/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
                       style={{ backgroundColor: "var(--bg-overlay)" }}
                     >
                       {activeTab === "kaydedilenler" ? "Kaydedilen" : "Öne Çıkan"}
@@ -540,10 +540,10 @@ export function PostsList({
                 return (
                   <Link key={post.id} href={`/posts/${post.id}`} className="group block">
                     {viewMode === "grid" ? (
-                      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:flex-row">
+                      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#6366f1]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:flex-row">
                         {!hasSearch && (
                           <div className="flex h-9 flex-shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
-                            <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#c4a24b]/60">
+                            <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#6366f1]/60">
                               {String(index + 2).padStart(2, "0")}
                             </span>
                           </div>
@@ -564,7 +564,7 @@ export function PostsList({
                         <div className="flex min-w-0 flex-1 flex-col justify-between p-3.5 sm:p-4">
                           <div>
                             <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                              <span className="flex-shrink-0 rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                              <span className="flex-shrink-0 rounded-sm border border-[#6366f1]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                                 {getCategoryLabel(post.category)}
                               </span>
                               {post.years && (
@@ -625,7 +625,7 @@ export function PostsList({
                         </div>
                       </article>
                     ) : (
-                      <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-[#c4a24b]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:px-4">
+                      <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-[#6366f1]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:px-4">
                         <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
                           <ResilientImage
                             src={getPostImageSrc(post.image, post.category)}
@@ -639,7 +639,7 @@ export function PostsList({
 
                         <div className="min-w-0 flex-1">
                           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-                            <span className="rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                            <span className="rounded-sm border border-[#6366f1]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                               {getCategoryLabel(post.category)}
                             </span>
                             {post.years && (
@@ -682,7 +682,7 @@ export function PostsList({
                 <button
                   onClick={() => currentLoadMore?.()}
                   disabled={!currentHasMore || currentIsLoadingMore}
-                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {currentIsLoadingMore
                     ? "Daha fazla yükleniyor..."

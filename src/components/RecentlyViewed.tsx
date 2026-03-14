@@ -239,7 +239,7 @@ export default function RecentlyViewed() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-1">
-                    <span className="rounded-sm border border-[#c4a24b]/25 bg-black/50 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[var(--gold)] backdrop-blur-sm">
+                    <span className="rounded-sm border border-[#6366f1]/25 bg-black/50 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[var(--gold)] backdrop-blur-sm">
                       {getCategoryLabel(item.category)}
                     </span>
                     {item.rating > 0 && (

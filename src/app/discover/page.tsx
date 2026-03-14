@@ -49,7 +49,7 @@ export default function DiscoverPage() {
     <main className="min-h-screen py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <header className="mb-8 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-          <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+          <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
             Keşfet
           </span>
           <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
@@ -86,7 +86,7 @@ export default function DiscoverPage() {
           </div>
         ) : users.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
               <UsersThree size={24} weight="duotone" />
             </div>
             <p className="text-sm text-[var(--text-secondary)]">

@@ -53,7 +53,7 @@ export default function RecommendedPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-8 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-        <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+        <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
           Öneriler
         </span>
         <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
@@ -75,7 +75,7 @@ export default function RecommendedPage() {
         </div>
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
             <Sparkle size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -87,7 +87,7 @@ export default function RecommendedPage() {
           </p>
           <Link
             href="/login"
-            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-[#6366f1]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 bg-[#6366f1]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
             Giriş yap
           </Link>
@@ -102,7 +102,7 @@ export default function RecommendedPage() {
         </div>
       ) : posts.length === 0 ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#c4a24b]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
             <Compass size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -114,7 +114,7 @@ export default function RecommendedPage() {
           </p>
           <Link
             href="/notes"
-            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-[#6366f1]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 bg-[#6366f1]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
             <Sparkle size={16} weight="duotone" />
             Notlarıma dön
@@ -147,7 +147,7 @@ function RecommendedCard({ post }: { post: Post }) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#c4a24b]/20 hover:shadow-[var(--shadow-card)]">
+    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#6366f1]/20 hover:shadow-[var(--shadow-card)]">
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-48 overflow-hidden bg-[var(--bg-raised)]">
           <ResilientImage
@@ -159,7 +159,7 @@ function RecommendedCard({ post }: { post: Post }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.88)] via-[rgba(7,12,22,0.1)] to-transparent" />
           <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[#c4a24b]/20 bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="rounded-full border border-[#6366f1]/20 bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               {getCategoryLabel(post.category)}
             </span>
             {post.status && <StatusBadge status={post.status} />}
@@ -168,7 +168,7 @@ function RecommendedCard({ post }: { post: Post }) {
 
         <div className="space-y-3 p-5">
           {post.user?.username && (
-            <div className="inline-flex rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <div className="inline-flex rounded-full border border-[#6366f1]/20 bg-[#6366f1]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               Benzer ilgi alanı
             </div>
           )}

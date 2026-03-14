@@ -39,7 +39,7 @@ interface StatsData {
   ratingDistribution: { label: string; count: number }[];
 }
 
-const CHART_COLORS = ["#c4a24b", "#818cf8", "#34d399", "#60a5fa", "#f472b6", "#fb923c"];
+const CHART_COLORS = ["#6366f1", "#818cf8", "#34d399", "#60a5fa", "#f472b6", "#fb923c"];
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -291,8 +291,8 @@ export default function PersonalStatsPage() {
                   <AreaChart data={data.monthlySeries}>
                     <defs>
                       <linearGradient id="statsArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#c4a24b" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="#c4a24b" stopOpacity={0.02} />
+                        <stop offset="0%" stopColor="#6366f1" stopOpacity={0.4} />
+                        <stop offset="100%" stopColor="#6366f1" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
@@ -309,7 +309,7 @@ export default function PersonalStatsPage() {
                     <Area
                       type="monotone"
                       dataKey="count"
-                      stroke="#c4a24b"
+                      stroke="#6366f1"
                       fill="url(#statsArea)"
                       strokeWidth={2.5}
                     />
@@ -378,7 +378,7 @@ export default function PersonalStatsPage() {
                         color: "var(--text-primary)",
                       }}
                     />
-                    <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#c4a24b" />
+                    <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#6366f1" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

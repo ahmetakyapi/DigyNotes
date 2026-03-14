@@ -35,11 +35,11 @@ export default function UserCard({ user }: UserCardProps) {
             name={user.name}
             size={56}
             className="h-full w-full object-cover"
-            textClassName="text-xl font-semibold text-[#c4a24b]"
+            textClassName="text-xl font-semibold text-[#6366f1]"
           />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#c4a24b]">
+          <p className="truncate text-base font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#6366f1]">
             {user.name}
           </p>
           {user.username && (
@@ -59,8 +59,8 @@ export default function UserCard({ user }: UserCardProps) {
           Not
         </span>
         {lastSeenLabel && (
-          <span className="bg-[#c4a24b]/8 inline-flex overflow-hidden rounded-full border border-[#c4a24b]/20 text-[11px]">
-            <span className="border-[#c4a24b]/18 border-r px-2.5 py-1.5 font-medium text-[var(--text-faint)]">
+          <span className="bg-[#6366f1]/8 inline-flex overflow-hidden rounded-full border border-[#6366f1]/20 text-[11px]">
+            <span className="border-[#6366f1]/18 border-r px-2.5 py-1.5 font-medium text-[var(--text-faint)]">
               Son Giriş
             </span>
             <span className="px-3 py-1.5 font-medium text-[var(--gold)]">{lastSeenLabel}</span>
@@ -78,7 +78,7 @@ export default function UserCard({ user }: UserCardProps) {
     return (
       <Link
         href={href}
-        className="hover:border-[#c4a24b]/24 group block rounded-[26px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.94),rgba(11,18,32,0.92))] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+        className="hover:border-[#6366f1]/24 group block rounded-[26px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.94),rgba(11,18,32,0.92))] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
       >
         {content}
       </Link>

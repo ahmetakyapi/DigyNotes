@@ -154,7 +154,7 @@ export default function NotFound() {
           style={{
             borderColor: "rgba(201,168,76,0.3)",
             background: "rgba(201,168,76,0.07)",
-            color: "#c4a24b",
+            color: "#6366f1",
           }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
@@ -233,7 +233,7 @@ export default function NotFound() {
             className="dn404-glitch-layer pointer-events-none absolute inset-0 text-[clamp(6.5rem,24vw,12rem)] font-black leading-none tracking-tighter"
             aria-hidden
             style={{
-              background: "linear-gradient(135deg, #c4a24b, #d7ba68)",
+              background: "linear-gradient(135deg, #6366f1, #818cf8)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}

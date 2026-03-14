@@ -160,8 +160,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 href="/notifications"
                 title="Bildirimler"
-                className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[var(--gold)] sm:flex ${
-                  isNotifications ? "text-[var(--gold)]" : ""
+                className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#818cf8] sm:flex ${
+                  isNotifications ? "text-[#818cf8]" : ""
                 }`}
               >
                 <Bell
@@ -169,7 +169,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   weight={notificationCount > 0 || isNotifications ? "fill" : "regular"}
                 />
                 {notificationCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-[var(--gold)] px-1 text-[10px] font-bold leading-[18px] text-[var(--text-on-accent)]">
+                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-[#6366f1] px-1 text-[10px] font-bold leading-[18px] text-white">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}
@@ -179,7 +179,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 onClick={toggleTheme}
                 title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-                className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[var(--gold)] sm:flex"
+                className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#818cf8] sm:flex"
               >
                 {theme === "dark" ? (
                   /* Sun icon */
@@ -239,8 +239,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   title="Yeni not ekle"
                   className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 items-center justify-center gap-1 rounded-xl border border-[#6366f1]/45 px-3 text-white transition-all duration-150 active:scale-[0.97] sm:h-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-medium"
                   style={{
-                    background:
-                      "linear-gradient(145deg, #818cf8 0%, #6366f1 55%, #4f46e5 100%)",
+                    background: "linear-gradient(145deg, #818cf8 0%, #6366f1 55%, #4f46e5 100%)",
                   }}
                 >
                   {/* Plus icon */}
@@ -268,10 +267,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     title={session.user?.name ?? ""}
-                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[12px] font-bold text-[var(--gold)] transition-all duration-150 sm:h-10 sm:w-10 sm:text-[13px] sm:shadow-none ${
+                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[12px] font-bold text-[#818cf8] transition-all duration-150 sm:h-10 sm:w-10 sm:text-[13px] sm:shadow-none ${
                       showUserMenu
-                        ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_var(--gold),0_8px_20px_rgba(3,8,20,0.28)]"
-                        : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgba(3,8,20,0.24)] hover:shadow-[0_0_0_1px_var(--gold),0_8px_20px_rgba(3,8,20,0.28)]"
+                        ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_#6366f1,0_8px_20px_rgba(3,8,20,0.28)]"
+                        : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgba(3,8,20,0.24)] hover:shadow-[0_0_0_1px_#6366f1,0_8px_20px_rgba(3,8,20,0.28)]"
                     }`}
                   >
                     {userInitial}
@@ -282,10 +281,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
                       {/* User info */}
                       <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
-                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/10">
-                          <span className="text-xs font-bold text-[var(--gold)]">
-                            {userInitial}
-                          </span>
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#6366f1]/20 bg-[#6366f1]/10">
+                          <span className="text-xs font-bold text-[#818cf8]">{userInitial}</span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
@@ -351,7 +348,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           <span className="relative">
                             <Bell size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
                             {notificationCount > 0 && (
-                              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[var(--gold)] px-0.5 text-[8px] font-bold leading-[14px] text-[var(--text-on-accent)]">
+                              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[#6366f1] px-0.5 text-[8px] font-bold leading-[14px] text-white">
                                 {notificationCount > 9 ? "9+" : notificationCount}
                               </span>
                             )}
@@ -499,7 +496,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                             <Link
                               href="/admin"
                               onClick={() => setShowUserMenu(false)}
-                              className="bg-[#c4a24b]/8 hover:bg-[#c4a24b]/14 mx-1 flex items-center gap-2.5 rounded-lg border border-[#c4a24b]/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#c4a24b]/40 hover:text-[var(--gold-light)]"
+                              className="bg-[#6366f1]/8 hover:bg-[#6366f1]/14 mx-1 flex items-center gap-2.5 rounded-lg border border-[#6366f1]/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#6366f1]/40 hover:text-[var(--gold-light)]"
                             >
                               <svg
                                 width="14"
@@ -562,7 +559,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   onClick={() => router.push("/notes")}
                   className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-4 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                     activeCategory === "all"
-                      ? "bg-[var(--gold)] text-[var(--text-on-accent)] shadow-[0_3px_14px_rgba(196,162,75,0.28)]"
+                      ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white shadow-[0_3px_14px_rgba(99,102,241,0.28)]"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                   }`}
                 >
@@ -576,7 +573,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
                       className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-3.5 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                         isActive
-                          ? "bg-[var(--gold)] text-[var(--text-on-accent)] shadow-[0_3px_14px_rgba(196,162,75,0.28)]"
+                          ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white shadow-[0_3px_14px_rgba(99,102,241,0.28)]"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                       }`}
                     >
@@ -616,7 +613,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href="/feed"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isFeed
-                    ? "border-[var(--gold)] text-[var(--text-primary)]"
+                    ? "border-[#6366f1] text-[var(--text-primary)]"
                     : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
@@ -638,7 +635,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href="/recommended"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isRecommended
-                    ? "border-[var(--gold)] text-[var(--text-primary)]"
+                    ? "border-[#6366f1] text-[var(--text-primary)]"
                     : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
@@ -660,7 +657,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href="/discover"
                 className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
                   isDiscover
-                    ? "border-[var(--gold)] text-[var(--text-primary)]"
+                    ? "border-[#6366f1] text-[var(--text-primary)]"
                     : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 }`}
               >
@@ -699,7 +696,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/notes"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isNotes ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
+                isNotes ? "bg-[#6366f1]/12 text-[#818cf8]" : "text-[var(--text-secondary)]"
               }`}
             >
               <svg
@@ -722,7 +719,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/feed"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isFeed ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
+                isFeed ? "bg-[#6366f1]/12 text-[#818cf8]" : "text-[var(--text-secondary)]"
               }`}
             >
               <svg
@@ -742,9 +739,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/recommended"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isRecommended
-                  ? "bg-[#c4a24b]/14 text-[var(--gold)]"
-                  : "text-[var(--text-secondary)]"
+                isRecommended ? "bg-[#6366f1]/12 text-[#818cf8]" : "text-[var(--text-secondary)]"
               }`}
             >
               <svg
@@ -764,7 +759,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/discover"
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isDiscover ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
+                isDiscover ? "bg-[#6366f1]/12 text-[#818cf8]" : "text-[var(--text-secondary)]"
               }`}
             >
               <svg
@@ -789,13 +784,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
               }
               className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isProfile ? "bg-[#c4a24b]/14 text-[var(--gold)]" : "text-[var(--text-secondary)]"
+                isProfile ? "bg-[#6366f1]/12 text-[#818cf8]" : "text-[var(--text-secondary)]"
               }`}
             >
               <div
                 className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
                   isProfile
-                    ? "bg-[#c4a24b]/20 text-[var(--gold)] ring-1 ring-[#c4a24b]/50"
+                    ? "bg-[#6366f1]/20 text-[#818cf8] ring-1 ring-[#6366f1]/50"
                     : "bg-[var(--bg-raised)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
                 }`}
               >
@@ -840,7 +835,7 @@ function NavTab({
       onClick={onClick}
       className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
         active
-          ? "border-[var(--gold)] text-[var(--text-primary)]"
+          ? "border-[#6366f1] text-[var(--text-primary)]"
           : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
       }`}
     >

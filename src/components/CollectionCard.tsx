@@ -30,7 +30,7 @@ export default function CollectionCard({
   return (
     <Link
       href={href}
-      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:border-[#c4a24b]/35 hover:shadow-[var(--shadow-soft)]"
+      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:border-[#6366f1]/35 hover:shadow-[var(--shadow-soft)]"
     >
       <div className="relative h-32 border-b border-[var(--border)] bg-[var(--bg-raised)]">
         {previewPosts.length > 0 ? (
@@ -67,7 +67,7 @@ export default function CollectionCard({
               </p>
             )}
           </div>
-          <span className="bg-[#c4a24b]/8 rounded-full border border-[#c4a24b]/25 px-2 py-1 text-[10px] font-semibold text-[var(--gold)]">
+          <span className="bg-[#6366f1]/8 rounded-full border border-[#6366f1]/25 px-2 py-1 text-[10px] font-semibold text-[var(--gold)]">
             {collection.postCount} not
           </span>
         </div>
@@ -86,7 +86,7 @@ export default function CollectionCard({
                 key={post.id}
                 className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#c4a24b]/70" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#6366f1]/70" />
                 <span className="line-clamp-1">{formatDisplayTitle(post.title)}</span>
               </div>
             ))}

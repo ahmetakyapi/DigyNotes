@@ -22,11 +22,7 @@ import { categorySupportsSpoiler } from "@/lib/post-config";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { addRecentView } from "@/components/RecentlyViewed";
 import { ResilientImage } from "@/components/ResilientImage";
-import {
-  getClientErrorMessage,
-  isAuthenticationError,
-  requestJson,
-} from "@/lib/client-api";
+import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 import toast from "react-hot-toast";
 
 const SPOILER_OVERLAY_STORAGE_KEY = "dn_spoiler_overlay_seen";
@@ -247,7 +243,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   };
 
   const threadedComments = useMemo(() => buildCommentTree(comments), [comments]);
-  const commentsById = useMemo(() => new Map(comments.map((comment) => [comment.id, comment])), [comments]);
+  const commentsById = useMemo(
+    () => new Map(comments.map((comment) => [comment.id, comment])),
+    [comments]
+  );
   const targetCommentId = searchParams.get("comment");
 
   const showInteractionMessage = (tone: "like" | "comment", text: string) => {
@@ -498,20 +497,20 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         id={`comment-${comment.id}`}
         className={
           depth > 0
-            ? "scroll-mt-24 ml-4 border-l border-[var(--surface-strong-border)] pl-4 sm:ml-6 sm:pl-5"
+            ? "ml-4 scroll-mt-24 border-l border-[var(--surface-strong-border)] pl-4 sm:ml-6 sm:pl-5"
             : "scroll-mt-24"
         }
       >
         <div
           className={`rounded-2xl border bg-gradient-to-br from-[var(--surface-strong)] to-[var(--surface-strong-hover)] p-3 shadow-[var(--shadow-soft)] transition-colors sm:p-4 ${
             isHighlighted
-              ? "border-[#c4a24b]/45 shadow-[0_0_0_1px_rgba(196,162,75,0.18)]"
+              ? "border-[#6366f1]/45 shadow-[0_0_0_1px_rgba(196,162,75,0.18)]"
               : "border-[var(--surface-strong-border)]"
           }`}
         >
           <div className="mb-2.5 flex items-start justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="bg-[#c4a24b]/12 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c4a24b]/20 text-[11px] font-bold text-[var(--gold)]">
+              <div className="bg-[#6366f1]/12 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#6366f1]/20 text-[11px] font-bold text-[var(--gold)]">
                 {comment.user.name?.charAt(0)?.toUpperCase() ?? "?"}
               </div>
               <div className="min-w-0">
@@ -530,7 +529,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     </span>
                   )}
                   {isPostAuthorComment && (
-                    <span className="rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+                    <span className="bg-[#6366f1]/8 rounded-full border border-[#6366f1]/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
                       Not sahibi
                     </span>
                   )}
@@ -558,7 +557,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <button
                   type="button"
                   onClick={() => toggleReply(comment.id)}
-                  className="hover:bg-[#c4a24b]/8 rounded-md border border-transparent px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:border-[#c4a24b]/20 hover:text-[var(--gold)]"
+                  className="hover:bg-[#6366f1]/8 rounded-md border border-transparent px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:border-[#6366f1]/20 hover:text-[var(--gold)]"
                 >
                   {isReplying ? "Vazgeç" : "Yanıtla"}
                 </button>
@@ -588,7 +587,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 placeholder="Yanıtınızı yazın..."
                 rows={3}
                 maxLength={1000}
-                className="bg-[var(--bg-card)]/70 min-h-[88px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-[13px]"
+                className="bg-[var(--bg-card)]/70 min-h-[88px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#6366f1]/45 sm:text-[13px]"
               />
               <div className="mt-3 flex items-center justify-between gap-3">
                 <span className="text-[10px] text-[var(--text-faint)]">
@@ -598,7 +597,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   type="button"
                   onClick={() => submitComment(comment.id)}
                   disabled={isSubmittingComment || !replyText.trim()}
-                  className="rounded-lg bg-[var(--gold)] px-3 py-1.5 text-[11px] font-bold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-lg bg-gradient-to-r from-[#6366f1] to-[#4f46e5] px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(99,102,241,0.3)] transition-all duration-200 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {isSubmittingComment ? "Gönderiliyor..." : "Yanıt Gönder"}
                 </button>
@@ -722,7 +721,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-6 sm:pb-8">
             <div className="max-w-3xl">
               <div className="mb-3 flex items-center gap-2">
-                <span className="inline-block rounded-sm border border-[#c4a24b]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                <span className="inline-block rounded-sm border border-[#6366f1]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                   {categoryLabel}
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
@@ -804,11 +803,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             {post.tags &&
               post.tags.length > 0 &&
               post.tags.map((tag) => (
-                <TagBadge
-                  key={tag.id}
-                  tag={tag}
-                  href={`/tag/${encodeURIComponent(tag.name)}`}
-                />
+                <TagBadge key={tag.id} tag={tag} href={`/tag/${encodeURIComponent(tag.name)}`} />
               ))}
           </div>
 
@@ -856,7 +851,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="grid gap-3 sm:grid-cols-3">
             <Link
               href={`/category/${encodeURIComponent(categorySlug)}`}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+              className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)]"
             >
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
                 Kategori
@@ -876,7 +871,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             {authorProfileHref ? (
               <Link
                 href={authorProfileHref}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)]"
               >
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
                   Profil
@@ -904,11 +899,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {post.tags.map((tag) => (
-                  <TagBadge
-                    key={tag.id}
-                    tag={tag}
-                    href={`/tag/${encodeURIComponent(tag.name)}`}
-                  />
+                  <TagBadge key={tag.id} tag={tag} href={`/tag/${encodeURIComponent(tag.name)}`} />
                 ))}
               </div>
             </div>
@@ -926,8 +917,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             <span
               className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
                 interactionMessage.tone === "like"
-                  ? "border-[#e53e3e]/20 bg-[#e53e3e]/8 text-[#ffb2b2]"
-                  : "border-[#c4a24b]/20 bg-[#c4a24b]/8 text-[var(--gold)]"
+                  ? "bg-[#e53e3e]/8 border-[#e53e3e]/20 text-[#ffb2b2]"
+                  : "bg-[#6366f1]/8 border-[#6366f1]/20 text-[var(--gold)]"
               }`}
             >
               {interactionMessage.text}
@@ -950,7 +941,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 href={buildOpenStreetMapLink(post.lat, post.lng)}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--text-primary)]"
               >
                 Haritada aç
               </a>
@@ -1079,7 +1070,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div className="mt-12 border-t border-[var(--surface-strong-border)] pt-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="bg-[#c4a24b]/12 flex h-7 w-7 items-center justify-center rounded-full border border-[#c4a24b]/25">
+              <div className="bg-[#6366f1]/12 flex h-7 w-7 items-center justify-center rounded-full border border-[#6366f1]/25">
                 <svg
                   className="h-3.5 w-3.5 text-[var(--gold)]"
                   fill="none"
@@ -1120,7 +1111,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {session?.user ? (
             <div className="bg-[var(--surface-strong)]/85 rounded-2xl border border-[var(--surface-strong-border)] p-3.5 shadow-[var(--shadow-soft)] sm:p-4">
               {replyingToId && (
-                <div className="bg-[#c4a24b]/8 mb-3 flex items-center justify-between rounded-xl border border-[#c4a24b]/20 px-3 py-2 text-[11px] text-[var(--gold)]">
+                <div className="bg-[#6366f1]/8 mb-3 flex items-center justify-between rounded-xl border border-[#6366f1]/20 px-3 py-2 text-[11px] text-[var(--gold)]">
                   <span>Şu anda bir yoruma yanıt yazıyorsun.</span>
                   <button
                     type="button"
@@ -1141,7 +1132,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 placeholder="Yorumunuzu yazın..."
                 rows={3}
                 maxLength={1000}
-                className="bg-[var(--bg-card)]/70 min-h-[96px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-[13px] sm:leading-relaxed"
+                className="bg-[var(--bg-card)]/70 min-h-[96px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#6366f1]/45 sm:text-[13px] sm:leading-relaxed"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && e.metaKey) submitComment();
                 }}
@@ -1154,7 +1145,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   type="button"
                   onClick={() => submitComment()}
                   disabled={isSubmittingComment || !commentText.trim()}
-                  className="h-11 w-full rounded-lg bg-[var(--gold)] px-4 text-xs font-bold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:py-1.5"
+                  className="h-11 w-full rounded-lg bg-gradient-to-r from-[#6366f1] to-[#4f46e5] px-4 text-xs font-bold text-white shadow-[0_2px_8px_rgba(99,102,241,0.3)] transition-all duration-200 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:py-1.5"
                 >
                   {isSubmittingComment ? "Gönderiliyor..." : "Yorum Yap"}
                 </button>
@@ -1165,7 +1156,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               <p className="mb-2 text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yapın.</p>
               <Link
                 href="/login"
-                className="text-xs font-medium text-[var(--gold)] transition-colors hover:text-[var(--gold-light)]"
+                className="text-xs font-medium text-[#818cf8] transition-colors hover:text-[#6366f1]"
               >
                 Giriş Yap →
               </Link>
@@ -1209,10 +1200,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <Link
                   key={cp.id}
                   href={`/posts/${cp.id}`}
-                  className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[#c4a24b]/30 hover:bg-[var(--bg-raised)]"
+                  className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[#6366f1]/30 hover:bg-[var(--bg-raised)]"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#c4a24b]/10 text-[10px] font-bold text-[var(--gold)]">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#6366f1]/10 text-[10px] font-bold text-[var(--gold)]">
                       {cp.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">

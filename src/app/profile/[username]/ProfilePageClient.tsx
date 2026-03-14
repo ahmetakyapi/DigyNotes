@@ -243,7 +243,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
           <p className="mb-4 text-xs text-[var(--text-muted)]">
             @{username} adlı profil mevcut değil veya gizli.
           </p>
-          <Link href="/discover" className="text-xs text-[#c4a24b] hover:underline">
+          <Link href="/discover" className="text-xs text-[#6366f1] hover:underline">
             ← Kullanıcıları keşfet
           </Link>
         </div>
@@ -265,7 +265,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 name={user.name}
                 size={80}
                 className="h-full w-full object-cover"
-                textClassName="text-3xl font-semibold text-[#c4a24b]"
+                textClassName="text-3xl font-semibold text-[#6366f1]"
               />
             </div>
 
@@ -294,7 +294,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 {!currentUser?.id && (
                   <Link
                     href="/login"
-                    className="hover:bg-[#c4a24b]/18 rounded-lg border border-[#c4a24b]/35 bg-[#c4a24b]/10 px-4 py-2 text-sm font-semibold text-[#c4a24b] transition-colors"
+                    className="hover:bg-[#6366f1]/18 rounded-lg border border-[#6366f1]/35 bg-[#6366f1]/10 px-4 py-2 text-sm font-semibold text-[#6366f1] transition-colors"
                   >
                     Takip etmek için giriş yap
                   </Link>
@@ -318,7 +318,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   </span>
                 )}
                 {currentUser?.id && currentUser.id !== user.id && isFollowingProfile && (
-                  <span className="rounded-full border border-[#c4a24b]/25 bg-[#c4a24b]/10 px-3 py-1 text-xs text-[#c4a24b]">
+                  <span className="rounded-full border border-[#6366f1]/25 bg-[#6366f1]/10 px-3 py-1 text-xs text-[#6366f1]">
                     Bu profili takip ediyorsun
                   </span>
                 )}
@@ -350,7 +350,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 </button>
                 {user.avgRating > 0 && (
                   <div className="text-center">
-                    <p className="text-lg font-bold text-[#c4a24b]">★ {user.avgRating}</p>
+                    <p className="text-lg font-bold text-[#6366f1]">★ {user.avgRating}</p>
                     <p className="text-xs text-[var(--text-muted)]">Ort. Puan</p>
                   </div>
                 )}
@@ -461,7 +461,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {filteredPosts.map((post) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30 sm:flex-row">
+                  <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#6366f1]/30 sm:flex-row">
                     {/* Cover */}
                     <div
                       className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
@@ -482,12 +482,12 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                          <span className="rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c4a24b]">
+                          <span className="rounded-sm border border-[#6366f1]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#6366f1]">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
-                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c4a24b]">
+                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#6366f1]">
                           {formatDisplayTitle(post.title)}
                         </h2>
                         {post.creator && (
@@ -576,7 +576,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {filteredLikedPosts.map((post) => (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#c4a24b]/30 sm:flex-row">
+                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#6366f1]/30 sm:flex-row">
                   {/* Cover */}
                   <div
                     className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
@@ -597,7 +597,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-sm border border-[#c4a24b]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#c4a24b]">
+                        <span className="rounded-sm border border-[#6366f1]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#6366f1]">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -620,7 +620,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                           </Link>
                         )}
                       </div>
-                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#c4a24b]">
+                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#6366f1]">
                         {formatDisplayTitle(post.title)}
                       </h2>
                       {post.creator && (
