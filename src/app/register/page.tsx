@@ -127,7 +127,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="name"
                 placeholder="Adın Soyadın"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
               />
             </div>
 
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                   placeholder="kullanici_adin"
                   minLength={3}
                   maxLength={30}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
                 />
               </div>
               <p className="mt-1 text-[11px] text-[var(--text-muted)]">
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
               />
             </div>
 
@@ -188,7 +188,7 @@ export default function RegisterPage() {
                   required
                   autoComplete="new-password"
                   placeholder="En az 6 karakter"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
                 />
                 <button
                   type="button"
@@ -245,10 +245,10 @@ export default function RegisterPage() {
                 required
                 autoComplete="new-password"
                 placeholder="Şifreyi tekrar girin"
-                className={`w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] focus:ring-1 focus:ring-[#c4a24b]/10 sm:text-sm ${
+                className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
                   confirmPw && confirmPw !== password
-                    ? "border-[#e53e3e]/50 focus:border-[#e53e3e]/70"
-                    : "border-[var(--border)] focus:border-[#c4a24b]/50"
+                    ? "dn-input-auth-error border-[#e53e3e]/50"
+                    : "border-[var(--border)]"
                 }`}
               />
               {confirmPw && confirmPw !== password && (
@@ -263,7 +263,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full rounded-xl bg-[#c4a24b] py-3.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d7ba68] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+              className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -297,7 +297,7 @@ export default function RegisterPage() {
             Zaten hesabın var mı?{" "}
             <Link
               href="/login"
-              className="font-medium text-[#c4a24b] transition-colors hover:text-[#d7ba68]"
+              className="dn-auth-link font-medium transition-colors"
             >
               Giriş Yap
             </Link>

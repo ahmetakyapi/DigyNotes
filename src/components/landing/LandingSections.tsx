@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import Link from "next/link";
+import { useTheme } from "@/components/ThemeProvider";
 import {
   LuFilm,
   LuTv,
@@ -472,6 +473,19 @@ export function HowItWorksSection() {
    BOTTOM CTA — Parallax glow section
    ──────────────────────────────────────────── */
 export function BottomCtaSection() {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
+  const ctaBg = isLight
+    ? "linear-gradient(135deg, #4a72e8, #3558cc, #2c4ec0, #3f67d8)"
+    : "linear-gradient(135deg, #6366f1, #4f46e5, #4338ca, #5b52e8)";
+  const ctaBgHover = isLight
+    ? "linear-gradient(135deg, #5a82f8, #4568dc, #355ed0, #4f77e8)"
+    : "linear-gradient(135deg, #818cf8, #6366f1, #5048e8, #6b62f0)";
+  const ctaTextColor = "#ffffff";
+  const ctaShadow = isLight
+    ? "0 6px 20px rgba(74,114,232,0.36)"
+    : "0 6px 20px rgba(99,102,241,0.36)";
+
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
   const { scrollYProgress } = useScroll({
@@ -606,8 +620,12 @@ export function BottomCtaSection() {
           <MagneticButton className="mx-auto w-auto">
             <Link
               href="/register"
-              className="dn-cta-gold group relative mx-auto flex items-center justify-center gap-2 overflow-hidden rounded-xl px-7 py-3 text-[14px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-[0_6px_20px_rgba(198,151,46,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(198,151,46,0.5)] sm:rounded-2xl sm:px-9 sm:py-3.5 sm:text-[14px]"
-              style={{ background: "linear-gradient(135deg, #e7bf5d, #c6972e, #b37a16, #cf9d2f)" }}
+              className="dn-cta-primary group relative mx-auto flex items-center justify-center gap-2 overflow-hidden rounded-xl px-7 py-3 text-[14px] font-semibold tracking-[0.01em] transition-all duration-300 hover:-translate-y-0.5 sm:rounded-2xl sm:px-9 sm:py-3.5 sm:text-[14px]"
+              style={{
+                background: ctaBg,
+                color: ctaTextColor,
+                boxShadow: ctaShadow,
+              }}
             >
               <span className="relative z-10">Hesap Oluştur</span>
               <LuArrowRight
@@ -616,9 +634,7 @@ export function BottomCtaSection() {
               />
               <div
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  background: "linear-gradient(135deg, #efca67, #d0a23d, #bc841c, #d6a83a)",
-                }}
+                style={{ background: ctaBgHover }}
               />
             </Link>
           </MagneticButton>

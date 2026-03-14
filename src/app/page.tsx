@@ -77,8 +77,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/register"
-            className="rounded-xl px-3.5 py-1.5 text-[13px] font-semibold tracking-[0.01em] text-[#1b1307] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5 sm:text-sm"
-            style={{ background: "linear-gradient(135deg, #ebc15c, #c6972e, #b77f18)" }}
+            className="dn-nav-cta-btn rounded-xl px-3.5 py-1.5 text-[13px] font-semibold tracking-[0.01em] shadow-lg transition-all duration-200 hover:-translate-y-px hover:opacity-90 sm:px-5 sm:py-2.5 sm:text-sm"
           >
             Kayıt Ol
           </Link>

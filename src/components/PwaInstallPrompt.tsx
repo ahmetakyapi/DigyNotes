@@ -129,7 +129,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void handleInstall()}
-            className="rounded-lg bg-[var(--gold)] px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+            className="rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-3 py-2 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
           >
             Yükle
           </button>
