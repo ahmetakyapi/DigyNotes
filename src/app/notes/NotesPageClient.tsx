@@ -92,7 +92,7 @@ export default function NotesPageClient({
       setSavedError(null);
 
       const [postsResult, savedResult] = await Promise.allSettled([
-        fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags)),
+        fetchPaginated(buildPostsUrl(initialQuery, "", [])),
         fetchPaginated(`/api/bookmarks?paginate=1&limit=${PAGE_SIZE}`),
       ]);
 
@@ -126,7 +126,7 @@ export default function NotesPageClient({
     return () => {
       cancelled = true;
     };
-  }, [initialCategory, initialQuery, initialTags]);
+  }, [initialQuery]);
 
   const loadMorePosts = async () => {
     if (!postsCursor || loadingMorePosts) return;
@@ -134,7 +134,7 @@ export default function NotesPageClient({
     setLoadingMorePosts(true);
     try {
       const data = await fetchPaginated(
-        buildPostsUrl(initialQuery, initialCategory, initialTags, postsCursor)
+        buildPostsUrl(initialQuery, "", [], postsCursor)
       );
 
       setPosts((prev) => mergePosts(prev, data.items));
