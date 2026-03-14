@@ -222,7 +222,7 @@ export default function NotesPageClient({
           )}
           <Link
             href="/new-post"
-            className="rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:shadow-[0_6px_20px_rgba(99,102,241,0.38)] hover:brightness-110"
+            className="rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:shadow-[0_6px_20px_rgba(16,185,129,0.38)] hover:brightness-110"
           >
             {hasFilterPath ? "Yeni not ekle" : "İlk notu ekle"}
           </Link>

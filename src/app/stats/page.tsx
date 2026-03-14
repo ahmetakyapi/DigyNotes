@@ -39,7 +39,7 @@ interface StatsData {
   ratingDistribution: { label: string; count: number }[];
 }
 
-const CHART_COLORS = ["#6366f1", "#818cf8", "#34d399", "#60a5fa", "#f472b6", "#fb923c"];
+const CHART_COLORS = ["#10b981", "#34d399", "#34d399", "#60a5fa", "#f472b6", "#fb923c"];
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -165,14 +165,14 @@ export default function PersonalStatsPage() {
           </p>
           <Link
             href="/new-post"
-            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.24)] transition-all hover:brightness-110"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.24)] transition-all hover:brightness-110"
           >
             İlk notu oluştur
           </Link>
         </div>
       ) : (
         <>
-          <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(104,136,192,0.08),rgba(12,18,31,0.92))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+          <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(16,185,129,0.12),rgba(14,165,233,0.08),rgba(12,18,31,0.92))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
             <div className="max-w-3xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
                 Arşiv okuması
@@ -291,8 +291,8 @@ export default function PersonalStatsPage() {
                   <AreaChart data={data.monthlySeries}>
                     <defs>
                       <linearGradient id="statsArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#6366f1" stopOpacity={0.4} />
-                        <stop offset="100%" stopColor="#6366f1" stopOpacity={0.02} />
+                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
@@ -309,7 +309,7 @@ export default function PersonalStatsPage() {
                     <Area
                       type="monotone"
                       dataKey="count"
-                      stroke="#6366f1"
+                      stroke="#10b981"
                       fill="url(#statsArea)"
                       strokeWidth={2.5}
                     />
@@ -378,7 +378,7 @@ export default function PersonalStatsPage() {
                         color: "var(--text-primary)",
                       }}
                     />
-                    <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#6366f1" />
+                    <Bar dataKey="count" radius={[8, 8, 0, 0]} fill="#10b981" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

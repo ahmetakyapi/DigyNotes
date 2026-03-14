@@ -216,7 +216,7 @@ export default function WatchlistPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
           >
             Giriş Yap
           </Link>
@@ -231,10 +231,10 @@ export default function WatchlistPage() {
         className="mb-6 rounded-[32px] border border-[var(--border)] p-6 shadow-[var(--shadow-soft)] sm:p-7"
         style={{
           background:
-            "radial-gradient(circle at top left, rgba(196,162,75,0.12), transparent 30%), var(--bg-card)",
+            "radial-gradient(circle at top left, rgba(16,185,129,0.1), transparent 30%), var(--bg-card)",
         }}
       >
-        <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+        <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
           İstek Listesi
         </span>
         <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
@@ -296,8 +296,8 @@ export default function WatchlistPage() {
               onClick={() => setActiveCategory(category)}
               className={`min-w-[144px] rounded-2xl border px-4 py-3 text-left transition-colors ${
                 activeCategory === category
-                  ? "border-[#6366f1]/28 bg-[#6366f1]/10 text-[var(--text-primary)]"
-                  : "hover:border-[#6366f1]/18 border-[var(--border)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  ? "border-[#10b981]/28 bg-[#10b981]/10 text-[var(--text-primary)]"
+                  : "hover:border-[#10b981]/18 border-[var(--border)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
@@ -341,7 +341,7 @@ export default function WatchlistPage() {
               )}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-[#6366f1]/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+                  <span className="rounded-full border border-[#10b981]/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
                     {getCategoryLabel(activeCategory)}
                   </span>
                   <StatusBadge status={getPlannedLabel(activeCategory)} />
@@ -364,7 +364,7 @@ export default function WatchlistPage() {
                 type="button"
                 onClick={() => addToWatchlist(selectedResult)}
                 disabled={pendingExternalId !== null || isSelectedResultSaved}
-                className="rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:opacity-50"
+                className="rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:opacity-50"
               >
                 {isSelectedResultSaved
                   ? "İstek listesinde"
@@ -399,13 +399,13 @@ export default function WatchlistPage() {
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Liste içinde ara..."
-                  className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/45 sm:text-sm"
+                  className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-sm"
                 />
               </label>
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-                className="h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/45 sm:text-sm"
+                className="h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-sm"
               >
                 <option value="recent">En yeni eklenen</option>
                 <option value="title">Başlığa göre</option>
@@ -415,7 +415,7 @@ export default function WatchlistPage() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="h-11 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)]"
+                  className="h-11 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
                 >
                   Temizle
                 </button>
@@ -435,7 +435,7 @@ export default function WatchlistPage() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center shadow-[var(--shadow-soft)]">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
               <BookmarkSimple size={24} weight="duotone" />
             </div>
             <h3 className="mt-4 text-base font-semibold text-[var(--text-primary)]">
@@ -454,7 +454,7 @@ export default function WatchlistPage() {
             {filteredItems.map((item) => (
               <article
                 key={item.id}
-                className="hover:border-[#6366f1]/18 group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+                className="hover:border-[#10b981]/18 group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
               >
                 <div className="relative h-52 bg-[var(--bg-raised)]">
                   {item.image ? (
@@ -466,7 +466,7 @@ export default function WatchlistPage() {
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(196,162,75,0.14),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
+                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
                       {item.title.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -479,7 +479,7 @@ export default function WatchlistPage() {
                   />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
                     <span
-                      className="border-[#6366f1]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
+                      className="border-[#10b981]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
                       style={{ background: "var(--bg-overlay)" }}
                     >
                       {getCategoryLabel(item.category)}

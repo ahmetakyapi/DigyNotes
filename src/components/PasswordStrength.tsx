@@ -34,7 +34,7 @@ function evaluateStrength(password: string): StrengthResult {
   const map: Record<number, { label: string; color: string }> = {
     0: { label: "Çok zayıf", color: "#e53e3e" },
     1: { label: "Zayıf", color: "#e57e3e" },
-    2: { label: "Orta", color: "#c9a84c" },
+    2: { label: "Orta", color: "#10b981" },
     3: { label: "Güçlü", color: "#5dba72" },
     4: { label: "Çok güçlü", color: "#38a169" },
   };

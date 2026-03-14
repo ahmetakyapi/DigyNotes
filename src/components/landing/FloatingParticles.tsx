@@ -50,11 +50,11 @@ export function FloatingParticles({ count = 24 }: { readonly count?: number }) {
             width: p.size,
             height: p.size,
             background: isLight
-              ? `radial-gradient(circle, rgba(80,110,220,${p.opacity * 1.8}) 0%, rgba(100,140,255,${p.opacity}) 42%, rgba(80,110,220,0) 72%)`
-              : `radial-gradient(circle, rgba(196,162,75,${p.opacity * 2}) 0%, rgba(196,162,75,0) 70%)`,
+              ? `radial-gradient(circle, rgba(16,185,129,${p.opacity * 1.8}) 0%, rgba(52,211,153,${p.opacity}) 42%, rgba(16,185,129,0) 72%)`
+              : `radial-gradient(circle, rgba(16,185,129,${p.opacity * 2}) 0%, rgba(16,185,129,0) 70%)`,
             boxShadow: isLight
-              ? `0 0 ${p.size * 5}px rgba(80,110,220,${p.opacity * 0.6})`
-              : `0 0 ${p.size * 4}px rgba(196,162,75,${p.opacity})`,
+              ? `0 0 ${p.size * 5}px rgba(16,185,129,${p.opacity * 0.6})`
+              : `0 0 ${p.size * 4}px rgba(16,185,129,${p.opacity})`,
           }}
           animate={{
             y: [0, -30 - Math.random() * 40, 0],

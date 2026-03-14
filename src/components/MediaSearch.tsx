@@ -555,7 +555,7 @@ export function MediaSearch({
                     onClick={() => {
                       void onAction(item);
                     }}
-                    className="bg-[#6366f1]/8 hover:bg-[#6366f1]/14 flex-shrink-0 rounded-lg border border-[#6366f1]/25 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors"
+                    className="bg-[#10b981]/8 hover:bg-[#10b981]/14 flex-shrink-0 rounded-lg border border-[#10b981]/25 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors"
                   >
                     {actionLabel}
                   </button>

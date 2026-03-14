@@ -11,15 +11,15 @@ const STATS = [
     label: "Kategori",
     suffix: "",
     color: "var(--gold)",
-    glowColor: "rgba(201,168,76,0.35)",
+    glowColor: "rgba(16,185,129,0.35)",
   },
-  { value: 5, label: "Yıldız", suffix: "★", color: "#818cf8", glowColor: "rgba(129,140,248,0.35)" },
+  { value: 5, label: "Yıldız", suffix: "★", color: "#0ea5e9", glowColor: "rgba(14,165,233,0.35)" },
   {
     value: 100,
     label: "Tamamen Ücretsiz",
     suffix: "%",
-    color: "#60a88a",
-    glowColor: "rgba(96,168,138,0.35)",
+    color: "#f59e0b",
+    glowColor: "rgba(245,158,11,0.35)",
   },
 ] as const;
 
@@ -29,7 +29,7 @@ function Counter({
   label,
   suffix = "",
   color = "var(--gold)",
-  glowColor = "rgba(201,168,76,0.35)",
+  glowColor = "rgba(16,185,129,0.35)",
   delay = 0,
 }: {
   readonly value: number;

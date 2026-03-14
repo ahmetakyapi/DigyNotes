@@ -9,43 +9,43 @@ const REASONS = [
     Icon: LuHeart,
     title: "Tamamen Ücretsiz",
     desc: "Reklam yok, gizli ücret yok. Tüm özellikler herkese açık.",
-    accent: "#6366f1",
-    accentBg: "rgba(196,162,75,0.08)",
+    accent: "#10b981",
+    accentBg: "rgba(16,185,129,0.08)",
   },
   {
     Icon: LuGlobe,
     title: "Her Şey Tek Yerde",
     desc: "Film, dizi, oyun, kitap ve gezi — ayrı ayrı uygulama kullanmana gerek yok.",
     accent: "#6888c0",
-    accentBg: "rgba(104,136,192,0.08)",
+    accentBg: "rgba(14,165,233,0.08)",
   },
   {
     Icon: LuClock,
     title: "Anında Başla",
     desc: "Kayıt ol, kategorini seç, notunu yaz. Beş dakikada hazırsın.",
-    accent: "#60a88a",
-    accentBg: "rgba(96,168,138,0.08)",
+    accent: "#0ea5e9",
+    accentBg: "rgba(14,165,233,0.08)",
   },
   {
     Icon: LuSmartphone,
     title: "Her Cihazdan Eriş",
     desc: "Mobil ve masaüstünde aynı deneyim. Nerede olursan ol notların yanında.",
-    accent: "#818cf8",
-    accentBg: "rgba(129,140,248,0.08)",
+    accent: "#6888c0",
+    accentBg: "rgba(14,165,233,0.08)",
   },
   {
     Icon: LuShield,
     title: "Verini Sen Kontrol Et",
     desc: "Notların sadece sana ait. İstediğin zaman düzenle, sil veya paylaş.",
-    accent: "#c8b090",
-    accentBg: "rgba(200,176,144,0.08)",
+    accent: "#f59e0b",
+    accentBg: "rgba(245,158,11,0.08)",
   },
   {
     Icon: LuLock,
     title: "Gizlilik Öncelikli",
     desc: "Verilerini üçüncü taraflarla paylaşmıyoruz. Basit ve güvenli.",
-    accent: "#60a88a",
-    accentBg: "rgba(96,168,138,0.08)",
+    accent: "#10b981",
+    accentBg: "rgba(16,185,129,0.08)",
   },
 ] as const;
 
@@ -64,7 +64,7 @@ export function TestimonialsSection() {
         animate={isInView ? { width: "66%" } : {}}
         transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.2), transparent)",
         }}
       />
 
@@ -79,8 +79,8 @@ export function TestimonialsSection() {
           <motion.div
             className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
-              borderColor: "rgba(196,162,75,0.2)",
-              background: "rgba(196,162,75,0.06)",
+              borderColor: "rgba(16,185,129,0.2)",
+              background: "rgba(16,185,129,0.06)",
               color: "var(--gold)",
             }}
             initial={{ opacity: 0, scale: 0.8 }}
@@ -101,7 +101,7 @@ export function TestimonialsSection() {
           <span
             className="dn-shimmer-text"
             style={{
-              background: "linear-gradient(90deg, #fff8c8, #e8b820, #f8d840, #c6972e, #fff8c8)",
+              background: "linear-gradient(90deg, #a7f3d0, #10b981, #059669, #34d399, #a7f3d0)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",

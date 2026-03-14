@@ -43,8 +43,8 @@ export function AppPreviewSection() {
 
   const mockCards = [
     { color: "rgba(255,107,53,0.12)", border: "rgba(255,107,53,0.15)", id: "film" },
-    { color: "rgba(129,140,248,0.12)", border: "rgba(129,140,248,0.15)", id: "game" },
-    { color: "rgba(201,168,76,0.10)", border: "rgba(201,168,76,0.15)", id: "book" },
+    { color: "rgba(14,165,233,0.12)", border: "rgba(14,165,233,0.15)", id: "game" },
+    { color: "rgba(16,185,129,0.10)", border: "rgba(16,185,129,0.15)", id: "book" },
     { color: "rgba(96,165,250,0.10)", border: "rgba(96,165,250,0.12)", id: "travel" },
   ] as const;
 
@@ -56,8 +56,8 @@ export function AppPreviewSection() {
           className="absolute -top-px left-1/2 h-px w-3/4 -translate-x-1/2"
           style={{
             background: isLight
-              ? "linear-gradient(90deg, transparent, rgba(192,138,30,0.48), rgba(111,145,216,0.22), transparent)"
-              : "linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent)",
+              ? "linear-gradient(90deg, transparent, rgba(5,150,105,0.4), rgba(14,165,233,0.2), transparent)"
+              : "linear-gradient(90deg, transparent, rgba(16,185,129,0.5), transparent)",
           }}
         />
 
@@ -74,10 +74,10 @@ export function AppPreviewSection() {
           style={{
             border: "1px solid var(--border-subtle)",
             background: isLight
-              ? "linear-gradient(180deg, rgba(255,250,243,0.98), rgba(246,237,222,0.98))"
+              ? "linear-gradient(180deg, rgba(248,250,252,0.98), rgba(240,253,244,0.98))"
               : "linear-gradient(180deg, var(--bg-card), var(--surface-strong))",
             boxShadow: isLight
-              ? "0 24px 70px rgba(125,92,50,0.14), 0 8px 22px rgba(125,92,50,0.08)"
+              ? "0 24px 70px rgba(15,23,42,0.08), 0 8px 22px rgba(15,23,42,0.05)"
               : undefined,
             rotateX,
             rotateY,
@@ -90,10 +90,9 @@ export function AppPreviewSection() {
           <motion.div
             className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-700"
             style={{
-              background:
-                isLight
-                  ? "radial-gradient(ellipse at 50% 0%, rgba(192,138,30,0.12), rgba(111,145,216,0.06), transparent 65%)"
-                  : "radial-gradient(ellipse at 50% 0%, rgba(196,162,75,0.06), transparent 60%)",
+              background: isLight
+                ? "radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.08), rgba(6,182,212,0.04), transparent 65%)"
+                : "radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.05), transparent 60%)",
               opacity: isHovered ? 1 : 0,
             }}
           />
@@ -104,7 +103,7 @@ export function AppPreviewSection() {
             style={{
               borderColor: "var(--border-subtle)",
               background: isLight
-                ? "linear-gradient(180deg, rgba(247,239,228,0.98), rgba(239,228,210,0.96))"
+                ? "linear-gradient(180deg, rgba(248,250,252,0.98), rgba(240,244,248,0.96))"
                 : "var(--bg-soft)",
             }}
           >
@@ -126,7 +125,7 @@ export function AppPreviewSection() {
               className="ml-3 flex h-7 max-w-xs flex-1 items-center justify-center gap-2 rounded-lg border"
               style={{
                 borderColor: "var(--border-subtle)",
-                background: isLight ? "rgba(255,252,247,0.92)" : "var(--bg-card)",
+                background: isLight ? "rgba(248,250,252,0.92)" : "var(--bg-card)",
               }}
             >
               <div className="h-2 w-2 rounded-full bg-[#28c840] opacity-60" />
@@ -201,10 +200,9 @@ export function AppPreviewSection() {
             <motion.div
               className="relative mb-2.5 flex h-28 items-end overflow-hidden rounded-xl p-3 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
               style={{
-                background:
-                  isLight
-                    ? "linear-gradient(135deg, color-mix(in srgb, var(--surface-strong) 86%, #f2e6d3 14%), color-mix(in srgb, var(--bg-card) 82%, #dae5f8 18%), color-mix(in srgb, var(--bg-soft) 88%, #efe0ca 12%))"
-                    : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
+                background: isLight
+                  ? "linear-gradient(135deg, color-mix(in srgb, var(--surface-strong) 86%, #f2e6d3 14%), color-mix(in srgb, var(--bg-card) 82%, #dae5f8 18%), color-mix(in srgb, var(--bg-soft) 88%, #efe0ca 12%))"
+                  : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 88%, #311742 12%), color-mix(in srgb, var(--bg-soft) 88%, #16274d 12%), var(--surface-strong))",
               }}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -215,7 +213,7 @@ export function AppPreviewSection() {
                 className="absolute inset-0 opacity-30"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(255,107,53,0.15), rgba(201,168,76,0.08), rgba(129,140,248,0.1))",
+                    "linear-gradient(135deg, rgba(16,185,129,0.12), rgba(14,165,233,0.08), rgba(6,182,212,0.08))",
                 }}
               />
               <div className="absolute inset-0 rounded-xl border border-[var(--border-subtle)] sm:rounded-2xl" />
@@ -225,7 +223,7 @@ export function AppPreviewSection() {
                     className="h-4 w-12 rounded-sm sm:h-5 sm:w-14"
                     style={{
                       background:
-                        "linear-gradient(90deg, rgba(201,168,76,0.5), rgba(201,168,76,0.3))",
+                        "linear-gradient(90deg, rgba(16,185,129,0.5), rgba(16,185,129,0.3))",
                     }}
                   />
                   <div
@@ -247,7 +245,7 @@ export function AppPreviewSection() {
                       key={s}
                       viewBox="0 0 24 24"
                       className="h-2.5 w-2.5 sm:h-3 sm:w-3"
-                      fill={s <= 4 ? "#6366f1" : "#1e1e1e"}
+                      fill={s <= 4 ? "#10b981" : "#1e1e1e"}
                     >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
@@ -299,7 +297,7 @@ export function AppPreviewSection() {
                           key={s}
                           viewBox="0 0 24 24"
                           className="h-2 w-2 sm:h-2.5 sm:w-2.5"
-                          fill={s <= 4 ? "#6366f1" : "#222"}
+                          fill={s <= 4 ? "#10b981" : "#222"}
                         >
                           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                         </svg>

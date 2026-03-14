@@ -60,8 +60,8 @@ interface YearData {
 const CATEGORY_COLORS: Record<string, string> = {
   movies: "#6888c0",
   series: "#c8b090",
-  game: "#818cf8",
-  book: "#6366f1",
+  game: "#34d399",
+  book: "#10b981",
   travel: "#60a88a",
   other: "#9aaacd",
 };
@@ -199,7 +199,7 @@ export default function YearInReviewPage() {
         <YearSelector year={year} onChange={setYear} max={currentYear} />
       </div>
 
-      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(129,140,248,0.08),rgba(12,18,31,0.94))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(16,185,129,0.1),rgba(14,165,233,0.06),rgba(10,15,30,0.94))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <div className="grid gap-3 md:grid-cols-3">
           <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.44)] px-4 py-4">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
@@ -263,10 +263,10 @@ export default function YearInReviewPage() {
           value={data.avgRating > 0 ? data.avgRating : "—"}
         />
         <KpiCard
-          icon={<Hash size={16} weight="duotone" className="text-[#818cf8]" />}
+          icon={<Hash size={16} weight="duotone" className="text-[#34d399]" />}
           label="Etiket"
           value={data.uniqueTagCount}
-          accent="#818cf8"
+          accent="#34d399"
         />
         <KpiCard
           icon={<Fire size={16} weight="duotone" className="text-[#fb923c]" />}
@@ -333,8 +333,8 @@ export default function YearInReviewPage() {
             >
               <defs>
                 <linearGradient id="yirGold" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -353,7 +353,7 @@ export default function YearInReviewPage() {
                 type="monotone"
                 dataKey="count"
                 name="Not"
-                stroke="#6366f1"
+                stroke="#10b981"
                 strokeWidth={2}
                 fill="url(#yirGold)"
               />
@@ -388,7 +388,7 @@ export default function YearInReviewPage() {
               />
               <Bar dataKey="count" name="Not" radius={[6, 6, 0, 0]}>
                 {data.categories.map((c, idx) => (
-                  <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "#6366f1"} />
+                  <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "#10b981"} />
                 ))}
               </Bar>
             </BarChart>
@@ -506,7 +506,7 @@ export default function YearInReviewPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} />
-              <Bar dataKey="count" name="Not" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" name="Not" fill="#10b981" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

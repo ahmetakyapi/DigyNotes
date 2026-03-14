@@ -85,8 +85,8 @@ const ACTION_META: Record<string, { label: string; color: string }> = {
   "post.create": { label: "Not oluşturuldu", color: "#34d399" },
   "post.update": { label: "Not güncellendi", color: "#60a5fa" },
   "post.delete": { label: "Not silindi", color: "#e53e3e" },
-  "user.register": { label: "Kayıt oldu", color: "#c4a24b" },
-  "category.create": { label: "Kategori oluşturuldu", color: "#818cf8" },
+  "user.register": { label: "Kayıt oldu", color: "#10b981" },
+  "category.create": { label: "Kategori oluşturuldu", color: "#34d399" },
   "user.follow": { label: "Takip etti", color: "#f472b6" },
 };
 
@@ -151,7 +151,7 @@ function InfoRow({
         {label}
       </span>
       <span
-        className={`text-right text-xs ${accent ? "font-semibold text-[#c4a24b]" : "text-[var(--text-secondary)]"}`}
+        className={`text-right text-xs ${accent ? "font-semibold text-[#10b981]" : "text-[var(--text-secondary)]"}`}
       >
         {value}
       </span>
@@ -233,7 +233,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
       </main>
     );
   }
@@ -259,7 +259,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           <div className="flex h-14 items-center gap-3">
             <button
               onClick={() => router.push("/admin")}
-              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] active:scale-95"
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] active:scale-95"
             >
               <svg
                 width="11"
@@ -277,7 +277,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             <span className="text-[var(--text-muted)]">/</span>
             <span className="text-sm font-semibold text-[var(--text-primary)]">{user.name}</span>
             {user.isAdmin && (
-              <span className="rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
+              <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
                 admin
               </span>
             )}
@@ -291,14 +291,14 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
         {/* ── hero card ── */}
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#c4a24b]/20 bg-[#c4a24b]/10 text-xl font-black text-[#c4a24b]">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#10b981]/20 bg-[#10b981]/10 text-xl font-black text-[#10b981]">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-bold text-[var(--text-primary)]">{user.name}</h1>
                 {user.isAdmin && (
-                  <span className="rounded bg-[#c4a24b]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#c4a24b]">
+                  <span className="rounded bg-[#10b981]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981]">
                     admin
                   </span>
                 )}
@@ -331,10 +331,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
         {/* ── KPI row ── */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <KpiCard value={user.postCount} label="Not" color="#818cf8" />
+          <KpiCard value={user.postCount} label="Not" color="#34d399" />
           <KpiCard value={user.followerCount} label="Takipçi" color="#f472b6" />
           <KpiCard value={user.followingCount} label="Takip" color="#fb923c" />
-          <KpiCard value={user.activityCount} label="Aksiyon" color="#c4a24b" />
+          <KpiCard value={user.activityCount} label="Aksiyon" color="#10b981" />
         </div>
 
         {/* ── two-column grid ── */}
@@ -348,7 +348,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   <h3 className="text-[13px] font-semibold text-[var(--text-primary)]">
                     {RANGE_LABELS[range]} Aktivitesi
                   </h3>
-                  <span className="rounded-lg border border-[#c4a24b]/20 bg-[#c4a24b]/10 px-2 py-0.5 text-[11px] font-bold text-[#c4a24b]">
+                  <span className="rounded-lg border border-[#10b981]/20 bg-[#10b981]/10 px-2 py-0.5 text-[11px] font-bold text-[#10b981]">
                     {chartTotal} aksiyon
                   </span>
                 </div>
@@ -359,8 +359,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       onClick={() => handleRangeChange(opt.key)}
                       className={`rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors duration-150 ${
                         range === opt.key
-                          ? "border border-[#c4a24b]/30 bg-[#c4a24b]/15 text-[#c4a24b]"
-                          : "border border-[var(--border)] text-[var(--text-muted)] hover:border-[#c4a24b]/20 hover:text-[var(--text-secondary)]"
+                          ? "border border-[#10b981]/30 bg-[#10b981]/15 text-[#10b981]"
+                          : "border border-[var(--border)] text-[var(--text-muted)] hover:border-[#10b981]/20 hover:text-[var(--text-secondary)]"
                       }`}
                     >
                       {opt.label}
@@ -390,7 +390,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       allowDecimals={false}
                     />
                     <Tooltip content={<DarkTooltip />} />
-                    <Bar dataKey="count" name="Aksiyon" fill="#c4a24b" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="count" name="Aksiyon" fill="#10b981" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -455,7 +455,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     load(next);
                   }}
                   disabled={loadingMore}
-                  className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {loadingMore ? "Yükleniyor…" : "Daha fazla göster"}
                 </button>
@@ -556,7 +556,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   href={`/profile/${user.username}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)]"
+                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
                 >
                   Profil sayfasına git
                   <svg

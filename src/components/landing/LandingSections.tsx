@@ -49,21 +49,21 @@ const FEATURES = [
     Icon: LuGamepad2,
     title: "Oyun",
     desc: "Oynadığın ya da oynamak istediğin oyunları RAWG veritabanıyla kaydet.",
-    border: "rgba(129,140,248,0.16)",
-    gradientFrom: "rgba(99,102,241,0.07)",
-    iconColor: "#818cf8",
-    iconBg: "rgba(129,140,248,0.1)",
-    iconBorder: "rgba(129,140,248,0.2)",
+    border: "rgba(14,165,233,0.16)",
+    gradientFrom: "rgba(16,185,129,0.07)",
+    iconColor: "#0ea5e9",
+    iconBg: "rgba(14,165,233,0.1)",
+    iconBorder: "rgba(14,165,233,0.2)",
   },
   {
     Icon: LuBookOpen,
     title: "Kitap",
     desc: "Okuduğun ya da okumak istediğin kitapları listele, notlar al.",
-    border: "rgba(201,168,76,0.18)",
+    border: "rgba(16,185,129,0.18)",
     gradientFrom: "rgba(160,128,40,0.08)",
-    iconColor: "#6366f1",
-    iconBg: "rgba(201,168,76,0.1)",
-    iconBorder: "rgba(201,168,76,0.2)",
+    iconColor: "#10b981",
+    iconBg: "rgba(16,185,129,0.1)",
+    iconBorder: "rgba(16,185,129,0.2)",
   },
   {
     Icon: LuMapPin,
@@ -82,20 +82,20 @@ const SUB_FEATURES = [
     label: "Tam Metin Arama",
     Icon: LuSearch,
     color: "var(--gold)",
-    accent: "rgba(196,162,75,0.1)",
+    accent: "rgba(16,185,129,0.1)",
   },
-  { label: "Kaydet & Etiketle", Icon: LuTag, color: "#8d7d5e", accent: "rgba(141,125,94,0.1)" },
+  { label: "Kaydet & Etiketle", Icon: LuTag, color: "#0ea5e9", accent: "rgba(14,165,233,0.1)" },
   {
     label: "Bildirimler & Keşfet",
     Icon: LuUsers,
-    color: "#7a85d8",
-    accent: "rgba(122,133,216,0.1)",
+    color: "#6888c0",
+    accent: "rgba(14,165,233,0.1)",
   },
   {
     label: "Kişisel İstatistikler",
     Icon: LuStar,
     color: "var(--gold)",
-    accent: "rgba(196,162,75,0.1)",
+    accent: "rgba(16,185,129,0.1)",
   },
 ] as const;
 
@@ -125,7 +125,7 @@ export function FeaturesSection() {
         animate={isInView ? { width: "66%" } : {}}
         transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.22), transparent)",
         }}
       />
 
@@ -138,8 +138,8 @@ export function FeaturesSection() {
           <motion.div
             className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
-              borderColor: "rgba(196,162,75,0.2)",
-              background: "rgba(196,162,75,0.06)",
+              borderColor: "rgba(16,185,129,0.2)",
+              background: "rgba(16,185,129,0.06)",
               color: "var(--gold)",
             }}
             initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
@@ -165,7 +165,7 @@ export function FeaturesSection() {
           <span
             className="dn-shimmer-text"
             style={{
-              background: "linear-gradient(90deg, #fff8c8, #e8b820, #f8d840, #c6972e, #fff8c8)",
+              background: "linear-gradient(90deg, #a7f3d0, #10b981, #059669, #34d399, #a7f3d0)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -196,8 +196,8 @@ export function FeaturesSection() {
             key={f.title}
             className={
               i === FEATURES.length - 1
-                ? "col-span-2 mx-auto w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1"
-                : ""
+                ? "col-span-2 mx-auto h-full w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1"
+                : "h-full"
             }
           >
             <FeatureCard {...f} index={i} />
@@ -217,7 +217,7 @@ export function FeaturesSection() {
             whileHover={{
               y: -4,
               scale: 1.04,
-              borderColor: "rgba(196,162,75,0.25)",
+              borderColor: "rgba(16,185,129,0.22)",
               transition: { duration: 0.2 },
             }}
             className="dn-landing-card group flex flex-row items-center gap-2.5 rounded-xl border border-[var(--border)] px-3 py-3 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-3.5"
@@ -227,7 +227,7 @@ export function FeaturesSection() {
             }}
           >
             <motion.div
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-shadow duration-300 group-hover:shadow-[0_0_16px_rgba(196,162,75,0.25)]"
+              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-shadow duration-300 group-hover:shadow-[0_0_16px_rgba(16,185,129,0.2)]"
               style={{ background: s.accent }}
               whileHover={{ scale: 1.15, rotate: 5 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -253,23 +253,23 @@ const STEPS = [
     title: "Hesap Oluştur",
     desc: "E-posta ve kullanıcı adınla kayıt ol. Beş saniye yeterli.",
     accent: "#6888c0",
-    accentBg: "rgba(104,136,192,0.08)",
+    accentBg: "rgba(14,165,233,0.08)",
     icon: LuZap,
   },
   {
     step: "2",
     title: "Notlarını Ekle",
     desc: "Film, dizi, oyun, kitap veya gezi — kategorini seç, notunu yaz.",
-    accent: "#6366f1",
-    accentBg: "rgba(196,162,75,0.08)",
+    accent: "#10b981",
+    accentBg: "rgba(16,185,129,0.08)",
     icon: LuTag,
   },
   {
     step: "3",
     title: "Keşfet & Hatırla",
     desc: "Puanla, etiketle ve yıllar sonra aynı duyguyla geri dön.",
-    accent: "#60a88a",
-    accentBg: "rgba(96,168,138,0.08)",
+    accent: "#0ea5e9",
+    accentBg: "rgba(14,165,233,0.08)",
     icon: LuStar,
   },
 ];
@@ -403,7 +403,7 @@ export function HowItWorksSection() {
         animate={isInView ? { width: "66%" } : {}}
         transition={{ duration: 1.2, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.22), transparent)",
         }}
       />
 
@@ -413,8 +413,8 @@ export function HowItWorksSection() {
           <motion.div
             className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
-              borderColor: "rgba(196,162,75,0.2)",
-              background: "rgba(196,162,75,0.06)",
+              borderColor: "rgba(16,185,129,0.2)",
+              background: "rgba(16,185,129,0.06)",
               color: "var(--gold)",
             }}
             initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
@@ -440,7 +440,7 @@ export function HowItWorksSection() {
           <span
             className="dn-shimmer-text"
             style={{
-              background: "linear-gradient(90deg, #fff8c8, #e8b820, #f8d840, #c6972e, #fff8c8)",
+              background: "linear-gradient(90deg, #a7f3d0, #10b981, #059669, #34d399, #a7f3d0)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -476,15 +476,15 @@ export function BottomCtaSection() {
   const { theme } = useTheme();
   const isLight = theme === "light";
   const ctaBg = isLight
-    ? "linear-gradient(135deg, #4a72e8, #3558cc, #2c4ec0, #3f67d8)"
-    : "linear-gradient(135deg, #6366f1, #4f46e5, #4338ca, #5b52e8)";
+    ? "linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%)"
+    : "linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%)";
   const ctaBgHover = isLight
-    ? "linear-gradient(135deg, #5a82f8, #4568dc, #355ed0, #4f77e8)"
-    : "linear-gradient(135deg, #818cf8, #6366f1, #5048e8, #6b62f0)";
+    ? "linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%)"
+    : "linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%)";
   const ctaTextColor = "#ffffff";
   const ctaShadow = isLight
-    ? "0 6px 20px rgba(74,114,232,0.36)"
-    : "0 6px 20px rgba(99,102,241,0.36)";
+    ? "0 8px 28px rgba(5,150,105,0.28), 0 0 0 1px rgba(16,185,129,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset"
+    : "0 8px 28px rgba(16,185,129,0.32), 0 0 0 1px rgba(52,211,153,0.1) inset, 0 1px 0 rgba(255,255,255,0.14) inset";
 
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
@@ -509,7 +509,7 @@ export function BottomCtaSection() {
         transition={{ duration: 1 }}
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(201,168,76,0.3), rgba(129,140,248,0.2), transparent)",
+            "linear-gradient(90deg, transparent, rgba(16,185,129,0.3), rgba(6,182,212,0.2), transparent)",
         }}
       />
 
@@ -518,7 +518,7 @@ export function BottomCtaSection() {
         className="pointer-events-none absolute left-1/2 top-1/2 h-[350px] w-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full sm:h-[700px] sm:w-[700px]"
         style={{
           background:
-            "radial-gradient(circle, rgba(196,162,75,0.3), rgba(196,162,75,0.05) 50%, transparent 70%)",
+            "radial-gradient(circle, rgba(16,185,129,0.25), rgba(16,185,129,0.05) 50%, transparent 70%)",
           scale: glowScale,
           opacity: glowOpacity,
           filter: "blur(60px)",
@@ -528,13 +528,13 @@ export function BottomCtaSection() {
       {/* Floating orbs — desktop only, enhanced */}
       <motion.div
         className="pointer-events-none absolute left-[20%] top-[30%] hidden h-32 w-32 rounded-full opacity-[0.08] blur-[50px] sm:block"
-        style={{ background: "radial-gradient(circle, #818cf8, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #34d399, transparent 70%)" }}
         animate={{ y: [0, -25, 0], x: [0, 12, 0], scale: [1, 1.15, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         className="pointer-events-none absolute right-[15%] top-[40%] hidden h-24 w-24 rounded-full opacity-[0.08] blur-[40px] sm:block"
-        style={{ background: "radial-gradient(circle, #60a88a, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #0ea5e9, transparent 70%)" }}
         animate={{ y: [0, 18, 0], x: [0, -10, 0], scale: [1, 1.2, 1] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
@@ -557,14 +557,14 @@ export function BottomCtaSection() {
         <motion.div
           className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl sm:mb-6 sm:h-14 sm:w-14 sm:rounded-2xl"
           style={{
-            background: "rgba(196,162,75,0.08)",
-            border: "1px solid rgba(196,162,75,0.15)",
+            background: "rgba(16,185,129,0.08)",
+            border: "1px solid rgba(16,185,129,0.15)",
           }}
           animate={{
             boxShadow: [
-              "0 0 0 0 rgba(196,162,75,0.2)",
-              "0 0 0 18px rgba(196,162,75,0)",
-              "0 0 0 0 rgba(196,162,75,0)",
+              "0 0 0 0 rgba(16,185,129,0.2)",
+              "0 0 0 18px rgba(16,185,129,0)",
+              "0 0 0 0 rgba(16,185,129,0)",
             ],
           }}
           transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
@@ -589,11 +589,11 @@ export function BottomCtaSection() {
             className="dn-shimmer-text"
             style={{
               background:
-                "linear-gradient(135deg, #fff8c8 0%, #f8d840 20%, #e8b820 50%, #f0c028 80%, #fff8c8 100%)",
+                "linear-gradient(135deg, #a7f3d0 0%, #34d399 20%, #10b981 50%, #059669 80%, #a7f3d0 100%)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 24px rgba(248,200,40,0.4))",
+              filter: "drop-shadow(0 0 24px rgba(16,185,129,0.35))",
             }}
           >
             başla.
@@ -625,8 +625,17 @@ export function BottomCtaSection() {
                 background: ctaBg,
                 color: ctaTextColor,
                 boxShadow: ctaShadow,
+                textShadow: "0 1px 2px rgba(4,120,87,0.3)",
               }}
             >
+              {/* Top shine line */}
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.2) 50%, transparent 90%)",
+                }}
+              />
               <span className="relative z-10">Hesap Oluştur</span>
               <LuArrowRight
                 className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"

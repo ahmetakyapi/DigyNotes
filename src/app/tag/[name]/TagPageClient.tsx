@@ -32,20 +32,20 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(12,18,31,0.94),rgba(104,136,192,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(16,185,129,0.12),rgba(12,18,31,0.94),rgba(14,165,233,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2">
               <Link
                 href="/discover"
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6366f1]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#10b981]"
               >
                 ← Keşfet
               </Link>
               <span className="text-[var(--border)]">•</span>
               <Link
                 href="/notes"
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6366f1]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#10b981]"
               >
                 Notlar
               </Link>
@@ -54,7 +54,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
               Etiket yüzeyi
             </p>
             <h1 className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
-              <span className="text-[#6366f1]">#</span>
+              <span className="text-[#10b981]">#</span>
               {tagName}
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
@@ -76,7 +76,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortOption)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/40 sm:text-sm"
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 sm:text-sm"
           >
             <option value="newest">En Yeni</option>
             <option value="oldest">En Eski</option>
@@ -133,7 +133,7 @@ function PostCard({ post }: { post: Post }) {
   const shouldHideExcerpt = Boolean(post.hasSpoiler && categorySupportsSpoiler(post.category));
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#6366f1]/30 hover:shadow-[var(--shadow-soft)]">
+    <article className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-[#10b981]/30 hover:shadow-[var(--shadow-soft)]">
       {/* Image */}
       <Link href={`/posts/${post.id}`} className="relative block h-40 w-full overflow-hidden">
         <ResilientImage
@@ -146,7 +146,7 @@ function PostCard({ post }: { post: Post }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
-          <span className="rounded-sm border border-[#6366f1]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#6366f1]">
+          <span className="rounded-sm border border-[#10b981]/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
             {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}
@@ -156,7 +156,7 @@ function PostCard({ post }: { post: Post }) {
       {/* Body */}
       <div className="p-4">
         <Link href={`/posts/${post.id}`} className="block">
-          <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#6366f1]">
+          <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#10b981]">
             {displayTitle}
           </h3>
         </Link>
@@ -181,20 +181,20 @@ function PostCard({ post }: { post: Post }) {
         {/* User */}
         {post.user && (
           <div className="mt-3 flex items-center gap-2 border-t border-[var(--border)] pt-3">
-            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-[#6366f1]/20 text-[9px] font-bold text-[#6366f1]">
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/20 text-[9px] font-bold text-[#10b981]">
               <AvatarImage
                 src={post.user.avatarUrl}
                 alt={post.user.name}
                 name={post.user.name}
                 size={24}
                 className="h-full w-full object-cover"
-                textClassName="text-[9px] font-bold text-[#6366f1]"
+                textClassName="text-[9px] font-bold text-[#10b981]"
               />
             </div>
             {post.user.username ? (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6366f1]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#10b981]"
               >
                 @{post.user.username}
               </Link>

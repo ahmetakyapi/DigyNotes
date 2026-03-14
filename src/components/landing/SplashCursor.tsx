@@ -50,9 +50,9 @@ export function SplashCursor() {
         <div
           className="h-8 w-8 rounded-full border"
           style={{
-            borderColor: "rgba(196,162,75,0.55)",
-            background: "radial-gradient(circle, rgba(196,162,75,0.08) 0%, transparent 70%)",
-            boxShadow: "0 0 16px rgba(196,162,75,0.18), inset 0 0 8px rgba(196,162,75,0.06)",
+            borderColor: "rgba(16,185,129,0.5)",
+            background: "radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)",
+            boxShadow: "0 0 16px rgba(16,185,129,0.16), inset 0 0 8px rgba(16,185,129,0.05)",
           }}
         />
       </motion.div>
@@ -70,8 +70,8 @@ export function SplashCursor() {
         <div
           className="h-2.5 w-2.5 rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(196,162,75,0.7) 0%, transparent 70%)",
-            boxShadow: "0 0 12px rgba(196,162,75,0.45)",
+            background: "radial-gradient(circle, rgba(16,185,129,0.65) 0%, transparent 70%)",
+            boxShadow: "0 0 12px rgba(16,185,129,0.4)",
           }}
         />
       </motion.div>

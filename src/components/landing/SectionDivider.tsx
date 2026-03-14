@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
-export function SectionDivider({ color = "rgba(201,168,76,0.3)" }: { readonly color?: string }) {
+export function SectionDivider({ color = "rgba(16,185,129,0.3)" }: { readonly color?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-20px" });
   const { scrollYProgress } = useScroll({

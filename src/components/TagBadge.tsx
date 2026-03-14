@@ -16,13 +16,13 @@ export default function TagBadge({ tag, onClick, onRemove, active, href }: TagBa
     onClick || href ? "cursor-pointer" : ""
   } ${
     active
-      ? "border border-[#6366f1]/50 bg-[#6366f1]/20 text-[#6366f1]"
-      : "border border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/40 hover:text-[#6366f1]"
+      ? "border border-[#10b981]/50 bg-[#10b981]/20 text-[#10b981]"
+      : "border border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/40 hover:text-[#10b981]"
   }`;
 
   const content = (
     <>
-      <span className="text-[#6366f1]/60">#</span>
+      <span className="text-[#10b981]/60">#</span>
       {tag.name}
     </>
   );

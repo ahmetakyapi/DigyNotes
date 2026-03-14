@@ -185,7 +185,7 @@ export default function NotificationsPage() {
             <button
               type="button"
               onClick={() => signIn()}
-              className="rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
+              className="rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
             >
               Giriş yap
             </button>
@@ -255,7 +255,7 @@ export default function NotificationsPage() {
             onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
             className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
               activeFilter === filter.key
-                ? "bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white"
+                ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
