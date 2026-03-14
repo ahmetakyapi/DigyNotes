@@ -81,7 +81,7 @@ export default function FeedPage() {
           </p>
           <Link
             href="/login"
-            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-[#6366f1]/12 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 bg-[#6366f1]/8 px-5 py-3 text-sm font-semibold text-[#818cf8] transition-colors"
           >
             Giriş yap
           </Link>
@@ -108,7 +108,7 @@ export default function FeedPage() {
           </p>
           <Link
             href="/discover"
-            className="hover:bg-[#c4a24b]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#c4a24b]/30 bg-[#c4a24b]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-[#6366f1]/12 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 bg-[#6366f1]/8 px-5 py-3 text-sm font-semibold text-[#818cf8] transition-colors"
           >
             <Sparkle size={16} weight="duotone" />
             Keşfet

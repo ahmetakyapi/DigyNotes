@@ -384,7 +384,7 @@ function NotificationCard({
                 </span>
               )}
               {notification.contextTitle && (
-                <span className="rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
+                <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
                   {notification.contextTitle}
                 </span>
               )}

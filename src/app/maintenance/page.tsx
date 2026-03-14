@@ -79,7 +79,7 @@ export default async function MaintenancePage() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <RetryButton
             label="Durumu tekrar kontrol et"
-            className="inline-flex min-w-[220px] justify-center rounded-2xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+            className="inline-flex min-w-[220px] justify-center rounded-2xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
           />
           <Link
             href="/"

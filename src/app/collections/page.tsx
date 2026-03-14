@@ -118,7 +118,7 @@ export default function CollectionsPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)]"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
           >
             Giriş Yap
           </Link>
@@ -197,7 +197,7 @@ export default function CollectionsPage() {
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
               placeholder="Örn. 2024'te izlediklerim"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:text-sm"
             />
           </label>
           <label className="space-y-2">
@@ -210,13 +210,13 @@ export default function CollectionsPage() {
               onChange={(event) => setDescription(event.target.value)}
               maxLength={400}
               placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:text-sm"
             />
           </label>
           <button
             type="submit"
             disabled={isCreating || loading || title.trim() === ""}
-            className="h-11 rounded-xl bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-11 rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCreating ? "Oluşturuluyor..." : "Koleksiyon oluştur"}
           </button>
@@ -237,7 +237,7 @@ export default function CollectionsPage() {
             value={collectionQuery}
             onChange={(event) => setCollectionQuery(event.target.value)}
             placeholder="Koleksiyon ara..."
-            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:max-w-sm sm:text-sm"
+            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:max-w-sm sm:text-sm"
           />
         </div>
       )}
