@@ -49,20 +49,20 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
             cy="40"
             r={r}
             fill="none"
-            stroke="#6366f1"
+            stroke="#10b981"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeDasharray={`${arcLength} ${gapLength}`}
             strokeDashoffset={arcLength * 0.3}
-            style={{ filter: "drop-shadow(0 0 5px rgba(201,168,76,0.55))" }}
+            style={{ filter: "drop-shadow(0 0 5px rgba(16,185,129,0.55))" }}
           />
           {/* Bright leading dot */}
           <circle
             cx="40"
             cy="4"
             r="3"
-            fill="#818cf8"
-            style={{ filter: "drop-shadow(0 0 4px rgba(224,192,104,0.9))" }}
+            fill="#34d399"
+            style={{ filter: "drop-shadow(0 0 4px rgba(52,211,153,0.9))" }}
           />
         </svg>
 
@@ -73,8 +73,8 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
               fontSize: "26px",
               fontWeight: 700,
               fontFamily: "Georgia, 'Times New Roman', serif",
-              color: "#6366f1",
-              textShadow: "0 0 24px rgba(201,168,76,0.35)",
+              color: "#10b981",
+              textShadow: "0 0 24px rgba(16,185,129,0.35)",
               letterSpacing: "-0.02em",
             }}
           >
@@ -93,7 +93,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
               fontSize: "12px",
               letterSpacing: "0.22em",
               fontWeight: 600,
-              color: i < 4 ? "#6366f1" : "var(--text-dim)",
+              color: i < 4 ? "#10b981" : "var(--text-dim)",
               opacity: 0,
               animation: "dg-fade-up 0.45s ease forwards",
               animationDelay: `${0.08 + i * 0.055}s`,
@@ -130,7 +130,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
             height: "100%",
             width: "35%",
             background:
-              "linear-gradient(90deg, transparent 0%, #6366f1 40%, #818cf8 50%, #6366f1 60%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, #10b981 40%, #34d399 50%, #10b981 60%, transparent 100%)",
             animation: "dg-shimmer 1.6s ease-in-out infinite",
           }}
         />

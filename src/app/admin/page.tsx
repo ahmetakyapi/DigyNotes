@@ -89,8 +89,8 @@ type SeriesKey = "7d" | "30d" | "90d" | "365d";
 /* ─────────────────────────── constants ─────────────────────── */
 
 const STATUS_COLORS: Record<string, string> = {
-  İzlendi: "#c4a24b",
-  İzleniyor: "#818cf8",
+  İzlendi: "#10b981",
+  İzleniyor: "#34d399",
   Okundu: "#34d399",
   Okunuyor: "#60a5fa",
   Oynandı: "#f472b6",
@@ -100,8 +100,8 @@ const STATUS_COLORS: Record<string, string> = {
   Belirsiz: "#3a3a5a",
 };
 const PIE_COLORS = [
-  "#c4a24b",
-  "#818cf8",
+  "#10b981",
+  "#34d399",
   "#34d399",
   "#60a5fa",
   "#f472b6",
@@ -115,8 +115,8 @@ const ACTION_META: Record<string, { label: string; color: string; icon: string }
   "post.create": { label: "Not oluşturuldu", color: "#34d399", icon: "+" },
   "post.update": { label: "Not güncellendi", color: "#60a5fa", icon: "↻" },
   "post.delete": { label: "Not silindi", color: "#e53e3e", icon: "×" },
-  "user.register": { label: "Yeni kayıt", color: "#c4a24b", icon: "★" },
-  "category.create": { label: "Kategori oluşturuldu", color: "#818cf8", icon: "□" },
+  "user.register": { label: "Yeni kayıt", color: "#10b981", icon: "★" },
+  "category.create": { label: "Kategori oluşturuldu", color: "#34d399", icon: "□" },
   "user.follow": { label: "Takip", color: "#f472b6", icon: "♥" },
 };
 
@@ -231,7 +231,7 @@ function WorkspaceGuide({
 }) {
   return (
     <section className="rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.9),rgba(10,16,30,0.76))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-      <span className="inline-flex rounded-full border border-[#c4a24b]/20 bg-[#c4a24b]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c4a24b]">
+      <span className="inline-flex rounded-full border border-[#10b981]/20 bg-[#10b981]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#10b981]">
         {eyebrow}
       </span>
       <h2 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-[28px]">
@@ -319,7 +319,7 @@ const DarkTooltip = ({
 function Spinner() {
   return (
     <div className="flex h-40 items-center justify-center">
-      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
     </div>
   );
 }
@@ -341,7 +341,7 @@ function RangePills<T extends string>({
           onClick={() => onChange(k)}
           className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors duration-150 ${
             value === k
-              ? "bg-[#c4a24b] text-[var(--text-on-accent)]"
+              ? "bg-[#10b981] text-[var(--text-on-accent)]"
               : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           }`}
         >
@@ -993,13 +993,13 @@ export default function AdminPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#c4a24b]/20 bg-[#c4a24b]/10">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#10b981]/20 bg-[#10b981]/10">
                 <svg
                   width="13"
                   height="13"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#c4a24b"
+                  stroke="#10b981"
                   strokeWidth="2"
                   strokeLinecap="round"
                 >
@@ -1007,7 +1007,7 @@ export default function AdminPage() {
                 </svg>
               </div>
               <span className="text-sm font-bold text-[var(--text-primary)]">Admin Paneli</span>
-              <span className="hidden rounded-md border border-[#c4a24b]/20 bg-[#c4a24b]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#c4a24b] sm:inline">
+              <span className="hidden rounded-md border border-[#10b981]/20 bg-[#10b981]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981] sm:inline">
                 DigyNotes
               </span>
             </div>
@@ -1020,7 +1020,7 @@ export default function AdminPage() {
                   onClick={() => setTab(t.key)}
                   className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
                     tab === t.key
-                      ? "bg-[#c4a24b] text-[var(--text-on-accent)] shadow-[0_2px_10px_rgba(201,168,76,0.3)]"
+                      ? "bg-[#10b981] text-[var(--text-on-accent)] shadow-[0_2px_10px_rgba(16,185,129,0.3)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -1062,7 +1062,7 @@ export default function AdminPage() {
                   <KpiCard
                     value={stats.kpi.totalUsers}
                     label="Kullanıcı"
-                    color="#c4a24b"
+                    color="#10b981"
                     icon={
                       <svg
                         width="15"
@@ -1081,7 +1081,7 @@ export default function AdminPage() {
                   <KpiCard
                     value={stats.kpi.totalPosts}
                     label="Not"
-                    color="#818cf8"
+                    color="#34d399"
                     icon={
                       <svg
                         width="15"
@@ -1195,8 +1195,8 @@ export default function AdminPage() {
                       >
                         <defs>
                           <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#818cf8" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="#818cf8" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid
@@ -1223,11 +1223,11 @@ export default function AdminPage() {
                           type="monotone"
                           dataKey="posts"
                           name="Not"
-                          stroke="#818cf8"
+                          stroke="#34d399"
                           strokeWidth={2}
                           fill="url(#g1)"
                           dot={false}
-                          activeDot={{ r: 4, fill: "#818cf8", strokeWidth: 0 }}
+                          activeDot={{ r: 4, fill: "#34d399", strokeWidth: 0 }}
                         />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -1241,8 +1241,8 @@ export default function AdminPage() {
                       >
                         <defs>
                           <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#c4a24b" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="#c4a24b" stopOpacity={0} />
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid
@@ -1269,11 +1269,11 @@ export default function AdminPage() {
                           type="monotone"
                           dataKey="users"
                           name="Kullanıcı"
-                          stroke="#c4a24b"
+                          stroke="#10b981"
                           strokeWidth={2}
                           fill="url(#g2)"
                           dot={false}
-                          activeDot={{ r: 4, fill: "#c4a24b", strokeWidth: 0 }}
+                          activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}
                         />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -1376,7 +1376,7 @@ export default function AdminPage() {
                           <Bar
                             dataKey="count"
                             name="Not"
-                            fill="#c4a24b"
+                            fill="#10b981"
                             radius={[0, 4, 4, 0]}
                             barSize={14}
                           />
@@ -1393,7 +1393,7 @@ export default function AdminPage() {
                       {stats.topUsers.map((u, i) => {
                         const maxPosts = stats.topUsers[0]?.postCount ?? 1;
                         const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
-                        const rankColors = ["#c4a24b", "#a0a0c0", "#b08060"];
+                        const rankColors = ["#10b981", "#a0a0c0", "#b08060"];
                         const rc = rankColors[i] ?? "#2a2a4a";
                         return (
                           <div
@@ -1408,7 +1408,7 @@ export default function AdminPage() {
                               {i + 1}
                             </span>
                             <div
-                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-[#c4a24b]"
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-[#10b981]"
                               style={{ background: `${rc}15`, border: `1px solid ${rc}25` }}
                             >
                               {u.name.charAt(0).toUpperCase()}
@@ -1459,12 +1459,12 @@ export default function AdminPage() {
                           allowDecimals={false}
                         />
                         <Tooltip content={<DarkTooltip />} />
-                        <Bar dataKey="count" name="Not" fill="#818cf8" radius={[4, 4, 0, 0]}>
+                        <Bar dataKey="count" name="Not" fill="#34d399" radius={[4, 4, 0, 0]}>
                           {stats.ratingDistribution.map((_, i) => (
                             <Cell
                               key={i}
                               fill={
-                                i === stats.ratingDistribution.length - 1 ? "#c4a24b" : "#818cf8"
+                                i === stats.ratingDistribution.length - 1 ? "#10b981" : "#34d399"
                               }
                             />
                           ))}
@@ -1485,9 +1485,9 @@ export default function AdminPage() {
                           key={tag.name}
                           className="rounded-lg border px-2.5 py-1 text-xs font-medium"
                           style={{
-                            borderColor: `rgba(201,168,76,${t * 0.35})`,
-                            background: `rgba(201,168,76,${t * 0.08})`,
-                            color: `rgba(201,168,76,${t + 0.1})`,
+                            borderColor: `rgba(16,185,129,${t * 0.35})`,
+                            background: `rgba(16,185,129,${t * 0.08})`,
+                            color: `rgba(16,185,129,${t + 0.1})`,
                           }}
                         >
                           #{tag.name}
@@ -1529,7 +1529,7 @@ export default function AdminPage() {
                     setUsersPage(1);
                   }}
                   placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1539,8 +1539,8 @@ export default function AdminPage() {
 
             {/* Bulk action bar */}
             {selectedUsers.size > 0 && (
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#c4a24b]/20 bg-[#c4a24b]/5 px-4 py-2.5">
-                <span className="text-sm font-semibold text-[#c4a24b]">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#10b981]/20 bg-[#10b981]/5 px-4 py-2.5">
+                <span className="text-sm font-semibold text-[#10b981]">
                   {selectedUsers.size} seçildi
                 </span>
                 <div className="flex flex-wrap gap-2 sm:ml-auto">
@@ -1581,7 +1581,7 @@ export default function AdminPage() {
                 <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
                   <input
                     type="checkbox"
-                    className="accent-[#c4a24b]"
+                    className="accent-[#10b981]"
                     checked={users.length > 0 && selectedUsers.size === users.length}
                     onChange={toggleSelectAll}
                   />
@@ -1591,7 +1591,7 @@ export default function AdminPage() {
                 </div>
                 {loadingUsers ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                   </div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
@@ -1602,12 +1602,12 @@ export default function AdminPage() {
                       >
                         <input
                           type="checkbox"
-                          className="mt-1.5 accent-[#c4a24b]"
+                          className="mt-1.5 accent-[#10b981]"
                           checked={selectedUsers.has(u.id)}
                           onChange={() => toggleSelectUser(u.id)}
                         />
                         <div
-                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#c4a24b]"
+                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#10b981]"
                           onClick={() => router.push(`/admin/users/${u.id}`)}
                         >
                           {u.name.charAt(0).toUpperCase()}
@@ -1619,7 +1619,7 @@ export default function AdminPage() {
                           <div className="flex flex-wrap items-center gap-1.5">
                             <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
                             {u.isAdmin && (
-                              <span className="rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
+                              <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
                                 admin
                               </span>
                             )}
@@ -1677,7 +1677,7 @@ export default function AdminPage() {
                                   e.stopPropagation();
                                   toggleAdmin(u);
                                 }}
-                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
+                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}
                               >
                                 <span
                                   className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
@@ -1725,7 +1725,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3">
                         <input
                           type="checkbox"
-                          className="accent-[#c4a24b]"
+                          className="accent-[#10b981]"
                           checked={users.length > 0 && selectedUsers.size === users.length}
                           onChange={toggleSelectAll}
                         />
@@ -1753,7 +1753,7 @@ export default function AdminPage() {
                     {loadingUsers ? (
                       <tr>
                         <td colSpan={9} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                         </td>
                       </tr>
                     ) : (
@@ -1765,7 +1765,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <input
                               type="checkbox"
-                              className="accent-[#c4a24b]"
+                              className="accent-[#10b981]"
                               checked={selectedUsers.has(u.id)}
                               onChange={() => toggleSelectUser(u.id)}
                             />
@@ -1775,7 +1775,7 @@ export default function AdminPage() {
                             onClick={() => router.push(`/admin/users/${u.id}`)}
                           >
                             <div className="flex items-center gap-2.5">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#c4a24b]">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#10b981]">
                                 {u.name.charAt(0).toUpperCase()}
                               </div>
                               <div className="min-w-0">
@@ -1784,7 +1784,7 @@ export default function AdminPage() {
                                     {u.name}
                                   </p>
                                   {u.isAdmin && (
-                                    <span className="shrink-0 rounded bg-[#c4a24b]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#c4a24b]">
+                                    <span className="shrink-0 rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
                                       admin
                                     </span>
                                   )}
@@ -1831,7 +1831,7 @@ export default function AdminPage() {
                                 e.stopPropagation();
                                 toggleAdmin(u);
                               }}
-                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"}`}
+                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}
                             >
                               <span
                                 className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
@@ -1891,7 +1891,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -1930,7 +1930,7 @@ export default function AdminPage() {
                     setPostsPage(1);
                   }}
                   placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
@@ -1943,7 +1943,7 @@ export default function AdminPage() {
               <div className="md:hidden">
                 {loadingPosts ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                   </div>
                 ) : posts.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">
@@ -1958,7 +1958,7 @@ export default function AdminPage() {
                       >
                         <div className="min-w-0 flex-1">
                           <p
-                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#c4a24b]"
+                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#10b981]"
                             onClick={() => router.push(`/posts/${p.id}`)}
                           >
                             {p.title}
@@ -1967,7 +1967,7 @@ export default function AdminPage() {
                             <span>{p.category}</span>
                             {p.user && (
                               <span className="flex items-center gap-1">
-                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#c4a24b]">
+                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#10b981]">
                                   {p.user.name.charAt(0).toUpperCase()}
                                 </span>
                                 {p.user.name}
@@ -1975,7 +1975,7 @@ export default function AdminPage() {
                             )}
                             <span>{fmtShortDate(p.createdAt)}</span>
                             {p.rating > 0 && (
-                              <span className="text-[#c4a24b]">★ {p.rating.toFixed(1)}</span>
+                              <span className="text-[#10b981]">★ {p.rating.toFixed(1)}</span>
                             )}
                           </div>
                           {p.status && (
@@ -1999,7 +1999,7 @@ export default function AdminPage() {
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
                           <button
                             onClick={() => router.push(`/posts/${p.id}/edit`)}
-                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[#c4a24b]"
+                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[#10b981]"
                           >
                             Düzenle
                           </button>
@@ -2037,7 +2037,7 @@ export default function AdminPage() {
                     {loadingPosts ? (
                       <tr>
                         <td colSpan={7} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                         </td>
                       </tr>
                     ) : posts.length === 0 ? (
@@ -2059,7 +2059,7 @@ export default function AdminPage() {
                             className="cursor-pointer px-4 py-3"
                             onClick={() => router.push(`/posts/${p.id}`)}
                           >
-                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#c4a24b]">
+                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#10b981]">
                               {p.title}
                             </p>
                           </td>
@@ -2069,7 +2069,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3">
                             {p.user ? (
                               <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c4a24b]">
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">
                                   {p.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-[11px] text-[var(--text-muted)]">
@@ -2106,7 +2106,7 @@ export default function AdminPage() {
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => router.push(`/posts/${p.id}/edit`)}
-                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#c4a24b]"
+                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#10b981]"
                               >
                                 Düzenle
                               </button>
@@ -2147,7 +2147,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -2179,7 +2179,7 @@ export default function AdminPage() {
             <Card title={`Aktivite — ${RANGE_LABELS[activityRange]}`}>
               {loadingLogs ? (
                 <div className="flex h-32 items-center justify-center">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={160}>
@@ -2245,7 +2245,7 @@ export default function AdminPage() {
               <div className="md:hidden">
                 {loadingLogs ? (
                   <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                   </div>
                 ) : logs.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">
@@ -2290,7 +2290,7 @@ export default function AdminPage() {
                             </div>
                             {log.user && (
                               <div className="flex items-center gap-1.5">
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#c4a24b]">
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#10b981]">
                                   {log.user.name.charAt(0).toUpperCase()}
                                 </div>
                                 <span className="text-[12px] text-[var(--text-secondary)]">
@@ -2337,7 +2337,7 @@ export default function AdminPage() {
                     {loadingLogs ? (
                       <tr>
                         <td colSpan={4} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#c4a24b]" />
+                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
                         </td>
                       </tr>
                     ) : logs.length === 0 ? (
@@ -2368,7 +2368,7 @@ export default function AdminPage() {
                             <td className="px-4 py-3">
                               {log.user ? (
                                 <div className="flex items-center gap-2">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#c4a24b]">
+                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">
                                     {log.user.name.charAt(0).toUpperCase()}
                                   </div>
                                   <div>
@@ -2434,7 +2434,7 @@ export default function AdminPage() {
                         key={btn.label}
                         onClick={btn.fn}
                         disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
+                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
                       >
                         {btn.label}
                       </button>
@@ -2576,7 +2576,7 @@ export default function AdminPage() {
                             saveSettings({ maintenanceMessage: e.target.value });
                           }
                         }}
-                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#c4a24b]/40 focus:outline-none focus:ring-1 focus:ring-[#c4a24b]/15 sm:text-sm"
+                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
                         placeholder="Bakım mesajı..."
                       />
                     </div>

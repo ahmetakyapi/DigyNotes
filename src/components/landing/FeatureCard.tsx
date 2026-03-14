@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface FeatureCardProps {
   readonly Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
@@ -28,6 +29,8 @@ export function FeatureCard({
 }: FeatureCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
+  const { theme } = useTheme();
+  const isLight = theme === "light";
 
   // Mouse spotlight tracking
   const mouseX = useMotionValue(0);
@@ -81,14 +84,16 @@ export function FeatureCard({
         transformPerspective: 800,
         transformStyle: "preserve-3d",
       }}
-      className="dn-landing-card group relative overflow-hidden rounded-xl p-4 sm:rounded-2xl sm:p-7"
+      className="dn-landing-card group relative h-full overflow-hidden rounded-xl p-4 sm:rounded-2xl sm:p-7"
     >
       {/* Glassmorphism background */}
       <div
         className="absolute inset-0 rounded-xl sm:rounded-2xl"
         style={{
-          background: `linear-gradient(145deg, ${gradientFrom}, color-mix(in srgb, var(--surface-strong) 85%, transparent))`,
-          border: `1px solid ${border}`,
+          background: isLight
+            ? `linear-gradient(145deg, rgba(255,255,255,0.95), rgba(248,250,252,0.92))`
+            : `linear-gradient(145deg, ${gradientFrom}, color-mix(in srgb, var(--surface-strong) 85%, transparent))`,
+          border: isLight ? `1px solid rgba(226,232,240,0.8)` : `1px solid ${border}`,
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
         }}
@@ -130,8 +135,8 @@ export function FeatureCard({
       <div
         className="relative z-10 mb-2.5 flex h-9 w-9 items-center justify-center rounded-lg sm:mb-5 sm:h-12 sm:w-12 sm:rounded-[14px]"
         style={{
-          background: iconBg,
-          border: `1px solid ${iconBorder}`,
+          background: isLight ? `${iconColor}12` : iconBg,
+          border: isLight ? `1px solid ${iconColor}18` : `1px solid ${iconBorder}`,
           boxShadow: hovered ? `0 0 20px ${iconColor}25, 0 4px 12px ${iconColor}15` : "none",
           transition: "box-shadow 0.4s ease",
         }}

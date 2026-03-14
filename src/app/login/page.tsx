@@ -54,8 +54,8 @@ export default function LoginPage() {
       <FullScreenLoader show={redirecting} message="Giriş yapılıyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-[#6366f1]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
-        <div className="bg-gradient-radial from-[#4a90e2]/4 absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#10b981]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#0ea5e9]/4 absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -200,10 +200,7 @@ export default function LoginPage() {
           {/* Register link */}
           <p className="text-center text-sm text-[var(--text-secondary)]">
             Hesabın yok mu?{" "}
-            <Link
-              href="/register"
-              className="dn-auth-link font-medium transition-colors"
-            >
+            <Link href="/register" className="dn-auth-link font-medium transition-colors">
               Kayıt Ol
             </Link>
           </p>

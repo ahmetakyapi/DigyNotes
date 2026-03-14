@@ -65,7 +65,7 @@ export default function FeedPage() {
         </div>
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
             <UsersThree size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -77,7 +77,7 @@ export default function FeedPage() {
           </p>
           <Link
             href="/login"
-            className="hover:bg-[#6366f1]/12 bg-[#6366f1]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 px-5 py-3 text-sm font-semibold text-[#818cf8] transition-colors"
+            className="hover:bg-[#10b981]/12 bg-[#10b981]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 px-5 py-3 text-sm font-semibold text-[#34d399] transition-colors"
           >
             Giriş yap
           </Link>
@@ -92,7 +92,7 @@ export default function FeedPage() {
         </div>
       ) : empty ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#6366f1]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
             <Compass size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -104,7 +104,7 @@ export default function FeedPage() {
           </p>
           <Link
             href="/discover"
-            className="hover:bg-[#6366f1]/12 bg-[#6366f1]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#6366f1]/30 px-5 py-3 text-sm font-semibold text-[#818cf8] transition-colors"
+            className="hover:bg-[#10b981]/12 bg-[#10b981]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 px-5 py-3 text-sm font-semibold text-[#34d399] transition-colors"
           >
             <Sparkle size={16} weight="duotone" />
             Keşfet
@@ -113,7 +113,7 @@ export default function FeedPage() {
       ) : (
         <section className="space-y-4">
           <div className="rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-            <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+            <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
               Akış
             </span>
             <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
@@ -149,17 +149,17 @@ function FeedCard({ post }: { post: Post }) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="hover:border-[#6366f1]/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
+    <article className="hover:border-[#10b981]/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
       {post.user && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-4">
-          <div className="bg-[#6366f1]/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-[#6366f1]">
+          <div className="bg-[#10b981]/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-[#10b981]">
             <AvatarImage
               src={post.user.avatarUrl}
               alt={post.user.name}
               name={post.user.name}
               size={40}
               className="h-full w-full object-cover"
-              textClassName="text-sm font-bold text-[#6366f1]"
+              textClassName="text-sm font-bold text-[#10b981]"
             />
           </div>
           <div className="min-w-0">
@@ -169,7 +169,7 @@ function FeedCard({ post }: { post: Post }) {
             {post.user.username && (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#6366f1]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#10b981]"
               >
                 @{post.user.username}
               </Link>
@@ -191,7 +191,7 @@ function FeedCard({ post }: { post: Post }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.82)] via-transparent to-transparent" />
             <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-              <span className="border-[#6366f1]/18 rounded-full border bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+              <span className="border-[#10b981]/18 rounded-full border bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.status && <StatusBadge status={post.status} />}

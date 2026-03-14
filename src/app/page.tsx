@@ -131,7 +131,7 @@ export default function LandingPage() {
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-px"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.15), transparent)",
           }}
         />
         <div className="mx-auto grid w-full max-w-6xl gap-2 text-xs text-[var(--text-muted)] sm:grid-cols-[1fr_auto_1fr] sm:items-center">

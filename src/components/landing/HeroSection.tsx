@@ -10,57 +10,59 @@ import { FloatingParticles } from "./FloatingParticles";
 
 const LIGHT_THEME = {
   glowBg:
-    "radial-gradient(circle, rgba(100,140,255,0.7) 0%, rgba(80,110,220,0.3) 42%, rgba(255,255,255,0) 76%)",
-  dotBgImage: "radial-gradient(circle, rgba(80,110,210,0.5) 1px, transparent 1px)",
+    "radial-gradient(circle, rgba(16,185,129,0.5) 0%, rgba(5,150,105,0.2) 42%, rgba(255,255,255,0) 76%)",
+  dotBgImage: "radial-gradient(circle, rgba(16,185,129,0.4) 1px, transparent 1px)",
   dotBgSize: "44px 44px",
-  dotOpacity: 0.2,
-  geomCircle: "rgba(80,110,220,0.2)",
-  geomSquare: "rgba(80,110,220,0.22)",
-  geomDot: "rgba(80,110,220,0.22)",
-  geomRing: "rgba(80,140,200,0.14)",
-  geomCross: "rgba(80,110,220,0.38)",
-  badgeBg: "linear-gradient(135deg, rgba(80,110,220,0.08), rgba(100,140,255,0.05))",
-  badgeBorder: "rgba(80,110,220,0.25)",
-  badgeDot: "radial-gradient(circle, #6e9eff, #4a72e8)",
-  badgeDotGlow: "0 0 8px #4a72e8",
-  badgeText: "linear-gradient(90deg, #3a60d8, #6090f0)",
+  dotOpacity: 0.18,
+  geomCircle: "rgba(16,185,129,0.15)",
+  geomSquare: "rgba(6,182,212,0.18)",
+  geomDot: "rgba(16,185,129,0.18)",
+  geomRing: "rgba(20,184,166,0.1)",
+  geomCross: "rgba(16,185,129,0.3)",
+  badgeBg: "linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04))",
+  badgeBorder: "rgba(16,185,129,0.22)",
+  badgeDot: "radial-gradient(circle, #34d399, #059669)",
+  badgeDotGlow: "0 0 8px #059669",
+  badgeText: "linear-gradient(90deg, #047857, #10b981)",
   headingLine2:
-    "linear-gradient(135deg, #3b9e7c 0%, #2f8f72 22%, #267c64 44%, #1c6c56 66%, #145445 100%)",
+    "linear-gradient(135deg, #1e40af 0%, #1e3a8a 22%, #1d4ed8 44%, #2563eb 66%, #1e40af 100%)",
   headingLine3:
-    "linear-gradient(90deg, #d8ae39 0%, #c7931f 18%, #b77719 38%, #c28d25 58%, #ddb852 80%, #d8ae39 100%)",
-  ctaBtnBg: "linear-gradient(135deg, #4a72e8, #3558cc, #2c4ec0, #3f67d8)",
-  ctaBtnBgHover: "linear-gradient(135deg, #5a82f8, #4568dc, #355ed0, #4f77e8)",
+    "linear-gradient(90deg, #059669 0%, #047857 18%, #065f46 38%, #059669 58%, #10b981 80%, #34d399 100%)",
+  ctaBtnBg: "linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%)",
+  ctaBtnBgHover: "linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%)",
   ctaBtnTextColor: "#ffffff",
-  ctaBtnShadow: "0 8px 24px rgba(67, 97, 232, 0.38)",
-  ctaBtnHoverShadow: "0 16px 48px rgba(67, 97, 232, 0.56)",
+  ctaBtnShadow:
+    "0 8px 28px rgba(5,150,105,0.28), 0 0 0 1px rgba(16,185,129,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset",
+  ctaBtnHoverShadow: "0 16px 48px rgba(5, 150, 105, 0.48)",
 } as const;
 
 const DARK_THEME = {
-  glowBg: "radial-gradient(circle, #6366f1 0%, #4338ca 50%, transparent 75%)",
+  glowBg: "radial-gradient(circle, #10b981 0%, #047857 50%, transparent 75%)",
   dotBgImage:
     "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
   dotBgSize: "80px 80px",
-  dotOpacity: 0.018,
-  geomCircle: "rgba(196,162,75,0.12)",
-  geomSquare: "rgba(129,140,248,0.15)",
-  geomDot: "rgba(196,162,75,0.15)",
-  geomRing: "rgba(80,160,120,0.06)",
-  geomCross: "rgba(196,162,75,0.3)",
+  dotOpacity: 0.016,
+  geomCircle: "rgba(16,185,129,0.1)",
+  geomSquare: "rgba(6,182,212,0.12)",
+  geomDot: "rgba(16,185,129,0.12)",
+  geomRing: "rgba(20,184,166,0.06)",
+  geomCross: "rgba(52,211,153,0.25)",
   badgeBg:
-    "linear-gradient(135deg, rgba(201,168,76,0.12), rgba(129,140,248,0.08), rgba(255,107,53,0.08))",
+    "linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.07), rgba(20,184,166,0.06))",
   badgeBorder: "color-mix(in srgb, var(--gold) 28%, transparent)",
-  badgeDot: "radial-gradient(circle, #a5b4fc, #6366f1)",
-  badgeDotGlow: "0 0 8px #6366f1",
+  badgeDot: "radial-gradient(circle, #34d399, #10b981)",
+  badgeDotGlow: "0 0 8px #10b981",
   badgeText: "linear-gradient(90deg, var(--gold), var(--gold-light))",
   headingLine2:
-    "linear-gradient(135deg, #48c890 0%, #28a068 22%, #148850 44%, #0a7040 66%, #065830 100%)",
+    "linear-gradient(135deg, #38bdf8 0%, #0ea5e9 22%, #0284c7 44%, #0369a1 66%, #0c4a6e 100%)",
   headingLine3:
-    "linear-gradient(90deg, #fff4b8 0%, #f8d038 16%, #e8a818 36%, #f0c028 56%, #fcd848 76%, #fff4b8 100%)",
-  ctaBtnBg: "linear-gradient(135deg, #6366f1, #4f46e5, #4338ca, #5b52e8)",
-  ctaBtnBgHover: "linear-gradient(135deg, #818cf8, #6366f1, #5048e8, #6b62f0)",
+    "linear-gradient(90deg, #a7f3d0 0%, #34d399 16%, #10b981 36%, #059669 56%, #34d399 76%, #a7f3d0 100%)",
+  ctaBtnBg: "linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%)",
+  ctaBtnBgHover: "linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%)",
   ctaBtnTextColor: "#ffffff",
-  ctaBtnShadow: "0 8px 24px rgba(99, 102, 241, 0.4)",
-  ctaBtnHoverShadow: "0 16px 48px rgba(99, 102, 241, 0.58)",
+  ctaBtnShadow:
+    "0 8px 28px rgba(16,185,129,0.32), 0 0 0 1px rgba(52,211,153,0.1) inset, 0 1px 0 rgba(255,255,255,0.14) inset",
+  ctaBtnHoverShadow: "0 16px 48px rgba(16, 185, 129, 0.52)",
 } as const;
 
 export function HeroSection() {
@@ -279,8 +281,17 @@ export function HeroSection() {
                 background: t.ctaBtnBg,
                 color: t.ctaBtnTextColor,
                 boxShadow: t.ctaBtnShadow,
+                textShadow: "0 1px 2px rgba(4,120,87,0.3)",
               }}
             >
+              {/* Top shine line */}
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.2) 50%, transparent 90%)",
+                }}
+              />
               <span className="relative z-10">Hemen Başla →</span>
               <div
                 className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -313,10 +324,10 @@ export function HeroSection() {
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="h-8 w-5 rounded-full border border-[rgba(99,102,241,0.35)] p-1">
+          <div className="h-8 w-5 rounded-full border border-[rgba(16,185,129,0.3)] p-1">
             <motion.div
               className="h-1.5 w-1.5 rounded-full"
-              style={{ background: "rgba(99,102,241,0.65)" }}
+              style={{ background: "rgba(16,185,129,0.6)" }}
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             />

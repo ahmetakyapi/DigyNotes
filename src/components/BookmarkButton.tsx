@@ -102,8 +102,8 @@ export function BookmarkButton({
         title={tooltipLabel}
         className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 ${
           bookmarked
-            ? "border-[#6366f1]/40 bg-[#6366f1]/10 text-[#818cf8]"
-            : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#6366f1]/30 hover:text-[#818cf8]"
+            ? "border-[#10b981]/40 bg-[#10b981]/10 text-[#34d399]"
+            : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#10b981]/30 hover:text-[#34d399]"
         } ${className}`}
       >
         <BookmarkSimple size={16} weight={bookmarked ? "fill" : "regular"} />

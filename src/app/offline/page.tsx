@@ -18,7 +18,7 @@ export default function OfflinePage() {
         <div
           className="absolute -left-16 top-0 h-72 w-72 rounded-full opacity-[0.08] blur-[120px]"
           style={{
-            background: "radial-gradient(circle, #6366f1 0%, #4338ca 55%, transparent 70%)",
+            background: "radial-gradient(circle, #10b981 0%, #047857 55%, transparent 70%)",
           }}
         />
         <div
@@ -30,7 +30,7 @@ export default function OfflinePage() {
       </div>
 
       <div className="bg-[var(--bg-card)]/92 relative w-full max-w-xl rounded-[28px] border border-[var(--border)] p-8 text-center shadow-[0_28px_80px_rgba(3,8,20,0.34)] backdrop-blur-xl sm:p-10">
-        <div className="border-[#6366f1]/24 mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border bg-[#6366f1]/10 text-[var(--gold)]">
+        <div className="border-[#10b981]/24 mx-auto flex h-16 w-16 items-center justify-center rounded-3xl border bg-[#10b981]/10 text-[var(--gold)]">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path
               d="M2 8.82A15.91 15.91 0 0 1 12 5c3.4 0 6.55 1.07 9.12 2.9M5 12.86A11.94 11.94 0 0 1 12 10c2.37 0 4.58.69 6.44 1.88M8.5 16.43A7.96 7.96 0 0 1 12 15.5c1.2 0 2.34.26 3.36.73M12 20h.01"
@@ -83,7 +83,7 @@ export default function OfflinePage() {
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <RetryButton
             label="Yeniden dene"
-            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
+            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
           />
           <Link
             href="/notes"

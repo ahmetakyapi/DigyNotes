@@ -67,7 +67,7 @@ export default function FollowButton({
       className={`rounded-lg border font-semibold transition-all disabled:opacity-50 ${sizeClassName} ${
         isFollowing
           ? "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#e53e3e]/60 hover:text-[#e53e3e]"
-          : "border-[#6366f1]/60 bg-[#6366f1]/10 text-[#6366f1] hover:bg-[#6366f1]/20"
+          : "border-[#10b981]/60 bg-[#10b981]/10 text-[#10b981] hover:bg-[#10b981]/20"
       }`}
     >
       {loading ? (

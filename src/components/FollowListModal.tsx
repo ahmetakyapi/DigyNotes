@@ -133,7 +133,7 @@ export default function FollowListModal({
                           name={u.name}
                           size={40}
                           className="h-full w-full object-cover"
-                          textClassName="text-sm font-semibold text-[#6366f1]"
+                          textClassName="text-sm font-semibold text-[#10b981]"
                         />
                       </div>
                       <div className="min-w-0 flex-1">

@@ -30,7 +30,7 @@ export default function CollectionCard({
   return (
     <Link
       href={href}
-      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:border-[#6366f1]/35 hover:shadow-[var(--shadow-soft)]"
+      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:border-[#10b981]/35 hover:shadow-[var(--shadow-soft)]"
     >
       <div className="relative h-32 border-b border-[var(--border)] bg-[var(--bg-raised)]">
         {previewPosts.length > 0 ? (
@@ -48,7 +48,7 @@ export default function CollectionCard({
             ))}
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(196,162,75,0.16),_transparent_60%)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
+          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.14),_transparent_60%)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
             Boş Koleksiyon
           </div>
         )}
@@ -67,7 +67,7 @@ export default function CollectionCard({
               </p>
             )}
           </div>
-          <span className="bg-[#6366f1]/8 rounded-full border border-[#6366f1]/25 px-2 py-1 text-[10px] font-semibold text-[var(--gold)]">
+          <span className="bg-[#10b981]/8 rounded-full border border-[#10b981]/25 px-2 py-1 text-[10px] font-semibold text-[var(--gold)]">
             {collection.postCount} not
           </span>
         </div>
@@ -86,7 +86,7 @@ export default function CollectionCard({
                 key={post.id}
                 className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-[#6366f1]/70" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]/70" />
                 <span className="line-clamp-1">{formatDisplayTitle(post.title)}</span>
               </div>
             ))}

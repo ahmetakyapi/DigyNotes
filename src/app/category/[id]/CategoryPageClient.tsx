@@ -124,9 +124,9 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       {/* ── Header ── */}
-      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(196,162,75,0.12),rgba(12,18,31,0.94),rgba(96,168,138,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(16,185,129,0.12),rgba(12,18,31,0.94),rgba(16,185,129,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors hover:text-[#6366f1]">
+          <Link href="/notes" className="transition-colors hover:text-[#10b981]">
             Notlar
           </Link>
           <span className="opacity-40">›</span>
@@ -136,7 +136,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         <div>
           <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryLabel}</h1>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#6366f1] to-transparent" />
+            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#10b981] to-transparent" />
             <span className="text-xs text-[var(--text-muted)]">{posts.length} not</span>
             {travelCategory && (
               <span className="text-xs text-[var(--text-muted)]">
@@ -159,7 +159,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryLabel} içinde ara...`}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#6366f1]/40 focus:ring-1 focus:ring-[#6366f1]/10 sm:text-xs"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-xs"
           />
           {searchQuery && (
             <button
@@ -185,7 +185,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               onClick={() => setViewMode("cards")}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                 viewMode === "cards"
-                  ? "bg-[#6366f1] text-white"
+                  ? "bg-[#10b981] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -197,7 +197,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               disabled={mappedPosts.length === 0}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 viewMode === "map"
-                  ? "bg-[#6366f1] text-white"
+                  ? "bg-[#10b981] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -232,7 +232,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           {!searchQuery && !hasActiveSortFilters(sortFilter, defaultSortFilter) && (
             <Link
               href="/new-post"
-              className="mt-3 text-xs text-[#818cf8] transition-colors hover:text-[#6366f1]"
+              className="mt-3 text-xs text-[#34d399] transition-colors hover:text-[#10b981]"
             >
               + İlk notu ekle
             </Link>
@@ -249,7 +249,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
             return (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#6366f1]/30 hover:shadow-[0_4px_24px_rgba(201,168,76,0.08)] sm:flex-row">
+                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#10b981]/30 hover:shadow-[0_4px_24px_rgba(16,185,129,0.08)] sm:flex-row">
                   <div
                     className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[32%]"
                     style={{ minHeight: "140px" }}
@@ -274,7 +274,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                         )}
                         {post.status && <StatusBadge status={post.status} />}
                       </div>
-                      <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[#6366f1] sm:text-[15px]">
+                      <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[#10b981] sm:text-[15px]">
                         {displayTitle}
                       </h2>
                       {post.creator && (

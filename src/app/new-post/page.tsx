@@ -40,14 +40,14 @@ import { stripHtml } from "@/lib/text";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#6366f1]/60 focus:ring-1 focus:ring-[#6366f1]/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 focus:bg-[var(--bg-card)]";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
 const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 function flashClass(flashed: boolean) {
-  return flashed ? "ring-2 ring-[#6366f1]/40 border-[#6366f1]/50" : "";
+  return flashed ? "ring-2 ring-[#10b981]/40 border-[#10b981]/50" : "";
 }
 
 export default function NewPostPage() {
@@ -418,7 +418,7 @@ export default function NewPostPage() {
               type="checkbox"
               checked={hasSpoiler}
               onChange={(event) => setHasSpoiler(event.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#6366f1] focus:ring-[#6366f1]"
+              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#10b981] focus:ring-[#10b981]"
             />
             <span className="min-w-0">
               <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -550,8 +550,8 @@ export default function NewPostPage() {
               disabled={isAdded || tags.length >= 10}
               className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                 isAdded
-                  ? "border-[#6366f1]/40 bg-[#6366f1]/10 text-[#818cf8]"
-                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/35 hover:text-[#818cf8]"
+                  ? "border-[#10b981]/40 bg-[#10b981]/10 text-[#34d399]"
+                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/35 hover:text-[#34d399]"
               }`}
             >
               #{tagName}
@@ -599,7 +599,7 @@ export default function NewPostPage() {
               className={`${cardClass} overflow-hidden`}
               style={{
                 background:
-                  "radial-gradient(circle at top left, rgba(196,162,75,0.12), transparent 34%), var(--bg-card)",
+                  "radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 34%), var(--bg-card)",
               }}
             >
               <div className="flex flex-col gap-4">
@@ -798,7 +798,7 @@ export default function NewPostPage() {
                         href={buildOpenStreetMapLink(lat as number, lng as number)}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--text-primary)]"
+                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--text-primary)]"
                       >
                         Haritada aç
                       </a>
@@ -853,8 +853,8 @@ export default function NewPostPage() {
                     }}
                     className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                       isTemplateActive
-                        ? "border-[#6366f1]/35 bg-[#6366f1]/10 text-[var(--gold)]"
-                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/30 hover:text-[var(--text-primary)]"
+                        ? "border-[#10b981]/35 bg-[#10b981]/10 text-[var(--gold)]"
+                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}
@@ -917,7 +917,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.3)] transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.3)] transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? (
                 <>

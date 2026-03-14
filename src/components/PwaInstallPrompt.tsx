@@ -99,8 +99,8 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
-      <div className="border-[#6366f1]/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgba(3,8,20,0.38)] backdrop-blur-xl">
-        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-[#6366f1]/25 bg-[#6366f1]/10 text-[var(--gold)]">
+      <div className="border-[#10b981]/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgba(3,8,20,0.38)] backdrop-blur-xl">
+        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-[#10b981]/25 bg-[#10b981]/10 text-[var(--gold)]">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path
               d="M12 16V4m0 0-4 4m4-4 4 4M4 14v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3"
@@ -129,7 +129,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void handleInstall()}
-            className="rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-3 py-2 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
+            className="rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-3 py-2 text-xs font-semibold text-white shadow-[0_2px_10px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
           >
             Yükle
           </button>

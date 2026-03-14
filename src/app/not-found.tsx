@@ -78,7 +78,7 @@ export default function NotFound() {
         .dn404-reveal-5 { animation: dn404-fade-up 0.55s ease-out 0.55s both; }
         .dn404-scan-line {
           position: absolute; inset: 0;
-          background: linear-gradient(transparent 45%, rgba(201,168,76,0.04) 50%, transparent 55%);
+          background: linear-gradient(transparent 45%, rgba(16,185,129,0.04) 50%, transparent 55%);
           animation: dn404-scan 6s ease-in-out infinite 1s;
           pointer-events: none;
         }
@@ -122,7 +122,7 @@ export default function NotFound() {
         <div
           className="dn404-tag-1 absolute left-[6%] top-[20%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.28]"
           style={{
-            borderColor: "rgba(104,136,192,0.35)",
+            borderColor: "rgba(14,165,233,0.35)",
             background: "rgba(56,88,168,0.12)",
             color: "#6888c0",
           }}
@@ -137,9 +137,9 @@ export default function NotFound() {
         <div
           className="dn404-tag-2 absolute right-[8%] top-[16%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.22]"
           style={{
-            borderColor: "rgba(129,140,248,0.35)",
-            background: "rgba(99,102,241,0.1)",
-            color: "#818cf8",
+            borderColor: "rgba(14,165,233,0.35)",
+            background: "rgba(14,165,233,0.1)",
+            color: "#0ea5e9",
           }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
@@ -152,9 +152,9 @@ export default function NotFound() {
         <div
           className="dn404-tag-3 absolute bottom-[25%] left-[10%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.18]"
           style={{
-            borderColor: "rgba(201,168,76,0.3)",
-            background: "rgba(201,168,76,0.07)",
-            color: "#6366f1",
+            borderColor: "rgba(16,185,129,0.3)",
+            background: "rgba(16,185,129,0.07)",
+            color: "#10b981",
           }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
@@ -222,7 +222,7 @@ export default function NotFound() {
               background: "linear-gradient(160deg, var(--text-contrast) 0%, transparent 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 0 60px rgba(201,168,76,0.15))",
+              filter: "drop-shadow(0 0 60px rgba(16,185,129,0.15))",
             }}
           >
             404
@@ -233,7 +233,7 @@ export default function NotFound() {
             className="dn404-glitch-layer pointer-events-none absolute inset-0 text-[clamp(6.5rem,24vw,12rem)] font-black leading-none tracking-tighter"
             aria-hidden
             style={{
-              background: "linear-gradient(135deg, #6366f1, #818cf8)",
+              background: "linear-gradient(135deg, #10b981, #34d399)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -273,7 +273,7 @@ export default function NotFound() {
         <div
           className="dn404-reveal-4 mb-8 h-px w-24"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent)",
+            background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.35), transparent)",
           }}
         />
 
@@ -284,7 +284,7 @@ export default function NotFound() {
             className="group relative overflow-hidden rounded-2xl px-8 py-3 text-sm font-bold text-[var(--text-on-accent)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02]"
             style={{
               background: "linear-gradient(135deg, #d4a84c, #c9a030, #b88820, #cca038)",
-              boxShadow: "0 4px 20px rgba(201,168,76,0.25)",
+              boxShadow: "0 4px 20px rgba(16,185,129,0.25)",
             }}
           >
             <span className="relative z-10">Ana Sayfaya Dön</span>

@@ -114,7 +114,7 @@ export default function CollectionsPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
           >
             Giriş Yap
           </Link>
@@ -129,12 +129,12 @@ export default function CollectionsPage() {
         className="mb-6 rounded-[32px] border border-[var(--border)] p-5 shadow-[var(--shadow-soft)] sm:p-6"
         style={{
           background:
-            "radial-gradient(circle at top left, rgba(196,162,75,0.12), transparent 32%), var(--bg-card)",
+            "radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 32%), var(--bg-card)",
         }}
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               Koleksiyonlar
             </span>
             <h1 className="mt-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
@@ -158,7 +158,7 @@ export default function CollectionsPage() {
           </div>
           <Link
             href="/notes"
-            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)]"
+            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
           >
             Notlarıma dön
           </Link>
@@ -193,7 +193,7 @@ export default function CollectionsPage() {
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
               placeholder="Örn. 2024'te izlediklerim"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:text-sm"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:text-sm"
             />
           </label>
           <label className="space-y-2">
@@ -206,13 +206,13 @@ export default function CollectionsPage() {
               onChange={(event) => setDescription(event.target.value)}
               maxLength={400}
               placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:text-sm"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:text-sm"
             />
           </label>
           <button
             type="submit"
             disabled={isCreating || loading || title.trim() === ""}
-            className="h-11 rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-11 rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCreating ? "Oluşturuluyor..." : "Koleksiyon oluştur"}
           </button>
@@ -233,7 +233,7 @@ export default function CollectionsPage() {
             value={collectionQuery}
             onChange={(event) => setCollectionQuery(event.target.value)}
             placeholder="Koleksiyon ara..."
-            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/50 sm:max-w-sm sm:text-sm"
+            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:max-w-sm sm:text-sm"
           />
         </div>
       )}

@@ -33,8 +33,7 @@ const CATEGORIES = [
     mockRating: 5,
     mockExcerpt:
       "Zaman, yerçekimi ve sevgi üzerine bir başyapıt. Cooper'ın kızına verdiği söz, insanlığın geleceğini değiştiriyor. Hans Zimmer'in müzikleri eşliğinde seyrettiğim en etkileyici uzay filmi.",
-    mockHighlight:
-      "\"Sevgi, zaman ve uzayı aşan tek şeydir.\" — Bu replik filmin tüm özeti.",
+    mockHighlight: '"Sevgi, zaman ve uzayı aşan tek şeydir." — Bu replik filmin tüm özeti.',
     mockTags: ["bilim-kurgu", "uzay", "zaman", "drama"],
     mockStatus: "İzledim",
   },
@@ -63,10 +62,10 @@ const CATEGORIES = [
     key: "oyun",
     label: "Oyun",
     Icon: LuGamepad2,
-    color: "#818cf8",
-    colorLight: "#b3bbff",
-    bg: "rgba(129,140,248,0.10)",
-    border: "rgba(129,140,248,0.25)",
+    color: "#0ea5e9",
+    colorLight: "#7dd3fc",
+    bg: "rgba(14,165,233,0.10)",
+    border: "rgba(14,165,233,0.25)",
     coverGradient: "linear-gradient(138deg, #0b0d1d 0%, #1b2154 40%, #1a2258 62%, #090b16 100%)",
     artworkSrc: "/landing/category-showcase/game.svg",
     mockTitle: "The Last of Us Part II",
@@ -75,8 +74,7 @@ const CATEGORIES = [
     mockRating: 4.5,
     mockExcerpt:
       "İntikam ve af arasında gidip gelen, duygusal olarak tüketen bir deneyim. Gameplay ve hikâye entegrasyonu muhteşem. Tartışmalı ama cesur bir anlatı tercihiyle unutulmaz.",
-    mockHighlight:
-      "Oyunun ortasındaki bakış açısı değişikliği beni tamamen hazırlıksız yakaladı.",
+    mockHighlight: "Oyunun ortasındaki bakış açısı değişikliği beni tamamen hazırlıksız yakaladı.",
     mockTags: ["aksiyon", "hikaye", "duygusal"],
     mockStatus: "Oynadım",
   },
@@ -84,10 +82,10 @@ const CATEGORIES = [
     key: "kitap",
     label: "Kitap",
     Icon: LuBookOpen,
-    color: "#6366f1",
-    colorLight: "#e6c87a",
-    bg: "rgba(201,168,76,0.10)",
-    border: "rgba(201,168,76,0.25)",
+    color: "#10b981",
+    colorLight: "#6ee7b7",
+    bg: "rgba(16,185,129,0.10)",
+    border: "rgba(16,185,129,0.25)",
     coverGradient: "linear-gradient(138deg, #171005 0%, #2f2008 38%, #412c0d 64%, #120b04 100%)",
     artworkSrc: "/landing/category-showcase/book.svg",
     mockTitle: "Suç ve Ceza",
@@ -138,8 +136,7 @@ const CATEGORIES = [
     mockRating: 4,
     mockExcerpt:
       "V60 pour-over, Aeropress, Chemex — her yöntemin kendi ritüeli var. Su sıcaklığı, öğütme boyutu ve demleme süresi üçlüsü mükemmel fincanın anahtarı. Kahve notlarım büyüyor.",
-    mockHighlight:
-      "93°C su + orta-ince öğütme + 3:30 demleme = şu ana kadarki en iyi V60.",
+    mockHighlight: "93°C su + orta-ince öğütme + 3:30 demleme = şu ana kadarki en iyi V60.",
     mockTags: ["kahve", "tarif", "hobi", "deney"],
     mockStatus: "Devam Ediyor",
   },
@@ -147,7 +144,16 @@ const CATEGORIES = [
 
 type Category = (typeof CATEGORIES)[number];
 
-function Stars({ count, color }: { readonly count: number; readonly color: string }) {
+function Stars({
+  count,
+  color,
+  isLight,
+}: {
+  readonly count: number;
+  readonly color: string;
+  readonly isLight: boolean;
+}) {
+  const emptyStroke = isLight ? "#d1d5db" : "#2a2a2a";
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((step) => (
@@ -155,7 +161,7 @@ function Stars({ count, color }: { readonly count: number; readonly color: strin
           key={step}
           size={14}
           fill={step <= count ? color : "transparent"}
-          stroke={step <= count ? color : "#2a2a2a"}
+          stroke={step <= count ? color : emptyStroke}
           strokeWidth={1.5}
           style={{ opacity: step <= count ? 1 : 0.3 }}
         />
@@ -186,8 +192,7 @@ function CoverArtwork({ cat }: { readonly cat: Category }) {
         className="absolute inset-0 rounded-[2rem] border backdrop-blur-[3px]"
         style={{
           borderColor: `${cat.color}2d`,
-          background:
-            "linear-gradient(135deg, rgba(6,8,12,0.12), rgba(255,255,255,0.02))",
+          background: "linear-gradient(135deg, rgba(6,8,12,0.12), rgba(255,255,255,0.02))",
           boxShadow: `0 24px 80px ${cat.color}18`,
         }}
       />
@@ -270,7 +275,7 @@ function CoverBackground({ cat }: { readonly cat: Category }) {
             {coverTags.map((tag) => (
               <span
                 key={tag}
-                className="max-w-full rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/84 sm:px-3 sm:py-1.5 sm:text-[10px]"
+                className="text-white/84 max-w-full rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] sm:px-3 sm:py-1.5 sm:text-[10px]"
                 style={{
                   borderColor: `${cat.color}2e`,
                   background: "rgba(7, 10, 15, 0.28)",
@@ -305,13 +310,12 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
       transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
       className="dn-category-showcase-card overflow-hidden rounded-[1.6rem] border"
       style={{
-        borderColor: cat.border,
-        background:
-          isLight
-            ? "linear-gradient(135deg, rgba(255,250,243,0.98), rgba(245,237,224,0.98))"
-            : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 92%, transparent), color-mix(in srgb, var(--surface-strong) 94%, transparent))",
+        borderColor: isLight ? "rgba(226,232,240,0.7)" : cat.border,
+        background: isLight
+          ? "linear-gradient(135deg, rgba(255,252,247,0.98), rgba(248,243,233,0.98))"
+          : "linear-gradient(135deg, color-mix(in srgb, var(--bg-card) 92%, transparent), color-mix(in srgb, var(--surface-strong) 94%, transparent))",
         boxShadow: isLight
-          ? "0 26px 70px rgba(117,89,55,0.12), 0 8px 24px rgba(117,89,55,0.06)"
+          ? "0 20px 60px rgba(15,23,42,0.07), 0 8px 24px rgba(15,23,42,0.04)"
           : "0 30px 80px rgba(0,0,0,0.22)",
       }}
     >
@@ -321,19 +325,18 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
         <div
           className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 backdrop-blur-md sm:left-4 sm:top-4"
           style={{
-            background: isLight ? "rgba(255,248,239,0.78)" : "rgba(8,10,14,0.56)",
-            border: `1px solid ${cat.border}`,
+            background: isLight ? "rgba(255,255,255,0.82)" : "rgba(8,10,14,0.56)",
+            border: isLight ? `1px solid rgba(226,232,240,0.6)` : `1px solid ${cat.border}`,
           }}
         >
           <cat.Icon size={12} style={{ color: cat.color }} />
           <span
             className="text-[11px] font-bold uppercase tracking-[0.22em]"
-            style={{ color: cat.colorLight }}
+            style={{ color: isLight ? cat.color : cat.colorLight }}
           >
             {cat.label}
           </span>
         </div>
-
       </div>
 
       <div className="p-4 sm:p-5">
@@ -355,7 +358,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
               </span>
             </div>
           </div>
-          <Stars count={cat.mockRating} color={cat.color} />
+          <Stars count={cat.mockRating} color={cat.color} isLight={isLight} />
         </div>
 
         <p className="mb-3 text-[14px] leading-[1.7] text-[var(--text-secondary)]">
@@ -366,7 +369,9 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
           className="mb-4 rounded-xl border-l-2 py-2 pl-3 pr-2"
           style={{
             borderColor: `${cat.color}50`,
-            background: `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`,
+            background: isLight
+              ? `linear-gradient(135deg, ${cat.color}08, rgba(248,250,252,0.5))`
+              : `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`,
           }}
         >
           <p className="text-[13px] italic leading-[1.65] text-[var(--text-secondary)]">
@@ -380,9 +385,11 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
               key={tag}
               className="rounded-full px-2.5 py-1 text-[11px] font-medium"
               style={{
-                background: "color-mix(in srgb, var(--bg-card) 68%, transparent)",
+                background: isLight
+                  ? "rgba(241,245,249,0.8)"
+                  : "color-mix(in srgb, var(--bg-card) 68%, transparent)",
                 color: "var(--text-muted)",
-                border: "1px solid var(--border)",
+                border: isLight ? "1px solid rgba(226,232,240,0.8)" : "1px solid var(--border)",
               }}
             >
               #{tag}
@@ -394,11 +401,91 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
   );
 }
 
+function getTabStyles(cat: Category, isActive: boolean, isLight: boolean) {
+  if (!isActive) {
+    return {
+      tabBg: "transparent",
+      tabBorder: "1px solid transparent",
+      tabShadow: "none",
+      iconBg: isLight ? "rgba(241,245,249,0.8)" : "rgba(42,42,42,0.3)",
+      labelColor: "var(--text-secondary)",
+    };
+  }
+
+  return isLight
+    ? {
+        tabBg: "rgba(255,255,255,0.95)",
+        tabBorder: "1px solid rgba(226,232,240,0.9)",
+        tabShadow: "0 4px 16px rgba(15,23,42,0.06), 0 1px 4px rgba(15,23,42,0.04)",
+        iconBg: `${cat.color}14`,
+        labelColor: cat.color,
+      }
+    : {
+        tabBg: `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`,
+        tabBorder: `1px solid ${cat.border}`,
+        tabShadow: "none",
+        iconBg: cat.bg,
+        labelColor: cat.colorLight,
+      };
+}
+
+function CategoryTab({
+  cat,
+  isActive,
+  isLight,
+  onClick,
+}: {
+  readonly cat: Category;
+  readonly isActive: boolean;
+  readonly isLight: boolean;
+  readonly onClick: () => void;
+}) {
+  const { tabBg, tabBorder, tabShadow, iconBg, labelColor } = getTabStyles(cat, isActive, isLight);
+
+  return (
+    <motion.button
+      onClick={onClick}
+      data-active={isActive ? "true" : "false"}
+      className="dn-category-tab group relative flex flex-shrink-0 items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left transition-colors duration-200 sm:w-44 sm:px-4 sm:py-3"
+      style={{ background: tabBg, border: tabBorder, boxShadow: tabShadow }}
+      whileHover={{ scale: 1.03, x: 2 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.15 }}
+    >
+      <div
+        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-200"
+        style={{
+          background: iconBg,
+          boxShadow: isActive ? `0 0 16px ${cat.color}22` : "none",
+        }}
+      >
+        <cat.Icon size={16} style={{ color: isActive ? cat.color : "var(--text-muted)" }} />
+      </div>
+      <span
+        className="text-[14px] font-semibold transition-colors duration-200 sm:text-sm"
+        style={{ color: labelColor }}
+      >
+        {cat.label}
+      </span>
+      {isActive && (
+        <motion.div
+          className="absolute -left-px top-1/2 hidden h-5 w-[3px] -translate-y-1/2 rounded-r-full sm:block"
+          style={{ background: cat.color }}
+          layoutId="showcase-indicator"
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
+    </motion.button>
+  );
+}
+
 export function CategoryShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const [activeIdx, setActiveIdx] = useState(0);
   const activeCat = CATEGORIES[activeIdx];
+  const { theme } = useTheme();
+  const isLight = theme === "light";
 
   return (
     <section
@@ -410,7 +497,7 @@ export function CategoryShowcase() {
         animate={isInView ? { width: "66%" } : {}}
         transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.2), transparent)",
         }}
       />
 
@@ -424,8 +511,8 @@ export function CategoryShowcase() {
           <motion.div
             className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
             style={{
-              borderColor: "rgba(196,162,75,0.2)",
-              background: "rgba(196,162,75,0.06)",
+              borderColor: "rgba(16,185,129,0.2)",
+              background: "rgba(16,185,129,0.06)",
               color: "var(--gold)",
             }}
             initial={{ opacity: 0, scale: 0.8 }}
@@ -447,7 +534,7 @@ export function CategoryShowcase() {
           <span
             className="dn-shimmer-text"
             style={{
-              background: "linear-gradient(90deg, #fff8c8, #e8b820, #f8d840, #c6972e, #fff8c8)",
+              background: "linear-gradient(90deg, #a7f3d0, #10b981, #059669, #34d399, #a7f3d0)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -463,7 +550,8 @@ export function CategoryShowcase() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Filmden kitaba, geziden oyuna; her kategori notunu kendi tarzına uygun bir kapakla öne çıkarır.
+          Filmden kitaba, geziden oyuna; her kategori notunu kendi tarzına uygun bir kapakla öne
+          çıkarır.
         </motion.p>
       </motion.div>
 
@@ -477,56 +565,15 @@ export function CategoryShowcase() {
           className="scrollbar-hide -mx-3 flex gap-1.5 overflow-x-auto px-3 pb-2 sm:mx-0 sm:flex-col sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-0"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
-          {CATEGORIES.map((cat, index) => {
-            const isActive = index === activeIdx;
-
-            return (
-              <motion.button
-                key={cat.key}
-                onClick={() => setActiveIdx(index)}
-                data-active={isActive ? "true" : "false"}
-                className="dn-category-tab group relative flex flex-shrink-0 items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-left transition-colors duration-200 sm:w-44 sm:px-4 sm:py-3"
-                style={{
-                  background: isActive
-                    ? `linear-gradient(135deg, ${cat.bg}, rgba(255,255,255,0.02))`
-                    : "transparent",
-                  border: isActive ? `1px solid ${cat.border}` : "1px solid transparent",
-                }}
-                whileHover={{ scale: 1.03, x: 2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ duration: 0.15 }}
-              >
-                <div
-                  className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-200"
-                  style={{
-                    background: isActive ? cat.bg : "rgba(42,42,42,0.3)",
-                    boxShadow: isActive ? `0 0 16px ${cat.color}22` : "none",
-                  }}
-                >
-                  <cat.Icon
-                    size={16}
-                    style={{ color: isActive ? cat.color : "var(--text-muted)" }}
-                  />
-                </div>
-
-                <span
-                  className="text-[14px] font-semibold transition-colors duration-200 sm:text-sm"
-                  style={{ color: isActive ? cat.colorLight : "var(--text-secondary)" }}
-                >
-                  {cat.label}
-                </span>
-
-                {isActive && (
-                  <motion.div
-                    className="absolute -left-px top-1/2 hidden h-5 w-[3px] -translate-y-1/2 rounded-r-full sm:block"
-                    style={{ background: cat.color }}
-                    layoutId="showcase-indicator"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-              </motion.button>
-            );
-          })}
+          {CATEGORIES.map((cat, index) => (
+            <CategoryTab
+              key={cat.key}
+              cat={cat}
+              isActive={index === activeIdx}
+              isLight={isLight}
+              onClick={() => setActiveIdx(index)}
+            />
+          ))}
         </div>
 
         <div className="flex-1">

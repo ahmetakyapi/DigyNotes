@@ -80,8 +80,8 @@ export default function RegisterPage() {
       <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-[#6366f1]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
-        <div className="bg-gradient-radial from-[#4a90e2]/4 absolute bottom-0 left-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#10b981]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#0ea5e9]/4 absolute bottom-0 left-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="name"
                 placeholder="Adın Soyadın"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
+                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
             </div>
 
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                   placeholder="kullanici_adin"
                   minLength={3}
                   maxLength={30}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
+                  className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
                 />
               </div>
               <p className="mt-1 text-[11px] text-[var(--text-muted)]">
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="ornek@mail.com"
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
+                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
             </div>
 
@@ -188,7 +188,7 @@ export default function RegisterPage() {
                   required
                   autoComplete="new-password"
                   placeholder="En az 6 karakter"
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] dn-input-auth sm:text-sm"
+                  className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
                 />
                 <button
                   type="button"
@@ -295,10 +295,7 @@ export default function RegisterPage() {
           {/* Login link */}
           <p className="text-center text-sm text-[var(--text-secondary)]">
             Zaten hesabın var mı?{" "}
-            <Link
-              href="/login"
-              className="dn-auth-link font-medium transition-colors"
-            >
+            <Link href="/login" className="dn-auth-link font-medium transition-colors">
               Giriş Yap
             </Link>
           </p>
