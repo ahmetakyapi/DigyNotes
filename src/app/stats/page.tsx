@@ -165,7 +165,7 @@ export default function PersonalStatsPage() {
           </p>
           <Link
             href="/new-post"
-            className="mt-4 inline-flex rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.24)] transition-all hover:brightness-110"
           >
             İlk notu oluştur
           </Link>

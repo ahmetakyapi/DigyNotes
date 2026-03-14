@@ -52,8 +52,11 @@ export function RotatingWord() {
         className="inline-block text-center"
         style={{
           background: WORD_STYLES[0].gradient,
+          backgroundClip: "text",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
+          color: "transparent",
+          transform: "translateZ(0)",
         }}
       >
         {WORDS[0]}
@@ -76,16 +79,18 @@ export function RotatingWord() {
         <motion.span
           key={index}
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
         >
           <span
             style={{
               background: style.gradient,
+              backgroundClip: "text",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
+              color: "transparent",
               whiteSpace: "nowrap",
             }}
           >

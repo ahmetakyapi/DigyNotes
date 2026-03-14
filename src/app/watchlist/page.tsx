@@ -224,7 +224,7 @@ export default function WatchlistPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)]"
+            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110"
           >
             Giriş Yap
           </Link>
@@ -372,7 +372,7 @@ export default function WatchlistPage() {
                 type="button"
                 onClick={() => addToWatchlist(selectedResult)}
                 disabled={pendingExternalId !== null || isSelectedResultSaved}
-                className="rounded-xl bg-[var(--gold)] px-4 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)] disabled:opacity-50"
+                className="rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:opacity-50"
               >
                 {isSelectedResultSaved
                   ? "İstek listesinde"
