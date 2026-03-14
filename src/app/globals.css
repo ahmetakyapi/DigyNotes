@@ -47,14 +47,11 @@
   --media-glow: 0 20px 48px rgba(4, 8, 16, 0.55);
   --image-edge-fade: rgba(14, 22, 38, 0.96);
   --new-note-glow:
-    0 0 0 1px rgba(16, 185, 129, 0.35), 0 10px 24px rgba(16, 185, 129, 0.22),
-    0 0 24px rgba(52, 211, 153, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
   --new-note-glow-breathe:
-    0 0 0 1px rgba(16, 185, 129, 0.4), 0 11px 26px rgba(16, 185, 129, 0.26),
-    0 0 28px rgba(52, 211, 153, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
   --new-note-glow-strong:
-    0 0 0 1px rgba(52, 211, 153, 0.5), 0 14px 32px rgba(16, 185, 129, 0.34),
-    0 0 36px rgba(52, 211, 153, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 0 0 1px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.14);
 }
 
 html.light,
@@ -101,14 +98,11 @@ html[data-theme="light"] {
   --media-glow: 0 12px 28px rgba(15, 23, 42, 0.08);
   --image-edge-fade: rgba(255, 255, 255, 0);
   --new-note-glow:
-    0 0 0 1px rgba(5, 150, 105, 0.28), 0 6px 14px rgba(5, 150, 105, 0.14),
-    0 0 16px rgba(16, 185, 129, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
   --new-note-glow-breathe:
-    0 0 0 1px rgba(5, 150, 105, 0.32), 0 7px 16px rgba(5, 150, 105, 0.18),
-    0 0 20px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
   --new-note-glow-strong:
-    0 0 0 1px rgba(5, 150, 105, 0.4), 0 9px 22px rgba(5, 150, 105, 0.22),
-    0 0 26px rgba(16, 185, 129, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.56);
+    0 0 0 1px rgba(5, 150, 105, 0.28), 0 4px 12px rgba(5, 150, 105, 0.1);
 }
 
 html {
@@ -178,7 +172,7 @@ html[data-theme="light"] body {
 }
 
 .dn-new-note-animate {
-  animation: dn-new-note-aura 6.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: var(--new-note-glow);
 }
 
 @media (hover: hover) {
@@ -341,18 +335,9 @@ html[data-theme="light"] body {
 
 @keyframes dn-cta-breathe {
   0%,
-  100% {
-    box-shadow:
-      0 6px 20px rgba(16, 185, 129, 0.28),
-      0 0 0 1px rgba(52, 211, 153, 0.1) inset,
-      0 1px 0 rgba(255, 255, 255, 0.12) inset;
-  }
+  100%,
   50% {
-    box-shadow:
-      0 14px 40px rgba(16, 185, 129, 0.42),
-      0 0 60px rgba(52, 211, 153, 0.12),
-      0 0 0 1px rgba(52, 211, 153, 0.15) inset,
-      0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
   }
 }
 
@@ -472,7 +457,7 @@ html[data-theme="light"] .dn-badge-sheen::after {
 }
 
 .dn-cta-primary {
-  animation: dn-cta-breathe 4.6s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
 }
 
 .dn-cta-ghost {
@@ -519,45 +504,31 @@ html[data-theme="light"] .dn-cta-ghost {
 
 html.light .dn-cta-primary,
 html[data-theme="light"] .dn-cta-primary {
-  animation: dn-cta-breathe-blue 4.6s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
 }
 
 /* ─── Nav CTA button — theme-aware ─── */
 .dn-nav-cta-btn {
   background: linear-gradient(160deg, #34d399 0%, #10b981 28%, #059669 64%, #047857 100%);
   color: #ffffff;
-  box-shadow:
-    0 4px 16px rgba(16, 185, 129, 0.3),
-    0 0 0 1px rgba(52, 211, 153, 0.12) inset,
-    0 1px 0 rgba(255, 255, 255, 0.15) inset;
   text-shadow: 0 1px 2px rgba(4, 120, 87, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .dn-nav-cta-btn:hover {
-  box-shadow:
-    0 8px 28px rgba(16, 185, 129, 0.4),
-    0 0 0 1px rgba(52, 211, 153, 0.18) inset,
-    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  background: linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 64%, #059669 100%);
 }
 
 html.light .dn-nav-cta-btn,
 html[data-theme="light"] .dn-nav-cta-btn {
   background: linear-gradient(160deg, #10b981 0%, #059669 35%, #047857 70%, #065f46 100%);
   color: #ffffff;
-  box-shadow:
-    0 4px 16px rgba(5, 150, 105, 0.24),
-    0 0 0 1px rgba(16, 185, 129, 0.1) inset,
-    0 1px 0 rgba(255, 255, 255, 0.2) inset;
   text-shadow: 0 1px 2px rgba(6, 95, 70, 0.3);
 }
 
 html.light .dn-nav-cta-btn:hover,
 html[data-theme="light"] .dn-nav-cta-btn:hover {
-  box-shadow:
-    0 8px 28px rgba(5, 150, 105, 0.35),
-    0 0 0 1px rgba(16, 185, 129, 0.15) inset,
-    0 1px 0 rgba(255, 255, 255, 0.25) inset;
+  background: linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%);
 }
 
 /* ─── Light theme: Landing cards & preview visibility ─── */
@@ -665,36 +636,21 @@ html[data-theme="light"] .dn-category-tab[data-active="true"] {
 .dn-btn-primary-auth {
   background: linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%);
   color: #ffffff;
-  box-shadow:
-    0 4px 16px rgba(16, 185, 129, 0.28),
-    0 0 0 1px rgba(52, 211, 153, 0.1) inset,
-    0 1px 0 rgba(255, 255, 255, 0.14) inset;
   text-shadow: 0 1px 2px rgba(4, 120, 87, 0.25);
+  transition: background 0.2s ease;
 }
 .dn-btn-primary-auth:hover:not(:disabled) {
   background: linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%);
-  box-shadow:
-    0 8px 28px rgba(16, 185, 129, 0.38),
-    0 0 0 1px rgba(52, 211, 153, 0.15) inset,
-    0 1px 0 rgba(255, 255, 255, 0.18) inset;
 }
 html.light .dn-btn-primary-auth,
 html[data-theme="light"] .dn-btn-primary-auth {
   background: linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%);
   color: #ffffff;
-  box-shadow:
-    0 4px 16px rgba(5, 150, 105, 0.24),
-    0 0 0 1px rgba(16, 185, 129, 0.08) inset,
-    0 1px 0 rgba(255, 255, 255, 0.2) inset;
   text-shadow: 0 1px 2px rgba(6, 95, 70, 0.25);
 }
 html.light .dn-btn-primary-auth:hover:not(:disabled),
 html[data-theme="light"] .dn-btn-primary-auth:hover:not(:disabled) {
   background: linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%);
-  box-shadow:
-    0 8px 28px rgba(5, 150, 105, 0.35),
-    0 0 0 1px rgba(16, 185, 129, 0.12) inset,
-    0 1px 0 rgba(255, 255, 255, 0.24) inset;
 }
 
 .dn-input-auth:focus {
