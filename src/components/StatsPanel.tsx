@@ -319,7 +319,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <p className="text-sm text-[var(--text-muted)]">İstatistik görmek için önce not ekle.</p>
         <Link
           href="/new-post"
-          className="mt-3 text-xs text-[#c4a24b] transition-colors hover:text-[#d7ba68]"
+          className="mt-3 text-xs text-[#818cf8] transition-colors hover:text-[#6366f1]"
         >
           + İlk notu ekle
         </Link>

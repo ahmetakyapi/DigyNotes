@@ -407,11 +407,11 @@ export default function PersonalStatsPage() {
                     En Aktif Etiketler
                   </p>
                   <div className="flex flex-wrap gap-2">
-                {data.topTags.length === 0 ? (
+                    {data.topTags.length === 0 ? (
                       <span className="text-xs text-[var(--text-muted)]">
                         Henüz etiket yok. Etiket ekledikçe tekrar eden temalar burada görünür.
                       </span>
-                ) : (
+                    ) : (
                       data.topTags.map((tag) => (
                         <span
                           key={tag.name}

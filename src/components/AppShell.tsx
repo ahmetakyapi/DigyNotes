@@ -225,10 +225,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-[#c4a24b]/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgba(3,8,20,0.4)] backdrop-blur-md sm:hidden"
+                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-[#6366f1]/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgba(3,8,20,0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
-                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-[#c4a24b]/40" />
+                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-[#6366f1]/40" />
                   </div>
                 )}
                 <Link
@@ -237,10 +237,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   aria-label="Yeni not ekle"
                   aria-describedby={showNewNoteHint ? "new-note-mobile-hint" : undefined}
                   title="Yeni not ekle"
-                  className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 items-center justify-center gap-1 rounded-xl border border-[#e6c976]/45 px-3 text-[var(--text-on-accent)] transition-all duration-150 active:scale-[0.97] sm:h-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:bg-[var(--gold)] sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-medium sm:hover:bg-[var(--gold-light)]"
+                  className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 items-center justify-center gap-1 rounded-xl border border-[#6366f1]/45 px-3 text-white transition-all duration-150 active:scale-[0.97] sm:h-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-medium"
                   style={{
                     background:
-                      "linear-gradient(145deg, var(--gold-light) 0%, var(--gold) 64%, #a98030 100%)",
+                      "linear-gradient(145deg, #818cf8 0%, #6366f1 55%, #4f46e5 100%)",
                   }}
                 >
                   {/* Plus icon */}

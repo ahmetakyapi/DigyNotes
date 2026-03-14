@@ -5,11 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import {
-  BookmarkSimple,
-  MagnifyingGlass,
-  Sparkle,
-} from "@phosphor-icons/react";
+import { BookmarkSimple, MagnifyingGlass, Sparkle } from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
   getCategoryLabel,
@@ -17,11 +13,7 @@ import {
   normalizeCategory,
 } from "@/lib/categories";
 import { ORGANIZATION_SURFACES } from "@/lib/organization";
-import {
-  getClientErrorMessage,
-  isAuthenticationError,
-  requestJson,
-} from "@/lib/client-api";
+import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { MediaSearch, MediaSearchResult } from "@/components/MediaSearch";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -285,7 +277,7 @@ export default function WatchlistPage() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
             1. Kategori
           </span>
           <span className="rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
@@ -486,7 +478,10 @@ export default function WatchlistPage() {
                     }}
                   />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span className="border-[#c4a24b]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm" style={{ background: "var(--bg-overlay)" }}>
+                    <span
+                      className="border-[#c4a24b]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
+                      style={{ background: "var(--bg-overlay)" }}
+                    >
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
