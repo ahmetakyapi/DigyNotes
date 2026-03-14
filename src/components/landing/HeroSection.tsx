@@ -36,7 +36,7 @@ const LIGHT_THEME = {
 } as const;
 
 const DARK_THEME = {
-  glowBg: "radial-gradient(circle, #c4a24b 0%, #8a6820 50%, transparent 75%)",
+  glowBg: "radial-gradient(circle, #6366f1 0%, #4338ca 50%, transparent 75%)",
   dotBgImage:
     "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
   dotBgSize: "80px 80px",
@@ -49,8 +49,8 @@ const DARK_THEME = {
   badgeBg:
     "linear-gradient(135deg, rgba(201,168,76,0.12), rgba(129,140,248,0.08), rgba(255,107,53,0.08))",
   badgeBorder: "color-mix(in srgb, var(--gold) 28%, transparent)",
-  badgeDot: "radial-gradient(circle, #fbbf24, #c4a24b)",
-  badgeDotGlow: "0 0 8px #c4a24b",
+  badgeDot: "radial-gradient(circle, #a5b4fc, #6366f1)",
+  badgeDotGlow: "0 0 8px #6366f1",
   badgeText: "linear-gradient(90deg, var(--gold), var(--gold-light))",
   headingLine2:
     "linear-gradient(135deg, #48c890 0%, #28a068 22%, #148850 44%, #0a7040 66%, #065830 100%)",
@@ -313,10 +313,10 @@ export function HeroSection() {
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="h-8 w-5 rounded-full border border-[rgba(196,162,75,0.3)] p-1">
+          <div className="h-8 w-5 rounded-full border border-[rgba(99,102,241,0.35)] p-1">
             <motion.div
               className="h-1.5 w-1.5 rounded-full"
-              style={{ background: "rgba(196,162,75,0.6)" }}
+              style={{ background: "rgba(99,102,241,0.65)" }}
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             />

@@ -31,7 +31,7 @@ import { stripHtml } from "@/lib/text";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[#c4a24b]/20";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-[#6366f1]/60 focus:ring-1 focus:ring-[#6366f1]/15";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass =
@@ -436,7 +436,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <div className="min-w-0">
               <div className="mb-1 flex flex-wrap items-center gap-2">
                 <h1 className="text-xl font-bold text-[var(--text-primary)]">Yazıyı Düzenle</h1>
-                <span className="inline-flex items-center rounded-full border border-[#c4a24b]/25 bg-[#c4a24b]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--gold)]">
+                <span className="inline-flex items-center rounded-full border border-[#6366f1]/25 bg-[#6366f1]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--gold)]">
                   Düzenleniyor
                 </span>
                 {isDirty && (
@@ -560,7 +560,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           href={buildOpenStreetMapLink(lat, lng)}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
+                          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--text-primary)]"
                         >
                           Haritada aç
                         </a>
@@ -599,8 +599,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           disabled={isAdded || tags.length >= 10}
                           className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                             isAdded
-                              ? "border-[var(--gold)]/40 bg-[var(--gold)]/10 text-[var(--gold)]"
-                              : "hover:border-[var(--gold)]/40 border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                              ? "border-[#6366f1]/40 bg-[#6366f1]/10 text-[#818cf8]"
+                              : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/35 hover:text-[#818cf8]"
                           }`}
                         >
                           #{tagName}
@@ -703,7 +703,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 60%, var(--media-overlay-strong) 100%)",
                       }}
                     />
-                    <span className="absolute left-3 top-3 rounded-full border border-[#c4a24b]/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] backdrop-blur-md">
+                    <span className="absolute left-3 top-3 rounded-full border border-[#6366f1]/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] backdrop-blur-md">
                       Kapak Önizleme
                     </span>
                     <span className="absolute bottom-3 right-3 rounded-md border border-white/25 bg-black/40 px-2 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
@@ -743,12 +743,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             {supportsSpoiler && (
               <div className={sectionClass}>
                 <p className={labelClass}>Yayın Ayarları</p>
-                <label className="hover:border-[var(--gold)]/30 flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors">
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#6366f1]/25">
                   <input
                     type="checkbox"
                     checked={hasSpoiler}
                     onChange={(e) => setHasSpoiler(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--gold)] focus:ring-[var(--gold)]"
+                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#6366f1] focus:ring-[#6366f1]"
                   />
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -792,7 +792,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--gold)] px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.3)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
             >
               {isSubmitting ? (
                 <>

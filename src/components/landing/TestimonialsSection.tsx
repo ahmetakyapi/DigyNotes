@@ -9,7 +9,7 @@ const REASONS = [
     Icon: LuHeart,
     title: "Tamamen Ücretsiz",
     desc: "Reklam yok, gizli ücret yok. Tüm özellikler herkese açık.",
-    accent: "#c4a24b",
+    accent: "#6366f1",
     accentBg: "rgba(196,162,75,0.08)",
   },
   {

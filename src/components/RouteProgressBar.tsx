@@ -90,7 +90,7 @@ export function RouteProgressBar() {
       className="pointer-events-none fixed left-0 top-0 z-[10000] h-[2px]"
       style={{
         width: `${width}%`,
-        background: "linear-gradient(90deg, #c4a24b 0%, #d7ba68 60%, #c4a24b 100%)",
+        background: "linear-gradient(90deg, #6366f1 0%, #818cf8 60%, #6366f1 100%)",
         transition: active ? "width 0.12s linear" : "width 0.3s ease-out, opacity 0.25s ease",
         opacity: active ? 1 : width >= 100 ? 0 : 1,
         boxShadow: "0 0 8px rgba(201,168,76,0.65), 0 0 2px rgba(224,192,104,0.8)",

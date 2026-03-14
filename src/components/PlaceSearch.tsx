@@ -169,7 +169,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
     <div className="space-y-3">
       {/* Arama kutusu */}
       <div className="relative">
-        <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-[#c4a24b]">
+        <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-[#6366f1]">
           <MagnifyingGlass size={16} className="shrink-0 text-[var(--text-muted)]" />
           <input
             type="text"
@@ -181,7 +181,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             className="flex-1 bg-transparent text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:text-sm"
           />
           {loading && (
-            <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-[#c4a24b] border-t-transparent" />
+            <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-[#6366f1] border-t-transparent" />
           )}
           {query && !loading && (
             <button

@@ -40,14 +40,14 @@ import { stripHtml } from "@/lib/text";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)]/20 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#6366f1]/60 focus:ring-1 focus:ring-[#6366f1]/15 focus:bg-[var(--bg-card)]";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
 const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 function flashClass(flashed: boolean) {
-  return flashed ? "ring-2 ring-[var(--gold)]/50 border-[var(--gold)]/60" : "";
+  return flashed ? "ring-2 ring-[#6366f1]/40 border-[#6366f1]/50" : "";
 }
 
 export default function NewPostPage() {
@@ -364,7 +364,7 @@ export default function NewPostPage() {
   const nextPendingStep = flowSteps.find((item) => !item.complete);
   const nextActionText = autofillDone
     ? "Başlık ve durumu tamamla"
-    : nextPendingStep?.label ?? "İçeriğe geç";
+    : (nextPendingStep?.label ?? "İçeriğe geç");
   const statusSidebarCard = (
     <div className={cardClass}>
       <p className={labelClass}>Not Durumu</p>
@@ -418,7 +418,7 @@ export default function NewPostPage() {
               type="checkbox"
               checked={hasSpoiler}
               onChange={(event) => setHasSpoiler(event.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[var(--gold)] focus:ring-[var(--gold)]"
+              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#6366f1] focus:ring-[#6366f1]"
             />
             <span className="min-w-0">
               <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -536,8 +536,7 @@ export default function NewPostPage() {
 
       <TagInput value={tags} onChange={setTags} />
       <p className={`${helperTextClass} mt-3`}>
-        Etiketler notu daha sonra ararken ve kategori içinde daraltırken işini
-        kolaylaştırır.
+        Etiketler notu daha sonra ararken ve kategori içinde daraltırken işini kolaylaştırır.
       </p>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -551,8 +550,8 @@ export default function NewPostPage() {
               disabled={isAdded || tags.length >= 10}
               className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                 isAdded
-                  ? "border-[var(--gold)]/40 bg-[var(--gold)]/10 text-[var(--gold)]"
-                  : "hover:border-[var(--gold)]/40 border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                  ? "border-[#6366f1]/40 bg-[#6366f1]/10 text-[#818cf8]"
+                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/35 hover:text-[#818cf8]"
               }`}
             >
               #{tagName}
@@ -622,7 +621,7 @@ export default function NewPostPage() {
                     <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
                       {completedStepCount}/4 adım hazır
                     </span>
-                    <span className="rounded-full border border-[var(--gold)]/24 bg-[var(--gold)]/10 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+                    <span className="border-[var(--gold)]/24 bg-[var(--gold)]/10 rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
                       Sıradaki: {nextActionText}
                     </span>
                   </div>
@@ -799,7 +798,7 @@ export default function NewPostPage() {
                         href={buildOpenStreetMapLink(lat as number, lng as number)}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
+                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--text-primary)]"
                       >
                         Haritada aç
                       </a>
@@ -854,8 +853,8 @@ export default function NewPostPage() {
                     }}
                     className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                       isTemplateActive
-                        ? "border-[#c4a24b]/35 bg-[#c4a24b]/10 text-[var(--gold)]"
-                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#c4a24b]/30 hover:text-[var(--text-primary)]"
+                        ? "border-[#6366f1]/35 bg-[#6366f1]/10 text-[var(--gold)]"
+                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#6366f1]/30 hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}
@@ -873,7 +872,6 @@ export default function NewPostPage() {
                     : "İlk paragrafı boş bırakma; neden kaydettiğini söyleyen tek bir cümle bile yeterli."}
               </p>
             </div>
-
           </div>
 
           <aside className="order-2 hidden min-w-0 space-y-4 xl:sticky xl:top-24 xl:block xl:self-start">
@@ -919,7 +917,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-[var(--gold)] px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 hover:bg-[var(--gold-light)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.3)] transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? (
                 <>

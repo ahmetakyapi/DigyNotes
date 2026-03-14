@@ -7,11 +7,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import CollectionCard from "@/components/CollectionCard";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
-import {
-  getClientErrorMessage,
-  isAuthenticationError,
-  requestJson,
-} from "@/lib/client-api";
+import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 import { Collection } from "@/types";
 
 export default function CollectionsPage() {
@@ -138,7 +134,7 @@ export default function CollectionsPage() {
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <span className="bg-[#c4a24b]/8 inline-flex rounded-full border border-[#c4a24b]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="bg-[#6366f1]/8 inline-flex rounded-full border border-[#6366f1]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               Koleksiyonlar
             </span>
             <h1 className="mt-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
@@ -162,7 +158,7 @@ export default function CollectionsPage() {
           </div>
           <Link
             href="/notes"
-            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--gold)]"
           >
             Notlarıma dön
           </Link>
@@ -179,7 +175,7 @@ export default function CollectionsPage() {
               Önce başlık ve kısa açıklamayı ver. Not ekleme işi sonra detay sayfasında devam eder.
             </p>
           </div>
-          <span className="inline-flex w-fit rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 inline-flex w-fit rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
             İlk aksiyon burada
           </span>
         </div>

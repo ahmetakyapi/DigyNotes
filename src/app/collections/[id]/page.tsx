@@ -7,11 +7,7 @@ import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { Collection, Post } from "@/types";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
-import {
-  getClientErrorMessage,
-  isAuthenticationError,
-  requestJson,
-} from "@/lib/client-api";
+import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 import { StatusBadge } from "@/components/StatusBadge";
 import StarRating from "@/components/StarRating";
 import { getCategoryLabel } from "@/lib/categories";
@@ -246,7 +242,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <p className="mt-2 text-sm text-[var(--text-muted)]">
             Bu koleksiyon silinmiş olabilir veya görüntüleme iznin olmayabilir.
           </p>
-          <Link href="/collections" className="mt-4 inline-flex text-sm text-[var(--gold)]">
+          <Link href="/collections" className="mt-4 inline-flex text-sm text-[#818cf8]">
             ← Koleksiyonlara dön
           </Link>
         </div>
@@ -260,7 +256,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-[#c4a24b]/8 rounded-full border border-[#c4a24b]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+              <span className="bg-[#6366f1]/8 rounded-full border border-[#6366f1]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#818cf8]">
                 Koleksiyon
               </span>
               <span className="text-xs text-[var(--text-faint)]">
@@ -275,7 +271,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     maxLength={80}
-                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/60 sm:text-sm"
                   />
                 </label>
                 <label className="space-y-2">
@@ -285,7 +281,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     onChange={(event) => setDescription(event.target.value)}
                     rows={3}
                     maxLength={400}
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/60 sm:text-sm"
                   />
                 </label>
               </div>
@@ -305,7 +301,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     {collection.owner.username ? (
                       <Link
                         href={`/profile/${collection.owner.username}`}
-                        className="text-[var(--gold)] hover:text-[var(--gold-light)]"
+                        className="text-[#818cf8] hover:text-[#a5b4fc]"
                       >
                         {collection.owner.name}
                       </Link>
@@ -323,13 +319,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               type="button"
               onClick={() => void copyCollectionLink()}
               disabled={isCopyingLink}
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)] disabled:opacity-50"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[#818cf8] disabled:opacity-50"
             >
               {isCopyingLink ? "Kopyalanıyor..." : "Bağlantıyı Kopyala"}
             </button>
             <Link
               href="/collections"
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[#818cf8]"
             >
               Tüm Koleksiyonlar
             </Link>
@@ -339,7 +335,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   type="button"
                   onClick={saveCollection}
                   disabled={isSaving || !hasUnsavedChanges || title.trim() === ""}
-                  className="rounded-xl bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSaving
                     ? "Kaydediliyor..."
@@ -413,7 +409,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={postQuery}
                 onChange={(event) => setPostQuery(event.target.value)}
                 placeholder="Eklemek için not ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/60 sm:text-sm"
               />
               <p className="mt-2 text-[11px] text-[var(--text-faint)]">
                 {availablePosts.length} uygun not bulundu
@@ -426,7 +422,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               <button
                 type="button"
                 onClick={() => setPostQuery("")}
-                className="text-xs font-medium text-[var(--gold)] transition-colors hover:text-[var(--gold-light)]"
+                className="text-xs font-medium text-[#818cf8] transition-colors hover:text-[#a5b4fc]"
               >
                 Aramayı temizle
               </button>
@@ -458,7 +454,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-[#c4a24b]/20 px-2 py-0.5 text-[10px] text-[var(--gold)]">
+                        <span className="rounded-full border border-[#6366f1]/20 px-2 py-0.5 text-[10px] text-[#818cf8]">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -476,7 +472,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       type="button"
                       onClick={() => mutatePost(post.id, "POST")}
                       disabled={pendingPostId === post.id}
-                      className="rounded-xl bg-[var(--gold)] px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[var(--gold-light)] disabled:opacity-50"
+                      className="rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-3 py-2 text-xs font-semibold text-white shadow-[0_3px_10px_rgba(99,102,241,0.25)] transition-all hover:brightness-110 disabled:opacity-50"
                     >
                       {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona ekle"}
                     </button>
@@ -493,7 +489,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                         Math.min(count + 12, availablePosts.length)
                       )
                     }
-                    className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--gold)]"
+                    className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[#818cf8]"
                   >
                     Daha fazla göster
                   </button>
@@ -518,13 +514,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={collectionQuery}
                 onChange={(event) => setCollectionQuery(event.target.value)}
                 placeholder="Koleksiyon içinde ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#c4a24b]/45 sm:text-sm"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#6366f1]/60 sm:text-sm"
               />
               {collectionQuery.trim() && (
                 <button
                   type="button"
                   onClick={() => setCollectionQuery("")}
-                  className="self-end text-xs font-medium text-[var(--gold)] transition-colors hover:text-[var(--gold-light)]"
+                  className="self-end text-xs font-medium text-[#818cf8] transition-colors hover:text-[#a5b4fc]"
                 >
                   Aramayı temizle
                 </button>
@@ -545,7 +541,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
             <button
               type="button"
               onClick={() => setCollectionQuery("")}
-              className="mt-3 text-xs font-medium text-[var(--gold)] transition-colors hover:text-[var(--gold-light)]"
+              className="mt-3 text-xs font-medium text-[#818cf8] transition-colors hover:text-[#a5b4fc]"
             >
               Aramayı temizle
             </button>
@@ -571,14 +567,14 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 </Link>
                 <div className="space-y-3 p-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[#c4a24b]/20 px-2 py-0.5 text-[10px] text-[var(--gold)]">
+                    <span className="rounded-full border border-[#6366f1]/20 px-2 py-0.5 text-[10px] text-[#818cf8]">
                       {getCategoryLabel(post.category)}
                     </span>
                     {post.status && <StatusBadge status={post.status} />}
                   </div>
                   <div>
                     <Link href={`/posts/${post.id}`}>
-                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--text-primary)] hover:text-[var(--gold)]">
+                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--text-primary)] hover:text-[#818cf8]">
                         {formatDisplayTitle(post.title)}
                       </h3>
                     </Link>

@@ -82,7 +82,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             href={buildOpenStreetMapLink(selectedPost.lat!, selectedPost.lng!)}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#c4a24b]/35 hover:text-[var(--text-primary)]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#6366f1]/35 hover:text-[var(--text-primary)]"
           >
             <MapPin size={14} />
             OpenStreetMap&apos;te Aç
@@ -121,7 +121,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                   <span
                     className={`flex h-11 w-11 items-center justify-center rounded-full border text-xs font-bold shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${
                       isSelected
-                        ? "border-[#f4d98a] bg-[#c4a24b] text-[#241807]"
+                        ? "border-[#a5b4fc] bg-[#6366f1] text-white"
                         : "border-white/15 bg-white/10 text-white backdrop-blur-md"
                     }`}
                   >
@@ -172,7 +172,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             </div>
             <Link
               href={`/posts/${selectedPost.id}`}
-              className="mt-4 inline-flex rounded-xl bg-[var(--gold)] px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-colors hover:bg-[var(--gold-light)]"
+              className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-3 py-2 text-xs font-semibold text-white shadow-[0_3px_10px_rgba(99,102,241,0.25)] transition-all hover:brightness-110"
             >
               Notu Aç
             </Link>
@@ -191,8 +191,8 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
               onClick={() => setSelectedPostId(post.id)}
               className={`w-full rounded-2xl border p-3 text-left transition-all ${
                 isSelected
-                  ? "border-[#c4a24b]/35 bg-[#c4a24b]/10"
-                  : "border-[var(--border)] bg-[var(--bg-raised)] hover:border-[#c4a24b]/25"
+                  ? "border-[#6366f1]/35 bg-[#6366f1]/10"
+                  : "border-[var(--border)] bg-[var(--bg-raised)] hover:border-[#6366f1]/25"
               }`}
             >
               <div className="flex items-start gap-3">

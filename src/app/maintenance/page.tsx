@@ -11,7 +11,7 @@ export default async function MaintenancePage() {
         <div
           className="absolute -left-20 top-0 h-72 w-72 rounded-full opacity-[0.08] blur-[120px]"
           style={{
-            background: "radial-gradient(circle, #c4a24b 0%, #8a6820 55%, transparent 70%)",
+            background: "radial-gradient(circle, #6366f1 0%, #4338ca 55%, transparent 70%)",
           }}
         />
         <div
@@ -22,14 +22,14 @@ export default async function MaintenancePage() {
         />
       </div>
 
-      <div className="relative w-full max-w-2xl rounded-[32px] border border-[var(--border)] bg-[var(--bg-card)]/94 p-8 shadow-[0_28px_80px_rgba(3,8,20,0.34)] backdrop-blur-xl sm:p-10">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#c4a24b]/20 bg-[#c4a24b]/10">
+      <div className="bg-[var(--bg-card)]/94 relative w-full max-w-2xl rounded-[32px] border border-[var(--border)] p-8 shadow-[0_28px_80px_rgba(3,8,20,0.34)] backdrop-blur-xl sm:p-10">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#6366f1]/20 bg-[#6366f1]/10">
           <svg
             width="32"
             height="32"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#c4a24b"
+            stroke="#6366f1"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

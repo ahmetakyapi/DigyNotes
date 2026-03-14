@@ -80,7 +80,7 @@ export default function RegisterPage() {
       <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-[#c4a24b]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-[#6366f1]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
         <div className="bg-gradient-radial from-[#4a90e2]/4 absolute bottom-0 left-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"

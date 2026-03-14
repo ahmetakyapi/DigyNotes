@@ -8,7 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#c4a24b]/50 focus:ring-1 focus:ring-[#c4a24b]/20 transition-all text-[16px] sm:text-sm";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#6366f1]/60 focus:ring-1 focus:ring-[#6366f1]/15 transition-all text-[16px] sm:text-sm";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
@@ -252,7 +252,7 @@ export default function ProfileSettingsPage() {
                     unoptimized
                   />
                 ) : (
-                  <span className="text-2xl font-semibold text-[#c4a24b]">
+                  <span className="text-2xl font-semibold text-[#818cf8]">
                     {profile?.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -321,7 +321,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => setIsPublic((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"
+                  isPublic ? "bg-[#6366f1]" : "bg-[var(--bg-raised)]"
                 }`}
               >
                 <span
@@ -351,7 +351,7 @@ export default function ProfileSettingsPage() {
                   type="button"
                   onClick={toggleTheme}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    theme === "dark" ? "bg-[#c4a24b]" : "bg-[var(--bg-raised)]"
+                    theme === "dark" ? "bg-[#6366f1]" : "bg-[var(--bg-raised)]"
                   }`}
                 >
                   <span
@@ -365,7 +365,7 @@ export default function ProfileSettingsPage() {
               {/* Bildirimler link */}
               <Link
                 href="/notifications"
-                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#c4a24b]/30"
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#6366f1]/30"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
@@ -409,7 +409,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => handleExport("csv")}
                 disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#c4a24b]/30 disabled:opacity-50"
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#6366f1]/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
@@ -425,7 +425,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => handleExport("json")}
                 disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#c4a24b]/30 disabled:opacity-50"
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#6366f1]/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
@@ -480,7 +480,7 @@ export default function ProfileSettingsPage() {
                 usernameStatus === "invalid" ||
                 usernameStatus === "checking"
               }
-              className="rounded-lg bg-[#c4a24b] px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all hover:bg-[#d7ba68] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-gradient-to-r from-[#6366f1] via-[#4f46e5] to-[#4338ca] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(99,102,241,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>
