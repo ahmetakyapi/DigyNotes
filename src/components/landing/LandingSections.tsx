@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import Link from "next/link";
@@ -29,8 +31,6 @@ const FEATURES = [
     Icon: LuFilm,
     title: "Film",
     desc: "İzlediğin filmleri puanla, yönetmen ve yıl bilgisiyle birlikte kaydet.",
-    border: "rgba(56,88,168,0.18)",
-    gradientFrom: "rgba(40,64,140,0.07)",
     iconColor: "#6888c0",
     iconBg: "rgba(56,88,168,0.12)",
     iconBorder: "rgba(56,88,168,0.2)",
@@ -39,8 +39,6 @@ const FEATURES = [
     Icon: LuTv,
     title: "Dizi",
     desc: "Devam eden ya da biten dizileri durumlarıyla takip et.",
-    border: "rgba(200,176,144,0.16)",
-    gradientFrom: "rgba(168,140,96,0.07)",
     iconColor: "#c8b090",
     iconBg: "rgba(200,176,144,0.1)",
     iconBorder: "rgba(200,176,144,0.2)",
@@ -49,8 +47,6 @@ const FEATURES = [
     Icon: LuGamepad2,
     title: "Oyun",
     desc: "Oynadığın ya da oynamak istediğin oyunları RAWG veritabanıyla kaydet.",
-    border: "rgba(14,165,233,0.16)",
-    gradientFrom: "rgba(16,185,129,0.07)",
     iconColor: "#0ea5e9",
     iconBg: "rgba(14,165,233,0.1)",
     iconBorder: "rgba(14,165,233,0.2)",
@@ -59,8 +55,6 @@ const FEATURES = [
     Icon: LuBookOpen,
     title: "Kitap",
     desc: "Okuduğun ya da okumak istediğin kitapları listele, notlar al.",
-    border: "rgba(16,185,129,0.18)",
-    gradientFrom: "rgba(160,128,40,0.08)",
     iconColor: "#10b981",
     iconBg: "rgba(16,185,129,0.1)",
     iconBorder: "rgba(16,185,129,0.2)",
@@ -69,8 +63,6 @@ const FEATURES = [
     Icon: LuMapPin,
     title: "Gezi",
     desc: "Gezdiğin şehirleri, ülkeleri ve mekânları puanla, anılarını kaydet.",
-    border: "rgba(80,160,120,0.18)",
-    gradientFrom: "rgba(60,130,90,0.07)",
     iconColor: "#60a88a",
     iconBg: "rgba(80,160,120,0.1)",
     iconBorder: "rgba(80,160,120,0.2)",
@@ -123,7 +115,7 @@ export function FeaturesSection() {
       <motion.div
         className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
         animate={isInView ? { width: "66%" } : {}}
-        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1, ease: EASE }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.22), transparent)",
         }}
@@ -136,12 +128,7 @@ export function FeaturesSection() {
       >
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
-            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-            style={{
-              borderColor: "rgba(16,185,129,0.2)",
-              background: "rgba(16,185,129,0.06)",
-              color: "var(--gold)",
-            }}
+            className="chip"
             initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
             animate={isInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -159,7 +146,7 @@ export function FeaturesSection() {
           className="mb-3 text-[1.35rem] font-black text-[var(--text-primary)] sm:mb-4 sm:text-4xl xl:text-5xl"
           initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
         >
           Her şey{" "}
           <span
@@ -213,7 +200,7 @@ export function FeaturesSection() {
             initial={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(6px)" }}
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.55, delay: 0.3 + i * 0.1, ease: [0.16, 0.8, 0.24, 1] }}
+            transition={{ duration: 0.55, delay: 0.3 + i * 0.1, ease: EASE }}
             whileHover={{
               y: -4,
               scale: 1.04,
@@ -295,7 +282,7 @@ function TimelineStep({
       transition={{
         duration: 0.8,
         delay: index * 0.2,
-        ease: [0.16, 0.8, 0.24, 1],
+        ease: EASE,
       }}
     >
       {/* Step number circle with pulse */}
@@ -357,7 +344,7 @@ function TimelineStep({
           }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1, delay: 0.5 + index * 0.2, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 1, delay: 0.5 + index * 0.2, ease: EASE }}
         />
       )}
 
@@ -401,7 +388,7 @@ export function HowItWorksSection() {
       <motion.div
         className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
         animate={isInView ? { width: "66%" } : {}}
-        transition={{ duration: 1.2, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1.2, ease: EASE }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.22), transparent)",
         }}
@@ -411,12 +398,7 @@ export function HowItWorksSection() {
       <motion.div className="mb-10 text-center sm:mb-16" style={{ y: headingY }}>
         <div className="mb-4 flex items-center justify-center gap-2 sm:mb-5">
           <motion.div
-            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-            style={{
-              borderColor: "rgba(16,185,129,0.2)",
-              background: "rgba(16,185,129,0.06)",
-              color: "var(--gold)",
-            }}
+            className="chip"
             initial={{ opacity: 0, scale: 0.8, filter: "blur(6px)" }}
             animate={isInView ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -434,7 +416,7 @@ export function HowItWorksSection() {
           className="mb-3 text-[1.35rem] font-black text-[var(--text-primary)] sm:text-4xl xl:text-5xl"
           initial={{ opacity: 0, y: 30, filter: "blur(12px)" }}
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
         >
           Üç adımda{" "}
           <span
@@ -551,7 +533,7 @@ export function BottomCtaSection() {
         style={{ y: contentY }}
         initial={{ opacity: 0, filter: "blur(14px)" }}
         animate={isInView ? { opacity: 1, filter: "blur(0px)" } : {}}
-        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1, ease: EASE }}
       >
         {/* Decorative sparkle with enhanced pulse */}
         <motion.div
@@ -572,7 +554,7 @@ export function BottomCtaSection() {
         >
           <motion.div
             animate={isInView ? { rotate: [0, 360] } : {}}
-            transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 0.8, 0.24, 1] }}
+            transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
           >
             <LuSparkles size={22} style={{ color: "var(--gold)" }} />
           </motion.div>
@@ -604,7 +586,7 @@ export function BottomCtaSection() {
           className="mb-6 max-w-[320px] px-2 text-[14px] leading-relaxed text-[var(--text-secondary)] sm:mb-9 sm:max-w-md sm:px-0 sm:text-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
         >
           Kayıt ol, kategorilerini oluştur ve ilk notunu ekle.
           <br />
@@ -615,7 +597,7 @@ export function BottomCtaSection() {
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.9 }}
           animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.3, ease: EASE }}
         >
           <MagneticButton className="mx-auto w-auto">
             <Link

@@ -296,6 +296,8 @@ export function MediaSearch({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputWrapRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyle, setDropdownStyle] = useState({ top: 0, left: 0, width: 0 });
   const skipNextSearchRef = useRef(false);
   const requestSequenceRef = useRef(0);
 
@@ -382,6 +384,13 @@ export function MediaSearch({
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
+  // Dropdown açıldığında input'un pozisyonunu hesapla (fixed konumlandırma için)
+  useEffect(() => {
+    if (!isOpen || !inputWrapRef.current) return;
+    const rect = inputWrapRef.current.getBoundingClientRect();
+    setDropdownStyle({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+  }, [isOpen]);
+
   const handleSelect = useCallback(
     async (item: MediaSearchResult) => {
       requestSequenceRef.current += 1;
@@ -467,7 +476,7 @@ export function MediaSearch({
       )}
 
       {/* Search input */}
-      <div className="relative">
+      <div ref={inputWrapRef} className="relative">
         <input
           ref={inputRef}
           type="text"
@@ -507,64 +516,72 @@ export function MediaSearch({
           )}
         </div>
 
-        {/* Dropdown */}
-        {isOpen && results.length > 0 && (
-          <div
-            className="absolute z-50 mt-1 w-full overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-xl"
-            style={{ maxHeight: "min(320px, 40vh)" }}
-          >
-            {results.map((item, i) => (
-              <div
-                key={item.externalId ?? `${item.title}-${item.years}-${i}`}
-                onMouseEnter={() => setHighlighted(i)}
-                className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${
-                  highlighted === i ? "bg-[var(--bg-raised)]" : "hover:bg-[var(--bg-raised)]"
-                }`}
+      </div>
+
+      {/* Dropdown — fixed konumlandırma ile stacking context sorununu aşar */}
+      {isOpen && results.length > 0 && (
+        <div
+          className="overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-xl"
+          style={{
+            position: "fixed",
+            top: dropdownStyle.top,
+            left: dropdownStyle.left,
+            width: dropdownStyle.width,
+            maxHeight: "min(320px, 40vh)",
+            zIndex: 9999,
+          }}
+        >
+          {results.map((item, i) => (
+            <div
+              key={item.externalId ?? `${item.title}-${item.years}-${i}`}
+              onMouseEnter={() => setHighlighted(i)}
+              className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${
+                highlighted === i ? "bg-[var(--bg-raised)]" : "hover:bg-[var(--bg-raised)]"
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => handleSelect(item)}
+                className="flex min-w-0 flex-1 items-center gap-3 text-left"
               >
+                {item.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className={`flex-shrink-0 rounded object-cover ${imgClass}`}
+                  />
+                ) : (
+                  <div
+                    className={`flex flex-shrink-0 items-center justify-center rounded bg-[var(--bg-raised)] ${imgClass}`}
+                  >
+                    <span className="text-xs text-[var(--text-muted)]">?</span>
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-[var(--text-primary)]">
+                    {item.title}
+                  </p>
+                  {subtitle(item) && (
+                    <p className="truncate text-xs text-[var(--text-muted)]">{subtitle(item)}</p>
+                  )}
+                </div>
+              </button>
+              {onAction && (
                 <button
                   type="button"
-                  onClick={() => handleSelect(item)}
-                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                  onClick={() => {
+                    void onAction(item);
+                  }}
+                  className="bg-[#10b981]/8 hover:bg-[#10b981]/14 flex-shrink-0 rounded-lg border border-[#10b981]/25 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors"
                 >
-                  {item.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className={`flex-shrink-0 rounded object-cover ${imgClass}`}
-                    />
-                  ) : (
-                    <div
-                      className={`flex flex-shrink-0 items-center justify-center rounded bg-[var(--bg-raised)] ${imgClass}`}
-                    >
-                      <span className="text-xs text-[var(--text-muted)]">?</span>
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-[var(--text-primary)]">
-                      {item.title}
-                    </p>
-                    {subtitle(item) && (
-                      <p className="truncate text-xs text-[var(--text-muted)]">{subtitle(item)}</p>
-                    )}
-                  </div>
+                  {actionLabel}
                 </button>
-                {onAction && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void onAction(item);
-                    }}
-                    className="bg-[#10b981]/8 hover:bg-[#10b981]/14 flex-shrink-0 rounded-lg border border-[#10b981]/25 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors"
-                  >
-                    {actionLabel}
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       {showHelperText && (
         <p className="mt-2 text-[11px] leading-5 text-[var(--text-muted)]">

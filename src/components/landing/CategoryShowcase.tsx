@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
@@ -307,7 +309,7 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
       initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(8px)" }}
       animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       exit={{ opacity: 0, y: -16, scale: 0.97, filter: "blur(6px)" }}
-      transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
+      transition={{ duration: 0.45, ease: EASE }}
       className="dn-category-showcase-card overflow-hidden rounded-[1.6rem] border"
       style={{
         borderColor: isLight ? "rgba(226,232,240,0.7)" : cat.border,
@@ -495,7 +497,7 @@ export function CategoryShowcase() {
       <motion.div
         className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
         animate={isInView ? { width: "66%" } : {}}
-        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1, ease: EASE }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.2), transparent)",
         }}
@@ -505,16 +507,11 @@ export function CategoryShowcase() {
         className="mb-8 text-center sm:mb-12"
         initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
         animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-        transition={{ duration: 0.8, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 0.8, ease: EASE }}
       >
         <div className="mb-4 flex items-center justify-center sm:mb-5">
           <motion.div
-            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-            style={{
-              borderColor: "rgba(16,185,129,0.2)",
-              background: "rgba(16,185,129,0.06)",
-              color: "var(--gold)",
-            }}
+            className="chip"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}

@@ -4,6 +4,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
+import { useSpotlight } from "@/hooks/useSpotlight";
+import { EASE } from "@/lib/variants";
 import { MagneticButton } from "./MagneticButton";
 import { RotatingWord } from "./RotatingWord";
 import { FloatingParticles } from "./FloatingParticles";
@@ -70,6 +72,7 @@ export function HeroSection() {
   const isLight = theme === "light";
   const t = isLight ? LIGHT_THEME : DARK_THEME;
   const sectionRef = useRef<HTMLElement>(null);
+  const spotlight = useSpotlight(680, isLight ? "rgba(16,185,129,0.05)" : "rgba(16,185,129,0.07)");
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -83,6 +86,12 @@ export function HeroSection() {
       ref={sectionRef}
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 pb-4 pt-[4.4rem] sm:px-4 sm:pt-16"
     >
+      {/* Mouse spotlight */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{ background: spotlight }}
+      />
+
       {/* ── Subtle background layers ── */}
       <motion.div
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -163,10 +172,10 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: -14, scale: 0.88 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
         >
           <div
-            className="dn-badge-sheen dn-section-pill relative mb-1 mt-2 flex items-center gap-2 rounded-full border px-4 py-1.5 backdrop-blur-md sm:mb-1 sm:mt-0 sm:gap-3 sm:px-5 sm:py-2 2xl:px-6 2xl:py-2.5"
+            className="dn-badge-sheen chip relative mb-1 mt-2 sm:mb-1 sm:mt-0"
             style={{ background: t.badgeBg, borderColor: t.badgeBorder }}
           >
             <span
@@ -198,7 +207,7 @@ export function HeroSection() {
               style={{ lineHeight: 1.25 }}
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: [0.16, 0.8, 0.24, 1] }}
+              transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
             >
               <RotatingWord />
             </motion.span>
@@ -207,7 +216,7 @@ export function HeroSection() {
               className="mb-0.5 block px-[0.04em] py-[0.08em] sm:mb-1"
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.24, ease: [0.16, 0.8, 0.24, 1] }}
+              transition={{ duration: 0.85, delay: 0.24, ease: EASE }}
             >
               {/* key forces DOM remount on theme switch — prevents WebKit background-clip:text bug
                   that triggers when background style updates on elements inside transform stacking contexts */}
@@ -230,7 +239,7 @@ export function HeroSection() {
               className="mt-1 block px-[0.04em] pb-[0.06em] pt-[0.04em] sm:mt-1.5"
               initial={{ opacity: 0, y: 28, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.85, delay: 0.38, ease: [0.16, 0.8, 0.24, 1] }}
+              transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
               style={{ fontSize: "1.08em" }}
             >
               <span
@@ -255,7 +264,7 @@ export function HeroSection() {
             className="mx-auto max-w-[342px] px-2 py-1 text-center text-[1.02rem] font-medium leading-[1.74] text-[var(--text-secondary)] [text-wrap:balance] sm:mb-2 sm:max-w-3xl sm:px-0 sm:py-0 sm:text-[1.08rem] sm:leading-[1.86] xl:max-w-4xl xl:text-[1.18rem] 2xl:max-w-[54rem] 2xl:text-[1.24rem]"
             initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.85, delay: 0.52, ease: [0.16, 0.8, 0.24, 1] }}
+            transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
           >
             <span className="block [text-wrap:balance]">
               Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla.
@@ -271,7 +280,7 @@ export function HeroSection() {
           className="mb-4 mt-2 flex w-full flex-col gap-4 px-1.5 pb-1 sm:mb-0 sm:mt-1 sm:w-auto sm:flex-row sm:gap-5 sm:px-0 sm:pb-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.64, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.7, delay: 0.64, ease: EASE }}
         >
           <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
             <Link

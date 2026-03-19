@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
@@ -32,7 +34,7 @@ export function Reveal({
       transition={{
         duration,
         delay,
-        ease: [0.16, 0.8, 0.24, 1],
+        ease: EASE,
       }}
     >
       {children}
@@ -72,7 +74,7 @@ export function StaggerReveal({
           transition={{
             duration: 0.65,
             delay: delay + i * stagger,
-            ease: [0.16, 0.8, 0.24, 1],
+            ease: EASE,
           }}
         >
           {child}
@@ -102,7 +104,7 @@ export function ScaleReveal({ children, delay = 0, className, once = true }: Sca
       transition={{
         duration: 0.8,
         delay,
-        ease: [0.16, 0.8, 0.24, 1],
+        ease: EASE,
       }}
     >
       {children}

@@ -85,6 +85,11 @@ export default function LandingPage() {
       </nav>
 
       {/* ══════════════════════════════════════
+          MAIN CONTENT
+      ══════════════════════════════════════ */}
+      <main>
+
+      {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
       <HeroSection />
@@ -123,6 +128,8 @@ export default function LandingPage() {
           BOTTOM CTA
       ══════════════════════════════════════ */}
       <BottomCtaSection />
+
+      </main>
 
       {/* ══════════════════════════════════════
           FOOTER

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { EASE } from "@/lib/variants";
 
 const WORDS = ["İzlediklerin", "Oynadıkların", "Okudukların", "Gezdiklerin"];
 
@@ -82,7 +83,7 @@ export function RotatingWord() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.45, ease: [0.22, 0.68, 0.32, 1] }}
+          transition={{ duration: 0.45, ease: EASE }}
         >
           <span
             style={{
