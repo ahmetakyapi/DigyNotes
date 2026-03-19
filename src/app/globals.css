@@ -216,6 +216,15 @@ html[data-theme="light"] body {
   background-attachment: fixed;
 }
 
+/* ─── Mobilde background-attachment: fixed performans sorununa yol açar ─── */
+@media (max-width: 768px) {
+  body,
+  html.light body,
+  html[data-theme="light"] body {
+    background-attachment: scroll;
+  }
+}
+
 .dn-new-note-soft-glow {
   box-shadow: var(--new-note-glow);
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { ClockCounterClockwise, X, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { ClockCounterClockwiseIcon, XIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { getPostImageSrc } from "@/lib/post-image";
 import { ResilientImage } from "@/components/ResilientImage";
 import { getCategoryLabel } from "@/lib/categories";
@@ -164,7 +164,7 @@ export default function RecentlyViewed() {
     <section className="mb-1">
       {/* Header */}
       <div className="mb-1.5 flex items-center gap-2">
-        <ClockCounterClockwise
+        <ClockCounterClockwiseIcon
           size={13}
           weight="bold"
           className="flex-shrink-0 text-[var(--text-muted)]"
@@ -182,14 +182,14 @@ export default function RecentlyViewed() {
                 disabled={!canScrollLeft}
                 className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-secondary)] disabled:pointer-events-none disabled:opacity-0"
               >
-                <CaretLeft size={12} weight="bold" />
+                <CaretLeftIcon size={12} weight="bold" />
               </button>
               <button
                 onClick={() => scroll("right")}
                 disabled={!canScrollRight}
                 className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-secondary)] disabled:pointer-events-none disabled:opacity-0"
               >
-                <CaretRight size={12} weight="bold" />
+                <CaretRightIcon size={12} weight="bold" />
               </button>
             </div>
           )}
@@ -199,7 +199,7 @@ export default function RecentlyViewed() {
             title="Geçmişi temizle"
             className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--danger,#e53e3e)]"
           >
-            <X size={12} weight="bold" />
+            <XIcon size={12} weight="bold" />
           </button>
         </div>
       </div>

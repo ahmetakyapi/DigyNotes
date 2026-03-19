@@ -14,7 +14,7 @@ import {
   matchesAdvancedFilters,
 } from "@/components/SortFilterBar";
 import toast from "react-hot-toast";
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getCategoryLabel, isTravelCategory, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -150,7 +150,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       {/* ── Arama + Sıralama satırı ── */}
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <div className="relative max-w-xs flex-1">
-          <MagnifyingGlass
+          <MagnifyingGlassIcon
             size={11}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
           />
@@ -166,7 +166,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               onClick={() => setSearchQuery("")}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
             >
-              <X size={10} />
+              <XIcon size={10} />
             </button>
           )}
         </div>

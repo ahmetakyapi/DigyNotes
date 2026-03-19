@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback } from "react";
-import { ShareNetwork, Check, Link as LinkIcon } from "@phosphor-icons/react";
+import { ShareNetworkIcon, CheckIcon, Link as LinkIcon } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 
 interface ShareButtonProps {
@@ -63,9 +63,9 @@ export default function ShareButton({
       className={`hover:border-[var(--gold)]/30 flex items-center justify-center border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-all duration-200 hover:text-[var(--gold)] active:scale-95 ${btnClass} ${className}`}
     >
       {copied ? (
-        <Check size={iconSize} weight="bold" className="text-[#48bb78]" />
+        <CheckIcon size={iconSize} weight="bold" className="text-[#48bb78]" />
       ) : (
-        <ShareNetwork size={iconSize} weight="regular" />
+        <ShareNetworkIcon size={iconSize} weight="regular" />
       )}
     </button>
   );

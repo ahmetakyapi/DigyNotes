@@ -5,10 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import PasswordStrength from "@/components/PasswordStrength";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { EASE } from "@/lib/variants";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -93,7 +95,12 @@ export default function RegisterPage() {
       </div>
 
       {/* Card */}
-      <div className="relative w-full max-w-md">
+      <motion.div
+        className="relative w-full max-w-md"
+        initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.6, ease: EASE }}
+      >
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center">
           <Link href="/">
@@ -117,10 +124,11 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="reg-name" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Ad Soyad
               </label>
               <input
+                id="reg-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -133,7 +141,7 @@ export default function RegisterPage() {
 
             {/* Username */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="reg-username" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Kullanıcı Adı
               </label>
               <div className="relative">
@@ -141,10 +149,11 @@ export default function RegisterPage() {
                   @
                 </span>
                 <input
+                  id="reg-username"
                   type="text"
                   value={username}
                   onChange={(e) =>
-                    setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))
+                    setUsername(e.target.value.toLowerCase().replaceAll(/[^a-z0-9_]/g, ""))
                   }
                   required
                   autoComplete="username"
@@ -161,10 +170,11 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="reg-email" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 E-posta
               </label>
               <input
+                id="reg-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -177,11 +187,12 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="reg-password" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Şifre
               </label>
               <div className="relative">
                 <input
+                  id="reg-password"
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -193,6 +204,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
+                  aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
                   tabIndex={-1}
                 >
@@ -235,10 +247,11 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="reg-confirm-password" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Şifre (Tekrar)
               </label>
               <input
+                id="reg-confirm-password"
                 type={showPw ? "text" : "password"}
                 value={confirmPw}
                 onChange={(e) => setConfirmPw(e.target.value)}
@@ -310,7 +323,7 @@ export default function RegisterPage() {
             ← Ana sayfaya dön
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

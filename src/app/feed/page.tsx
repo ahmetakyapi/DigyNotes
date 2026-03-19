@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Compass, Sparkle, UsersThree } from "@phosphor-icons/react";
+import { CompassIcon, SparkleIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -66,7 +66,7 @@ export default function FeedPage() {
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-            <UsersThree size={28} weight="duotone" />
+            <UsersThreeIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Akışı görmek için giriş yap
@@ -93,7 +93,7 @@ export default function FeedPage() {
       ) : empty ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-            <Compass size={28} weight="duotone" />
+            <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Akışın henüz boş görünüyor
@@ -106,7 +106,7 @@ export default function FeedPage() {
             href="/discover"
             className="hover:bg-[#10b981]/12 bg-[#10b981]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 px-5 py-3 text-sm font-semibold text-[#34d399] transition-colors"
           >
-            <Sparkle size={16} weight="duotone" />
+            <SparkleIcon size={16} weight="duotone" />
             Keşfet
           </Link>
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MapPin } from "@phosphor-icons/react";
+import { MapPinIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import {
   buildOpenStreetMapEmbedUrl,
@@ -84,7 +84,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--text-primary)]"
           >
-            <MapPin size={14} />
+            <MapPinIcon size={14} />
             OpenStreetMap&apos;te Aç
           </a>
         </div>
