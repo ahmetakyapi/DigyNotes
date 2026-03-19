@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { LuShield, LuHeart, LuGlobe, LuClock, LuLock, LuSmartphone } from "react-icons/lu";
@@ -62,7 +64,7 @@ export function TestimonialsSection() {
       <motion.div
         className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"
         animate={isInView ? { width: "66%" } : {}}
-        transition={{ duration: 1, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1, ease: EASE }}
         style={{
           background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.2), transparent)",
         }}
@@ -73,16 +75,11 @@ export function TestimonialsSection() {
         className="mb-10 text-center sm:mb-14"
         initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
         animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-        transition={{ duration: 0.8, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 0.8, ease: EASE }}
       >
         <div className="mb-4 flex items-center justify-center sm:mb-5">
           <motion.div
-            className="dn-section-pill flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-            style={{
-              borderColor: "rgba(16,185,129,0.2)",
-              background: "rgba(16,185,129,0.06)",
-              color: "var(--gold)",
-            }}
+            className="chip"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -135,7 +132,7 @@ export function TestimonialsSection() {
             transition={{
               duration: 0.6,
               delay: 0.1 + i * 0.08,
-              ease: [0.16, 0.8, 0.24, 1],
+              ease: EASE,
             }}
             whileHover={{
               y: -4,

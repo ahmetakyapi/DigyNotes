@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useSpring } from "framer-motion";
 import { useTheme } from "@/components/ThemeProvider";
@@ -76,7 +78,7 @@ function Counter({
       className="group relative flex flex-col items-center gap-2"
       initial={{ opacity: 0, y: 30, scale: 0.85, filter: "blur(10px)" }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.16, 0.8, 0.24, 1] }}
+      transition={{ duration: 0.7, delay, ease: EASE }}
     >
       {/* Background glow pulse when done */}
       <motion.div
@@ -118,7 +120,7 @@ function AnimatedDivider({ delay = 0 }: { readonly delay?: number }) {
       className="mx-4 h-12 w-px sm:mx-8 sm:h-14"
       initial={{ scaleY: 0, opacity: 0 }}
       animate={isInView ? { scaleY: 1, opacity: 1 } : {}}
-      transition={{ duration: 0.6, delay, ease: [0.16, 0.8, 0.24, 1] }}
+      transition={{ duration: 0.6, delay, ease: EASE }}
     >
       <div
         className="h-full w-full rounded-full"

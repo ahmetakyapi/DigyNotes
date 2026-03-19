@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useSpring, useScroll, useTransform } from "framer-motion";
@@ -66,7 +68,7 @@ export function AppPreviewSection() {
           initial={{ opacity: 0, y: 48, scale: 0.96, filter: "blur(12px)" }}
           whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: [0.16, 0.8, 0.24, 1] }}
+          transition={{ duration: 0.9, ease: EASE }}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={handleMouseLeave}
@@ -245,7 +247,7 @@ export function AppPreviewSection() {
                       key={s}
                       viewBox="0 0 24 24"
                       className="h-2.5 w-2.5 sm:h-3 sm:w-3"
-                      fill={s <= 4 ? "#10b981" : "#1e1e1e"}
+                      fill={s <= 4 ? "#10b981" : "var(--border)"}
                     >
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
@@ -267,7 +269,7 @@ export function AppPreviewSection() {
                   transition={{
                     duration: 0.5,
                     delay: 0.6 + i * 0.08,
-                    ease: [0.16, 0.8, 0.24, 1],
+                    ease: EASE,
                   }}
                 >
                   <div
@@ -297,7 +299,7 @@ export function AppPreviewSection() {
                           key={s}
                           viewBox="0 0 24 24"
                           className="h-2 w-2 sm:h-2.5 sm:w-2.5"
-                          fill={s <= 4 ? "#10b981" : "#222"}
+                          fill={s <= 4 ? "#10b981" : "var(--border)"}
                         >
                           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                         </svg>

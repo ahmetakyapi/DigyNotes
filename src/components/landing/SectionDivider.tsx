@@ -1,5 +1,7 @@
 "use client";
 
+import { EASE } from "@/lib/variants";
+
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
@@ -17,7 +19,7 @@ export function SectionDivider({ color = "rgba(16,185,129,0.3)" }: { readonly co
       <motion.div
         className="mx-auto h-px w-0"
         animate={isInView ? { width: "66%" } : {}}
-        transition={{ duration: 1.2, ease: [0.16, 0.8, 0.24, 1] }}
+        transition={{ duration: 1.2, ease: EASE }}
         style={{
           background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
         }}
