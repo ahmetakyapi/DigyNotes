@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { BookmarkSimple } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 import { ActionTooltip } from "@/components/ActionTooltip";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
@@ -106,7 +106,7 @@ export function BookmarkButton({
             : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#10b981]/30 hover:text-[#34d399]"
         } ${className}`}
       >
-        <BookmarkSimple size={16} weight={bookmarked ? "fill" : "regular"} />
+        <BookmarkSimpleIcon size={16} weight={bookmarked ? "fill" : "regular"} />
         {showLabel && (
           <span>
             {bookmarked

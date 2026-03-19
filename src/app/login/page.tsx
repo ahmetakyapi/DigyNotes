@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { EASE } from "@/lib/variants";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -67,7 +69,12 @@ export default function LoginPage() {
       </div>
 
       {/* Card */}
-      <div className="relative w-full max-w-md">
+      <motion.div
+        className="relative w-full max-w-md"
+        initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.6, ease: EASE }}
+      >
         {/* Logo */}
         <div className="mb-10 flex flex-col items-center">
           <Link href="/">
@@ -91,10 +98,11 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="login-email" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 E-posta
               </label>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -107,11 +115,12 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              <label htmlFor="login-password" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
                 Şifre
               </label>
               <div className="relative">
                 <input
+                  id="login-password"
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -123,6 +132,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
+                  aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
                   tabIndex={-1}
                 >
@@ -215,7 +225,7 @@ export default function LoginPage() {
             ← Ana sayfaya dön
           </Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

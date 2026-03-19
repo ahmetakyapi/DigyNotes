@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
 import { useSession, signOut } from "next-auth/react";
-import { Bell } from "@phosphor-icons/react";
+import { BellIcon } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";
 import { FIXED_CATEGORIES, getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { useTheme } from "@/components/ThemeProvider";
@@ -164,7 +164,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   isNotifications ? "text-[#34d399]" : ""
                 }`}
               >
-                <Bell
+                <BellIcon
                   size={16}
                   weight={notificationCount > 0 || isNotifications ? "fill" : "regular"}
                 />
@@ -179,6 +179,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 onClick={toggleTheme}
                 title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+                aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
                 className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#34d399] sm:flex"
               >
                 {theme === "dark" ? (
@@ -346,7 +347,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                           className="flex flex-1 items-center justify-center gap-2 py-2.5 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                         >
                           <span className="relative">
-                            <Bell size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
+                            <BellIcon size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
                             {notificationCount > 0 && (
                               <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[#10b981] px-0.5 text-[8px] font-bold leading-[14px] text-white">
                                 {notificationCount > 9 ? "9+" : notificationCount}

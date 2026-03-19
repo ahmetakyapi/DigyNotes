@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { Heart } from "@phosphor-icons/react";
+import { HeartIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -825,7 +825,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#e53e3e]/30 hover:text-[#e53e3e]"
                   }`}
                 >
-                  <Heart
+                  <HeartIcon
                     size={16}
                     weight={likeData.liked ? "fill" : "regular"}
                     className="transition-transform duration-150"
@@ -839,7 +839,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {/* Kendi notu — sadece like sayısını göster */}
           {isOwnPost && likeData.count > 0 && (
             <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--surface-strong-border)] px-3 py-1.5 text-sm text-[var(--text-dim)]">
-              <Heart size={16} weight="fill" className="text-[#e53e3e]" />
+              <HeartIcon size={16} weight="fill" className="text-[#e53e3e]" />
               <span>{likeData.count}</span>
             </div>
           )}

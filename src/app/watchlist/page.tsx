@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { BookmarkSimple, MagnifyingGlass, Sparkle } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, MagnifyingGlassIcon, SparkleIcon } from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
   getCategoryLabel,
@@ -271,7 +271,7 @@ export default function WatchlistPage() {
             </p>
           </div>
           <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1.5 text-xs text-[var(--text-secondary)]">
-            <Sparkle size={14} weight="duotone" className="text-[var(--gold)]" />
+            <SparkleIcon size={14} weight="duotone" className="text-[var(--gold)]" />
             Şu an: {getCategoryLabel(activeCategory)}
           </div>
         </div>
@@ -390,7 +390,7 @@ export default function WatchlistPage() {
             </div>
             <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
               <label className="relative block w-full sm:min-w-[260px]">
-                <MagnifyingGlass
+                <MagnifyingGlassIcon
                   size={16}
                   weight="bold"
                   className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)]"
@@ -436,7 +436,7 @@ export default function WatchlistPage() {
         ) : filteredItems.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center shadow-[var(--shadow-soft)]">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-              <BookmarkSimple size={24} weight="duotone" />
+              <BookmarkSimpleIcon size={24} weight="duotone" />
             </div>
             <h3 className="mt-4 text-base font-semibold text-[var(--text-primary)]">
               {searchQuery.trim()

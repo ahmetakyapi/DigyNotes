@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { MagnifyingGlass, X, ArrowLeft, UserCircle } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, XIcon, ArrowLeftIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
 
 interface UserResult {
@@ -191,7 +191,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
         }
         title="Ara"
       >
-        <MagnifyingGlass size={16} />
+        <MagnifyingGlassIcon size={16} />
         {isMobileFull && <span className="text-xs font-medium">Ara</span>}
       </button>
     );
@@ -269,16 +269,16 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             onClick={closeSearch}
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
-            <ArrowLeft size={20} weight="bold" />
+            <ArrowLeftIcon size={20} weight="bold" />
           </button>
           <form
             onSubmit={submit}
             className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5"
           >
             {isUserMode ? (
-              <UserCircle size={14} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
+              <UserCircleIcon size={14} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
             ) : (
-              <MagnifyingGlass size={14} className="flex-shrink-0 text-[var(--text-muted)]" />
+              <MagnifyingGlassIcon size={14} className="flex-shrink-0 text-[var(--text-muted)]" />
             )}
             <input
               ref={inputRef}
@@ -299,7 +299,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                 }}
                 className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
               >
-                <X size={12} />
+                <XIcon size={12} />
               </button>
             )}
           </form>
@@ -309,7 +309,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
         <div className="flex-1 overflow-y-auto overscroll-contain px-3 py-3">
           {!query.trim() && (
             <div className="py-12 text-center">
-              <MagnifyingGlass size={32} className="mx-auto mb-3 text-[var(--text-faint)]" />
+              <MagnifyingGlassIcon size={32} className="mx-auto mb-3 text-[var(--text-faint)]" />
               <p className="text-sm text-[var(--text-muted)]">Not başlığı veya @kullanıcı ara</p>
             </div>
           )}
@@ -326,9 +326,9 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
           }`}
         >
           {isUserMode ? (
-            <UserCircle size={13} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
+            <UserCircleIcon size={13} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
           ) : (
-            <MagnifyingGlass size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
+            <MagnifyingGlassIcon size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
           )}
           <input
             type="text"
@@ -347,7 +347,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
               onClick={clear}
               className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
             >
-              <X size={11} />
+              <XIcon size={11} />
             </button>
           )}
         </form>

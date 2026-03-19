@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { Keyboard, X } from "@phosphor-icons/react";
+import { KeyboardIcon, XIcon } from "@phosphor-icons/react";
 
 const SHORTCUT_HELP_EVENT = "dn:shortcut-help";
 
@@ -56,7 +56,7 @@ export default function ShortcutHelpModal() {
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
-              <Keyboard size={18} weight="duotone" />
+              <KeyboardIcon size={18} weight="duotone" />
             </div>
             <h2 className="text-base font-semibold text-[var(--text-primary)]">
               Klavye Kısayolları
@@ -66,7 +66,7 @@ export default function ShortcutHelpModal() {
             onClick={() => setOpen(false)}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           >
-            <X size={16} />
+            <XIcon size={16} />
           </button>
         </div>
 

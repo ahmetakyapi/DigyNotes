@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Compass, Sparkle } from "@phosphor-icons/react";
+import { CompassIcon, SparkleIcon } from "@phosphor-icons/react";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -76,7 +76,7 @@ export default function RecommendedPage() {
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-            <Sparkle size={28} weight="duotone" />
+            <SparkleIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Önerileri görmek için giriş yap
@@ -103,7 +103,7 @@ export default function RecommendedPage() {
       ) : posts.length === 0 ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-            <Compass size={28} weight="duotone" />
+            <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Henüz öneri görünmüyor
@@ -116,7 +116,7 @@ export default function RecommendedPage() {
             href="/notes"
             className="hover:bg-[#10b981]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 bg-[#10b981]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
-            <Sparkle size={16} weight="duotone" />
+            <SparkleIcon size={16} weight="duotone" />
             Notlarıma dön
           </Link>
         </div>

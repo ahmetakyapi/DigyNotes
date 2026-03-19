@@ -7,7 +7,7 @@ import {
   Crown,
   Fire,
   Hash,
-  Sparkle,
+  SparkleIcon,
   Star,
   TrendUp,
 } from "@phosphor-icons/react";
@@ -400,7 +400,7 @@ export default function YearInReviewPage() {
       {data.topRated.length > 0 && (
         <div className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
-            <Sparkle size={14} weight="fill" className="text-[var(--gold)]" />
+            <SparkleIcon size={14} weight="fill" className="text-[var(--gold)]" />
             En Yüksek Puanlı Notlar
           </h2>
           <div className="space-y-2.5">

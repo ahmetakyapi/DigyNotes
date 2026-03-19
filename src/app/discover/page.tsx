@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { MagnifyingGlass, UsersThree } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import UserCard from "@/components/UserCard";
 
 interface PublicUser {
@@ -49,9 +49,7 @@ export default function DiscoverPage() {
     <main className="min-h-screen py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <header className="mb-8 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-          <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
-            Keşfet
-          </span>
+          <span className="chip">Keşfet</span>
           <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
             Topluluktaki Kişileri Keşfet
           </h1>
@@ -60,7 +58,7 @@ export default function DiscoverPage() {
           </p>
 
           <label className="relative mt-5 block w-full sm:max-w-md">
-            <MagnifyingGlass
+            <MagnifyingGlassIcon
               size={16}
               weight="bold"
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)]"
@@ -87,7 +85,7 @@ export default function DiscoverPage() {
         ) : users.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
-              <UsersThree size={24} weight="duotone" />
+              <UsersThreeIcon size={24} weight="duotone" />
             </div>
             <p className="text-sm text-[var(--text-secondary)]">
               {query ? "Kullanıcı bulunamadı." : "Henüz herkese açık profil yok."}

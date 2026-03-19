@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { MagnifyingGlass, MapPin, X } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon, MapPinIcon, XIcon } from "@phosphor-icons/react";
 
 interface NominatimAddress {
   city?: string;
@@ -170,7 +170,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
       {/* Arama kutusu */}
       <div className="relative">
         <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-[#10b981]">
-          <MagnifyingGlass size={16} className="shrink-0 text-[var(--text-muted)]" />
+          <MagnifyingGlassIcon size={16} className="shrink-0 text-[var(--text-muted)]" />
           <input
             type="text"
             value={query}
@@ -189,7 +189,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
               onClick={handleClear}
               className="shrink-0 text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
             >
-              <X size={14} />
+              <XIcon size={14} />
             </button>
           )}
         </div>
@@ -213,7 +213,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                       <img src={place.thumbUrl} alt={main} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
-                        <MapPin size={18} weight="fill" className="text-[var(--text-muted)]" />
+                        <MapPinIcon size={18} weight="fill" className="text-[var(--text-muted)]" />
                       </div>
                     )}
                   </div>
