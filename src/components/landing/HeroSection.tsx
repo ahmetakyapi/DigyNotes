@@ -406,17 +406,22 @@ export function HeroSection() {
             }}
           />
 
-          {/* App window frame — chrome bar only on lg+ */}
+          {/* ── Mobile: bare Remotion player ── */}
+          <div className="w-full overflow-hidden rounded-2xl lg:hidden">
+            <DigyNotesPlayer />
+          </div>
+
+          {/* ── Desktop: App window frame with chrome bar ── */}
           <div
-            className="relative w-full overflow-hidden rounded-none lg:rounded-[18px] lg:border lg:border-[var(--border)]"
+            className="relative hidden w-full overflow-hidden rounded-[18px] border border-[var(--border)] lg:block"
             style={{
               boxShadow:
                 "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 64px rgba(16,185,129,0.10), 0 8px 32px rgba(0,0,0,0.2)",
             }}
           >
-            {/* Chrome bar — hidden on mobile */}
+            {/* Chrome bar */}
             <div
-              className="hidden items-center gap-3 border-b border-[var(--border)] px-4 py-2.5 lg:flex"
+              className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5"
               style={{ background: "var(--bg-header)" }}
             >
               {/* Traffic lights */}
