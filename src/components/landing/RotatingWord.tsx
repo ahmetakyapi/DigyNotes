@@ -27,7 +27,7 @@ const WORD_STYLES = [
 
 const INTERVAL = 2600;
 
-export function RotatingWord() {
+export function RotatingWord({ innerClassName = "justify-center" }: { readonly innerClassName?: string }) {
   const [index, setIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -79,7 +79,7 @@ export function RotatingWord() {
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
-          className="absolute inset-0 flex items-center justify-center"
+          className={`absolute inset-0 flex items-center ${innerClassName}`}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
