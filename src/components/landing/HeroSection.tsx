@@ -326,7 +326,7 @@ export function HeroSection() {
             <MagneticButton className="w-full sm:w-auto">
               <Link
                 href="/register"
-                className="dn-cta-primary group relative block w-full overflow-hidden rounded-xl py-2.5 text-center text-[0.9rem] font-semibold tracking-[0.01em] transition-all duration-300 sm:px-8 sm:py-3 sm:text-[13px] 2xl:px-10 2xl:py-3.5"
+                className="dn-cta-primary group relative block w-full overflow-hidden rounded-2xl py-3.5 text-center text-[0.95rem] font-semibold tracking-[0.01em] transition-all duration-300 sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
                 style={{
                   background: t.ctaBtnBg,
                   color: t.ctaBtnTextColor,
@@ -352,7 +352,7 @@ export function HeroSection() {
             <MagneticButton className="w-full sm:w-auto">
               <Link
                 href="/login"
-                className="dn-cta-ghost block w-full rounded-xl border border-[var(--border)] py-2.5 text-center text-[0.88rem] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:px-8 sm:py-3 sm:text-[13px] 2xl:px-10 2xl:py-3.5"
+                className="dn-cta-ghost block w-full rounded-2xl border border-[var(--border)] py-3.5 text-center text-[0.93rem] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
                 style={{ background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)" }}
               >
                 Giriş Yap
@@ -373,15 +373,15 @@ export function HeroSection() {
               { value: "100%", label: "Ücretsiz" },
             ].map((s, i) => (
               <div key={s.label} className="flex items-center gap-5">
-                {i > 0 && <div className="h-4 w-px" style={{ background: "var(--border)" }} />}
+                {i > 0 && <div className="h-5 w-px" style={{ background: "var(--border)" }} />}
                 <div className="flex flex-col">
                   <span
-                    className="text-sm font-black leading-none tracking-tight"
+                    className="text-lg font-black leading-none tracking-tight sm:text-xl"
                     style={{ color: "var(--gold)" }}
                   >
                     {s.value}
                   </span>
-                  <span className="mt-0.5 text-[10px] font-medium text-[var(--text-muted)]">
+                  <span className="mt-1 text-xs font-medium text-[var(--text-muted)] sm:text-sm">
                     {s.label}
                   </span>
                 </div>
@@ -397,26 +397,26 @@ export function HeroSection() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
         >
-          {/* Glow halo */}
+          {/* Glow halo — desktop only */}
           <div
-            className="pointer-events-none absolute -inset-10 rounded-full blur-3xl"
+            className="pointer-events-none absolute -inset-10 hidden rounded-full blur-3xl lg:block"
             style={{
               background:
                 "radial-gradient(ellipse 70% 60% at 60% 50%, rgba(16,185,129,0.11), transparent)",
             }}
           />
 
-          {/* App window frame */}
+          {/* App window frame — chrome bar only on lg+ */}
           <div
-            className="relative w-full overflow-hidden rounded-[18px] border border-[var(--border)]"
+            className="relative w-full overflow-hidden rounded-none lg:rounded-[18px] lg:border lg:border-[var(--border)]"
             style={{
               boxShadow:
                 "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 64px rgba(16,185,129,0.10), 0 8px 32px rgba(0,0,0,0.2)",
             }}
           >
-            {/* Chrome bar */}
+            {/* Chrome bar — hidden on mobile */}
             <div
-              className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5"
+              className="hidden items-center gap-3 border-b border-[var(--border)] px-4 py-2.5 lg:flex"
               style={{ background: "var(--bg-header)" }}
             >
               {/* Traffic lights */}

@@ -47,12 +47,9 @@
   --media-control-hover-border: rgba(16, 185, 129, 0.55);
   --media-glow: 0 20px 48px rgba(4, 8, 16, 0.55);
   --image-edge-fade: rgba(14, 22, 38, 0.96);
-  --new-note-glow:
-    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
-  --new-note-glow-breathe:
-    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
-  --new-note-glow-strong:
-    0 0 0 1px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.14);
+  --new-note-glow: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
+  --new-note-glow-breathe: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
+  --new-note-glow-strong: 0 0 0 1px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.14);
 }
 
 html.light,
@@ -98,12 +95,9 @@ html[data-theme="light"] {
   --media-control-hover-border: rgba(5, 150, 105, 0.5);
   --media-glow: 0 12px 28px rgba(15, 23, 42, 0.08);
   --image-edge-fade: rgba(255, 255, 255, 0);
-  --new-note-glow:
-    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
-  --new-note-glow-breathe:
-    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
-  --new-note-glow-strong:
-    0 0 0 1px rgba(5, 150, 105, 0.28), 0 4px 12px rgba(5, 150, 105, 0.1);
+  --new-note-glow: 0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
+  --new-note-glow-breathe: 0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
+  --new-note-glow-strong: 0 0 0 1px rgba(5, 150, 105, 0.28), 0 4px 12px rgba(5, 150, 105, 0.1);
 }
 
 /* ── Mobile shadow overrides ── */

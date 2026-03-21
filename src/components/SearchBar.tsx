@@ -279,7 +279,11 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5"
           >
             {isUserMode ? (
-              <UserCircleIcon size={14} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
+              <UserCircleIcon
+                size={14}
+                className="flex-shrink-0 text-[var(--gold)]"
+                weight="bold"
+              />
             ) : (
               <MagnifyingGlassIcon size={14} className="flex-shrink-0 text-[var(--text-muted)]" />
             )}

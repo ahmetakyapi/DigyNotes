@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import type { SortFilterState } from "@/components/SortFilterBar";
 import { SortFilterBar } from "@/components/SortFilterBar";
 import TagBadge from "@/components/TagBadge";
@@ -234,18 +235,7 @@ export function PostsEmptyState({
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          className="text-[var(--text-muted)]"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" strokeLinecap="round" />
-        </svg>
+        <MagnifyingGlassIcon size={20} className="text-[var(--text-muted)]" />
       </div>
       <p className="mb-3 text-sm text-[var(--text-muted)]">
         {!hasVisiblePosts && activeTab === "kaydedilenler"

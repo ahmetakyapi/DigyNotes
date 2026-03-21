@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { getSearchTabForCategory, SearchTabKey } from "@/lib/categories";
 
 export interface MediaSearchResult {
@@ -505,17 +506,9 @@ export function MediaSearch({
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           ) : (
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
-              />
-            </svg>
+            <MagnifyingGlassIcon size={16} />
           )}
         </div>
-
       </div>
 
       {/* Dropdown — fixed konumlandırma ile stacking context sorununu aşar */}
