@@ -39,10 +39,6 @@ const LIGHT_THEME = {
   ctaBtnHoverShadow: "0 16px 48px rgba(5, 150, 105, 0.48)",
   statsBg: "rgba(255,255,255,0.7)",
   statsBorder: "rgba(16,185,129,0.2)",
-  notifBg: "rgba(255,255,255,0.92)",
-  notifBorder: "rgba(16,185,129,0.25)",
-  notifText: "#0f172a",
-  notifSub: "#64748b",
 } as const;
 
 const DARK_THEME = {
@@ -74,10 +70,6 @@ const DARK_THEME = {
   ctaBtnHoverShadow: "0 16px 48px rgba(16, 185, 129, 0.52)",
   statsBg: "rgba(255,255,255,0.04)",
   statsBorder: "rgba(255,255,255,0.08)",
-  notifBg: "rgba(16,24,40,0.95)",
-  notifBorder: "rgba(16,185,129,0.25)",
-  notifText: "#ecf2ff",
-  notifSub: "#6b7f9e",
 } as const;
 
 const FEATURE_PILLS = [
@@ -188,12 +180,11 @@ export function HeroSection() {
           İçerik — 2 kolon (lg+)
       ══════════════════════════════════════ */}
       <motion.div
-        className="relative z-10 w-full max-w-[460px] sm:max-w-5xl xl:max-w-7xl flex flex-col items-center gap-6 sm:gap-8 lg:grid lg:grid-cols-[1fr,1.1fr] lg:items-center lg:gap-14 xl:gap-20"
+        className="relative z-10 flex w-full max-w-[460px] flex-col items-center gap-6 sm:max-w-5xl sm:gap-8 lg:grid lg:grid-cols-[1fr,1.1fr] lg:items-center lg:gap-14 xl:max-w-7xl xl:gap-20"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         {/* ══ Sol kolon: metin + CTA ══ */}
-        <div className="flex w-full flex-col items-center lg:items-start gap-0">
-
+        <div className="flex w-full flex-col items-center gap-0 lg:items-start">
           {/* Badge */}
           <motion.div
             className="mb-5 sm:mb-6"
@@ -203,7 +194,11 @@ export function HeroSection() {
           >
             <div
               className="dn-badge-sheen chip relative flex items-center gap-2 rounded-full px-3.5 py-2 sm:px-4 sm:py-2.5"
-              style={{ background: t.badgeBg, borderColor: t.badgeBorder, border: `1px solid ${t.badgeBorder}` }}
+              style={{
+                background: t.badgeBg,
+                borderColor: t.badgeBorder,
+                border: `1px solid ${t.badgeBorder}`,
+              }}
             >
               <span
                 className="dn-dot-pulse h-1.5 w-1.5 flex-shrink-0 rounded-full sm:h-2 sm:w-2"
@@ -293,7 +288,8 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
           >
-            Film, dizi, oyun, kitap ve gezi anılarını kaydet. Puanla, etiketle — yıllar sonra bile aynı duyguyla geri dön.
+            Film, dizi, oyun, kitap ve gezi anılarını kaydet. Puanla, etiketle — yıllar sonra bile
+            aynı duyguyla geri dön.
           </motion.p>
 
           {/* Feature pills */}
@@ -377,12 +373,7 @@ export function HeroSection() {
               { value: "100%", label: "Ücretsiz" },
             ].map((s, i) => (
               <div key={s.label} className="flex items-center gap-5">
-                {i > 0 && (
-                  <div
-                    className="h-4 w-px"
-                    style={{ background: "var(--border)" }}
-                  />
-                )}
+                {i > 0 && <div className="h-4 w-px" style={{ background: "var(--border)" }} />}
                 <div className="flex flex-col">
                   <span
                     className="text-sm font-black leading-none tracking-tight"
@@ -401,59 +392,11 @@ export function HeroSection() {
 
         {/* ══ Sağ kolon: App window + Remotion player ══ */}
         <motion.div
-          className="hidden lg:flex relative w-full flex-col gap-3"
+          className="relative hidden w-full flex-col gap-3 lg:flex"
           initial={{ opacity: 0, x: 48, scale: 0.94 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
         >
-          {/* Floating notification card — üstte */}
-          <motion.div
-            className="absolute -top-5 -left-2 z-10 flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-xl"
-            style={{
-              background: t.notifBg,
-              border: `1px solid ${t.notifBorder}`,
-              backdropFilter: "blur(12px)",
-            }}
-            initial={{ opacity: 0, y: 12, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 1.1, ease: EASE }}
-          >
-            <div
-              className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl text-sm"
-              style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.25)" }}
-            >
-              🎬
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold leading-none" style={{ color: t.notifText }}>
-                Interstellar kaydedildi
-              </p>
-              <p className="mt-0.5 text-[10px]" style={{ color: t.notifSub }}>
-                ★★★★★ · Film
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Floating stat badge — sağ üst */}
-          <motion.div
-            className="absolute -right-3 top-10 z-10 flex flex-col items-center rounded-2xl px-3.5 py-2.5 shadow-xl"
-            style={{
-              background: t.notifBg,
-              border: `1px solid ${t.notifBorder}`,
-              backdropFilter: "blur(12px)",
-            }}
-            initial={{ opacity: 0, x: 12, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
-          >
-            <span className="text-lg font-black leading-none" style={{ color: "var(--gold)" }}>
-              47
-            </span>
-            <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide" style={{ color: t.notifSub }}>
-              Not
-            </span>
-          </motion.div>
-
           {/* Glow halo */}
           <div
             className="pointer-events-none absolute -inset-10 rounded-full blur-3xl"
@@ -515,10 +458,7 @@ export function HeroSection() {
                   >
                     DIGY
                   </span>
-                  <span
-                    className="text-[7px] font-bold tracking-wide"
-                    style={{ color: "#3399ff" }}
-                  >
+                  <span className="text-[7px] font-bold tracking-wide" style={{ color: "#3399ff" }}>
                     NOTES
                   </span>
                 </div>
