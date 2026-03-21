@@ -4,15 +4,18 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Toaster } from "react-hot-toast";
-import { useSession, signOut } from "next-auth/react";
-import { BellIcon } from "@phosphor-icons/react";
+import { useSession } from "next-auth/react";
+import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";
 import { FIXED_CATEGORIES, getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { useTheme } from "@/components/ThemeProvider";
+import { UserDropdownMenu } from "@/components/appshell/UserDropdownMenu";
+import { MobileTabBar } from "@/components/appshell/MobileTabBar";
+import { DesktopGlobalNav } from "@/components/appshell/DesktopGlobalNav";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+export default function AppShell({ children }: { readonly children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -59,7 +62,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       if (shownCount < 2) {
         setShowNewNoteHint(true);
         localStorage.setItem(NEW_NOTE_HINT_KEY, String(shownCount + 1));
-        const timer = window.setTimeout(() => setShowNewNoteHint(false), 5000);
+        const timer = globalThis.setTimeout(() => setShowNewNoteHint(false), 5000);
         return () => clearTimeout(timer);
       }
     } catch {
@@ -93,10 +96,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
 
     void loadNotifications();
-    window.addEventListener("notifications:refresh", handleRefresh);
+    globalThis.addEventListener("notifications:refresh", handleRefresh);
     return () => {
       active = false;
-      window.removeEventListener("notifications:refresh", handleRefresh);
+      globalThis.removeEventListener("notifications:refresh", handleRefresh);
     };
   }, [session?.user]);
 
@@ -111,7 +114,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const getActiveCategory = () => {
     if (pathname === "/notes") return "all";
-    const match = pathname.match(/^\/category\/(.+)/);
+    const match = /^\/category\/(.+)/.exec(pathname);
     return match ? normalizeCategory(decodeURIComponent(match[1])) : "";
   };
   const activeCategory = getActiveCategory();
@@ -183,41 +186,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#34d399] sm:flex"
               >
                 {theme === "dark" ? (
-                  /* Sun icon */
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="4" />
-                    <line x1="12" y1="2" x2="12" y2="4" />
-                    <line x1="12" y1="20" x2="12" y2="22" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="2" y1="12" x2="4" y2="12" />
-                    <line x1="20" y1="12" x2="22" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                  </svg>
+                  <SunIcon size={16} />
                 ) : (
-                  /* Moon icon */
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
+                  <MoonIcon size={16} />
                 )}
               </button>
 
@@ -245,15 +216,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 >
                   {/* Plus icon */}
                   <span className="flex items-center justify-center">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 12 12"
-                      fill="currentColor"
+                    <PlusIcon
+                      size={14}
+                      weight="bold"
                       className="flex-shrink-0 transition-transform duration-150 group-active:scale-90"
-                    >
-                      <path d="M6.75 1.25a.75.75 0 0 0-1.5 0V5.25H1.25a.75.75 0 0 0 0 1.5H5.25v4a.75.75 0 0 0 1.5 0V6.75h4a.75.75 0 0 0 0-1.5H6.75V1.25Z" />
-                    </svg>
+                    />
                   </span>
                   <span className="text-[12px] font-medium sm:text-[13px]">
                     <span className="sm:hidden">Not</span>
@@ -279,271 +246,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
                   {/* ── Dropdown menu ── */}
                   {showUserMenu && (
-                    <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
-                      {/* User info */}
-                      <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
-                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#10b981]/20 bg-[#10b981]/10">
-                          <span className="text-xs font-bold text-[#34d399]">{userInitial}</span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
-                            {session.user?.name}
-                          </p>
-                          <p className="mt-0.5 truncate text-[10px] leading-tight text-[var(--text-muted)]">
-                            {session.user?.email}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Nav items */}
-                      <div className="py-1">
-                        {userUsername && (
-                          <Link
-                            href={`/profile/${userUsername}`}
-                            onClick={() => setShowUserMenu(false)}
-                            className="flex items-center gap-2.5 px-3.5 py-3 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                            >
-                              <circle cx="12" cy="8" r="4" />
-                              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                            </svg>
-                            Profilim
-                          </Link>
-                        )}
-                        <Link
-                          href="/profile/settings"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                          >
-                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
-                          Ayarlar
-                        </Link>
-                      </div>
-
-                      {/* Mobile-only: Bildirimler & Tema — compact row */}
-                      <div className="flex items-center border-b border-t border-[var(--border-header)] sm:hidden">
-                        <Link
-                          href="/notifications"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex flex-1 items-center justify-center gap-2 py-2.5 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <span className="relative">
-                            <BellIcon size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
-                            {notificationCount > 0 && (
-                              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[#10b981] px-0.5 text-[8px] font-bold leading-[14px] text-white">
-                                {notificationCount > 9 ? "9+" : notificationCount}
-                              </span>
-                            )}
-                          </span>
-                          Bildirimler
-                        </Link>
-                        <div className="h-5 w-px bg-[var(--border-header)]" />
-                        <button
-                          onClick={() => {
-                            toggleTheme();
-                            setShowUserMenu(false);
-                          }}
-                          className="flex flex-1 items-center justify-center gap-2 py-2.5 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          {theme === "dark" ? (
-                            <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <circle cx="12" cy="12" r="4" />
-                              <line x1="12" y1="2" x2="12" y2="4" />
-                              <line x1="12" y1="20" x2="12" y2="22" />
-                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                              <line x1="2" y1="12" x2="4" y2="12" />
-                              <line x1="20" y1="12" x2="22" y2="12" />
-                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                            </svg>
-                          ) : (
-                            <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.8"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                          )}
-                          {theme === "dark" ? "Açık Tema" : "Koyu Tema"}
-                        </button>
-                      </div>
-
-                      {/* Nav items continued */}
-                      <div className="py-1">
-                        <Link
-                          href="/collections"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                          </svg>
-                          Koleksiyonlar
-                        </Link>
-                        <Link
-                          href="/watchlist"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                          </svg>
-                          İstek Listesi
-                        </Link>
-                        <Link
-                          href="/stats"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M4 19V10" />
-                            <path d="M10 19V5" />
-                            <path d="M16 19v-7" />
-                            <path d="M22 19v-3" />
-                          </svg>
-                          İstatistikler
-                        </Link>
-                        <Link
-                          href="/stats/year-in-review"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-[var(--text-secondary)] transition-colors duration-100 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                            <line x1="16" y1="2" x2="16" y2="6" />
-                            <line x1="8" y1="2" x2="8" y2="6" />
-                            <line x1="3" y1="10" x2="21" y2="10" />
-                          </svg>
-                          Yılın Özeti
-                        </Link>
-                      </div>
-
-                      {isAdmin && (
-                        <>
-                          <div className="border-t border-[var(--border-header)]" />
-                          <div className="py-1">
-                            <Link
-                              href="/admin"
-                              onClick={() => setShowUserMenu(false)}
-                              className="bg-[#10b981]/8 hover:bg-[#10b981]/14 mx-1 flex items-center gap-2.5 rounded-lg border border-[#10b981]/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#10b981]/40 hover:text-[var(--gold-light)]"
-                            >
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                              >
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                              </svg>
-                              Admin Paneli
-                              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--gold)] opacity-85 shadow-[0_0_0_3px_rgba(16,185,129,0.14)]" />
-                            </Link>
-                          </div>
-                        </>
-                      )}
-
-                      <div className="border-t border-[var(--border-header)]" />
-
-                      <div className="py-1">
-                        <button
-                          onClick={() => {
-                            localStorage.removeItem("dn_username");
-                            signOut({ callbackUrl: "/" });
-                          }}
-                          className="hover:bg-[var(--danger)]/5 flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[var(--text-muted)] transition-colors duration-100 hover:text-[var(--danger)]"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                          >
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                          </svg>
-                          Çıkış Yap
-                        </button>
-                      </div>
-                    </div>
+                    <UserDropdownMenu
+                      session={session}
+                      userUsername={userUsername}
+                      userInitial={userInitial}
+                      isAdmin={isAdmin}
+                      notificationCount={notificationCount}
+                      theme={theme}
+                      toggleTheme={toggleTheme}
+                      onClose={() => setShowUserMenu(false)}
+                    />
                   )}
                 </div>
               )}
@@ -609,77 +321,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <div className="mx-2 flex flex-shrink-0 items-center self-stretch">
               <div className="h-4 w-px bg-[var(--border)]" />
             </div>
-            <div className="flex flex-shrink-0 items-center gap-0.5 px-1">
-              <Link
-                href="/feed"
-                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
-                  isFeed
-                    ? "border-[#10b981] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                }`}
-              >
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3 11l19-9-9 19-2-8-8-2z" />
-                </svg>
-                Akış
-              </Link>
-              <Link
-                href="/recommended"
-                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
-                  isRecommended
-                    ? "border-[#10b981] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                }`}
-              >
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                Öneriler
-              </Link>
-              <Link
-                href="/discover"
-                className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
-                  isDiscover
-                    ? "border-[#10b981] text-[var(--text-primary)]"
-                    : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                }`}
-              >
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                Keşfet
-              </Link>
-            </div>
+            <DesktopGlobalNav isFeed={isFeed} isRecommended={isRecommended} isDiscover={isDiscover} />
           </div>
         </div>
       </header>
@@ -689,118 +331,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ─── MOBILE BOTTOM TAB BAR ─── */}
       {!hideMobileBottomTabs && (
-        <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border-header)] bg-[var(--bg-header)] backdrop-blur-xl sm:hidden">
-          <div
-            className="mx-auto flex max-w-xl items-center gap-1 px-1.5"
-            style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-          >
-            <Link
-              href="/notes"
-              className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isNotes ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="9" y1="13" x2="15" y2="13" />
-                <line x1="9" y1="17" x2="13" y2="17" />
-              </svg>
-              <span className="text-[10px] font-medium">Notlarım</span>
-            </Link>
-            <Link
-              href="/feed"
-              className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isFeed ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 11l19-9-9 19-2-8-8-2z" />
-              </svg>
-              <span className="text-[10px] font-medium">Akış</span>
-            </Link>
-            <Link
-              href="/recommended"
-              className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isRecommended ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-              <span className="text-[10px] font-medium">Öneriler</span>
-            </Link>
-            <Link
-              href="/discover"
-              className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isDiscover ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-              <span className="text-[10px] font-medium">Keşfet</span>
-            </Link>
-            <button
-              onClick={() =>
-                router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
-              }
-              className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
-                isProfile ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
-              }`}
-            >
-              <div
-                className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
-                  isProfile
-                    ? "bg-[#10b981]/20 text-[#34d399] ring-1 ring-[#10b981]/50"
-                    : "bg-[var(--bg-raised)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
-                }`}
-              >
-                {userInitial}
-              </div>
-              <span className="text-[10px] font-medium">Profil</span>
-            </button>
-          </div>
-        </nav>
+        <MobileTabBar
+          isNotes={isNotes}
+          isFeed={isFeed}
+          isRecommended={isRecommended}
+          isDiscover={isDiscover}
+          isProfile={isProfile}
+          userInitial={userInitial}
+          userUsername={userUsername}
+        />
       )}
 
       {/* ─── TOAST ─── */}
@@ -827,9 +366,9 @@ function NavTab({
   onClick,
   children,
 }: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
+  readonly active: boolean;
+  readonly onClick: () => void;
+  readonly children: React.ReactNode;
 }) {
   return (
     <button

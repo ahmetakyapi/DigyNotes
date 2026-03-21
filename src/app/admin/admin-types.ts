@@ -68,15 +68,15 @@ export type SeriesKey = "7d" | "30d" | "90d" | "365d";
 /* ─────────────────────────── constants ─────────────────────── */
 
 export const STATUS_COLORS: Record<string, string> = {
-  "İzlendi": "#10b981",
-  "İzleniyor": "#34d399",
-  "Okundu": "#34d399",
-  "Okunuyor": "#60a5fa",
-  "Oynandı": "#f472b6",
-  "Oynanıyor": "#fb923c",
-  "Tamamlandı": "#a78bfa",
+  İzlendi: "#10b981",
+  İzleniyor: "#34d399",
+  Okundu: "#34d399",
+  Okunuyor: "#60a5fa",
+  Oynandı: "#f472b6",
+  Oynanıyor: "#fb923c",
+  Tamamlandı: "#a78bfa",
   "Devam Ediyor": "#38bdf8",
-  "Belirsiz": "#3a3a5a",
+  Belirsiz: "#3a3a5a",
 };
 
 export const PIE_COLORS = [
