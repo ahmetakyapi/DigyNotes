@@ -185,11 +185,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
                 className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#34d399] sm:flex"
               >
-                {theme === "dark" ? (
-                  <SunIcon size={16} />
-                ) : (
-                  <MoonIcon size={16} />
-                )}
+                {theme === "dark" ? <SunIcon size={16} /> : <MoonIcon size={16} />}
               </button>
 
               {/* + Yeni Not */}
@@ -321,7 +317,11 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             <div className="mx-2 flex flex-shrink-0 items-center self-stretch">
               <div className="h-4 w-px bg-[var(--border)]" />
             </div>
-            <DesktopGlobalNav isFeed={isFeed} isRecommended={isRecommended} isDiscover={isDiscover} />
+            <DesktopGlobalNav
+              isFeed={isFeed}
+              isRecommended={isRecommended}
+              isDiscover={isDiscover}
+            />
           </div>
         </div>
       </header>

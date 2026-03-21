@@ -2,12 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  FileTextIcon,
-  NavigationArrowIcon,
-  StarIcon,
-  UsersThreeIcon,
-} from "@phosphor-icons/react";
+import { FileTextIcon, NavigationArrowIcon, StarIcon, UsersThreeIcon } from "@phosphor-icons/react";
 
 interface MobileTabBarProps {
   readonly isNotes: boolean;
@@ -36,10 +31,30 @@ export function MobileTabBar({
         className="mx-auto flex max-w-xl items-center gap-1 px-1.5"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
-        <MobileTab href="/notes" active={isNotes} label="Notlarım" icon={<FileTextIcon size={18} />} />
-        <MobileTab href="/feed" active={isFeed} label="Akış" icon={<NavigationArrowIcon size={18} />} />
-        <MobileTab href="/recommended" active={isRecommended} label="Öneriler" icon={<StarIcon size={18} />} />
-        <MobileTab href="/discover" active={isDiscover} label="Keşfet" icon={<UsersThreeIcon size={18} />} />
+        <MobileTab
+          href="/notes"
+          active={isNotes}
+          label="Notlarım"
+          icon={<FileTextIcon size={18} />}
+        />
+        <MobileTab
+          href="/feed"
+          active={isFeed}
+          label="Akış"
+          icon={<NavigationArrowIcon size={18} />}
+        />
+        <MobileTab
+          href="/recommended"
+          active={isRecommended}
+          label="Öneriler"
+          icon={<StarIcon size={18} />}
+        />
+        <MobileTab
+          href="/discover"
+          active={isDiscover}
+          label="Keşfet"
+          icon={<UsersThreeIcon size={18} />}
+        />
         <button
           onClick={() =>
             router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")

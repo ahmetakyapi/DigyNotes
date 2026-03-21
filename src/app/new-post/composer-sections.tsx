@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
+import { CaretDownIcon, InfoIcon } from "@phosphor-icons/react";
 import { MediaSearch } from "@/components/MediaSearch";
 import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import {
@@ -78,9 +79,13 @@ export function CategorySearchSection({
   onMediaSelect,
   onTitleChange,
 }: CategorySearchSectionProps) {
+  const [guidanceOpen, setGuidanceOpen] = useState(false);
+
   const searchHint = (() => {
-    if (autofillDone) return "Temel alanlar doldu. Aşağıda sadece başlığı ve durumu gözden geçirmen yeterli.";
-    if (isTravelCat) return "Doğru yeri seçtiğinde koordinatlar görünür ve gezi notu haritayla bağ kurar.";
+    if (autofillDone)
+      return "Temel alanlar doldu. Aşağıda sadece başlığı ve durumu gözden geçirmen yeterli.";
+    if (isTravelCat)
+      return "Doğru yeri seçtiğinde koordinatlar görünür ve gezi notu haritayla bağ kurar.";
     return "Arama başlangıcı hızlandırır; istersen sonucu seçmeden de devam edebilirsin.";
   })();
 
@@ -93,33 +98,47 @@ export function CategorySearchSection({
       }}
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-              İlk aksiyon
-            </p>
-            <h2 className="mt-1 text-lg font-semibold text-[var(--text-primary)] sm:text-[1.35rem]">
-              {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
-            </h2>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-secondary)]">
+        {/* ── Compact guidance bar (collapsed by default) ── */}
+        <div>
+          <button
+            type="button"
+            onClick={() => setGuidanceOpen((prev) => !prev)}
+            className="hover:bg-[var(--bg-raised)]/60 flex w-full items-center justify-between gap-3 rounded-lg px-1 py-1 text-left transition-colors"
+          >
+            <div className="flex min-w-0 items-center gap-2.5">
+              <InfoIcon size={16} weight="bold" className="shrink-0 text-[var(--gold)]" />
+              <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
+                {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
+              </span>
+              <span className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-muted)]">
+                {completedStepCount}/4
+              </span>
+              <span className="border-[var(--gold)]/24 bg-[var(--gold)]/10 shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
+                {nextActionText}
+              </span>
+            </div>
+            <CaretDownIcon
+              size={14}
+              weight="bold"
+              className={`shrink-0 text-[var(--text-muted)] transition-transform duration-200 ${guidanceOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {guidanceOpen && (
+            <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--bg-base)] px-3.5 py-3 text-sm leading-6 text-[var(--text-secondary)]">
               {supportsAutofill
                 ? "Kategori seç, arama sonucunu al ve sonra alt alandaki başlık ile durum bilgilerini tamamla."
                 : guidance.manualHint}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
-              {completedStepCount}/4 adım hazır
-            </span>
-            <span className="border-[var(--gold)]/24 bg-[var(--gold)]/10 rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
-              Sıradaki: {nextActionText}
-            </span>
-          </div>
+            </div>
+          )}
         </div>
 
+        {/* ── Category + Search / Title input ── */}
         <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5">
-            <label htmlFor="np-category" className={labelClass}>Kategori</label>
+            <label htmlFor="np-category" className={labelClass}>
+              Kategori
+            </label>
             <select
               id="np-category"
               value={category}
@@ -132,23 +151,9 @@ export function CategorySearchSection({
                 </option>
               ))}
             </select>
-            <p className={helperTextClass}>
-              Seçtiğin kategori aramayı, şablonu ve görünür alanları ayarlar.
-            </p>
           </div>
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5 sm:p-4">
-            <div className="mb-3">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
-              </p>
-              <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
-                {supportsAutofill
-                  ? guidance.searchDescription
-                  : "Bu kategoride otomatik arama yok. Önce başlığı ver, sonra aşağıdaki alanlarla notu tamamla."}
-              </p>
-            </div>
-
             {supportsAutofill ? (
               <>
                 <MediaSearch
@@ -156,9 +161,7 @@ export function CategorySearchSection({
                   lockedTab={lockedSearchTab}
                   onSelect={onMediaSelect}
                 />
-                <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-                  {searchHint}
-                </p>
+                <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">{searchHint}</p>
               </>
             ) : (
               <>
@@ -255,7 +258,9 @@ export function FieldsSection({
 
       {supportsAutofill && (
         <div className="mt-4">
-          <label htmlFor="np-title" className={labelClass}>Başlık</label>
+          <label htmlFor="np-title" className={labelClass}>
+            Başlık
+          </label>
           <input
             id="np-title"
             type="text"
@@ -274,7 +279,9 @@ export function FieldsSection({
 
       <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,0.8fr)_1fr_1fr]">
         <div>
-          <label htmlFor="np-status" className={labelClass}>Durum</label>
+          <label htmlFor="np-status" className={labelClass}>
+            Durum
+          </label>
           <select
             id="np-status"
             value={status}
@@ -294,9 +301,7 @@ export function FieldsSection({
           <div>
             <label htmlFor="np-creator" className={labelClass}>
               {config.creatorLabel}
-              {config.creatorRequired && (
-                <span className="ml-1 text-[var(--danger)]">*</span>
-              )}
+              {config.creatorRequired && <span className="ml-1 text-[var(--danger)]">*</span>}
             </label>
             <input
               id="np-creator"
@@ -436,7 +441,9 @@ export function ContentSection({
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
             4. adım
           </p>
-          <label htmlFor="np-content" className={`${labelClass} mb-0 mt-1`}>İçerik</label>
+          <label htmlFor="np-content" className={`${labelClass} mb-0 mt-1`}>
+            İçerik
+          </label>
           <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
             {activeTemplate ? activeTemplate.description : guidance.contentHint}
           </p>

@@ -59,7 +59,11 @@ export function UserDropdownMenu({
       {/* Nav items */}
       <div className="py-1">
         {userUsername && (
-          <DropdownLink href={`/profile/${userUsername}`} onClose={onClose} icon={<UserIcon size={14} />}>
+          <DropdownLink
+            href={`/profile/${userUsername}`}
+            onClose={onClose}
+            icon={<UserIcon size={14} />}
+          >
             Profilim
           </DropdownLink>
         )}
@@ -82,8 +86,8 @@ export function UserDropdownMenu({
                 {notificationCount > 9 ? "9+" : notificationCount}
               </span>
             )}
-          </span>
-          {" "}Bildirimler
+          </span>{" "}
+          Bildirimler
         </Link>
         <div className="h-5 w-px bg-[var(--border-header)]" />
         <button
@@ -109,7 +113,11 @@ export function UserDropdownMenu({
         <DropdownLink href="/stats" onClose={onClose} icon={<ChartBarIcon size={14} />}>
           İstatistikler
         </DropdownLink>
-        <DropdownLink href="/stats/year-in-review" onClose={onClose} icon={<CalendarIcon size={14} />}>
+        <DropdownLink
+          href="/stats/year-in-review"
+          onClose={onClose}
+          icon={<CalendarIcon size={14} />}
+        >
           Yılın Özeti
         </DropdownLink>
       </div>

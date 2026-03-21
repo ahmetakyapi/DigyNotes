@@ -92,7 +92,7 @@ function sceneOpacity(frame: number, start: number) {
 }
 
 /* ── DigyNotes logo component ── */
-function DigyNotesLogo({ height = 36 }: { readonly height?: number } = {}) {
+function DigyNotesLogo({ height = 64 }: { readonly height?: number } = {}) {
   return <Img src="/app-logo.png" style={{ height, width: "auto", objectFit: "contain" }} />;
 }
 
