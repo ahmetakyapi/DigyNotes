@@ -46,6 +46,9 @@ export default function ShortcutHelpModal() {
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shortcut-help-title"
       onClick={() => setOpen(false)}
     >
       <div
@@ -58,12 +61,13 @@ export default function ShortcutHelpModal() {
             <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
               <KeyboardIcon size={18} weight="duotone" />
             </div>
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+            <h2 id="shortcut-help-title" className="text-base font-semibold text-[var(--text-primary)]">
               Klavye Kısayolları
             </h2>
           </div>
           <button
             onClick={() => setOpen(false)}
+            aria-label="Kısayol yardımını kapat"
             className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           >
             <XIcon size={16} />

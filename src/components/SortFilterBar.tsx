@@ -210,6 +210,9 @@ export function SortFilterBar({
       {showAdvanced && (
         <div
           className="fixed inset-0 z-[90] bg-[rgba(3,6,12,0.76)] p-4 backdrop-blur-md sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sort-filter-title"
           onClick={() => setShowAdvanced(false)}
         >
           <div className="flex min-h-full items-end justify-center sm:items-center">
@@ -219,7 +222,7 @@ export function SortFilterBar({
             >
               <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3 id="sort-filter-title" className="text-lg font-semibold text-[var(--text-primary)]">
                     Filtreleri Düzenle
                   </h3>
                   <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">

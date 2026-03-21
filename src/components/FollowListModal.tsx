@@ -69,6 +69,9 @@ export default function FollowListModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "rgba(0,0,0,0.7)" }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="follow-list-title"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -77,12 +80,13 @@ export default function FollowListModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
           <div>
-            <h2 className="font-semibold text-[var(--text-primary)]">{title}</h2>
+            <h2 id="follow-list-title" className="font-semibold text-[var(--text-primary)]">{title}</h2>
             <p className="mt-1 text-xs text-[var(--text-muted)]">{subtitle}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Listeyi kapat"
             className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

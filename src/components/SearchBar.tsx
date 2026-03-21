@@ -258,6 +258,9 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       <div
         className="fixed inset-0 z-[60] flex flex-col bg-[var(--bg-base)] sm:hidden"
         style={{ height: "100dvh" }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Arama"
       >
         {/* Top bar */}
         <div
