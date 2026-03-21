@@ -10,7 +10,7 @@ export default function DigyNotesPlayerInner({ theme = "dark" }: Props) {
     <Player
       component={DigyNotesIntro}
       inputProps={{ theme }}
-      durationInFrames={300}
+      durationInFrames={840}
       compositionWidth={640}
       compositionHeight={480}
       fps={30}
