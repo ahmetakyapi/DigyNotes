@@ -55,7 +55,7 @@ export function serializePost<T extends PostWithDates>(post: T) {
  * Geçersiz input → 0 döner.
  */
 export function sanitizeRating(value: unknown): number {
-  const num = typeof value === "number" ? value : parseFloat(String(value));
+  const num = typeof value === "number" ? value : Number.parseFloat(String(value ?? ""));
   if (!Number.isFinite(num)) return 0;
   const clamped = Math.max(0, Math.min(5, num));
   return Math.round(clamped * 2) / 2; // 0.5 step

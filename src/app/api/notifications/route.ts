@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireAuth, handleApiError } from "@/lib/api-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -22,142 +21,145 @@ function parseLikeReference(referenceId: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    const limit = Math.min(
+      Number.parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10),
+      50
+    );
+    const notifications = await prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+    const unreadCount = await prisma.notification.count({
+      where: { userId, read: false },
+    });
 
-  const limit = Math.min(parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10), 50);
-  const notifications = await prisma.notification.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-  });
-  const unreadCount = await prisma.notification.count({
-    where: { userId, read: false },
-  });
+    const followActorIds = notifications
+      .filter((item) => item.type === "follow")
+      .map((item) => item.referenceId);
+    const likeRefs = notifications
+      .filter((item) => item.type === "like")
+      .map((item) => parseLikeReference(item.referenceId))
+      .filter(Boolean) as { postId: string; actorUserId: string }[];
+    const commentIds = notifications
+      .filter((item) => item.type === "comment")
+      .map((item) => item.referenceId);
 
-  const followActorIds = notifications
-    .filter((item) => item.type === "follow")
-    .map((item) => item.referenceId);
-  const likeRefs = notifications
-    .filter((item) => item.type === "like")
-    .map((item) => parseLikeReference(item.referenceId))
-    .filter(Boolean) as { postId: string; actorUserId: string }[];
-  const commentIds = notifications
-    .filter((item) => item.type === "comment")
-    .map((item) => item.referenceId);
-
-  const [followActors, likeActors, likePosts, commentRecords] = await Promise.all([
-    followActorIds.length > 0
-      ? prisma.user.findMany({
-          where: { id: { in: followActorIds } },
-          select: { id: true, name: true, username: true, avatarUrl: true },
-        })
-      : Promise.resolve([]),
-    likeRefs.length > 0
-      ? prisma.user.findMany({
-          where: { id: { in: likeRefs.map((item) => item.actorUserId) } },
-          select: { id: true, name: true, username: true, avatarUrl: true },
-        })
-      : Promise.resolve([]),
-    likeRefs.length > 0
-      ? prisma.post.findMany({
-          where: { id: { in: likeRefs.map((item) => item.postId) } },
-          select: { id: true, title: true },
-        })
-      : Promise.resolve([]),
-    commentIds.length > 0
-      ? prisma.comment.findMany({
-          where: { id: { in: commentIds } },
-          include: {
-            user: { select: { id: true, name: true, username: true, avatarUrl: true } },
-            post: { select: { id: true, title: true } },
-            parent: {
-              select: {
-                id: true,
-                userId: true,
-                user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+    const [followActors, likeActors, likePosts, commentRecords] = await Promise.all([
+      followActorIds.length > 0
+        ? prisma.user.findMany({
+            where: { id: { in: followActorIds } },
+            select: { id: true, name: true, username: true, avatarUrl: true },
+          })
+        : Promise.resolve([]),
+      likeRefs.length > 0
+        ? prisma.user.findMany({
+            where: { id: { in: likeRefs.map((item) => item.actorUserId) } },
+            select: { id: true, name: true, username: true, avatarUrl: true },
+          })
+        : Promise.resolve([]),
+      likeRefs.length > 0
+        ? prisma.post.findMany({
+            where: { id: { in: likeRefs.map((item) => item.postId) } },
+            select: { id: true, title: true },
+          })
+        : Promise.resolve([]),
+      commentIds.length > 0
+        ? prisma.comment.findMany({
+            where: { id: { in: commentIds } },
+            include: {
+              user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+              post: { select: { id: true, title: true } },
+              parent: {
+                select: {
+                  id: true,
+                  userId: true,
+                  user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+                },
               },
             },
-          },
-        })
-      : Promise.resolve([]),
-  ]);
+          })
+        : Promise.resolve([]),
+    ]);
 
-  const followActorMap = new Map(followActors.map((user) => [user.id, user]));
-  const likeActorMap = new Map(likeActors.map((user) => [user.id, user]));
-  const likePostMap = new Map(likePosts.map((post) => [post.id, post]));
-  const commentMap = new Map(commentRecords.map((comment) => [comment.id, comment]));
+    const followActorMap = new Map(followActors.map((user) => [user.id, user]));
+    const likeActorMap = new Map(likeActors.map((user) => [user.id, user]));
+    const likePostMap = new Map(likePosts.map((post) => [post.id, post]));
+    const commentMap = new Map(commentRecords.map((comment) => [comment.id, comment]));
 
-  const items = notifications.map((notification: NotificationRow) => {
-    if (notification.type === "follow") {
-      const actor = followActorMap.get(notification.referenceId);
-      return {
-        id: notification.id,
-        type: notification.type,
-        read: notification.read,
-        createdAt: notification.createdAt.toISOString(),
-        href: actor?.username ? `/profile/${actor.username}` : "/discover",
-        actor,
-        text: actor ? `${actor.name} seni takip etti` : "Yeni bir takipçin var",
-        kindLabel: "Takip",
-        contextTitle: actor?.username ? `@${actor.username}` : null,
-        preview: null,
-      };
-    }
+    const items = notifications.map((notification: NotificationRow) => {
+      if (notification.type === "follow") {
+        const actor = followActorMap.get(notification.referenceId);
+        return {
+          id: notification.id,
+          type: notification.type,
+          read: notification.read,
+          createdAt: notification.createdAt.toISOString(),
+          href: actor?.username ? `/profile/${actor.username}` : "/discover",
+          actor,
+          text: actor ? `${actor.name} seni takip etti` : "Yeni bir takipçin var",
+          kindLabel: "Takip",
+          contextTitle: actor?.username ? `@${actor.username}` : null,
+          preview: null,
+        };
+      }
 
-    if (notification.type === "like") {
-      const likeRef = parseLikeReference(notification.referenceId);
-      const actor = likeRef ? likeActorMap.get(likeRef.actorUserId) : null;
-      const post = likeRef ? likePostMap.get(likeRef.postId) : null;
-      return {
-        id: notification.id,
-        type: notification.type,
-        read: notification.read,
-        createdAt: notification.createdAt.toISOString(),
-        href: post ? `/posts/${post.id}` : "/notes",
-        actor: actor ?? undefined,
-        text:
-          actor && post ? `${actor.name} "${post.title}" notunu beğendi` : "Bir notun beğenildi",
-        kindLabel: "Beğeni",
-        contextTitle: post?.title ?? null,
-        preview: null,
-      };
-    }
+      if (notification.type === "like") {
+        const likeRef = parseLikeReference(notification.referenceId);
+        const actor = likeRef ? likeActorMap.get(likeRef.actorUserId) : null;
+        const post = likeRef ? likePostMap.get(likeRef.postId) : null;
+        return {
+          id: notification.id,
+          type: notification.type,
+          read: notification.read,
+          createdAt: notification.createdAt.toISOString(),
+          href: post ? `/posts/${post.id}` : "/notes",
+          actor: actor ?? undefined,
+          text:
+            actor && post ? `${actor.name} "${post.title}" notunu beğendi` : "Bir notun beğenildi",
+          kindLabel: "Beğeni",
+          contextTitle: post?.title ?? null,
+          preview: null,
+        };
+      }
 
-    const comment = commentMap.get(notification.referenceId);
-    const isReplyToRecipient = Boolean(
-      comment?.parentId &&
+      const comment = commentMap.get(notification.referenceId);
+      const isReplyToRecipient = Boolean(
+        comment?.parentId &&
         comment.parent?.userId === notification.userId &&
         comment.user.id !== notification.userId
-    );
-    const href = comment?.post
-      ? `/posts/${comment.post.id}?comment=${comment.id}#comment-${comment.id}`
-      : "/notes";
-    const text =
-      comment?.user && comment.post
-        ? isReplyToRecipient
-          ? `${comment.user.name} yorumuna yanıt verdi`
-          : comment.parentId
-            ? `${comment.user.name} "${comment.post.title}" notundaki sohbete katıldı`
-            : `${comment.user.name} "${comment.post.title}" notuna yorum yaptı`
-        : "Bir notuna yorum yapıldı";
-    return {
-      id: notification.id,
-      type: notification.type,
-      read: notification.read,
-      createdAt: notification.createdAt.toISOString(),
-      href,
-      actor: comment?.user,
-      text,
-      kindLabel: isReplyToRecipient ? "Yanıt" : "Yorum",
-      contextTitle: comment?.post?.title ?? null,
-      preview: comment?.content ?? null,
-    };
-  });
+      );
+      const href = comment?.post
+        ? `/posts/${comment.post.id}?comment=${comment.id}#comment-${comment.id}`
+        : "/notes";
+      const text =
+        comment?.user && comment.post
+          ? isReplyToRecipient
+            ? `${comment.user.name} yorumuna yanıt verdi`
+            : comment.parentId
+              ? `${comment.user.name} "${comment.post.title}" notundaki sohbete katıldı`
+              : `${comment.user.name} "${comment.post.title}" notuna yorum yaptı`
+          : "Bir notuna yorum yapıldı";
+      return {
+        id: notification.id,
+        type: notification.type,
+        read: notification.read,
+        createdAt: notification.createdAt.toISOString(),
+        href,
+        actor: comment?.user,
+        text,
+        kindLabel: isReplyToRecipient ? "Yanıt" : "Yorum",
+        contextTitle: comment?.post?.title ?? null,
+        preview: comment?.content ?? null,
+      };
+    });
 
-  return NextResponse.json({ notifications: items, unreadCount });
+    return NextResponse.json({ notifications: items, unreadCount });
+  } catch (error) {
+    return handleApiError(error, "Bildirimler alınamadı.");
+  }
 }
