@@ -3,8 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import { HeartIcon } from "@phosphor-icons/react";
+import { HeartIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -699,7 +698,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     color: "var(--media-control-text)",
                   }}
                 >
-                  <FaEdit size={11} /> Düzenle
+                  <PencilSimpleIcon size={11} weight="fill" /> Düzenle
                 </Link>
                 <button
                   onClick={() => setIsModalOpen(true)}
@@ -711,7 +710,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     color: "var(--media-control-text)",
                   }}
                 >
-                  <FaTrash size={10} /> Sil
+                  <TrashIcon size={10} weight="fill" /> Sil
                 </button>
               </>
             )}

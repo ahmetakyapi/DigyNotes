@@ -3,6 +3,28 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
+// ── Basit in-memory login rate limit ────────────────────────────────
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+const LOGIN_MAX = 8;
+const LOGIN_WINDOW_MS = 5 * 60_000; // 5 dakika
+
+function checkLoginRateLimit(email: string): boolean {
+  const now = Date.now();
+  const key = `login:${email}`;
+  const entry = loginAttempts.get(key);
+
+  if (!entry || entry.resetAt <= now) {
+    loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= LOGIN_MAX) return false;
+
+  entry.count += 1;
+  return true;
+}
+// ────────────────────────────────────────────────────────────────────
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -14,8 +36,13 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
+        const normalizedEmail = credentials.email.toLowerCase();
+
+        // Rate limit kontrolü
+        if (!checkLoginRateLimit(normalizedEmail)) return null;
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
+          where: { email: normalizedEmail },
         });
 
         if (!user) return null;

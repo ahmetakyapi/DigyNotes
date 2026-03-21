@@ -7,22 +7,22 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useTheme } from "@/components/ThemeProvider";
 import {
-  LuBookOpen,
-  LuCalendar,
-  LuFilm,
-  LuGamepad2,
-  LuMapPin,
-  LuPenLine,
-  LuStar,
-  LuTv,
-  LuUser,
-} from "react-icons/lu";
+  BookOpenIcon,
+  CalendarIcon,
+  FilmSlateIcon,
+  GameControllerIcon,
+  MapPinIcon,
+  PencilLineIcon,
+  StarIcon,
+  TelevisionIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
 
 const CATEGORIES = [
   {
     key: "film",
     label: "Film",
-    Icon: LuFilm,
+    Icon: FilmSlateIcon,
     color: "#6888c0",
     colorLight: "#9db9eb",
     bg: "rgba(56,88,168,0.10)",
@@ -42,7 +42,7 @@ const CATEGORIES = [
   {
     key: "dizi",
     label: "Dizi",
-    Icon: LuTv,
+    Icon: TelevisionIcon,
     color: "#c8b090",
     colorLight: "#e0c8a8",
     bg: "rgba(200,176,144,0.10)",
@@ -63,7 +63,7 @@ const CATEGORIES = [
   {
     key: "oyun",
     label: "Oyun",
-    Icon: LuGamepad2,
+    Icon: GameControllerIcon,
     color: "#0ea5e9",
     colorLight: "#7dd3fc",
     bg: "rgba(14,165,233,0.10)",
@@ -83,7 +83,7 @@ const CATEGORIES = [
   {
     key: "kitap",
     label: "Kitap",
-    Icon: LuBookOpen,
+    Icon: BookOpenIcon,
     color: "#10b981",
     colorLight: "#6ee7b7",
     bg: "rgba(16,185,129,0.10)",
@@ -104,7 +104,7 @@ const CATEGORIES = [
   {
     key: "gezi",
     label: "Gezi",
-    Icon: LuMapPin,
+    Icon: MapPinIcon,
     color: "#60a88a",
     colorLight: "#9fdfc2",
     bg: "rgba(80,160,120,0.10)",
@@ -125,7 +125,7 @@ const CATEGORIES = [
   {
     key: "diger",
     label: "Diğer",
-    Icon: LuPenLine,
+    Icon: PencilLineIcon,
     color: "#a0a0a0",
     colorLight: "#d2d2d2",
     bg: "rgba(160,160,160,0.08)",
@@ -159,12 +159,11 @@ function Stars({
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((step) => (
-        <LuStar
+        <StarIcon
           key={step}
           size={14}
-          fill={step <= count ? color : "transparent"}
-          stroke={step <= count ? color : emptyStroke}
-          strokeWidth={1.5}
+          weight={step <= count ? "fill" : "regular"}
+          color={step <= count ? color : emptyStroke}
           style={{ opacity: step <= count ? 1 : 0.3 }}
         />
       ))}
@@ -350,12 +349,12 @@ function MockNoteCard({ cat }: { readonly cat: Category }) {
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-[var(--text-secondary)]">
               {cat.mockCreator && (
                 <span className="flex items-center gap-1">
-                  <LuUser size={10} style={{ color: cat.color, opacity: 0.6 }} />
+                  <UserIcon size={10} style={{ color: cat.color, opacity: 0.6 }} />
                   {cat.mockCreator}
                 </span>
               )}
               <span className="flex items-center gap-1">
-                <LuCalendar size={10} style={{ color: cat.color, opacity: 0.6 }} />
+                <CalendarIcon size={10} style={{ color: cat.color, opacity: 0.6 }} />
                 {cat.mockYear}
               </span>
             </div>
@@ -516,7 +515,7 @@ export function CategoryShowcase() {
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <LuStar size={12} />
+            <StarIcon size={12} />
             Her Kategori
           </motion.div>
         </div>

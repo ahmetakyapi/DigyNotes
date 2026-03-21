@@ -7,6 +7,10 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { serializeWishlistItem } from "@/lib/wishlist";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 const TITLE_MAX_LENGTH = 160;
 const CREATOR_MAX_LENGTH = 120;
@@ -41,6 +45,20 @@ export async function POST(req: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await consumeRateLimit({
+    action: "watchlist-add",
+    req,
+    userId,
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla izleme listesi işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
   }
 
   const body = await req.json();

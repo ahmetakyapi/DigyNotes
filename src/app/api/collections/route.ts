@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { collectionWithPostsInclude, serializeCollection } from "@/lib/collections";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -34,6 +38,20 @@ export async function POST(req: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await consumeRateLimit({
+    action: "collection-create",
+    req,
+    userId,
+    limit: 15,
+    windowMs: 10 * 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla koleksiyon oluşturdunuz. Lütfen biraz sonra tekrar deneyin."
+    );
   }
 
   const body = await req.json();
