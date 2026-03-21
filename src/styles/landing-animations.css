@@ -1,0 +1,459 @@
+/* ═══════════════════════════════════════════
+   DigyNotes — Landing Page Animations
+   Keyframes, animation utility classes,
+   and landing-specific light-theme overrides
+═══════════════════════════════════════════ */
+
+/* ─── Keyframes ─── */
+
+@keyframes dn-reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes dn-line-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes dn-aurora-float-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.07;
+  }
+  50% {
+    transform: translate3d(24px, 16px, 0) scale(1.07);
+    opacity: 0.1;
+  }
+}
+
+@keyframes dn-aurora-float-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.05;
+  }
+  50% {
+    transform: translate3d(-20px, 22px, 0) scale(1.08);
+    opacity: 0.09;
+  }
+}
+
+@keyframes dn-aurora-float-3 {
+  0%,
+  100% {
+    transform: translate3d(-50%, 0, 0) scale(1);
+    opacity: 0.06;
+  }
+  50% {
+    transform: translate3d(calc(-50% + 16px), -10px, 0) scale(1.06);
+    opacity: 0.1;
+  }
+}
+
+@keyframes dn-aurora-core {
+  0%,
+  100% {
+    opacity: 0.05;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.1;
+    transform: translate(-50%, -50%) scale(1.14);
+  }
+}
+
+@keyframes dn-shimmer-text {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+@keyframes dn-gradient-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dn-timeline-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes dn-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes dn-badge-sheen {
+  0% {
+    transform: translateX(-210%) skewX(-22deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.6;
+  }
+  48% {
+    opacity: 0.25;
+  }
+  70% {
+    transform: translateX(220%) skewX(-22deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(220%) skewX(-22deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dn-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    transform: scale(1.28);
+    box-shadow: 0 0 18px rgba(52, 211, 153, 0.9);
+  }
+}
+
+@keyframes dn-cta-breathe {
+  0%,
+  100%,
+  50% {
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+  }
+}
+
+@keyframes dn-ghost-glow {
+  0%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      inset 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow:
+      inset 0 0 24px rgba(255, 255, 255, 0.03),
+      0 0 24px rgba(113, 132, 180, 0.16);
+  }
+}
+
+@keyframes dn-ghost-glow-light {
+  0%,
+  100% {
+    border-color: rgba(16, 185, 129, 0.22);
+    box-shadow: 0 2px 12px rgba(5, 150, 105, 0.06);
+  }
+  50% {
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 4px 18px rgba(5, 150, 105, 0.1);
+  }
+}
+
+@keyframes dn-cta-breathe-blue {
+  0%,
+  100% {
+    box-shadow:
+      0 6px 20px rgba(5, 150, 105, 0.28),
+      0 0 0 1px rgba(16, 185, 129, 0.08) inset,
+      0 1px 0 rgba(255, 255, 255, 0.18) inset;
+  }
+  50% {
+    box-shadow:
+      0 12px 36px rgba(5, 150, 105, 0.44),
+      0 0 48px rgba(16, 185, 129, 0.1),
+      0 0 0 1px rgba(16, 185, 129, 0.12) inset,
+      0 1px 0 rgba(255, 255, 255, 0.22) inset;
+  }
+}
+
+/* ─── Animation utility classes ─── */
+
+.dn-reveal {
+  opacity: 0;
+  animation: dn-reveal-up 0.86s cubic-bezier(0.16, 0.8, 0.24, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+.dn-delay-1 {
+  animation-delay: 0.06s;
+}
+
+.dn-delay-3 {
+  animation-delay: 0.26s;
+}
+
+.dn-delay-4 {
+  animation-delay: 0.42s;
+}
+
+.dn-line-reveal {
+  opacity: 0;
+  animation: dn-line-reveal 0.86s cubic-bezier(0.16, 0.8, 0.24, 1) forwards;
+}
+
+.dn-line-1 {
+  animation-delay: 0.12s;
+}
+
+.dn-line-2 {
+  animation-delay: 0.2s;
+}
+
+.dn-line-3 {
+  animation-delay: 0.28s;
+}
+
+.dn-line-4 {
+  animation-delay: 0.36s;
+}
+
+.dn-line-5 {
+  animation-delay: 0.44s;
+}
+
+.dn-aurora-float-1 {
+  animation: dn-aurora-float-1 15s ease-in-out infinite;
+}
+
+.dn-aurora-float-2 {
+  animation: dn-aurora-float-2 17s ease-in-out infinite;
+}
+
+.dn-aurora-float-3 {
+  animation: dn-aurora-float-3 18s ease-in-out infinite;
+}
+
+.dn-aurora-core {
+  animation: dn-aurora-core 9s ease-in-out infinite;
+}
+
+.dn-shimmer-text {
+  animation: dn-shimmer-text 4s ease-in-out infinite;
+}
+
+.dn-badge-sheen {
+  overflow: clip;
+  overflow-clip-margin: 0px;
+}
+
+html.light .dn-badge-sheen,
+html[data-theme="light"] .dn-badge-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.08),
+    rgba(6, 182, 212, 0.05),
+    rgba(16, 185, 129, 0.06)
+  ) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+  box-shadow:
+    0 0 16px rgba(16, 185, 129, 0.06),
+    inset 0 0 12px rgba(16, 185, 129, 0.03);
+}
+
+.dn-badge-sheen::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  top: -40%;
+  bottom: -40%;
+  left: 0;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  animation: dn-badge-sheen 4.6s ease-in-out infinite;
+}
+
+html.light .dn-badge-sheen::after,
+html[data-theme="light"] .dn-badge-sheen::after {
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.18), transparent);
+}
+
+.dn-dot-pulse {
+  animation: dn-dot-pulse 2.1s ease-in-out infinite;
+}
+
+.dn-cta-primary {
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+}
+
+.dn-cta-ghost {
+  animation: dn-ghost-glow 5.2s ease-in-out infinite;
+}
+
+/* ─── Light theme: CTA ─── */
+html.light .dn-cta-ghost,
+html[data-theme="light"] .dn-cta-ghost {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 2px 12px rgba(5, 150, 105, 0.06);
+  animation: dn-ghost-glow-light 5.2s ease-in-out infinite;
+}
+
+html.light .dn-cta-primary,
+html[data-theme="light"] .dn-cta-primary {
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
+}
+
+/* ─── Nav CTA button — theme-aware ─── */
+.dn-nav-cta-btn {
+  background: linear-gradient(160deg, #34d399 0%, #10b981 28%, #059669 64%, #047857 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(4, 120, 87, 0.3);
+  transition: all 0.2s ease;
+}
+
+.dn-nav-cta-btn:hover {
+  background: linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 64%, #059669 100%);
+}
+
+html.light .dn-nav-cta-btn,
+html[data-theme="light"] .dn-nav-cta-btn {
+  background: linear-gradient(160deg, #10b981 0%, #059669 35%, #047857 70%, #065f46 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(6, 95, 70, 0.3);
+}
+
+html.light .dn-nav-cta-btn:hover,
+html[data-theme="light"] .dn-nav-cta-btn:hover {
+  background: linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%);
+}
+
+/* ─── Light theme: Landing cards & page overrides ─── */
+html.light .dn-landing-card,
+html[data-theme="light"] .dn-landing-card {
+  border-color: rgba(226, 232, 240, 0.8) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.05),
+    0 2px 8px rgba(15, 23, 42, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+html.light .dn-landing-preview,
+html[data-theme="light"] .dn-landing-preview {
+  box-shadow:
+    0 24px 80px rgba(15, 23, 42, 0.08),
+    0 8px 24px rgba(15, 23, 42, 0.05) !important;
+  border-color: rgba(226, 232, 240, 0.7) !important;
+}
+
+html.light .dn-landing-page,
+html[data-theme="light"] .dn-landing-page {
+  background:
+    radial-gradient(circle at 16% -4%, rgba(255, 255, 255, 0.98) 0%, transparent 28%),
+    radial-gradient(circle at 84% 8%, rgba(16, 185, 129, 0.05) 0%, transparent 26%),
+    radial-gradient(circle at 50% 44%, rgba(6, 182, 212, 0.04) 0%, transparent 44%),
+    linear-gradient(180deg, #f8fafc 0%, #f5f7fa 48%, #f0f4f8 100%);
+}
+
+html.light .dn-landing-nav,
+html[data-theme="light"] .dn-landing-nav {
+  background: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0.95) 0%,
+    rgba(245, 247, 250, 0.8) 62%,
+    rgba(245, 247, 250, 0) 100%
+  ) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 rgba(16, 185, 129, 0.08);
+}
+
+html.light .dn-landing-footer,
+html[data-theme="light"] .dn-landing-footer {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.6), rgba(245, 247, 250, 0.92));
+}
+
+html.light .dn-footer-link,
+html[data-theme="light"] .dn-footer-link {
+  color: var(--text-secondary);
+}
+
+html.light .dn-footer-link:hover,
+html[data-theme="light"] .dn-footer-link:hover {
+  color: #059669;
+}
+
+html.light .dn-landing-toggle,
+html[data-theme="light"] .dn-landing-toggle {
+  background: rgba(248, 250, 252, 0.9);
+  border-color: rgba(16, 185, 129, 0.18);
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+html.light .dn-section-pill,
+html[data-theme="light"] .dn-section-pill {
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.95),
+    rgba(240, 253, 244, 0.88)
+  ) !important;
+  border-color: rgba(16, 185, 129, 0.18) !important;
+  box-shadow:
+    0 6px 18px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+html.light .dn-category-showcase-card,
+html[data-theme="light"] .dn-category-showcase-card {
+  border-color: rgba(226, 232, 240, 0.7) !important;
+}
+
+html.light .dn-category-tab,
+html[data-theme="light"] .dn-category-tab {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+html.light .dn-category-tab[data-active="false"],
+html[data-theme="light"] .dn-category-tab[data-active="false"] {
+  background: rgba(248, 250, 252, 0.6) !important;
+  border-color: rgba(226, 232, 240, 0.4) !important;
+}
+
+html.light .dn-category-tab[data-active="true"],
+html[data-theme="light"] .dn-category-tab[data-active="true"] {
+  box-shadow:
+    0 8px 20px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}

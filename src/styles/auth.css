@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════
+   DigyNotes — Auth Page Styles
+   Login / Register button, input, and link
+═══════════════════════════════════════════ */
+
+.dn-btn-primary-auth {
+  background: linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(4, 120, 87, 0.25);
+  transition: background 0.2s ease;
+}
+.dn-btn-primary-auth:hover:not(:disabled) {
+  background: linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%);
+}
+html.light .dn-btn-primary-auth,
+html[data-theme="light"] .dn-btn-primary-auth {
+  background: linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(6, 95, 70, 0.25);
+}
+html.light .dn-btn-primary-auth:hover:not(:disabled),
+html[data-theme="light"] .dn-btn-primary-auth:hover:not(:disabled) {
+  background: linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%);
+}
+
+.dn-input-auth:focus {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.1);
+}
+html.light .dn-input-auth:focus,
+html[data-theme="light"] .dn-input-auth:focus {
+  border-color: rgba(5, 150, 105, 0.45);
+  box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.08);
+}
+.dn-input-auth-error:focus {
+  border-color: rgba(229, 62, 62, 0.7);
+  box-shadow: none;
+}
+
+.dn-auth-link {
+  color: #34d399;
+}
+.dn-auth-link:hover {
+  color: #6ee7b7;
+}
+html.light .dn-auth-link,
+html[data-theme="light"] .dn-auth-link {
+  color: #059669;
+}
+html.light .dn-auth-link:hover,
+html[data-theme="light"] .dn-auth-link:hover {
+  color: #10b981;
+}
