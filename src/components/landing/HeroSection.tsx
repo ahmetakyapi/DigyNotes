@@ -9,6 +9,7 @@ import { EASE } from "@/lib/variants";
 import { MagneticButton } from "./MagneticButton";
 import { RotatingWord } from "./RotatingWord";
 import { FloatingParticles } from "./FloatingParticles";
+import { DigyNotesPlayer } from "@/components/DigyNotesPlayer";
 
 const LIGHT_THEME = {
   glowBg:
@@ -163,161 +164,232 @@ export function HeroSection() {
         </motion.div>
       </div>
 
-      {/* ── İçerik ── */}
+      {/* ── İçerik — 2 kolon (lg+) ── */}
       <motion.div
-        className="relative z-10 flex w-full max-w-[430px] flex-col items-center gap-5 sm:max-w-5xl sm:gap-6 xl:max-w-6xl"
+        className="relative z-10 w-full max-w-[430px] sm:max-w-5xl xl:max-w-7xl flex flex-col items-center gap-5 sm:gap-6 lg:grid lg:grid-cols-[1fr,1.15fr] lg:items-center lg:gap-12 xl:gap-16"
         style={{ y: contentY, opacity: contentOpacity }}
       >
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -14, scale: 0.88 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
-        >
-          <div
-            className="dn-badge-sheen chip relative mb-1 mt-2 sm:mb-1 sm:mt-0"
-            style={{ background: t.badgeBg, borderColor: t.badgeBorder }}
+        {/* ── Sol kolon: metin + CTA ── */}
+        <div className="flex flex-col items-center lg:items-start gap-5 sm:gap-6 w-full">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.88 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
           >
-            <span
-              className="dn-dot-pulse h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"
-              style={{ background: t.badgeDot, boxShadow: t.badgeDotGlow }}
-            />
-            <span
-              key={theme}
-              className="text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-              style={{
-                background: t.badgeText,
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                color: "transparent",
-                display: "inline-block",
-              }}
+            <div
+              className="dn-badge-sheen chip relative mb-1 mt-2 sm:mb-1 sm:mt-0"
+              style={{ background: t.badgeBg, borderColor: t.badgeBorder }}
             >
-              Kişisel Not Defteri
-            </span>
+              <span
+                className="dn-dot-pulse h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"
+                style={{ background: t.badgeDot, boxShadow: t.badgeDotGlow }}
+              />
+              <span
+                key={theme}
+                className="text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+                style={{
+                  background: t.badgeText,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  color: "transparent",
+                  display: "inline-block",
+                }}
+              >
+                Kişisel Not Defteri
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Başlık + açıklama */}
+          <div className="flex flex-col items-center lg:items-start">
+            <h1 className="mb-4 w-full overflow-visible px-1 pb-[0.1em] text-center lg:text-left text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.14] tracking-[-0.038em] sm:mb-5 sm:px-0 sm:text-[clamp(3rem,5.5vw,4.5rem)] sm:leading-[1.12] xl:text-[clamp(3.4rem,4.8vw,5rem)] xl:leading-[1.1]">
+              <motion.span
+                className="mb-0.5 block px-[0.04em] pb-[0.04em] pt-[0.12em] sm:mb-1"
+                style={{ lineHeight: 1.25 }}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
+              >
+                <RotatingWord />
+              </motion.span>
+
+              <motion.span
+                className="mb-0.5 block px-[0.04em] py-[0.08em] sm:mb-1"
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: 0.24, ease: EASE }}
+              >
+                <span
+                  key={theme}
+                  style={{
+                    background: t.headingLine2,
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                    display: "inline-block",
+                  }}
+                >
+                  Sana Kalanlar
+                </span>
+              </motion.span>
+
+              <motion.span
+                className="mt-1 block px-[0.04em] pb-[0.06em] pt-[0.04em] sm:mt-1.5"
+                initial={{ opacity: 0, y: 28, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
+                style={{ fontSize: "1.08em" }}
+              >
+                <span
+                  key={theme}
+                  className="dn-shimmer-text"
+                  style={{
+                    background: t.headingLine3,
+                    backgroundSize: "200% 100%",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                    display: "inline-block",
+                  }}
+                >
+                  Tek Yerde
+                </span>
+              </motion.span>
+            </h1>
+
+            <motion.p
+              className="mx-auto lg:mx-0 max-w-[342px] px-2 py-1 text-center lg:text-left text-[1.02rem] font-medium leading-[1.74] text-[var(--text-secondary)] [text-wrap:balance] sm:mb-2 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.08rem] sm:leading-[1.86]"
+              initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
+            >
+              <span className="block [text-wrap:balance]">
+                Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla.
+              </span>
+              <span className="mt-2 block [text-wrap:balance] sm:mt-2">
+                Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
+              </span>
+            </motion.p>
           </div>
-        </motion.div>
 
-        {/* Başlık + açıklama */}
-        <div className="flex flex-col items-center">
-          <h1 className="mb-4 w-full overflow-visible px-1 pb-[0.1em] text-center text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.14] tracking-[-0.038em] sm:mb-5 sm:px-0 sm:text-[clamp(3.35rem,6vw,5.25rem)] sm:leading-[1.12] xl:text-[clamp(4rem,5.4vw,5.8rem)] xl:leading-[1.1] 2xl:text-[clamp(4.5rem,4.8vw,6.4rem)]">
-            <motion.span
-              className="mb-0.5 block px-[0.04em] pb-[0.04em] pt-[0.12em] sm:mb-1"
-              style={{ lineHeight: 1.25 }}
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
-            >
-              <RotatingWord />
-            </motion.span>
-
-            <motion.span
-              className="mb-0.5 block px-[0.04em] py-[0.08em] sm:mb-1"
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.24, ease: EASE }}
-            >
-              {/* key forces DOM remount on theme switch — prevents WebKit background-clip:text bug
-                  that triggers when background style updates on elements inside transform stacking contexts */}
-              <span
-                key={theme}
-                style={{
-                  background: t.headingLine2,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  color: "transparent",
-                  display: "inline-block",
-                }}
-              >
-                Sana Kalanlar
-              </span>
-            </motion.span>
-
-            <motion.span
-              className="mt-1 block px-[0.04em] pb-[0.06em] pt-[0.04em] sm:mt-1.5"
-              initial={{ opacity: 0, y: 28, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
-              style={{ fontSize: "1.08em" }}
-            >
-              <span
-                key={theme}
-                className="dn-shimmer-text"
-                style={{
-                  background: t.headingLine3,
-                  backgroundSize: "200% 100%",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  color: "transparent",
-                  display: "inline-block",
-                }}
-              >
-                Tek Yerde
-              </span>
-            </motion.span>
-          </h1>
-
-          <motion.p
-            className="mx-auto max-w-[342px] px-2 py-1 text-center text-[1.02rem] font-medium leading-[1.74] text-[var(--text-secondary)] [text-wrap:balance] sm:mb-2 sm:max-w-3xl sm:px-0 sm:py-0 sm:text-[1.08rem] sm:leading-[1.86] xl:max-w-4xl xl:text-[1.18rem] 2xl:max-w-[54rem] 2xl:text-[1.24rem]"
-            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
+          {/* CTA butonları */}
+          <motion.div
+            className="mb-4 mt-2 flex w-full flex-col gap-4 px-1.5 pb-1 sm:mb-0 sm:mt-1 sm:w-auto sm:flex-row sm:gap-5 sm:px-0 sm:pb-0 lg:justify-start"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.64, ease: EASE }}
           >
-            <span className="block [text-wrap:balance]">
-              Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla.
-            </span>
-            <span className="mt-2 block [text-wrap:balance] sm:mt-2">
-              Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
-            </span>
-          </motion.p>
+            <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
+              <Link
+                href="/register"
+                className="dn-cta-primary group relative block w-full overflow-hidden rounded-[1.6rem] py-[10px] text-center text-[clamp(0.98rem,4vw,1.12rem)] font-semibold tracking-[0.01em] transition-all duration-300 sm:rounded-2xl sm:px-9 sm:py-[12px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[16px]"
+                style={{
+                  background: t.ctaBtnBg,
+                  color: t.ctaBtnTextColor,
+                  boxShadow: t.ctaBtnShadow,
+                  textShadow: "0 1px 2px rgba(4,120,87,0.3)",
+                }}
+              >
+                <div
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.2) 50%, transparent 90%)",
+                  }}
+                />
+                <span className="relative z-10">Hemen Başla →</span>
+                <div
+                  className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{ background: t.ctaBtnBgHover }}
+                />
+              </Link>
+            </MagneticButton>
+
+            <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
+              <Link
+                href="/login"
+                className="dn-cta-ghost block w-full rounded-[1.6rem] border border-[var(--border)] py-[9px] text-center text-[clamp(0.94rem,3.8vw,1.06rem)] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[16px]"
+                style={{ background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)" }}
+              >
+                Giriş Yap
+              </Link>
+            </MagneticButton>
+          </motion.div>
         </div>
 
-        {/* CTA butonları */}
+        {/* ── Sağ kolon: App window + Remotion player ── */}
         <motion.div
-          className="mb-4 mt-2 flex w-full flex-col gap-4 px-1.5 pb-1 sm:mb-0 sm:mt-1 sm:w-auto sm:flex-row sm:gap-5 sm:px-0 sm:pb-0"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.64, ease: EASE }}
+          className="hidden lg:block relative w-full"
+          initial={{ opacity: 0, x: 48, scale: 0.94 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
         >
-          <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
-            <Link
-              href="/register"
-              className="dn-cta-primary group relative block w-full overflow-hidden rounded-[1.6rem] py-[10px] text-center text-[clamp(0.98rem,4vw,1.12rem)] font-semibold tracking-[0.01em] transition-all duration-300 sm:rounded-2xl sm:px-9 sm:py-[12px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[16px]"
-              style={{
-                background: t.ctaBtnBg,
-                color: t.ctaBtnTextColor,
-                boxShadow: t.ctaBtnShadow,
-                textShadow: "0 1px 2px rgba(4,120,87,0.3)",
-              }}
-            >
-              {/* Top shine line */}
-              <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-px"
-                style={{
-                  background:
-                    "linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.2) 50%, transparent 90%)",
-                }}
-              />
-              <span className="relative z-10">Hemen Başla →</span>
-              <div
-                className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{ background: t.ctaBtnBgHover }}
-              />
-            </Link>
-          </MagneticButton>
+          {/* Glow halo */}
+          <div
+            className="pointer-events-none absolute -inset-8 rounded-full blur-3xl"
+            style={{
+              background: "radial-gradient(ellipse 70% 60% at 60% 50%, rgba(16,185,129,0.12), transparent)",
+            }}
+          />
 
-          <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
-            <Link
-              href="/login"
-              className="dn-cta-ghost block w-full rounded-[1.6rem] border border-[var(--border)] py-[9px] text-center text-[clamp(0.94rem,3.8vw,1.06rem)] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[16px]"
-              style={{ background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)" }}
+          {/* App window frame */}
+          <div
+            className="relative w-full rounded-2xl overflow-hidden border border-[var(--border)]"
+            style={{
+              boxShadow:
+                "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 60px rgba(16,185,129,0.10), 0 8px 28px rgba(0,0,0,0.18)",
+            }}
+          >
+            {/* Chrome bar */}
+            <div
+              className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]"
+              style={{ background: "var(--bg-header)" }}
             >
-              Giriş Yap
-            </Link>
-          </MagneticButton>
+              {/* Traffic lights */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <div className="w-3 h-3 rounded-full bg-red-400/70" />
+                <div className="w-3 h-3 rounded-full bg-amber-400/70" />
+                <div className="w-3 h-3 rounded-full bg-emerald-400/70" />
+              </div>
+
+              {/* URL bar */}
+              <div className="flex-1 mx-2 max-w-xs">
+                <div
+                  className="h-6 rounded-md flex items-center justify-center gap-1.5 px-3 border border-[var(--border)]"
+                  style={{ background: "var(--bg-soft)" }}
+                >
+                  <span className="text-[9px]" style={{ color: "var(--gold)" }}>🔒</span>
+                  <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    digynotes.app/notes
+                  </span>
+                </div>
+              </div>
+
+              {/* Tab indicator */}
+              <div
+                className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md border"
+                style={{
+                  background: "rgba(16,185,129,0.08)",
+                  borderColor: "rgba(16,185,129,0.2)",
+                }}
+              >
+                <span className="text-[10px]">📝</span>
+                <span
+                  className="text-[10px] font-semibold"
+                  style={{ color: "var(--gold)" }}
+                >
+                  DigyNotes
+                </span>
+              </div>
+            </div>
+
+            {/* Remotion player */}
+            <DigyNotesPlayer />
+          </div>
         </motion.div>
       </motion.div>
 
