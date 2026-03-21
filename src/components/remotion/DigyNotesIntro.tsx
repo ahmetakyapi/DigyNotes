@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import {
   Film,
   Tv,
@@ -66,11 +60,22 @@ const LIGHT = {
 } as const;
 
 type Colors = {
-  bg: string; surface: string; surfaceEl: string; border: string;
-  gold: string; goldLight: string; cyan: string; blue: string;
-  amber: string; red: string; purple: string;
-  textStrong: string; textSoft: string; textMuted: string;
-  glowGold: string; glowCyan: string;
+  bg: string;
+  surface: string;
+  surfaceEl: string;
+  border: string;
+  gold: string;
+  goldLight: string;
+  cyan: string;
+  blue: string;
+  amber: string;
+  red: string;
+  purple: string;
+  textStrong: string;
+  textSoft: string;
+  textMuted: string;
+  glowGold: string;
+  glowCyan: string;
 };
 
 type SceneProps = { readonly frame: number; readonly fps: number; readonly C: Colors };
@@ -80,12 +85,10 @@ function sp(frame: number, fps: number, delay = 0, stiffness = 100, damping = 20
 }
 
 function sceneOpacity(frame: number, start: number) {
-  return interpolate(
-    frame,
-    [start, start + 15, start + 155, start + 175],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-  );
+  return interpolate(frame, [start, start + 15, start + 155, start + 175], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 }
 
 /* ── DigyNotes logo component ── */
@@ -93,17 +96,27 @@ function DigyNotesLogo() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
       {/* Notebook icon */}
-      <div style={{
-        width: 22, height: 22, borderRadius: 6,
-        background: "linear-gradient(135deg, #c026d3, #7c3aed)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        boxShadow: "0 2px 8px rgba(192,38,211,0.35)",
-      }}>
+      <div
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: 6,
+          background: "linear-gradient(135deg, #c026d3, #7c3aed)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 2px 8px rgba(192,38,211,0.35)",
+        }}
+      >
         <BookOpen size={12} color="white" strokeWidth={2.5} />
       </div>
       <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05 }}>
-        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: 2, color: "#d946ef" }}>DIGY</span>
-        <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: "#3b82f6" }}>NOTES</span>
+        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: 2, color: "#d946ef" }}>
+          DIGY
+        </span>
+        <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: "#3b82f6" }}>
+          NOTES
+        </span>
       </div>
     </div>
   );
@@ -112,19 +125,36 @@ function DigyNotesLogo() {
 /* ── Category chip ── */
 function Chip({ label, color }: { readonly label: string; readonly color: string }) {
   return (
-    <span style={{
-      display: "inline-flex", alignItems: "center",
-      background: `${color}18`, border: `1px solid ${color}30`,
-      borderRadius: 20, padding: "2px 8px",
-      color, fontSize: 8, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
-    }}>
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        background: `${color}18`,
+        border: `1px solid ${color}30`,
+        borderRadius: 20,
+        padding: "2px 8px",
+        color,
+        fontSize: 8,
+        fontWeight: 700,
+        letterSpacing: 0.8,
+        textTransform: "uppercase",
+      }}
+    >
       {label}
     </span>
   );
 }
 
 /* ── Star rating ── */
-function StarRating({ count, total = 5, color }: { readonly count: number; readonly total?: number; readonly color: string }) {
+function StarRating({
+  count,
+  total = 5,
+  color,
+}: {
+  readonly count: number;
+  readonly total?: number;
+  readonly color: string;
+}) {
   return (
     <div style={{ display: "flex", gap: 2 }}>
       {Array.from({ length: total }, (_, i) => i + 1).map((i) => (
@@ -141,34 +171,47 @@ type PosterData = {
   grad: string;
   accent: string;
   Icon: LucideIcon;
+  posterUrl: string;
 };
 
-function Poster({ data, width = 40, height = 56 }: { readonly data: PosterData; readonly width?: number; readonly height?: number }) {
-  const Icon = data.Icon;
+function Poster({
+  data,
+  width = 40,
+  height = 56,
+}: {
+  readonly data: PosterData;
+  readonly width?: number;
+  readonly height?: number;
+}) {
   return (
-    <div style={{
-      width, height, borderRadius: 7, flexShrink: 0,
-      background: data.grad,
-      display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "space-between",
-      padding: "6px 4px 4px",
-      overflow: "hidden", position: "relative",
-      boxShadow: `0 4px 12px ${data.accent}40`,
-    }}>
-      {/* Overlay gradient */}
-      <div style={{
-        position: "absolute", inset: 0,
-        background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%)",
-      }} />
-      <Icon size={Math.round(width * 0.35)} color={data.accent} strokeWidth={1.5} />
-      <span style={{
-        position: "relative", zIndex: 1,
-        color: "white", fontSize: Math.max(5, Math.round(width * 0.14)),
-        fontWeight: 800, textAlign: "center", lineHeight: 1.1,
-        textShadow: "0 1px 4px rgba(0,0,0,0.8)",
-      }}>
-        {data.title.split(" ").slice(0, 2).join("\n")}
-      </span>
+    <div
+      style={{
+        width,
+        height,
+        borderRadius: 7,
+        flexShrink: 0,
+        overflow: "hidden",
+        position: "relative",
+        boxShadow: `0 4px 12px ${data.accent}40`,
+      }}
+    >
+      <Img
+        src={data.posterUrl}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+      {/* Subtle bottom gradient for text readability */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.5) 100%)",
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 }
@@ -180,6 +223,7 @@ const OPPENHEIMER: PosterData = {
   grad: "linear-gradient(160deg, #1a0500 0%, #7c2d12 55%, #ea580c 100%)",
   accent: "#fb923c",
   Icon: Film,
+  posterUrl: "/landing/posters/oppenheimer.jpg",
 };
 const BREAKING_BAD: PosterData = {
   title: "Breaking Bad",
@@ -187,6 +231,7 @@ const BREAKING_BAD: PosterData = {
   grad: "linear-gradient(160deg, #052005 0%, #14532d 50%, #16a34a 100%)",
   accent: "#4ade80",
   Icon: Tv,
+  posterUrl: "/landing/posters/breaking-bad.jpg",
 };
 const DUNE: PosterData = {
   title: "Dune",
@@ -194,6 +239,7 @@ const DUNE: PosterData = {
   grad: "linear-gradient(160deg, #1c1000 0%, #6b4c00 50%, #ca8a04 100%)",
   accent: "#fbbf24",
   Icon: BookOpen,
+  posterUrl: "/landing/posters/dune.jpg",
 };
 const INTERSTELLAR: PosterData = {
   title: "Interstellar",
@@ -201,6 +247,7 @@ const INTERSTELLAR: PosterData = {
   grad: "linear-gradient(160deg, #000814 0%, #0a1628 50%, #1e40af 100%)",
   accent: "#60a5fa",
   Icon: Film,
+  posterUrl: "/landing/posters/interstellar.jpg",
 };
 const INCEPTION: PosterData = {
   title: "Inception",
@@ -208,6 +255,7 @@ const INCEPTION: PosterData = {
   grad: "linear-gradient(160deg, #0f0a1e 0%, #1e1248 50%, #4c1d95 100%)",
   accent: "#a78bfa",
   Icon: Film,
+  posterUrl: "/landing/posters/inception.jpg",
 };
 const TENET: PosterData = {
   title: "Tenet",
@@ -215,6 +263,7 @@ const TENET: PosterData = {
   grad: "linear-gradient(160deg, #000a1a 0%, #0a2040 50%, #1e3a78 100%)",
   accent: "#38bdf8",
   Icon: Film,
+  posterUrl: "/landing/posters/tenet.jpg",
 };
 const POOR_THINGS: PosterData = {
   title: "Poor Things",
@@ -222,6 +271,7 @@ const POOR_THINGS: PosterData = {
   grad: "linear-gradient(160deg, #1a0a1a 0%, #6b21a8 55%, #a855f7 100%)",
   accent: "#c084fc",
   Icon: Film,
+  posterUrl: "/landing/posters/poor-things.jpg",
 };
 
 /* ══════════════════════════════════════════
@@ -229,9 +279,27 @@ const POOR_THINGS: PosterData = {
 ══════════════════════════════════════════ */
 function NotesFeedScene({ frame, fps, C }: SceneProps) {
   const notes = [
-    { poster: OPPENHEIMER, cat: "Film", catColor: C.cyan, rating: 5, excerpt: "Nolan'ın şaheseri. Zaman ve ahlak üzerine derin bir sorgulama..." },
-    { poster: BREAKING_BAD, cat: "Dizi", catColor: C.gold, rating: 5, excerpt: "Walter White dönüşümü sinema tarihinin en iyi karakteri..." },
-    { poster: DUNE, cat: "Kitap", catColor: C.amber, rating: 4, excerpt: "Herbert'in evreni sonsuz zenginlikte. Arrakis'in kum fırtınaları..." },
+    {
+      poster: OPPENHEIMER,
+      cat: "Film",
+      catColor: C.cyan,
+      rating: 5,
+      excerpt: "Nolan'ın şaheseri. Zaman ve ahlak üzerine derin bir sorgulama...",
+    },
+    {
+      poster: BREAKING_BAD,
+      cat: "Dizi",
+      catColor: C.gold,
+      rating: 5,
+      excerpt: "Walter White dönüşümü sinema tarihinin en iyi karakteri...",
+    },
+    {
+      poster: DUNE,
+      cat: "Kitap",
+      catColor: C.amber,
+      rating: 4,
+      excerpt: "Herbert'in evreni sonsuz zenginlikte. Arrakis'in kum fırtınaları...",
+    },
   ];
 
   const headerP = sp(frame, fps, 0);
@@ -239,36 +307,73 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
 
   return (
     <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div style={{
-        position: "absolute", top: -60, left: -60, width: 280, height: 280, borderRadius: "50%",
-        background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+      <div
+        style={{
+          position: "absolute",
+          top: -60,
+          left: -60,
+          width: 280,
+          height: 280,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Header */}
-      <div style={{
-        transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        opacity: headerP, marginBottom: 14,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
+      <div
+        style={{
+          transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
+          opacity: headerP,
+          marginBottom: 14,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <div>
           <div style={{ marginBottom: 5 }}>
             <DigyNotesLogo />
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+          <h2
+            style={{
+              color: C.textStrong,
+              fontSize: 15,
+              fontWeight: 800,
+              margin: "0 0 2px",
+              lineHeight: 1.2,
+            }}
+          >
             Son Notlar
           </h2>
-          <p style={{ color: C.textMuted, fontSize: 10, margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+          <p
+            style={{
+              color: C.textMuted,
+              fontSize: 10,
+              margin: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
             <List size={9} color={C.textMuted} />
             47 not · 12 kategori
           </p>
         </div>
-        <div style={{
-          display: "flex", alignItems: "center", gap: 5,
-          background: `${C.gold}18`, border: `1px solid ${C.gold}28`,
-          borderRadius: 8, padding: "5px 10px",
-          color: C.gold, fontSize: 10, fontWeight: 700,
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            background: `${C.gold}18`,
+            border: `1px solid ${C.gold}28`,
+            borderRadius: 8,
+            padding: "5px 10px",
+            color: C.gold,
+            fontSize: 10,
+            fontWeight: 700,
+          }}
+        >
           <Plus size={10} color={C.gold} />
           Yeni Not
         </div>
@@ -278,43 +383,69 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
       {notes.map((n, i) => {
         const p = sp(frame, fps, 18 + i * 14, 90, 20);
         return (
-          <div key={n.poster.title} style={{
-            display: "flex", alignItems: "flex-start", gap: 11,
-            background: C.surfaceEl, border: `1px solid ${C.border}`,
-            borderRadius: 12, padding: "10px 12px", marginBottom: 8,
-            transform: `translateX(${interpolate(p, [0, 1], [24, 0])}px)`,
-            opacity: p,
-          }}>
+          <div
+            key={n.poster.title}
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 11,
+              background: C.surfaceEl,
+              border: `1px solid ${C.border}`,
+              borderRadius: 12,
+              padding: "10px 12px",
+              marginBottom: 8,
+              transform: `translateX(${interpolate(p, [0, 1], [24, 0])}px)`,
+              opacity: p,
+            }}
+          >
             <Poster data={n.poster} width={38} height={54} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                <p style={{ color: C.textStrong, fontSize: 11, fontWeight: 700, margin: 0 }}>{n.poster.title}</p>
+                <p style={{ color: C.textStrong, fontSize: 11, fontWeight: 700, margin: 0 }}>
+                  {n.poster.title}
+                </p>
                 <Chip label={n.cat} color={n.catColor} />
               </div>
               <div style={{ marginBottom: 4 }}>
                 <StarRating count={n.rating} color={n.catColor} />
               </div>
-              <p style={{ color: C.textMuted, fontSize: 9, margin: 0, lineHeight: 1.55 }}>{n.excerpt}</p>
+              <p style={{ color: C.textMuted, fontSize: 9, margin: 0, lineHeight: 1.55 }}>
+                {n.excerpt}
+              </p>
             </div>
           </div>
         );
       })}
 
       {/* Stats strip */}
-      <div style={{
-        display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6, marginTop: 4,
-        opacity: statsP, transform: `translateY(${interpolate(statsP, [0, 1], [10, 0])}px)`,
-      }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 6,
+          marginTop: 4,
+          opacity: statsP,
+          transform: `translateY(${interpolate(statsP, [0, 1], [10, 0])}px)`,
+        }}
+      >
         {[
           { label: "Toplam Not", value: "47", color: C.gold, Icon: List },
           { label: "Film & Dizi", value: "29", color: C.cyan, Icon: Film },
           { label: "Bu Ay", value: "8", color: C.blue, Icon: TrendingUp },
         ].map((s) => (
-          <div key={s.label} style={{
-            background: `${s.color}10`, border: `1px solid ${s.color}22`,
-            borderRadius: 10, padding: "8px 10px",
-            display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-          }}>
+          <div
+            key={s.label}
+            style={{
+              background: `${s.color}10`,
+              border: `1px solid ${s.color}22`,
+              borderRadius: 10,
+              padding: "8px 10px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
             <s.Icon size={12} color={s.color} strokeWidth={2} />
             <strong style={{ color: s.color, fontSize: 17, fontWeight: 900, lineHeight: 1 }}>
               {s.value}
@@ -331,7 +462,8 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
    Scene 2 — Note Writing
 ══════════════════════════════════════════ */
 function NoteWritingScene({ frame, fps, C }: SceneProps) {
-  const NOTE_TEXT = "Christopher Nolan bu filmde zamana farklı bir bakış açısı getiriyor. Interstellar, bilim kurgu sinemasının sınırlarını zorlayan, izleyiciyi hem duygusal hem entelektüel olarak etkileyen...";
+  const NOTE_TEXT =
+    "Christopher Nolan bu filmde zamana farklı bir bakış açısı getiriyor. Interstellar, bilim kurgu sinemasının sınırlarını zorlayan, izleyiciyi hem duygusal hem entelektüel olarak etkileyen...";
 
   const headerP = sp(frame, fps, 0);
   const movieP = sp(frame, fps, 12, 80, 18);
@@ -340,51 +472,86 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
   const tagsP = sp(frame, fps, 70);
   const btnP = sp(frame, fps, 100);
 
-  const starsLit = Math.floor(interpolate(frame, [28, 65], [0, 5], {
-    extrapolateLeft: "clamp", extrapolateRight: "clamp",
-  }));
+  const starsLit = Math.floor(
+    interpolate(frame, [28, 65], [0, 5], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    })
+  );
 
-  const charCount = Math.floor(interpolate(frame, [50, 140], [0, NOTE_TEXT.length], {
-    extrapolateLeft: "clamp", extrapolateRight: "clamp",
-  }));
+  const charCount = Math.floor(
+    interpolate(frame, [50, 140], [0, NOTE_TEXT.length], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    })
+  );
 
   return (
     <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div style={{
-        position: "absolute", bottom: -50, right: -50, width: 260, height: 260, borderRadius: "50%",
-        background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+      <div
+        style={{
+          position: "absolute",
+          bottom: -50,
+          right: -50,
+          width: 260,
+          height: 260,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Header */}
-      <div style={{
-        opacity: headerP,
-        transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 14,
-      }}>
+      <div
+        style={{
+          opacity: headerP,
+          transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
+          marginBottom: 14,
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
           <ArrowLeft size={11} color={C.textMuted} strokeWidth={2} />
           <span style={{ color: C.textMuted, fontSize: 9 }}>Notlarım</span>
           <span style={{ color: C.border, fontSize: 9 }}>/</span>
           <span style={{ color: C.textSoft, fontSize: 9, fontWeight: 600 }}>Yeni Not</span>
         </div>
-        <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
+        <h2
+          style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: 0, lineHeight: 1.2 }}
+        >
           Not Yazılıyor
         </h2>
       </div>
 
       {/* Movie card */}
-      <div style={{
-        display: "flex", gap: 12, alignItems: "center",
-        background: C.surfaceEl, border: `1px solid ${C.border}`,
-        borderRadius: 12, padding: "10px 12px", marginBottom: 11,
-        opacity: movieP,
-        transform: `translateY(${interpolate(movieP, [0, 1], [12, 0])}px)`,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
+          background: C.surfaceEl,
+          border: `1px solid ${C.border}`,
+          borderRadius: 12,
+          padding: "10px 12px",
+          marginBottom: 11,
+          opacity: movieP,
+          transform: `translateY(${interpolate(movieP, [0, 1], [12, 0])}px)`,
+        }}
+      >
         <Poster data={INTERSTELLAR} width={42} height={58} />
         <div>
-          <p style={{ color: C.textStrong, fontSize: 13, fontWeight: 800, margin: "0 0 3px" }}>Interstellar</p>
-          <p style={{ color: C.textMuted, fontSize: 10, margin: "0 0 6px", display: "flex", alignItems: "center", gap: 4 }}>
+          <p style={{ color: C.textStrong, fontSize: 13, fontWeight: 800, margin: "0 0 3px" }}>
+            Interstellar
+          </p>
+          <p
+            style={{
+              color: C.textMuted,
+              fontSize: 10,
+              margin: "0 0 6px",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
             <Clock size={9} color={C.textMuted} strokeWidth={2} />
             2014 · Christopher Nolan
           </p>
@@ -393,14 +560,21 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
       </div>
 
       {/* Star rating */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: 8, marginBottom: 10,
-        opacity: starsP,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          marginBottom: 10,
+          opacity: starsP,
+        }}
+      >
         <span style={{ color: C.textMuted, fontSize: 9, fontWeight: 600 }}>Puan:</span>
         <div style={{ display: "flex", gap: 5 }}>
           {[1, 2, 3, 4, 5].map((i) => (
-            <Star key={i} size={18}
+            <Star
+              key={i}
+              size={18}
               color={i <= starsLit ? C.amber : `${C.textMuted}44`}
               fill={i <= starsLit ? C.amber : "none"}
               strokeWidth={1.5}
@@ -413,58 +587,104 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
       </div>
 
       {/* Text area */}
-      <div style={{
-        background: C.surface, border: `1px solid ${C.gold}30`,
-        borderRadius: 10, padding: "10px 12px", marginBottom: 10, minHeight: 68,
-        opacity: textP, transform: `translateY(${interpolate(textP, [0, 1], [8, 0])}px)`,
-      }}>
+      <div
+        style={{
+          background: C.surface,
+          border: `1px solid ${C.gold}30`,
+          borderRadius: 10,
+          padding: "10px 12px",
+          marginBottom: 10,
+          minHeight: 68,
+          opacity: textP,
+          transform: `translateY(${interpolate(textP, [0, 1], [8, 0])}px)`,
+        }}
+      >
         <p style={{ color: C.textStrong, fontSize: 10, lineHeight: 1.68, margin: 0 }}>
           {NOTE_TEXT.slice(0, charCount)}
           {charCount < NOTE_TEXT.length && (
-            <span style={{
-              display: "inline-block", width: 1, height: 11,
-              background: C.gold, marginLeft: 1, verticalAlign: "text-bottom",
-              opacity: frame % 20 < 10 ? 1 : 0,
-            }} />
+            <span
+              style={{
+                display: "inline-block",
+                width: 1,
+                height: 11,
+                background: C.gold,
+                marginLeft: 1,
+                verticalAlign: "text-bottom",
+                opacity: frame % 20 < 10 ? 1 : 0,
+              }}
+            />
           )}
         </p>
       </div>
 
       {/* Tags */}
-      <div style={{
-        display: "flex", gap: 5, flexWrap: "wrap",
-        opacity: tagsP, transform: `translateY(${interpolate(tagsP, [0, 1], [8, 0])}px)`,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 5,
+          flexWrap: "wrap",
+          opacity: tagsP,
+          transform: `translateY(${interpolate(tagsP, [0, 1], [8, 0])}px)`,
+        }}
+      >
         {["Bilim Kurgu", "Christopher Nolan", "Uzay"].map((tag) => (
-          <div key={tag} style={{
-            display: "flex", alignItems: "center", gap: 4,
-            background: C.surface, border: `1px solid ${C.border}`,
-            borderRadius: 20, padding: "3px 8px", color: C.textSoft, fontSize: 9, fontWeight: 600,
-          }}>
+          <div
+            key={tag}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              background: C.surface,
+              border: `1px solid ${C.border}`,
+              borderRadius: 20,
+              padding: "3px 8px",
+              color: C.textSoft,
+              fontSize: 9,
+              fontWeight: 600,
+            }}
+          >
             <Tag size={8} color={C.textMuted} strokeWidth={2} />
             {tag}
           </div>
         ))}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 4,
-          background: `${C.gold}14`, border: `1px solid ${C.gold}30`,
-          borderRadius: 20, padding: "3px 8px", color: C.gold, fontSize: 9, fontWeight: 700,
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            background: `${C.gold}14`,
+            border: `1px solid ${C.gold}30`,
+            borderRadius: 20,
+            padding: "3px 8px",
+            color: C.gold,
+            fontSize: 9,
+            fontWeight: 700,
+          }}
+        >
           <Plus size={8} color={C.gold} />
           Etiket Ekle
         </div>
       </div>
 
       {/* Save button */}
-      <div style={{
-        position: "absolute", bottom: 20, right: 20,
-        background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
-        borderRadius: 10, padding: "8px 18px",
-        color: "white", fontSize: 10, fontWeight: 700,
-        opacity: btnP,
-        boxShadow: `0 4px 16px ${C.gold}40`,
-        display: "flex", alignItems: "center", gap: 6,
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 20,
+          right: 20,
+          background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
+          borderRadius: 10,
+          padding: "8px 18px",
+          color: "white",
+          fontSize: 10,
+          fontWeight: 700,
+          opacity: btnP,
+          boxShadow: `0 4px 16px ${C.gold}40`,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+        }}
+      >
         <CheckCircle size={11} color="white" strokeWidth={2.5} />
         Kaydet
       </div>
@@ -477,9 +697,12 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
 ══════════════════════════════════════════ */
 function SearchScene({ frame, fps, C }: SceneProps) {
   const SEARCH_TEXT = "christopher nolan";
-  const searchChars = Math.floor(interpolate(frame, [20, 70], [0, SEARCH_TEXT.length], {
-    extrapolateLeft: "clamp", extrapolateRight: "clamp",
-  }));
+  const searchChars = Math.floor(
+    interpolate(frame, [20, 70], [0, SEARCH_TEXT.length], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    })
+  );
 
   const results = [
     { poster: INTERSTELLAR, cat: "Film", catColor: C.cyan, rating: 5, year: "2014" },
@@ -501,73 +724,124 @@ function SearchScene({ frame, fps, C }: SceneProps) {
 
   return (
     <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div style={{
-        position: "absolute", top: -60, right: -60, width: 260, height: 260, borderRadius: "50%",
-        background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+      <div
+        style={{
+          position: "absolute",
+          top: -60,
+          right: -60,
+          width: 260,
+          height: 260,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Header */}
-      <div style={{
-        opacity: headerP,
-        transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 12,
-      }}>
+      <div
+        style={{
+          opacity: headerP,
+          transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
+          marginBottom: 12,
+        }}
+      >
         <div style={{ marginBottom: 6 }}>
           <DigyNotesLogo />
         </div>
-        <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+        <h2
+          style={{
+            color: C.textStrong,
+            fontSize: 15,
+            fontWeight: 800,
+            margin: "0 0 2px",
+            lineHeight: 1.2,
+          }}
+        >
           Notları Keşfet
         </h2>
         <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>47 not arasında arama yap</p>
       </div>
 
       {/* Search box */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: 9,
-        background: C.surfaceEl, border: `1px solid ${C.gold}35`,
-        borderRadius: 12, padding: "9px 13px", marginBottom: 9,
-        opacity: searchBoxP,
-        transform: `translateY(${interpolate(searchBoxP, [0, 1], [10, 0])}px)`,
-        boxShadow: `0 0 0 3px ${C.gold}10`,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 9,
+          background: C.surfaceEl,
+          border: `1px solid ${C.gold}35`,
+          borderRadius: 12,
+          padding: "9px 13px",
+          marginBottom: 9,
+          opacity: searchBoxP,
+          transform: `translateY(${interpolate(searchBoxP, [0, 1], [10, 0])}px)`,
+          boxShadow: `0 0 0 3px ${C.gold}10`,
+        }}
+      >
         <Search size={13} color={C.textMuted} strokeWidth={2} />
         <span style={{ color: C.textStrong, fontSize: 12, flex: 1 }}>
           {SEARCH_TEXT.slice(0, searchChars)}
           {searchChars < SEARCH_TEXT.length && (
-            <span style={{
-              display: "inline-block", width: 1, height: 13,
-              background: C.gold, marginLeft: 1, verticalAlign: "text-bottom",
-              opacity: frame % 18 < 9 ? 1 : 0,
-            }} />
+            <span
+              style={{
+                display: "inline-block",
+                width: 1,
+                height: 13,
+                background: C.gold,
+                marginLeft: 1,
+                verticalAlign: "text-bottom",
+                opacity: frame % 18 < 9 ? 1 : 0,
+              }}
+            />
           )}
         </span>
-        <div style={{
-          background: `${C.cyan}14`, border: `1px solid ${C.cyan}28`,
-          borderRadius: 6, padding: "3px 8px", color: C.cyan, fontSize: 9, fontWeight: 700,
-          display: "flex", alignItems: "center", gap: 3,
-        }}>
-          <Film size={8} color={C.cyan} />
-          4 sonuç
+        <div
+          style={{
+            background: `${C.cyan}14`,
+            border: `1px solid ${C.cyan}28`,
+            borderRadius: 6,
+            padding: "3px 8px",
+            color: C.cyan,
+            fontSize: 9,
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+          }}
+        >
+          <Film size={8} color={C.cyan} />4 sonuç
         </div>
       </div>
 
       {/* Filter chips */}
-      <div style={{
-        display: "flex", gap: 5, marginBottom: 10, flexWrap: "wrap",
-        opacity: filtersP, transform: `translateX(${interpolate(filtersP, [0, 1], [-12, 0])}px)`,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 5,
+          marginBottom: 10,
+          flexWrap: "wrap",
+          opacity: filtersP,
+          transform: `translateX(${interpolate(filtersP, [0, 1], [-12, 0])}px)`,
+        }}
+      >
         {filters.map((f) => {
           const FIcon = f.Icon;
           return (
-            <div key={f.label} style={{
-              display: "flex", alignItems: "center", gap: 4,
-              background: f.active ? `${f.color}20` : C.surface,
-              border: `1px solid ${f.active ? f.color + "40" : C.border}`,
-              borderRadius: 20, padding: "4px 10px",
-              color: f.active ? f.color : C.textMuted,
-              fontSize: 9, fontWeight: f.active ? 700 : 500,
-            }}>
+            <div
+              key={f.label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                background: f.active ? `${f.color}20` : C.surface,
+                border: `1px solid ${f.active ? f.color + "40" : C.border}`,
+                borderRadius: 20,
+                padding: "4px 10px",
+                color: f.active ? f.color : C.textMuted,
+                fontSize: 9,
+                fontWeight: f.active ? 700 : 500,
+              }}
+            >
               {FIcon && <FIcon size={9} color={f.active ? f.color : C.textMuted} strokeWidth={2} />}
               {f.label}
             </div>
@@ -579,16 +853,27 @@ function SearchScene({ frame, fps, C }: SceneProps) {
       {results.map((r, i) => {
         const p = sp(frame, fps, 78 + i * 10, 90, 20);
         return (
-          <div key={r.poster.title} style={{
-            display: "flex", alignItems: "center", gap: 10,
-            background: C.surfaceEl, border: `1px solid ${C.border}`,
-            borderRadius: 10, padding: "8px 12px", marginBottom: 6,
-            opacity: p, transform: `translateX(${interpolate(p, [0, 1], [18, 0])}px)`,
-          }}>
+          <div
+            key={r.poster.title}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              background: C.surfaceEl,
+              border: `1px solid ${C.border}`,
+              borderRadius: 10,
+              padding: "8px 12px",
+              marginBottom: 6,
+              opacity: p,
+              transform: `translateX(${interpolate(p, [0, 1], [18, 0])}px)`,
+            }}
+          >
             <Poster data={r.poster} width={30} height={42} />
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                <span style={{ color: C.textStrong, fontSize: 11, fontWeight: 700 }}>{r.poster.title}</span>
+                <span style={{ color: C.textStrong, fontSize: 11, fontWeight: 700 }}>
+                  {r.poster.title}
+                </span>
                 <Chip label={r.cat} color={r.catColor} />
               </div>
               <StarRating count={r.rating} color={r.catColor} />
@@ -606,8 +891,12 @@ function SearchScene({ frame, fps, C }: SceneProps) {
 ══════════════════════════════════════════ */
 function StatsScene({ frame, fps, C }: SceneProps) {
   const months = [
-    { m: "Eki", v: 3 }, { m: "Kas", v: 5 }, { m: "Ara", v: 4 },
-    { m: "Oca", v: 7 }, { m: "Şub", v: 6 }, { m: "Mar", v: 8 },
+    { m: "Eki", v: 3 },
+    { m: "Kas", v: 5 },
+    { m: "Ara", v: 4 },
+    { m: "Oca", v: 7 },
+    { m: "Şub", v: 6 },
+    { m: "Mar", v: 8 },
   ];
   const maxV = 8;
 
@@ -625,79 +914,156 @@ function StatsScene({ frame, fps, C }: SceneProps) {
 
   return (
     <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div style={{
-        position: "absolute", bottom: -60, left: -60, width: 280, height: 280, borderRadius: "50%",
-        background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+      <div
+        style={{
+          position: "absolute",
+          bottom: -60,
+          left: -60,
+          width: 280,
+          height: 280,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Header */}
-      <div style={{
-        opacity: headerP,
-        transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 12,
-        display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-      }}>
+      <div
+        style={{
+          opacity: headerP,
+          transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
+          marginBottom: 12,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
             <BarChart3 size={11} color={C.gold} strokeWidth={2} />
-            <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
+            <span
+              style={{
+                color: C.gold,
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: 1.5,
+                textTransform: "uppercase",
+              }}
+            >
               İstatistikler
             </span>
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+          <h2
+            style={{
+              color: C.textStrong,
+              fontSize: 15,
+              fontWeight: 800,
+              margin: "0 0 2px",
+              lineHeight: 1.2,
+            }}
+          >
             Okuma Alışkanlıkları
           </h2>
           <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>Son 6 ay · 33 not</p>
         </div>
 
         {/* Streak badge */}
-        <div style={{
-          background: `${C.amber}14`, border: `1px solid ${C.amber}30`,
-          borderRadius: 12, padding: "8px 12px",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-          opacity: streakP, transform: `translateX(${interpolate(streakP, [0, 1], [14, 0])}px)`,
-        }}>
+        <div
+          style={{
+            background: `${C.amber}14`,
+            border: `1px solid ${C.amber}30`,
+            borderRadius: 12,
+            padding: "8px 12px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 3,
+            opacity: streakP,
+            transform: `translateX(${interpolate(streakP, [0, 1], [14, 0])}px)`,
+          }}
+        >
           <Flame size={16} color={C.amber} strokeWidth={2} fill={`${C.amber}40`} />
-          <strong style={{ color: C.amber, fontSize: 16, fontWeight: 900, lineHeight: 1 }}>12</strong>
+          <strong style={{ color: C.amber, fontSize: 16, fontWeight: 900, lineHeight: 1 }}>
+            12
+          </strong>
           <span style={{ color: C.textMuted, fontSize: 8 }}>gün seri</span>
         </div>
       </div>
 
       {/* Chart label */}
-      <p style={{
-        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.2,
-        textTransform: "uppercase", margin: "0 0 8px",
-        opacity: chartLabelP,
-        display: "flex", alignItems: "center", gap: 4,
-      }}>
+      <p
+        style={{
+          color: C.textMuted,
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: 1.2,
+          textTransform: "uppercase",
+          margin: "0 0 8px",
+          opacity: chartLabelP,
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+        }}
+      >
         <BarChart3 size={9} color={C.textMuted} />
         Aylık Not Sayısı
       </p>
 
       {/* Bar chart */}
-      <div style={{
-        display: "flex", alignItems: "flex-end", gap: 6, height: 70, marginBottom: 14,
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 6,
+          height: 70,
+          marginBottom: 14,
+        }}
+      >
         {months.map((m, i) => {
           const barH = interpolate(frame, [25 + i * 8, 75 + i * 8], [0, (m.v / maxV) * 70], {
-            extrapolateLeft: "clamp", extrapolateRight: "clamp",
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
           });
           const isLast = i === months.length - 1;
           return (
-            <div key={m.m} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", height: 70, width: "100%" }}>
-                <div style={{
-                  height: barH,
-                  background: isLast
-                    ? `linear-gradient(180deg, ${C.goldLight}, ${C.gold})`
-                    : `${C.gold}35`,
-                  borderRadius: "4px 4px 0 0",
-                  minWidth: 16,
-                  boxShadow: isLast ? `0 -2px 8px ${C.gold}40` : "none",
-                }} />
+            <div
+              key={m.m}
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  height: 70,
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    height: barH,
+                    background: isLast
+                      ? `linear-gradient(180deg, ${C.goldLight}, ${C.gold})`
+                      : `${C.gold}35`,
+                    borderRadius: "4px 4px 0 0",
+                    minWidth: 16,
+                    boxShadow: isLast ? `0 -2px 8px ${C.gold}40` : "none",
+                  }}
+                />
               </div>
-              <span style={{ color: isLast ? C.gold : C.textMuted, fontSize: 8, fontWeight: isLast ? 700 : 400 }}>
+              <span
+                style={{
+                  color: isLast ? C.gold : C.textMuted,
+                  fontSize: 8,
+                  fontWeight: isLast ? 700 : 400,
+                }}
+              >
                 {m.m}
               </span>
             </div>
@@ -706,23 +1072,36 @@ function StatsScene({ frame, fps, C }: SceneProps) {
       </div>
 
       {/* Category breakdown label */}
-      <p style={{
-        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.2,
-        textTransform: "uppercase", margin: "0 0 9px",
-        opacity: catLabelP,
-      }}>Kategori Dağılımı</p>
+      <p
+        style={{
+          color: C.textMuted,
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: 1.2,
+          textTransform: "uppercase",
+          margin: "0 0 9px",
+          opacity: catLabelP,
+        }}
+      >
+        Kategori Dağılımı
+      </p>
 
       {cats.map((cat, i) => {
         const p = sp(frame, fps, 95 + i * 10);
         const barW = interpolate(frame, [110 + i * 10, 150 + i * 10], [0, cat.pct], {
-          extrapolateLeft: "clamp", extrapolateRight: "clamp",
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
         });
         const CatIcon = cat.Icon;
         return (
-          <div key={cat.label} style={{
-            marginBottom: 8, opacity: p,
-            transform: `translateX(${interpolate(p, [0, 1], [-14, 0])}px)`,
-          }}>
+          <div
+            key={cat.label}
+            style={{
+              marginBottom: 8,
+              opacity: p,
+              transform: `translateX(${interpolate(p, [0, 1], [-14, 0])}px)`,
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <CatIcon size={9} color={cat.color} strokeWidth={2} />
@@ -730,8 +1109,22 @@ function StatsScene({ frame, fps, C }: SceneProps) {
               </div>
               <span style={{ color: cat.color, fontSize: 10, fontWeight: 700 }}>{cat.count}</span>
             </div>
-            <div style={{ height: 4, background: `${cat.color}18`, borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ width: `${barW}%`, height: "100%", background: cat.color, borderRadius: 2 }} />
+            <div
+              style={{
+                height: 4,
+                background: `${cat.color}18`,
+                borderRadius: 2,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  width: `${barW}%`,
+                  height: "100%",
+                  background: cat.color,
+                  borderRadius: 2,
+                }}
+              />
             </div>
           </div>
         );
@@ -747,20 +1140,26 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
   const collections = [
     {
       name: "İzleme Listesi",
-      count: 12, desc: "Bekleyen filmler",
-      color: C.cyan, Icon: Film,
+      count: 12,
+      desc: "Bekleyen filmler",
+      color: C.cyan,
+      Icon: Film,
       posters: [POOR_THINGS, TENET, INCEPTION],
     },
     {
       name: "Kitaplığım",
-      count: 8, desc: "Okuduğum kitaplar",
-      color: C.amber, Icon: BookOpen,
+      count: 8,
+      desc: "Okuduğum kitaplar",
+      color: C.amber,
+      Icon: BookOpen,
       posters: [DUNE],
     },
     {
       name: "Favori Filmler",
-      count: 17, desc: "Tüm zamanların en iyileri",
-      color: C.gold, Icon: Star,
+      count: 17,
+      desc: "Tüm zamanların en iyileri",
+      color: C.gold,
+      Icon: Star,
       posters: [INTERSTELLAR, OPPENHEIMER, INCEPTION],
     },
   ];
@@ -770,34 +1169,61 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
 
   return (
     <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div style={{
-        position: "absolute", top: -60, right: -60, width: 280, height: 280, borderRadius: "50%",
-        background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
-        pointerEvents: "none",
-      }} />
+      <div
+        style={{
+          position: "absolute",
+          top: -60,
+          right: -60,
+          width: 280,
+          height: 280,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Header */}
-      <div style={{
-        opacity: headerP,
-        transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 14,
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-      }}>
+      <div
+        style={{
+          opacity: headerP,
+          transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
+          marginBottom: 14,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <div>
           <div style={{ marginBottom: 5 }}>
             <DigyNotesLogo />
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+          <h2
+            style={{
+              color: C.textStrong,
+              fontSize: 15,
+              fontWeight: 800,
+              margin: "0 0 2px",
+              lineHeight: 1.2,
+            }}
+          >
             Koleksiyonlarım
           </h2>
           <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>3 liste · 37 içerik</p>
         </div>
-        <div style={{
-          display: "flex", alignItems: "center", gap: 5,
-          background: `${C.gold}18`, border: `1px solid ${C.gold}28`,
-          borderRadius: 8, padding: "5px 10px",
-          color: C.gold, fontSize: 10, fontWeight: 700,
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            background: `${C.gold}18`,
+            border: `1px solid ${C.gold}28`,
+            borderRadius: 8,
+            padding: "5px 10px",
+            color: C.gold,
+            fontSize: 10,
+            fontWeight: 700,
+          }}
+        >
           <Plus size={10} color={C.gold} />
           Yeni Liste
         </div>
@@ -807,32 +1233,69 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
         const p = sp(frame, fps, 18 + i * 22, 80, 18);
         const ColIcon = col.Icon;
         return (
-          <div key={col.name} style={{
-            background: C.surfaceEl,
-            border: `1px solid ${col.color}22`,
-            borderRadius: 14, padding: "12px 13px", marginBottom: 9,
-            opacity: p, transform: `translateX(${interpolate(p, [0, 1], [i % 2 === 0 ? -22 : 22, 0])}px)`,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 9 }}>
+          <div
+            key={col.name}
+            style={{
+              background: C.surfaceEl,
+              border: `1px solid ${col.color}22`,
+              borderRadius: 14,
+              padding: "12px 13px",
+              marginBottom: 9,
+              opacity: p,
+              transform: `translateX(${interpolate(p, [0, 1], [i % 2 === 0 ? -22 : 22, 0])}px)`,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 9,
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                  background: `${col.color}18`, border: `1px solid ${col.color}28`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    flexShrink: 0,
+                    background: `${col.color}18`,
+                    border: `1px solid ${col.color}28`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <ColIcon size={16} color={col.color} strokeWidth={1.75} />
                 </div>
                 <div>
-                  <p style={{ color: C.textStrong, fontSize: 12, fontWeight: 700, margin: "0 0 2px" }}>{col.name}</p>
+                  <p
+                    style={{
+                      color: C.textStrong,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      margin: "0 0 2px",
+                    }}
+                  >
+                    {col.name}
+                  </p>
                   <p style={{ color: C.textMuted, fontSize: 9, margin: 0 }}>{col.desc}</p>
                 </div>
               </div>
-              <div style={{
-                background: `${col.color}18`, color: col.color,
-                fontSize: 13, fontWeight: 900,
-                padding: "4px 10px", borderRadius: 8,
-                border: `1px solid ${col.color}28`,
-              }}>{col.count}</div>
+              <div
+                style={{
+                  background: `${col.color}18`,
+                  color: col.color,
+                  fontSize: 13,
+                  fontWeight: 900,
+                  padding: "4px 10px",
+                  borderRadius: 8,
+                  border: `1px solid ${col.color}28`,
+                }}
+              >
+                {col.count}
+              </div>
             </div>
 
             {/* Poster preview row */}
@@ -841,12 +1304,21 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
                 <Poster key={poster.title} data={poster} width={28} height={40} />
               ))}
               {col.count > col.posters.length && (
-                <div style={{
-                  width: 28, height: 40, borderRadius: 7,
-                  background: `${col.color}12`, border: `1px solid ${col.color}22`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: col.color, fontSize: 10, fontWeight: 800,
-                }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 40,
+                    borderRadius: 7,
+                    background: `${col.color}12`,
+                    border: `1px solid ${col.color}22`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: col.color,
+                    fontSize: 10,
+                    fontWeight: 800,
+                  }}
+                >
                   +{col.count - col.posters.length}
                 </div>
               )}
@@ -856,19 +1328,31 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       })}
 
       {/* Total badge */}
-      <div style={{
-        position: "absolute", bottom: 22, left: 26, right: 26,
-        background: `${C.gold}10`, border: `1px solid ${C.gold}20`,
-        borderRadius: 10, padding: "8px 14px",
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        opacity: totalP, transform: `translateY(${interpolate(totalP, [0, 1], [10, 0])}px)`,
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          bottom: 22,
+          left: 26,
+          right: 26,
+          background: `${C.gold}10`,
+          border: `1px solid ${C.gold}20`,
+          borderRadius: 10,
+          padding: "8px 14px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          opacity: totalP,
+          transform: `translateY(${interpolate(totalP, [0, 1], [10, 0])}px)`,
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
           <List size={11} color={C.textSoft} strokeWidth={2} />
           <span style={{ color: C.textSoft, fontSize: 10 }}>Toplam takip edilen içerik</span>
         </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
-          <strong style={{ color: C.gold, fontSize: 20, fontWeight: 900, lineHeight: 1 }}>37</strong>
+          <strong style={{ color: C.gold, fontSize: 20, fontWeight: 900, lineHeight: 1 }}>
+            37
+          </strong>
           <span style={{ color: C.textMuted, fontSize: 9 }}>içerik</span>
         </div>
       </div>
