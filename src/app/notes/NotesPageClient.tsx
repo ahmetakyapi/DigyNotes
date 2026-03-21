@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Post } from "@/types";
-import { PostsList } from "@/components/PostsList";
+import { PostsList } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
 
 const PAGE_SIZE = 12;
@@ -41,10 +41,10 @@ async function fetchPaginated(url: string): Promise<PaginatedPostsResponse> {
 }
 
 interface NotesPageClientProps {
-  initialQuery: string;
-  initialCategory: string;
-  initialTags: string[];
-  initialTab: "notlar" | "kaydedilenler";
+  readonly initialQuery: string;
+  readonly initialCategory: string;
+  readonly initialTags: string[];
+  readonly initialTab: "notlar" | "kaydedilenler";
 }
 
 function buildPostsUrl(query: string, category: string, tags: string[], cursor?: string | null) {
@@ -133,9 +133,7 @@ export default function NotesPageClient({
 
     setLoadingMorePosts(true);
     try {
-      const data = await fetchPaginated(
-        buildPostsUrl(initialQuery, "", [], postsCursor)
-      );
+      const data = await fetchPaginated(buildPostsUrl(initialQuery, "", [], postsCursor));
 
       setPosts((prev) => mergePosts(prev, data.items));
       setPostsCursor(data.nextCursor);

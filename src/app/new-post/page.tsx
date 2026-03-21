@@ -371,11 +371,7 @@ export default function NewPostPage() {
         imageHint={guidance.imageHint}
         onImageChange={setImage}
       />
-      <TagsSidebar
-        tags={tags}
-        exampleTags={exampleTags}
-        onTagsChange={setTags}
-      />
+      <TagsSidebar tags={tags} exampleTags={exampleTags} onTagsChange={setTags} />
     </>
   );
 
@@ -390,8 +386,7 @@ export default function NewPostPage() {
             </span>
             {autofillDone && (
               <span className="bg-[#2bbf6a]/8 inline-flex items-center gap-1.5 rounded-full border border-[#2bbf6a]/25 px-2.5 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" />{" "}
-                Otomatik dolduruldu
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" /> Otomatik dolduruldu
               </span>
             )}
           </div>
@@ -466,9 +461,7 @@ export default function NewPostPage() {
             {sidebarCards}
           </aside>
 
-          <div className="order-2 min-w-0 space-y-4 xl:hidden">
-            {sidebarCards}
-          </div>
+          <div className="order-2 min-w-0 space-y-4 xl:hidden">{sidebarCards}</div>
         </form>
       </div>
 
