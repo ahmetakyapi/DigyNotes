@@ -22,8 +22,8 @@ const LIGHT_THEME = {
   geomDot: "rgba(16,185,129,0.18)",
   geomRing: "rgba(20,184,166,0.1)",
   geomCross: "rgba(16,185,129,0.3)",
-  badgeBg: "linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04))",
-  badgeBorder: "rgba(16,185,129,0.22)",
+  badgeBg: "linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.05))",
+  badgeBorder: "rgba(16,185,129,0.28)",
   badgeDot: "radial-gradient(circle, #34d399, #059669)",
   badgeDotGlow: "0 0 8px #059669",
   badgeText: "linear-gradient(90deg, #047857, #10b981)",
@@ -37,6 +37,12 @@ const LIGHT_THEME = {
   ctaBtnShadow:
     "0 8px 28px rgba(5,150,105,0.28), 0 0 0 1px rgba(16,185,129,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset",
   ctaBtnHoverShadow: "0 16px 48px rgba(5, 150, 105, 0.48)",
+  statsBg: "rgba(255,255,255,0.7)",
+  statsBorder: "rgba(16,185,129,0.2)",
+  notifBg: "rgba(255,255,255,0.92)",
+  notifBorder: "rgba(16,185,129,0.25)",
+  notifText: "#0f172a",
+  notifSub: "#64748b",
 } as const;
 
 const DARK_THEME = {
@@ -66,7 +72,21 @@ const DARK_THEME = {
   ctaBtnShadow:
     "0 8px 28px rgba(16,185,129,0.32), 0 0 0 1px rgba(52,211,153,0.1) inset, 0 1px 0 rgba(255,255,255,0.14) inset",
   ctaBtnHoverShadow: "0 16px 48px rgba(16, 185, 129, 0.52)",
+  statsBg: "rgba(255,255,255,0.04)",
+  statsBorder: "rgba(255,255,255,0.08)",
+  notifBg: "rgba(16,24,40,0.95)",
+  notifBorder: "rgba(16,185,129,0.25)",
+  notifText: "#ecf2ff",
+  notifSub: "#6b7f9e",
 } as const;
+
+const FEATURE_PILLS = [
+  { emoji: "🎬", label: "Film" },
+  { emoji: "📺", label: "Dizi" },
+  { emoji: "🎮", label: "Oyun" },
+  { emoji: "📚", label: "Kitap" },
+  { emoji: "🗺️", label: "Gezi" },
+];
 
 export function HeroSection() {
   const { theme } = useTheme();
@@ -93,7 +113,7 @@ export function HeroSection() {
         style={{ background: spotlight }}
       />
 
-      {/* ── Subtle background layers ── */}
+      {/* ── Background layers ── */}
       <motion.div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         style={{ y: bgY }}
@@ -103,17 +123,17 @@ export function HeroSection() {
           className="dn-aurora-float-3 absolute bottom-[18%] left-1/2 h-[200px] w-[340px] -translate-x-1/2 rounded-full opacity-[0.10] blur-[120px] sm:h-[300px] sm:w-[600px] sm:opacity-[0.12]"
           style={{ background: t.glowBg }}
         />
-        {/* Dot grid overlay — constellation-style for light, line grid for dark */}
+        {/* Top-right accent glow */}
         <div
-          className="absolute inset-0 sm:hidden"
+          className="absolute right-[5%] top-[8%] hidden h-[180px] w-[180px] rounded-full blur-[90px] lg:block"
           style={{
-            backgroundImage: t.dotBgImage,
-            backgroundSize: t.dotBgSize,
-            opacity: t.dotOpacity,
+            background: "radial-gradient(circle, rgba(16,185,129,0.12), transparent 70%)",
+            opacity: 0.8,
           }}
         />
+        {/* Grid/dot overlay */}
         <div
-          className="absolute inset-0 hidden sm:block"
+          className="absolute inset-0"
           style={{
             backgroundImage: t.dotBgImage,
             backgroundSize: t.dotBgSize,
@@ -164,30 +184,34 @@ export function HeroSection() {
         </motion.div>
       </div>
 
-      {/* ── İçerik — 2 kolon (lg+) ── */}
+      {/* ══════════════════════════════════════
+          İçerik — 2 kolon (lg+)
+      ══════════════════════════════════════ */}
       <motion.div
-        className="relative z-10 w-full max-w-[430px] sm:max-w-5xl xl:max-w-7xl flex flex-col items-center gap-5 sm:gap-6 lg:grid lg:grid-cols-[1fr,1.15fr] lg:items-center lg:gap-12 xl:gap-16"
+        className="relative z-10 w-full max-w-[460px] sm:max-w-5xl xl:max-w-7xl flex flex-col items-center gap-6 sm:gap-8 lg:grid lg:grid-cols-[1fr,1.1fr] lg:items-center lg:gap-14 xl:gap-20"
         style={{ y: contentY, opacity: contentOpacity }}
       >
-        {/* ── Sol kolon: metin + CTA ── */}
-        <div className="flex flex-col items-center lg:items-start gap-5 sm:gap-6 w-full">
+        {/* ══ Sol kolon: metin + CTA ══ */}
+        <div className="flex w-full flex-col items-center lg:items-start gap-0">
+
           {/* Badge */}
           <motion.div
+            className="mb-5 sm:mb-6"
             initial={{ opacity: 0, y: -14, scale: 0.88 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
           >
             <div
-              className="dn-badge-sheen chip relative mb-1 mt-2 sm:mb-1 sm:mt-0"
-              style={{ background: t.badgeBg, borderColor: t.badgeBorder }}
+              className="dn-badge-sheen chip relative flex items-center gap-2 rounded-full px-3.5 py-2 sm:px-4 sm:py-2.5"
+              style={{ background: t.badgeBg, borderColor: t.badgeBorder, border: `1px solid ${t.badgeBorder}` }}
             >
               <span
-                className="dn-dot-pulse h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"
+                className="dn-dot-pulse h-1.5 w-1.5 flex-shrink-0 rounded-full sm:h-2 sm:w-2"
                 style={{ background: t.badgeDot, boxShadow: t.badgeDotGlow }}
               />
               <span
                 key={theme}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+                className="text-[10px] font-bold uppercase tracking-[0.18em] sm:text-[11px]"
                 style={{
                   background: t.badgeText,
                   backgroundClip: "text",
@@ -202,91 +226,111 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Başlık + açıklama */}
-          <div className="flex flex-col items-center lg:items-start">
-            <h1 className="mb-4 w-full overflow-visible px-1 pb-[0.1em] text-center lg:text-left text-[clamp(2.3rem,11vw,3.3rem)] font-black leading-[1.14] tracking-[-0.038em] sm:mb-5 sm:px-0 sm:text-[clamp(3rem,5.5vw,4.5rem)] sm:leading-[1.12] xl:text-[clamp(3.4rem,4.8vw,5rem)] xl:leading-[1.1]">
-              <motion.span
-                className="mb-0.5 block px-[0.04em] pb-[0.04em] pt-[0.12em] sm:mb-1"
-                style={{ lineHeight: 1.25 }}
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
-              >
-                <RotatingWord />
-              </motion.span>
-
-              <motion.span
-                className="mb-0.5 block px-[0.04em] py-[0.08em] sm:mb-1"
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.85, delay: 0.24, ease: EASE }}
-              >
-                <span
-                  key={theme}
-                  style={{
-                    background: t.headingLine2,
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    color: "transparent",
-                    display: "inline-block",
-                  }}
-                >
-                  Sana Kalanlar
-                </span>
-              </motion.span>
-
-              <motion.span
-                className="mt-1 block px-[0.04em] pb-[0.06em] pt-[0.04em] sm:mt-1.5"
-                initial={{ opacity: 0, y: 28, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
-                style={{ fontSize: "1.08em" }}
-              >
-                <span
-                  key={theme}
-                  className="dn-shimmer-text"
-                  style={{
-                    background: t.headingLine3,
-                    backgroundSize: "200% 100%",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    color: "transparent",
-                    display: "inline-block",
-                  }}
-                >
-                  Tek Yerde
-                </span>
-              </motion.span>
-            </h1>
-
-            <motion.p
-              className="mx-auto lg:mx-0 max-w-[342px] px-2 py-1 text-center lg:text-left text-[1.02rem] font-medium leading-[1.74] text-[var(--text-secondary)] [text-wrap:balance] sm:mb-2 sm:max-w-xl sm:px-0 sm:py-0 sm:text-[1.08rem] sm:leading-[1.86]"
-              initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
+          {/* Başlık */}
+          <h1 className="mb-5 w-full overflow-visible pb-[0.06em] text-left text-[clamp(2.5rem,11vw,3.5rem)] font-black leading-[1.12] tracking-[-0.038em] sm:mb-6 sm:text-[clamp(3.2rem,5.8vw,4.8rem)] sm:leading-[1.1] xl:text-[clamp(3.6rem,5vw,5.2rem)]">
+            {/* Line 1: rotating word */}
+            <motion.span
+              className="mb-1 block sm:mb-1.5"
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.12, ease: EASE }}
             >
-              <span className="block [text-wrap:balance]">
-                Film, dizi, oyun, kitap ve gezilerden geriye kalan düşüncelerini tek bir yerde topla.
+              <RotatingWord innerClassName="justify-start" />
+            </motion.span>
+
+            {/* Line 2: Sana Kalanlar */}
+            <motion.span
+              className="mb-1 block sm:mb-1.5"
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay: 0.24, ease: EASE }}
+            >
+              <span
+                key={theme}
+                style={{
+                  background: t.headingLine2,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  color: "transparent",
+                  display: "inline-block",
+                }}
+              >
+                Sana Kalanlar
               </span>
-              <span className="mt-2 block [text-wrap:balance] sm:mt-2">
-                Puanla, etiketle ve yıllar sonra bile aynı duyguyla geri dön.
+            </motion.span>
+
+            {/* Line 3: Tek Yerde */}
+            <motion.span
+              className="block"
+              style={{ fontSize: "1.06em" }}
+              initial={{ opacity: 0, y: 28, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
+            >
+              <span
+                key={theme}
+                className="dn-shimmer-text"
+                style={{
+                  background: t.headingLine3,
+                  backgroundSize: "200% 100%",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  color: "transparent",
+                  display: "inline-block",
+                }}
+              >
+                Tek Yerde
               </span>
-            </motion.p>
-          </div>
+            </motion.span>
+          </h1>
+
+          {/* Açıklama */}
+          <motion.p
+            className="mb-5 max-w-[360px] text-left text-[1rem] font-medium leading-[1.76] text-[var(--text-secondary)] sm:mb-6 sm:max-w-md sm:text-[1.06rem] sm:leading-[1.84]"
+            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
+          >
+            Film, dizi, oyun, kitap ve gezi anılarını kaydet. Puanla, etiketle — yıllar sonra bile aynı duyguyla geri dön.
+          </motion.p>
+
+          {/* Feature pills */}
+          <motion.div
+            className="mb-6 flex flex-wrap gap-2 sm:mb-7"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.58, ease: EASE }}
+          >
+            {FEATURE_PILLS.map((pill, i) => (
+              <div
+                key={pill.label}
+                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold"
+                style={{
+                  background: t.statsBg,
+                  borderColor: t.statsBorder,
+                  color: "var(--text-secondary)",
+                  animationDelay: `${i * 60}ms`,
+                }}
+              >
+                <span className="text-[12px]">{pill.emoji}</span>
+                {pill.label}
+              </div>
+            ))}
+          </motion.div>
 
           {/* CTA butonları */}
           <motion.div
-            className="mb-4 mt-2 flex w-full flex-col gap-4 px-1.5 pb-1 sm:mb-0 sm:mt-1 sm:w-auto sm:flex-row sm:gap-5 sm:px-0 sm:pb-0 lg:justify-start"
+            className="flex w-full flex-col gap-3.5 sm:w-auto sm:flex-row sm:gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.64, ease: EASE }}
           >
-            <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
+            <MagneticButton className="w-full sm:w-auto">
               <Link
                 href="/register"
-                className="dn-cta-primary group relative block w-full overflow-hidden rounded-[1.6rem] py-[10px] text-center text-[clamp(0.98rem,4vw,1.12rem)] font-semibold tracking-[0.01em] transition-all duration-300 sm:rounded-2xl sm:px-9 sm:py-[12px] sm:text-[14px] 2xl:px-12 2xl:py-[18px] 2xl:text-[16px]"
+                className="dn-cta-primary group relative block w-full overflow-hidden rounded-2xl py-3 text-center text-[1rem] font-semibold tracking-[0.01em] transition-all duration-300 sm:px-10 sm:py-3.5 sm:text-[14px] 2xl:px-12 2xl:py-4"
                 style={{
                   background: t.ctaBtnBg,
                   color: t.ctaBtnTextColor,
@@ -309,81 +353,175 @@ export function HeroSection() {
               </Link>
             </MagneticButton>
 
-            <MagneticButton className="w-[86%] self-center sm:w-auto sm:self-auto">
+            <MagneticButton className="w-full sm:w-auto">
               <Link
                 href="/login"
-                className="dn-cta-ghost block w-full rounded-[1.6rem] border border-[var(--border)] py-[9px] text-center text-[clamp(0.94rem,3.8vw,1.06rem)] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:rounded-2xl sm:px-9 sm:py-[11px] sm:text-[14px] 2xl:px-12 2xl:py-[17px] 2xl:text-[16px]"
+                className="dn-cta-ghost block w-full rounded-2xl border border-[var(--border)] py-3 text-center text-[0.96rem] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:px-10 sm:py-3.5 sm:text-[14px] 2xl:px-12 2xl:py-4"
                 style={{ background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)" }}
               >
                 Giriş Yap
               </Link>
             </MagneticButton>
           </motion.div>
+
+          {/* Mini stats strip */}
+          <motion.div
+            className="mt-6 flex items-center gap-5 sm:mt-7"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.82, ease: EASE }}
+          >
+            {[
+              { value: "5", label: "Kategori" },
+              { value: "∞", label: "Not" },
+              { value: "100%", label: "Ücretsiz" },
+            ].map((s, i) => (
+              <div key={s.label} className="flex items-center gap-5">
+                {i > 0 && (
+                  <div
+                    className="h-4 w-px"
+                    style={{ background: "var(--border)" }}
+                  />
+                )}
+                <div className="flex flex-col">
+                  <span
+                    className="text-sm font-black leading-none tracking-tight"
+                    style={{ color: "var(--gold)" }}
+                  >
+                    {s.value}
+                  </span>
+                  <span className="mt-0.5 text-[10px] font-medium text-[var(--text-muted)]">
+                    {s.label}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
         </div>
 
-        {/* ── Sağ kolon: App window + Remotion player ── */}
+        {/* ══ Sağ kolon: App window + Remotion player ══ */}
         <motion.div
-          className="hidden lg:block relative w-full"
+          className="hidden lg:flex relative w-full flex-col gap-3"
           initial={{ opacity: 0, x: 48, scale: 0.94 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
         >
+          {/* Floating notification card — üstte */}
+          <motion.div
+            className="absolute -top-5 -left-2 z-10 flex items-center gap-3 rounded-2xl px-4 py-2.5 shadow-xl"
+            style={{
+              background: t.notifBg,
+              border: `1px solid ${t.notifBorder}`,
+              backdropFilter: "blur(12px)",
+            }}
+            initial={{ opacity: 0, y: 12, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 1.1, ease: EASE }}
+          >
+            <div
+              className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl text-sm"
+              style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.25)" }}
+            >
+              🎬
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold leading-none" style={{ color: t.notifText }}>
+                Interstellar kaydedildi
+              </p>
+              <p className="mt-0.5 text-[10px]" style={{ color: t.notifSub }}>
+                ★★★★★ · Film
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Floating stat badge — sağ üst */}
+          <motion.div
+            className="absolute -right-3 top-10 z-10 flex flex-col items-center rounded-2xl px-3.5 py-2.5 shadow-xl"
+            style={{
+              background: t.notifBg,
+              border: `1px solid ${t.notifBorder}`,
+              backdropFilter: "blur(12px)",
+            }}
+            initial={{ opacity: 0, x: 12, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
+          >
+            <span className="text-lg font-black leading-none" style={{ color: "var(--gold)" }}>
+              47
+            </span>
+            <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide" style={{ color: t.notifSub }}>
+              Not
+            </span>
+          </motion.div>
+
           {/* Glow halo */}
           <div
-            className="pointer-events-none absolute -inset-8 rounded-full blur-3xl"
+            className="pointer-events-none absolute -inset-10 rounded-full blur-3xl"
             style={{
-              background: "radial-gradient(ellipse 70% 60% at 60% 50%, rgba(16,185,129,0.12), transparent)",
+              background:
+                "radial-gradient(ellipse 70% 60% at 60% 50%, rgba(16,185,129,0.11), transparent)",
             }}
           />
 
           {/* App window frame */}
           <div
-            className="relative w-full rounded-2xl overflow-hidden border border-[var(--border)]"
+            className="relative w-full overflow-hidden rounded-[18px] border border-[var(--border)]"
             style={{
               boxShadow:
-                "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 60px rgba(16,185,129,0.10), 0 8px 28px rgba(0,0,0,0.18)",
+                "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 64px rgba(16,185,129,0.10), 0 8px 32px rgba(0,0,0,0.2)",
             }}
           >
             {/* Chrome bar */}
             <div
-              className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]"
+              className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5"
               style={{ background: "var(--bg-header)" }}
             >
               {/* Traffic lights */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                <div className="w-3 h-3 rounded-full bg-red-400/70" />
-                <div className="w-3 h-3 rounded-full bg-amber-400/70" />
-                <div className="w-3 h-3 rounded-full bg-emerald-400/70" />
+              <div className="flex flex-shrink-0 items-center gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-red-400/70" />
+                <div className="h-3 w-3 rounded-full bg-amber-400/70" />
+                <div className="h-3 w-3 rounded-full bg-emerald-400/70" />
               </div>
 
               {/* URL bar */}
-              <div className="flex-1 mx-2 max-w-xs">
+              <div className="mx-2 max-w-[200px] flex-1">
                 <div
-                  className="h-6 rounded-md flex items-center justify-center gap-1.5 px-3 border border-[var(--border)]"
+                  className="flex h-6 items-center justify-center gap-1.5 rounded-md border border-[var(--border)] px-3"
                   style={{ background: "var(--bg-soft)" }}
                 >
-                  <span className="text-[9px]" style={{ color: "var(--gold)" }}>🔒</span>
+                  <span className="text-[9px]" style={{ color: "var(--gold)" }}>
+                    🔒
+                  </span>
                   <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
                     digynotes.app/notes
                   </span>
                 </div>
               </div>
 
-              {/* Tab indicator */}
+              {/* Tab — DigyNotes logo renkleriyle */}
               <div
-                className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md border"
+                className="flex flex-shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-1"
                 style={{
                   background: "rgba(16,185,129,0.08)",
                   borderColor: "rgba(16,185,129,0.2)",
                 }}
               >
-                <span className="text-[10px]">📝</span>
-                <span
-                  className="text-[10px] font-semibold"
-                  style={{ color: "var(--gold)" }}
-                >
-                  DigyNotes
-                </span>
+                {/* Mini logo: notebook + stacked DIGY/NOTES */}
+                <span className="text-[11px]">📒</span>
+                <div className="flex flex-col leading-none">
+                  <span
+                    className="text-[7px] font-black tracking-wide"
+                    style={{ color: "#d966ff" }}
+                  >
+                    DIGY
+                  </span>
+                  <span
+                    className="text-[7px] font-bold tracking-wide"
+                    style={{ color: "#3399ff" }}
+                  >
+                    NOTES
+                  </span>
+                </div>
               </div>
             </div>
 

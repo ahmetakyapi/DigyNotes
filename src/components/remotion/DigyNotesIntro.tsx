@@ -7,6 +7,24 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import {
+  Film,
+  Tv,
+  BookOpen,
+  Search,
+  Star,
+  TrendingUp,
+  Tag,
+  Bookmark,
+  List,
+  BarChart3,
+  Flame,
+  CheckCircle,
+  Clock,
+  Plus,
+  ArrowLeft,
+  type LucideIcon,
+} from "lucide-react";
 
 /* ── Color palettes matching DigyNotes theme ── */
 const DARK = {
@@ -20,6 +38,7 @@ const DARK = {
   blue: "#38bdf8",
   amber: "#fbbf24",
   red: "#f87171",
+  purple: "#a78bfa",
   textStrong: "#ecf2ff",
   textSoft: "#94a8c8",
   textMuted: "#6b7f9e",
@@ -38,6 +57,7 @@ const LIGHT = {
   blue: "#1d4ed8",
   amber: "#d97706",
   red: "#ef4444",
+  purple: "#7c3aed",
   textStrong: "#0f172a",
   textSoft: "#475569",
   textMuted: "#94a3b8",
@@ -48,7 +68,7 @@ const LIGHT = {
 type Colors = {
   bg: string; surface: string; surfaceEl: string; border: string;
   gold: string; goldLight: string; cyan: string; blue: string;
-  amber: string; red: string;
+  amber: string; red: string; purple: string;
   textStrong: string; textSoft: string; textMuted: string;
   glowGold: string; glowCyan: string;
 };
@@ -59,13 +79,33 @@ function sp(frame: number, fps: number, delay = 0, stiffness = 100, damping = 20
   return spring({ frame: frame - delay, fps, config: { stiffness, damping } });
 }
 
-/* ── Scene opacity helper ── */
 function sceneOpacity(frame: number, start: number) {
   return interpolate(
     frame,
     [start, start + 15, start + 155, start + 175],
     [0, 1, 1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+}
+
+/* ── DigyNotes logo component ── */
+function DigyNotesLogo() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+      {/* Notebook icon */}
+      <div style={{
+        width: 22, height: 22, borderRadius: 6,
+        background: "linear-gradient(135deg, #c026d3, #7c3aed)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        boxShadow: "0 2px 8px rgba(192,38,211,0.35)",
+      }}>
+        <BookOpen size={12} color="white" strokeWidth={2.5} />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05 }}>
+        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: 2, color: "#d946ef" }}>DIGY</span>
+        <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: "#3b82f6" }}>NOTES</span>
+      </div>
+    </div>
   );
 }
 
@@ -84,147 +124,204 @@ function Chip({ label, color }: { readonly label: string; readonly color: string
 }
 
 /* ── Star rating ── */
-function Stars({ count, total = 5, color }: { readonly count: number; readonly total?: number; readonly color: string }) {
+function StarRating({ count, total = 5, color }: { readonly count: number; readonly total?: number; readonly color: string }) {
   return (
     <div style={{ display: "flex", gap: 2 }}>
       {Array.from({ length: total }, (_, i) => i + 1).map((i) => (
-        <span key={i} style={{ fontSize: 9, color: i <= count ? color : `${color}30` }}>★</span>
+        <Star key={i} size={9} color={color} fill={i <= count ? color : "none"} strokeWidth={1.5} />
       ))}
     </div>
   );
 }
+
+/* ── Movie poster card ── */
+type PosterData = {
+  title: string;
+  subtitle: string;
+  grad: string;
+  accent: string;
+  Icon: LucideIcon;
+};
+
+function Poster({ data, width = 40, height = 56 }: { readonly data: PosterData; readonly width?: number; readonly height?: number }) {
+  const Icon = data.Icon;
+  return (
+    <div style={{
+      width, height, borderRadius: 7, flexShrink: 0,
+      background: data.grad,
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "space-between",
+      padding: "6px 4px 4px",
+      overflow: "hidden", position: "relative",
+      boxShadow: `0 4px 12px ${data.accent}40`,
+    }}>
+      {/* Overlay gradient */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.6) 100%)",
+      }} />
+      <Icon size={Math.round(width * 0.35)} color={data.accent} strokeWidth={1.5} />
+      <span style={{
+        position: "relative", zIndex: 1,
+        color: "white", fontSize: Math.max(5, Math.round(width * 0.14)),
+        fontWeight: 800, textAlign: "center", lineHeight: 1.1,
+        textShadow: "0 1px 4px rgba(0,0,0,0.8)",
+      }}>
+        {data.title.split(" ").slice(0, 2).join("\n")}
+      </span>
+    </div>
+  );
+}
+
+/* ── Poster data definitions ── */
+const OPPENHEIMER: PosterData = {
+  title: "Oppenheimer",
+  subtitle: "2023 · Christopher Nolan",
+  grad: "linear-gradient(160deg, #1a0500 0%, #7c2d12 55%, #ea580c 100%)",
+  accent: "#fb923c",
+  Icon: Film,
+};
+const BREAKING_BAD: PosterData = {
+  title: "Breaking Bad",
+  subtitle: "2008–2013 · AMC",
+  grad: "linear-gradient(160deg, #052005 0%, #14532d 50%, #16a34a 100%)",
+  accent: "#4ade80",
+  Icon: Tv,
+};
+const DUNE: PosterData = {
+  title: "Dune",
+  subtitle: "Frank Herbert",
+  grad: "linear-gradient(160deg, #1c1000 0%, #6b4c00 50%, #ca8a04 100%)",
+  accent: "#fbbf24",
+  Icon: BookOpen,
+};
+const INTERSTELLAR: PosterData = {
+  title: "Interstellar",
+  subtitle: "2014 · Christopher Nolan",
+  grad: "linear-gradient(160deg, #000814 0%, #0a1628 50%, #1e40af 100%)",
+  accent: "#60a5fa",
+  Icon: Film,
+};
+const INCEPTION: PosterData = {
+  title: "Inception",
+  subtitle: "2010 · Christopher Nolan",
+  grad: "linear-gradient(160deg, #0f0a1e 0%, #1e1248 50%, #4c1d95 100%)",
+  accent: "#a78bfa",
+  Icon: Film,
+};
+const TENET: PosterData = {
+  title: "Tenet",
+  subtitle: "2020 · Christopher Nolan",
+  grad: "linear-gradient(160deg, #000a1a 0%, #0a2040 50%, #1e3a78 100%)",
+  accent: "#38bdf8",
+  Icon: Film,
+};
+const POOR_THINGS: PosterData = {
+  title: "Poor Things",
+  subtitle: "2023 · Yorgos Lanthimos",
+  grad: "linear-gradient(160deg, #1a0a1a 0%, #6b21a8 55%, #a855f7 100%)",
+  accent: "#c084fc",
+  Icon: Film,
+};
 
 /* ══════════════════════════════════════════
    Scene 1 — Notes Feed
 ══════════════════════════════════════════ */
 function NotesFeedScene({ frame, fps, C }: SceneProps) {
   const notes = [
-    {
-      title: "Oppenheimer",
-      cat: "Film", catColor: C.cyan,
-      rating: 5,
-      excerpt: "Nolan'ın şaheseri. Zaman ve ahlak üzerine derin bir sorgulama...",
-      avatar: "O", avatarColor: "#6366f1",
-    },
-    {
-      title: "Breaking Bad",
-      cat: "Dizi", catColor: C.gold,
-      rating: 5,
-      excerpt: "Walter White dönüşümü sinema tarihinin en iyi karakteri...",
-      avatar: "B", avatarColor: "#8b5cf6",
-    },
-    {
-      title: "Dune",
-      cat: "Kitap", catColor: C.amber,
-      rating: 4,
-      excerpt: "Herbert'in evreni sonsuz zenginlikte. Arrakis'in kum fırtınaları...",
-      avatar: "D", avatarColor: "#f59e0b",
-    },
+    { poster: OPPENHEIMER, cat: "Film", catColor: C.cyan, rating: 5, excerpt: "Nolan'ın şaheseri. Zaman ve ahlak üzerine derin bir sorgulama..." },
+    { poster: BREAKING_BAD, cat: "Dizi", catColor: C.gold, rating: 5, excerpt: "Walter White dönüşümü sinema tarihinin en iyi karakteri..." },
+    { poster: DUNE, cat: "Kitap", catColor: C.amber, rating: 4, excerpt: "Herbert'in evreni sonsuz zenginlikte. Arrakis'in kum fırtınaları..." },
   ];
 
   const headerP = sp(frame, fps, 0);
   const statsP = sp(frame, fps, 80);
-  const notifP = sp(frame, fps, 95);
 
   return (
-    <AbsoluteFill style={{ padding: 26, fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{
         position: "absolute", top: -60, left: -60, width: 280, height: 280, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
         pointerEvents: "none",
       }} />
 
+      {/* Header */}
       <div style={{
         transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        opacity: headerP, marginBottom: 16,
+        opacity: headerP, marginBottom: 14,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-            <div style={{
-              width: 18, height: 18, borderRadius: 5,
-              background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "white", fontSize: 9, fontWeight: 900,
-            }}>D</div>
-            <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
-              DigyNotes
-            </span>
+          <div style={{ marginBottom: 5 }}>
+            <DigyNotesLogo />
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
             Son Notlar
           </h2>
-          <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>47 not · 12 kategori</p>
+          <p style={{ color: C.textMuted, fontSize: 10, margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+            <List size={9} color={C.textMuted} />
+            47 not · 12 kategori
+          </p>
         </div>
         <div style={{
+          display: "flex", alignItems: "center", gap: 5,
           background: `${C.gold}18`, border: `1px solid ${C.gold}28`,
           borderRadius: 8, padding: "5px 10px",
           color: C.gold, fontSize: 10, fontWeight: 700,
-        }}>+ Yeni Not</div>
+        }}>
+          <Plus size={10} color={C.gold} />
+          Yeni Not
+        </div>
       </div>
 
+      {/* Note cards */}
       {notes.map((n, i) => {
         const p = sp(frame, fps, 18 + i * 14, 90, 20);
         return (
-          <div key={n.title} style={{
-            display: "flex", alignItems: "flex-start", gap: 10,
+          <div key={n.poster.title} style={{
+            display: "flex", alignItems: "flex-start", gap: 11,
             background: C.surfaceEl, border: `1px solid ${C.border}`,
-            borderRadius: 11, padding: "10px 12px", marginBottom: 7,
+            borderRadius: 12, padding: "10px 12px", marginBottom: 8,
             transform: `translateX(${interpolate(p, [0, 1], [24, 0])}px)`,
             opacity: p,
           }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-              background: `linear-gradient(135deg, ${n.avatarColor}, ${n.avatarColor}88)`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "white", fontSize: 12, fontWeight: 800,
-            }}>{n.avatar}</div>
+            <Poster data={n.poster} width={38} height={54} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-                <p style={{ color: C.textStrong, fontSize: 11, fontWeight: 700, margin: 0 }}>{n.title}</p>
+                <p style={{ color: C.textStrong, fontSize: 11, fontWeight: 700, margin: 0 }}>{n.poster.title}</p>
                 <Chip label={n.cat} color={n.catColor} />
               </div>
-              <Stars count={n.rating} color={n.catColor} />
-              <p style={{ color: C.textMuted, fontSize: 9, margin: "4px 0 0", lineHeight: 1.5 }}>{n.excerpt}</p>
+              <div style={{ marginBottom: 4 }}>
+                <StarRating count={n.rating} color={n.catColor} />
+              </div>
+              <p style={{ color: C.textMuted, fontSize: 9, margin: 0, lineHeight: 1.55 }}>{n.excerpt}</p>
             </div>
           </div>
         );
       })}
 
+      {/* Stats strip */}
       <div style={{
         display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6, marginTop: 4,
         opacity: statsP, transform: `translateY(${interpolate(statsP, [0, 1], [10, 0])}px)`,
       }}>
         {[
-          { label: "Toplam Not", value: "47", color: C.gold },
-          { label: "Film & Dizi", value: "29", color: C.cyan },
-          { label: "Bu Ay", value: "8", color: C.blue },
+          { label: "Toplam Not", value: "47", color: C.gold, Icon: List },
+          { label: "Film & Dizi", value: "29", color: C.cyan, Icon: Film },
+          { label: "Bu Ay", value: "8", color: C.blue, Icon: TrendingUp },
         ].map((s) => (
           <div key={s.label} style={{
             background: `${s.color}10`, border: `1px solid ${s.color}22`,
-            borderRadius: 9, padding: "7px 10px", textAlign: "center",
+            borderRadius: 10, padding: "8px 10px",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
           }}>
-            <strong style={{ color: s.color, fontSize: 18, fontWeight: 900, lineHeight: 1, display: "block" }}>
+            <s.Icon size={12} color={s.color} strokeWidth={2} />
+            <strong style={{ color: s.color, fontSize: 17, fontWeight: 900, lineHeight: 1 }}>
               {s.value}
             </strong>
             <span style={{ color: C.textMuted, fontSize: 8, fontWeight: 600 }}>{s.label}</span>
           </div>
         ))}
-      </div>
-
-      <div style={{
-        position: "absolute", top: 20, right: 20,
-        background: `${C.goldLight}14`, border: `1px solid ${C.goldLight}30`,
-        borderRadius: 10, padding: "6px 10px",
-        display: "flex", alignItems: "center", gap: 5,
-        opacity: notifP,
-        transform: `translateX(${interpolate(notifP, [0, 1], [16, 0])}px)`,
-      }}>
-        <div style={{
-          width: 6, height: 6, borderRadius: "50%", background: C.gold,
-          boxShadow: `0 0 6px ${C.gold}`,
-        }} />
-        <span style={{ color: C.gold, fontSize: 9, fontWeight: 700 }}>Canlı güncelleniyor</span>
       </div>
     </AbsoluteFill>
   );
@@ -241,6 +338,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
   const starsP = sp(frame, fps, 28);
   const textP = sp(frame, fps, 45);
   const tagsP = sp(frame, fps, 70);
+  const btnP = sp(frame, fps, 100);
 
   const starsLit = Math.floor(interpolate(frame, [28, 65], [0, 5], {
     extrapolateLeft: "clamp", extrapolateRight: "clamp",
@@ -251,67 +349,76 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
   }));
 
   return (
-    <AbsoluteFill style={{ padding: 26, fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{
         position: "absolute", bottom: -50, right: -50, width: 260, height: 260, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
         pointerEvents: "none",
       }} />
 
+      {/* Header */}
       <div style={{
         opacity: headerP,
         transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 16,
+        marginBottom: 14,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-          <span style={{ color: C.textMuted, fontSize: 9, cursor: "pointer" }}>← Notlarım</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+          <ArrowLeft size={11} color={C.textMuted} strokeWidth={2} />
+          <span style={{ color: C.textMuted, fontSize: 9 }}>Notlarım</span>
           <span style={{ color: C.border, fontSize: 9 }}>/</span>
           <span style={{ color: C.textSoft, fontSize: 9, fontWeight: 600 }}>Yeni Not</span>
         </div>
-        <h2 style={{ color: C.textStrong, fontSize: 16, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
+        <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
           Not Yazılıyor
         </h2>
       </div>
 
+      {/* Movie card */}
       <div style={{
         display: "flex", gap: 12, alignItems: "center",
         background: C.surfaceEl, border: `1px solid ${C.border}`,
-        borderRadius: 11, padding: "10px 12px", marginBottom: 12,
+        borderRadius: 12, padding: "10px 12px", marginBottom: 11,
         opacity: movieP,
         transform: `translateY(${interpolate(movieP, [0, 1], [12, 0])}px)`,
       }}>
-        <div style={{
-          width: 40, height: 56, borderRadius: 6, flexShrink: 0,
-          background: `linear-gradient(160deg, ${C.cyan}, ${C.blue})`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "white", fontSize: 18,
-        }}>🎬</div>
+        <Poster data={INTERSTELLAR} width={42} height={58} />
         <div>
-          <p style={{ color: C.textStrong, fontSize: 13, fontWeight: 800, margin: "0 0 2px" }}>Interstellar</p>
-          <p style={{ color: C.textMuted, fontSize: 10, margin: "0 0 5px" }}>2014 · Christopher Nolan</p>
+          <p style={{ color: C.textStrong, fontSize: 13, fontWeight: 800, margin: "0 0 3px" }}>Interstellar</p>
+          <p style={{ color: C.textMuted, fontSize: 10, margin: "0 0 6px", display: "flex", alignItems: "center", gap: 4 }}>
+            <Clock size={9} color={C.textMuted} strokeWidth={2} />
+            2014 · Christopher Nolan
+          </p>
           <Chip label="Film" color={C.cyan} />
         </div>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, opacity: starsP }}>
+      {/* Star rating */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 8, marginBottom: 10,
+        opacity: starsP,
+      }}>
         <span style={{ color: C.textMuted, fontSize: 9, fontWeight: 600 }}>Puan:</span>
-        <div style={{ display: "flex", gap: 4 }}>
+        <div style={{ display: "flex", gap: 5 }}>
           {[1, 2, 3, 4, 5].map((i) => (
-            <span key={i} style={{ fontSize: 16, color: i <= starsLit ? C.amber : `${C.textMuted}44` }}>★</span>
+            <Star key={i} size={18}
+              color={i <= starsLit ? C.amber : `${C.textMuted}44`}
+              fill={i <= starsLit ? C.amber : "none"}
+              strokeWidth={1.5}
+            />
           ))}
         </div>
-        <span style={{ color: C.amber, fontSize: 10, fontWeight: 700 }}>
-          {starsLit > 0 ? `${starsLit}/5` : ""}
-        </span>
+        {starsLit > 0 && (
+          <span style={{ color: C.amber, fontSize: 10, fontWeight: 700 }}>{starsLit}/5</span>
+        )}
       </div>
 
+      {/* Text area */}
       <div style={{
         background: C.surface, border: `1px solid ${C.gold}30`,
-        borderRadius: 10, padding: "10px 12px", marginBottom: 10, minHeight: 72,
-        opacity: textP,
-        transform: `translateY(${interpolate(textP, [0, 1], [8, 0])}px)`,
+        borderRadius: 10, padding: "10px 12px", marginBottom: 10, minHeight: 68,
+        opacity: textP, transform: `translateY(${interpolate(textP, [0, 1], [8, 0])}px)`,
       }}>
-        <p style={{ color: C.textStrong, fontSize: 10, lineHeight: 1.65, margin: 0 }}>
+        <p style={{ color: C.textStrong, fontSize: 10, lineHeight: 1.68, margin: 0 }}>
           {NOTE_TEXT.slice(0, charCount)}
           {charCount < NOTE_TEXT.length && (
             <span style={{
@@ -323,30 +430,44 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
         </p>
       </div>
 
+      {/* Tags */}
       <div style={{
         display: "flex", gap: 5, flexWrap: "wrap",
         opacity: tagsP, transform: `translateY(${interpolate(tagsP, [0, 1], [8, 0])}px)`,
       }}>
-        {["Bilim Kurgu", "Christopher Nolan", "Uzay", "Duygusal"].map((tag) => (
+        {["Bilim Kurgu", "Christopher Nolan", "Uzay"].map((tag) => (
           <div key={tag} style={{
+            display: "flex", alignItems: "center", gap: 4,
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 20, padding: "3px 8px", color: C.textSoft, fontSize: 9, fontWeight: 600,
-          }}># {tag}</div>
+          }}>
+            <Tag size={8} color={C.textMuted} strokeWidth={2} />
+            {tag}
+          </div>
         ))}
         <div style={{
+          display: "flex", alignItems: "center", gap: 4,
           background: `${C.gold}14`, border: `1px solid ${C.gold}30`,
           borderRadius: 20, padding: "3px 8px", color: C.gold, fontSize: 9, fontWeight: 700,
-        }}>+ Etiket Ekle</div>
+        }}>
+          <Plus size={8} color={C.gold} />
+          Etiket Ekle
+        </div>
       </div>
 
+      {/* Save button */}
       <div style={{
         position: "absolute", bottom: 20, right: 20,
         background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
-        borderRadius: 9, padding: "7px 16px",
+        borderRadius: 10, padding: "8px 18px",
         color: "white", fontSize: 10, fontWeight: 700,
-        opacity: sp(frame, fps, 100),
+        opacity: btnP,
         boxShadow: `0 4px 16px ${C.gold}40`,
-      }}>Kaydet →</div>
+        display: "flex", alignItems: "center", gap: 6,
+      }}>
+        <CheckCircle size={11} color="white" strokeWidth={2.5} />
+        Kaydet
+      </div>
     </AbsoluteFill>
   );
 }
@@ -361,27 +482,25 @@ function SearchScene({ frame, fps, C }: SceneProps) {
   }));
 
   const results = [
-    { title: "Interstellar", cat: "Film", catColor: C.cyan, rating: 5, year: "2014" },
-    { title: "Oppenheimer", cat: "Film", catColor: C.cyan, rating: 5, year: "2023" },
-    { title: "Tenet", cat: "Film", catColor: C.cyan, rating: 4, year: "2020" },
-    { title: "Inception", cat: "Film", catColor: C.cyan, rating: 5, year: "2010" },
+    { poster: INTERSTELLAR, cat: "Film", catColor: C.cyan, rating: 5, year: "2014" },
+    { poster: OPPENHEIMER, cat: "Film", catColor: C.cyan, rating: 5, year: "2023" },
+    { poster: TENET, cat: "Film", catColor: C.blue, rating: 4, year: "2020" },
+    { poster: INCEPTION, cat: "Film", catColor: C.purple, rating: 5, year: "2010" },
   ];
 
   const filters = [
     { label: "Tümü", active: false, color: C.textMuted },
-    { label: "Film", active: true, color: C.cyan },
-    { label: "Dizi", active: false, color: C.gold },
-    { label: "Kitap", active: false, color: C.amber },
-    { label: "Müzik", active: false, color: C.blue },
+    { label: "Film", active: true, color: C.cyan, Icon: Film },
+    { label: "Dizi", active: false, color: C.gold, Icon: Tv },
+    { label: "Kitap", active: false, color: C.amber, Icon: BookOpen },
   ];
 
   const headerP = sp(frame, fps, 0);
   const searchBoxP = sp(frame, fps, 8);
   const filtersP = sp(frame, fps, 16);
-  const resultCountP = sp(frame, fps, 78);
 
   return (
-    <AbsoluteFill style={{ padding: 26, fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{
         position: "absolute", top: -60, right: -60, width: 260, height: 260, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.glowCyan}, transparent 70%)`,
@@ -392,20 +511,12 @@ function SearchScene({ frame, fps, C }: SceneProps) {
       <div style={{
         opacity: headerP,
         transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 14,
+        marginBottom: 12,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-          <div style={{
-            width: 18, height: 18, borderRadius: 5,
-            background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "white", fontSize: 9, fontWeight: 900,
-          }}>D</div>
-          <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
-            DigyNotes
-          </span>
+        <div style={{ marginBottom: 6 }}>
+          <DigyNotesLogo />
         </div>
-        <h2 style={{ color: C.textStrong, fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+        <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
           Notları Keşfet
         </h2>
         <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>47 not arasında arama yap</p>
@@ -414,12 +525,13 @@ function SearchScene({ frame, fps, C }: SceneProps) {
       {/* Search box */}
       <div style={{
         display: "flex", alignItems: "center", gap: 9,
-        background: C.surfaceEl, border: `1px solid ${C.gold}30`,
-        borderRadius: 11, padding: "10px 14px", marginBottom: 10,
+        background: C.surfaceEl, border: `1px solid ${C.gold}35`,
+        borderRadius: 12, padding: "9px 13px", marginBottom: 9,
         opacity: searchBoxP,
         transform: `translateY(${interpolate(searchBoxP, [0, 1], [10, 0])}px)`,
+        boxShadow: `0 0 0 3px ${C.gold}10`,
       }}>
-        <span style={{ color: C.textMuted, fontSize: 14 }}>🔍</span>
+        <Search size={13} color={C.textMuted} strokeWidth={2} />
         <span style={{ color: C.textStrong, fontSize: 12, flex: 1 }}>
           {SEARCH_TEXT.slice(0, searchChars)}
           {searchChars < SEARCH_TEXT.length && (
@@ -429,68 +541,62 @@ function SearchScene({ frame, fps, C }: SceneProps) {
               opacity: frame % 18 < 9 ? 1 : 0,
             }} />
           )}
-          {searchChars >= SEARCH_TEXT.length && (
-            <span style={{ color: C.textMuted, fontSize: 12 }}> </span>
-          )}
         </span>
         <div style={{
           background: `${C.cyan}14`, border: `1px solid ${C.cyan}28`,
           borderRadius: 6, padding: "3px 8px", color: C.cyan, fontSize: 9, fontWeight: 700,
-        }}>4 sonuç</div>
+          display: "flex", alignItems: "center", gap: 3,
+        }}>
+          <Film size={8} color={C.cyan} />
+          4 sonuç
+        </div>
       </div>
 
       {/* Filter chips */}
       <div style={{
-        display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap",
+        display: "flex", gap: 5, marginBottom: 10, flexWrap: "wrap",
         opacity: filtersP, transform: `translateX(${interpolate(filtersP, [0, 1], [-12, 0])}px)`,
       }}>
-        {filters.map((f) => (
-          <div key={f.label} style={{
-            background: f.active ? `${f.color}20` : C.surface,
-            border: `1px solid ${f.active ? f.color + "40" : C.border}`,
-            borderRadius: 20, padding: "4px 11px",
-            color: f.active ? f.color : C.textMuted,
-            fontSize: 9, fontWeight: f.active ? 700 : 500,
-          }}>{f.label}</div>
-        ))}
+        {filters.map((f) => {
+          const FIcon = f.Icon;
+          return (
+            <div key={f.label} style={{
+              display: "flex", alignItems: "center", gap: 4,
+              background: f.active ? `${f.color}20` : C.surface,
+              border: `1px solid ${f.active ? f.color + "40" : C.border}`,
+              borderRadius: 20, padding: "4px 10px",
+              color: f.active ? f.color : C.textMuted,
+              fontSize: 9, fontWeight: f.active ? 700 : 500,
+            }}>
+              {FIcon && <FIcon size={9} color={f.active ? f.color : C.textMuted} strokeWidth={2} />}
+              {f.label}
+            </div>
+          );
+        })}
       </div>
 
       {/* Results */}
       {results.map((r, i) => {
-        const p = sp(frame, fps, 80 + i * 10, 90, 20);
+        const p = sp(frame, fps, 78 + i * 10, 90, 20);
         return (
-          <div key={r.title} style={{
+          <div key={r.poster.title} style={{
             display: "flex", alignItems: "center", gap: 10,
             background: C.surfaceEl, border: `1px solid ${C.border}`,
-            borderRadius: 10, padding: "9px 12px", marginBottom: 6,
+            borderRadius: 10, padding: "8px 12px", marginBottom: 6,
             opacity: p, transform: `translateX(${interpolate(p, [0, 1], [18, 0])}px)`,
           }}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 8, flexShrink: 0,
-              background: `linear-gradient(135deg, ${C.cyan}40, ${C.blue}40)`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 16,
-            }}>🎬</div>
+            <Poster data={r.poster} width={30} height={42} />
             <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                <span style={{ color: C.textStrong, fontSize: 11, fontWeight: 700 }}>{r.title}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+                <span style={{ color: C.textStrong, fontSize: 11, fontWeight: 700 }}>{r.poster.title}</span>
                 <Chip label={r.cat} color={r.catColor} />
               </div>
-              <Stars count={r.rating} color={r.catColor} />
+              <StarRating count={r.rating} color={r.catColor} />
             </div>
             <span style={{ color: C.textMuted, fontSize: 9 }}>{r.year}</span>
           </div>
         );
       })}
-
-      {/* Result count */}
-      <div style={{
-        position: "absolute", bottom: 22, left: 26,
-        color: C.textMuted, fontSize: 9,
-        opacity: resultCountP,
-      }}>
-        <span style={{ color: C.cyan, fontWeight: 700 }}>4</span> sonuç · &quot;christopher nolan&quot;
-      </div>
     </AbsoluteFill>
   );
 }
@@ -506,10 +612,10 @@ function StatsScene({ frame, fps, C }: SceneProps) {
   const maxV = 8;
 
   const cats = [
-    { label: "Film", count: 29, color: C.cyan, pct: 62 },
-    { label: "Kitap", count: 11, color: C.amber, pct: 23 },
-    { label: "Dizi", count: 5, color: C.gold, pct: 11 },
-    { label: "Müzik", count: 2, color: C.blue, pct: 4 },
+    { label: "Film", count: 29, color: C.cyan, pct: 62, Icon: Film },
+    { label: "Kitap", count: 11, color: C.amber, pct: 23, Icon: BookOpen },
+    { label: "Dizi", count: 5, color: C.gold, pct: 11, Icon: Tv },
+    { label: "Oyun", count: 2, color: C.blue, pct: 4, Icon: Bookmark },
   ];
 
   const headerP = sp(frame, fps, 0);
@@ -518,7 +624,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
   const catLabelP = sp(frame, fps, 90);
 
   return (
-    <AbsoluteFill style={{ padding: 26, fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{
         position: "absolute", bottom: -60, left: -60, width: 280, height: 280, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
@@ -533,12 +639,13 @@ function StatsScene({ frame, fps, C }: SceneProps) {
         display: "flex", justifyContent: "space-between", alignItems: "flex-start",
       }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-            <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
+            <BarChart3 size={11} color={C.gold} strokeWidth={2} />
+            <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" }}>
               İstatistikler
             </span>
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
             Okuma Alışkanlıkları
           </h2>
           <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>Son 6 ay · 33 not</p>
@@ -546,42 +653,48 @@ function StatsScene({ frame, fps, C }: SceneProps) {
 
         {/* Streak badge */}
         <div style={{
-          background: `${C.amber}18`, border: `1px solid ${C.amber}30`,
-          borderRadius: 12, padding: "8px 12px", textAlign: "center",
+          background: `${C.amber}14`, border: `1px solid ${C.amber}30`,
+          borderRadius: 12, padding: "8px 12px",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
           opacity: streakP, transform: `translateX(${interpolate(streakP, [0, 1], [14, 0])}px)`,
         }}>
-          <div style={{ fontSize: 18, lineHeight: 1, marginBottom: 2 }}>🔥</div>
-          <strong style={{ color: C.amber, fontSize: 16, fontWeight: 900, lineHeight: 1, display: "block" }}>12</strong>
+          <Flame size={16} color={C.amber} strokeWidth={2} fill={`${C.amber}40`} />
+          <strong style={{ color: C.amber, fontSize: 16, fontWeight: 900, lineHeight: 1 }}>12</strong>
           <span style={{ color: C.textMuted, fontSize: 8 }}>gün seri</span>
         </div>
       </div>
 
       {/* Chart label */}
       <p style={{
-        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.5,
+        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.2,
         textTransform: "uppercase", margin: "0 0 8px",
         opacity: chartLabelP,
-      }}>Aylık Not Sayısı</p>
+        display: "flex", alignItems: "center", gap: 4,
+      }}>
+        <BarChart3 size={9} color={C.textMuted} />
+        Aylık Not Sayısı
+      </p>
 
       {/* Bar chart */}
       <div style={{
-        display: "flex", alignItems: "flex-end", gap: 6, height: 72, marginBottom: 16,
+        display: "flex", alignItems: "flex-end", gap: 6, height: 70, marginBottom: 14,
       }}>
         {months.map((m, i) => {
-          const barH = interpolate(frame, [25 + i * 8, 75 + i * 8], [0, (m.v / maxV) * 72], {
+          const barH = interpolate(frame, [25 + i * 8, 75 + i * 8], [0, (m.v / maxV) * 70], {
             extrapolateLeft: "clamp", extrapolateRight: "clamp",
           });
           const isLast = i === months.length - 1;
           return (
             <div key={m.m} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", height: 72 }}>
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", height: 70, width: "100%" }}>
                 <div style={{
-                  width: "100%", height: barH,
+                  height: barH,
                   background: isLast
-                    ? `linear-gradient(180deg, ${C.gold}, ${C.goldLight})`
-                    : `${C.gold}40`,
-                  borderRadius: "3px 3px 0 0",
-                  minWidth: 18,
+                    ? `linear-gradient(180deg, ${C.goldLight}, ${C.gold})`
+                    : `${C.gold}35`,
+                  borderRadius: "4px 4px 0 0",
+                  minWidth: 16,
+                  boxShadow: isLast ? `0 -2px 8px ${C.gold}40` : "none",
                 }} />
               </div>
               <span style={{ color: isLast ? C.gold : C.textMuted, fontSize: 8, fontWeight: isLast ? 700 : 400 }}>
@@ -594,7 +707,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
 
       {/* Category breakdown label */}
       <p style={{
-        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.5,
+        color: C.textMuted, fontSize: 9, fontWeight: 700, letterSpacing: 1.2,
         textTransform: "uppercase", margin: "0 0 9px",
         opacity: catLabelP,
       }}>Kategori Dağılımı</p>
@@ -604,6 +717,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
         const barW = interpolate(frame, [110 + i * 10, 150 + i * 10], [0, cat.pct], {
           extrapolateLeft: "clamp", extrapolateRight: "clamp",
         });
+        const CatIcon = cat.Icon;
         return (
           <div key={cat.label} style={{
             marginBottom: 8, opacity: p,
@@ -611,7 +725,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <div style={{ width: 6, height: 6, borderRadius: 2, background: cat.color }} />
+                <CatIcon size={9} color={cat.color} strokeWidth={2} />
                 <span style={{ color: C.textSoft, fontSize: 10 }}>{cat.label}</span>
               </div>
               <span style={{ color: cat.color, fontSize: 10, fontWeight: 700 }}>{cat.count}</span>
@@ -633,35 +747,29 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
   const collections = [
     {
       name: "İzleme Listesi",
-      count: 12,
-      desc: "Bekleyen filmler",
-      color: C.cyan,
-      emoji: "🎬",
-      items: ["Dune: Part 2", "Poor Things", "Asteroid City"],
+      count: 12, desc: "Bekleyen filmler",
+      color: C.cyan, Icon: Film,
+      posters: [POOR_THINGS, TENET, INCEPTION],
     },
     {
       name: "Kitaplığım",
-      count: 8,
-      desc: "Okuduğum kitaplar",
-      color: C.amber,
-      emoji: "📚",
-      items: ["Suç ve Ceza", "1984", "Savaş ve Barış"],
+      count: 8, desc: "Okuduğum kitaplar",
+      color: C.amber, Icon: BookOpen,
+      posters: [DUNE],
     },
     {
       name: "Favori Filmler",
-      count: 17,
-      desc: "Tüm zamanların en iyileri",
-      color: C.gold,
-      emoji: "⭐",
-      items: ["Interstellar", "Inception", "Blade Runner 2049"],
+      count: 17, desc: "Tüm zamanların en iyileri",
+      color: C.gold, Icon: Star,
+      posters: [INTERSTELLAR, OPPENHEIMER, INCEPTION],
     },
   ];
 
   const headerP = sp(frame, fps, 0);
-  const totalP = sp(frame, fps, 110);
+  const totalP = sp(frame, fps, 112);
 
   return (
-    <AbsoluteFill style={{ padding: 26, fontFamily: "system-ui, sans-serif" }}>
+    <AbsoluteFill style={{ padding: 26, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div style={{
         position: "absolute", top: -60, right: -60, width: 280, height: 280, borderRadius: "50%",
         background: `radial-gradient(circle, ${C.glowGold}, transparent 70%)`,
@@ -672,74 +780,76 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       <div style={{
         opacity: headerP,
         transform: `translateY(${interpolate(headerP, [0, 1], [14, 0])}px)`,
-        marginBottom: 16,
+        marginBottom: 14,
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-            <div style={{
-              width: 18, height: 18, borderRadius: 5,
-              background: `linear-gradient(135deg, ${C.gold}, ${C.goldLight})`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "white", fontSize: 9, fontWeight: 900,
-            }}>D</div>
-            <span style={{ color: C.gold, fontSize: 9, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase" }}>
-              Koleksiyonlar
-            </span>
+          <div style={{ marginBottom: 5 }}>
+            <DigyNotesLogo />
           </div>
-          <h2 style={{ color: C.textStrong, fontSize: 16, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
-            Listelerim
+          <h2 style={{ color: C.textStrong, fontSize: 15, fontWeight: 800, margin: "0 0 2px", lineHeight: 1.2 }}>
+            Koleksiyonlarım
           </h2>
-          <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>3 koleksiyon · 37 içerik</p>
+          <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>3 liste · 37 içerik</p>
         </div>
         <div style={{
+          display: "flex", alignItems: "center", gap: 5,
           background: `${C.gold}18`, border: `1px solid ${C.gold}28`,
           borderRadius: 8, padding: "5px 10px",
           color: C.gold, fontSize: 10, fontWeight: 700,
-        }}>+ Yeni Liste</div>
+        }}>
+          <Plus size={10} color={C.gold} />
+          Yeni Liste
+        </div>
       </div>
 
       {collections.map((col, i) => {
         const p = sp(frame, fps, 18 + i * 22, 80, 18);
+        const ColIcon = col.Icon;
         return (
           <div key={col.name} style={{
             background: C.surfaceEl,
             border: `1px solid ${col.color}22`,
-            borderRadius: 14, padding: "13px 14px", marginBottom: 10,
+            borderRadius: 14, padding: "12px 13px", marginBottom: 9,
             opacity: p, transform: `translateX(${interpolate(p, [0, 1], [i % 2 === 0 ? -22 : 22, 0])}px)`,
           }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 9 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{
-                  width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                   background: `${col.color}18`, border: `1px solid ${col.color}28`,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 18,
-                }}>{col.emoji}</div>
+                }}>
+                  <ColIcon size={16} color={col.color} strokeWidth={1.75} />
+                </div>
                 <div>
                   <p style={{ color: C.textStrong, fontSize: 12, fontWeight: 700, margin: "0 0 2px" }}>{col.name}</p>
-                  <p style={{ color: C.textMuted, fontSize: 10, margin: 0 }}>{col.desc}</p>
+                  <p style={{ color: C.textMuted, fontSize: 9, margin: 0 }}>{col.desc}</p>
                 </div>
               </div>
               <div style={{
                 background: `${col.color}18`, color: col.color,
-                fontSize: 14, fontWeight: 900,
+                fontSize: 13, fontWeight: 900,
                 padding: "4px 10px", borderRadius: 8,
                 border: `1px solid ${col.color}28`,
               }}>{col.count}</div>
             </div>
 
-            {/* Preview items */}
-            <div style={{ display: "flex", gap: 5 }}>
-              {col.items.map((item) => (
-                <div key={item} style={{
-                  background: C.surface, border: `1px solid ${C.border}`,
-                  borderRadius: 6, padding: "3px 8px",
-                  color: C.textSoft, fontSize: 8, fontWeight: 500,
-                  whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-                  maxWidth: 90,
-                }}>{item}</div>
+            {/* Poster preview row */}
+            <div style={{ display: "flex", gap: 5, alignItems: "flex-end" }}>
+              {col.posters.map((poster) => (
+                <Poster key={poster.title} data={poster} width={28} height={40} />
               ))}
+              {col.count > col.posters.length && (
+                <div style={{
+                  width: 28, height: 40, borderRadius: 7,
+                  background: `${col.color}12`, border: `1px solid ${col.color}22`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: col.color, fontSize: 10, fontWeight: 800,
+                }}>
+                  +{col.count - col.posters.length}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -749,11 +859,14 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       <div style={{
         position: "absolute", bottom: 22, left: 26, right: 26,
         background: `${C.gold}10`, border: `1px solid ${C.gold}20`,
-        borderRadius: 10, padding: "9px 14px",
+        borderRadius: 10, padding: "8px 14px",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         opacity: totalP, transform: `translateY(${interpolate(totalP, [0, 1], [10, 0])}px)`,
       }}>
-        <span style={{ color: C.textSoft, fontSize: 10 }}>Toplam takip edilen içerik</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <List size={11} color={C.textSoft} strokeWidth={2} />
+          <span style={{ color: C.textSoft, fontSize: 10 }}>Toplam takip edilen içerik</span>
+        </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
           <strong style={{ color: C.gold, fontSize: 20, fontWeight: 900, lineHeight: 1 }}>37</strong>
           <span style={{ color: C.textMuted, fontSize: 9 }}>içerik</span>
@@ -764,15 +877,9 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
 }
 
 /* ══════════════════════════════════════════
-   Main Composition
-   840 frames @ 30fps = 28s looping
-   Scene 1: Notes Feed        0   → 175
-   Scene 2: Note Writing      165 → 340
-   Scene 3: Search & Filter   330 → 505
-   Scene 4: Statistics        495 → 670
-   Scene 5: Collections       660 → 840
+   Main Composition — 840 frames @ 30fps = 28s
 ══════════════════════════════════════════ */
-export type DigyNotesIntroProps = { theme?: "dark" | "light" };
+export type DigyNotesIntroProps = { readonly theme?: "dark" | "light" };
 
 export function DigyNotesIntro({ theme = "dark" }: DigyNotesIntroProps) {
   const frame = useCurrentFrame();
