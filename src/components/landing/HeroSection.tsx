@@ -427,39 +427,14 @@ export function HeroSection() {
               </div>
 
               {/* URL bar */}
-              <div className="mx-2 max-w-[200px] flex-1">
+              <div className="flex-1">
                 <div
-                  className="flex h-6 items-center justify-center gap-1.5 rounded-md border border-[var(--border)] px-3"
+                  className="mx-auto flex h-6 max-w-[220px] items-center justify-center gap-1.5 rounded-md border border-[var(--border)] px-3"
                   style={{ background: "var(--bg-soft)" }}
                 >
-                  <span className="text-[9px]" style={{ color: "var(--gold)" }}>
-                    🔒
-                  </span>
+                  <div className="h-[6px] w-[6px] flex-shrink-0 rounded-full bg-emerald-400" />
                   <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
                     digynotes.app/notes
-                  </span>
-                </div>
-              </div>
-
-              {/* Tab — DigyNotes logo renkleriyle */}
-              <div
-                className="flex flex-shrink-0 items-center gap-1.5 rounded-md border px-2.5 py-1"
-                style={{
-                  background: "rgba(16,185,129,0.08)",
-                  borderColor: "rgba(16,185,129,0.2)",
-                }}
-              >
-                {/* Mini logo: notebook + stacked DIGY/NOTES */}
-                <span className="text-[11px]">📒</span>
-                <div className="flex flex-col leading-none">
-                  <span
-                    className="text-[7px] font-black tracking-wide"
-                    style={{ color: "#d966ff" }}
-                  >
-                    DIGY
-                  </span>
-                  <span className="text-[7px] font-bold tracking-wide" style={{ color: "#3399ff" }}>
-                    NOTES
                   </span>
                 </div>
               </div>

@@ -93,33 +93,7 @@ function sceneOpacity(frame: number, start: number) {
 
 /* ── DigyNotes logo component ── */
 function DigyNotesLogo() {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-      {/* Notebook icon */}
-      <div
-        style={{
-          width: 22,
-          height: 22,
-          borderRadius: 6,
-          background: "linear-gradient(135deg, #c026d3, #7c3aed)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 2px 8px rgba(192,38,211,0.35)",
-        }}
-      >
-        <BookOpen size={12} color="white" strokeWidth={2.5} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.05 }}>
-        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: 2, color: "#d946ef" }}>
-          DIGY
-        </span>
-        <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: 2, color: "#3b82f6" }}>
-          NOTES
-        </span>
-      </div>
-    </div>
-  );
+  return <Img src="/app-logo.png" style={{ height: 22, width: "auto", objectFit: "contain" }} />;
 }
 
 /* ── Category chip ── */
