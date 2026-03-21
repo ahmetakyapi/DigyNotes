@@ -1,0 +1,123 @@
+/* ═══════════════════════════════════════════
+   DigyNotes — Theme CSS Custom Properties
+   Dark (default) + Light theme variables
+═══════════════════════════════════════════ */
+
+:root {
+  --font-sans: "Manrope", "Segoe UI Variable", "Segoe UI", sans-serif;
+  --font-display: "Manrope", "Segoe UI Variable", "Segoe UI", sans-serif;
+  --bg-base: #0a0f1e;
+  --bg-card: #101828;
+  --bg-raised: #182036;
+  --bg-header: #080d1a;
+  --bg-soft: #0e1626;
+  --bg-overlay: rgba(8, 12, 22, 0.76);
+  --border: #1e3044;
+  --border-subtle: #182840;
+  --border-header: #162236;
+  --gold: #10b981;
+  --gold-light: #34d399;
+  --text-on-accent: #ffffff;
+  --text-primary: #ecf2ff;
+  --text-secondary: #94a8c8;
+  --text-muted: #6b7f9e;
+  --danger: #e53e3e;
+  --surface-strong: #0e1828;
+  --surface-strong-hover: #142236;
+  --surface-strong-active: #1a2c44;
+  --surface-strong-muted: #0f1a2e;
+  --surface-strong-border: #1e3450;
+  --text-contrast: #f3f7ff;
+  --text-dim: #afc0da;
+  --text-faint: #7e90ae;
+  --grid-line: rgba(180, 220, 255, 0.06);
+  --shadow-card: 0 18px 40px rgba(2, 8, 18, 0.55);
+  --shadow-soft: 0 8px 20px rgba(2, 8, 18, 0.35);
+  --media-panel-bg: #0c1526;
+  --media-panel-sheen: rgba(30, 60, 80, 0.3);
+  --media-overlay-strong: rgba(8, 12, 22, 0.86);
+  --media-overlay-mid: rgba(8, 12, 22, 0.58);
+  --media-overlay-soft: rgba(8, 12, 22, 0.12);
+  --media-text-primary: #f5f7ff;
+  --media-text-secondary: #b0c4dc;
+  --media-control-bg: rgba(6, 10, 18, 0.64);
+  --media-control-border: rgba(255, 255, 255, 0.22);
+  --media-control-text: #f5f7ff;
+  --media-control-hover-bg: rgba(6, 10, 18, 0.78);
+  --media-control-hover-border: rgba(16, 185, 129, 0.55);
+  --media-glow: 0 20px 48px rgba(4, 8, 16, 0.55);
+  --image-edge-fade: rgba(14, 22, 38, 0.96);
+  --new-note-glow:
+    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
+  --new-note-glow-breathe:
+    0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
+  --new-note-glow-strong:
+    0 0 0 1px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.14);
+}
+
+html.light,
+html[data-theme="light"] {
+  --bg-base: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-raised: #eef2f7;
+  --bg-header: #f8fafc;
+  --bg-soft: #e8eef6;
+  --bg-overlay: rgba(245, 247, 250, 0.92);
+  --border: #d4dde8;
+  --border-subtle: #e2e9f0;
+  --border-header: #d8e2ec;
+  --gold: #059669;
+  --gold-light: #10b981;
+  --text-on-accent: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --danger: #dc2626;
+  --surface-strong: #f8fafc;
+  --surface-strong-hover: #f0f4f8;
+  --surface-strong-active: #e6ecf2;
+  --surface-strong-muted: #f3f6fa;
+  --surface-strong-border: #cbd5e1;
+  --text-contrast: #0f172a;
+  --text-dim: #4b5c78;
+  --text-faint: #8896aa;
+  --grid-line: rgba(16, 185, 129, 0.08);
+  --shadow-card: 0 14px 30px rgba(15, 23, 42, 0.06);
+  --shadow-soft: 0 8px 18px rgba(15, 23, 42, 0.04);
+  --media-panel-bg: #e6ecf2;
+  --media-panel-sheen: rgba(16, 185, 129, 0.1);
+  --media-overlay-strong: rgba(15, 23, 42, 0.72);
+  --media-overlay-mid: rgba(15, 23, 42, 0.46);
+  --media-overlay-soft: rgba(15, 23, 42, 0.06);
+  --media-text-primary: #f0f4f8;
+  --media-text-secondary: #c8d4e0;
+  --media-control-bg: rgba(248, 250, 252, 0.85);
+  --media-control-border: rgba(16, 185, 129, 0.4);
+  --media-control-text: #0f172a;
+  --media-control-hover-bg: rgba(248, 250, 252, 0.96);
+  --media-control-hover-border: rgba(5, 150, 105, 0.5);
+  --media-glow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  --image-edge-fade: rgba(255, 255, 255, 0);
+  --new-note-glow:
+    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
+  --new-note-glow-breathe:
+    0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
+  --new-note-glow-strong:
+    0 0 0 1px rgba(5, 150, 105, 0.28), 0 4px 12px rgba(5, 150, 105, 0.1);
+}
+
+/* ── Mobile shadow overrides ── */
+@media (max-width: 640px) {
+  :root {
+    --shadow-card: 0 12px 28px rgba(2, 8, 18, 0.36);
+    --shadow-soft: 0 6px 14px rgba(2, 8, 18, 0.24);
+    --media-glow: 0 14px 30px rgba(5, 8, 15, 0.36);
+  }
+
+  html.light,
+  html[data-theme="light"] {
+    --shadow-card: 0 8px 18px rgba(15, 23, 42, 0.05);
+    --shadow-soft: 0 4px 10px rgba(15, 23, 42, 0.03);
+    --media-glow: 0 10px 20px rgba(15, 23, 42, 0.06);
+  }
+}

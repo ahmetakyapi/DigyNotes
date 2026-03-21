@@ -1,0 +1,100 @@
+/* ═══════════════════════════════════════════
+   DigyNotes — React Quill Editor Styles
+═══════════════════════════════════════════ */
+
+.ql-toolbar.ql-snow {
+  background-color: var(--bg-raised) !important;
+  border: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 8px 12px !important;
+}
+
+.ql-toolbar.ql-snow .ql-stroke {
+  stroke: var(--text-secondary) !important;
+}
+.ql-toolbar.ql-snow .ql-fill {
+  fill: var(--text-secondary) !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-stroke,
+.ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: var(--gold) !important;
+}
+.ql-toolbar.ql-snow button:hover .ql-fill,
+.ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: var(--gold) !important;
+}
+.ql-toolbar.ql-snow .ql-picker-label {
+  color: var(--text-secondary) !important;
+}
+.ql-toolbar.ql-snow .ql-picker-options {
+  background-color: var(--bg-raised) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.ql-container.ql-snow {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-top: none !important;
+  border-radius: 0 0 8px 8px !important;
+  color: var(--text-primary) !important;
+  font-size: 1rem;
+  min-height: 280px;
+}
+
+.ql-editor {
+  color: var(--text-primary) !important;
+  min-height: 260px;
+  line-height: 1.75;
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--text-muted) !important;
+  font-style: normal !important;
+}
+
+.ql-editor p {
+  color: var(--text-primary);
+}
+
+/* ── Compose editor constraints ── */
+.dn-compose-editor .ql-container.ql-snow {
+  min-height: clamp(220px, 34vh, 330px);
+}
+
+.dn-compose-editor .ql-editor {
+  min-height: clamp(190px, 30vh, 280px);
+}
+
+/* xl: editör max yükseklik — sayfa uzamaz, kart içi scroll */
+@media (min-width: 1280px) {
+  .dn-compose-editor .ql-editor {
+    max-height: clamp(300px, calc(100dvh - 24rem), 720px);
+    overflow-y: auto;
+  }
+}
+
+/* ── Mobile editor overrides ── */
+@media (max-width: 640px) {
+  .ql-toolbar.ql-snow {
+    padding: 6px 8px !important;
+  }
+
+  .ql-container.ql-snow {
+    min-height: 208px;
+    font-size: 16px;
+  }
+
+  .ql-editor {
+    min-height: 188px;
+    line-height: 1.65;
+  }
+
+  .dn-compose-editor .ql-container.ql-snow {
+    min-height: clamp(180px, 30vh, 240px);
+  }
+
+  .dn-compose-editor .ql-editor {
+    min-height: clamp(150px, 26vh, 200px);
+  }
+}
