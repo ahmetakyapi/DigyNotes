@@ -2,15 +2,11 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import dynamic from "next/dynamic";
-import Image from "next/image";
 import "react-quill/dist/quill.snow.css";
-import StarRating from "@/components/StarRating";
 import { getStatusOptions } from "@/components/StatusBadge";
-import { MediaSearch } from "@/components/MediaSearch";
-import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
-import TagInput from "@/components/TagInput";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { StatusSidebar, CoverSidebar, TagsSidebar } from "./composer-sidebar";
+import { CategorySearchSection, FieldsSection, ContentSection } from "./composer-sections";
 import toast from "react-hot-toast";
 import {
   FIXED_CATEGORIES,
@@ -20,9 +16,8 @@ import {
   isTravelCategory,
   normalizeFixedCategory,
 } from "@/lib/categories";
+import type { PlaceResult } from "@/components/PlaceSearch";
 import { ClientApiError, getClientErrorMessage, requestJson } from "@/lib/client-api";
-import { customLoader } from "@/lib/image";
-import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import {
   CATEGORY_EXAMPLE_TAGS,
   categorySupportsAutofill,
@@ -37,14 +32,8 @@ import {
 import { getPostTemplate, getTemplateSignature } from "@/lib/post-templates";
 import { stripHtml } from "@/lib/text";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-
 const inputBase =
   "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 focus:bg-[var(--bg-card)]";
-const labelClass =
-  "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
-const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
-const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-[#10b981]/40 border-[#10b981]/50" : "";
@@ -190,15 +179,6 @@ export default function NewPostPage() {
     flashTimerRef.current = setTimeout(() => setFlashFields(new Set()), 2000);
   };
 
-  const handleAddPopularTag = (tagName: string) => {
-    if (tags.length >= 10) {
-      toast.error("En fazla 10 etiket ekleyebilirsiniz.");
-      return;
-    }
-    if (tags.includes(tagName)) return;
-    setTags((prev) => [...prev, tagName]);
-  };
-
   useEffect(() => {
     if (prefillAppliedRef.current) return;
 
@@ -271,11 +251,14 @@ export default function NewPostPage() {
   const isTemplateActive = Boolean(
     activeTemplate && getTemplateSignature(content) === getTemplateSignature(activeTemplate.html)
   );
-  const footerHint = title
-    ? `${status}${rating > 0 ? ` · ${rating}/5` : ""}`
-    : supportsAutofill
-      ? "Önce arama yap ya da başlığı elle netleştir."
-      : guidance.manualHint;
+  const footerHint = (() => {
+    if (title) {
+      const ratingStr = rating > 0 ? ` · ${rating}/5` : "";
+      return `${status}${ratingStr}`;
+    }
+    if (supportsAutofill) return "Önce arama yap ya da başlığı elle netleştir.";
+    return guidance.manualHint;
+  })();
   const flowSteps = [
     {
       step: "1",
@@ -292,7 +275,7 @@ export default function NewPostPage() {
     {
       step: "3",
       label: "Başlık",
-      detail: title ? title : guidance.titleHint,
+      detail: title || guidance.titleHint,
       complete: Boolean(title.trim()),
     },
     {
@@ -365,201 +348,35 @@ export default function NewPostPage() {
   const nextActionText = autofillDone
     ? "Başlık ve durumu tamamla"
     : (nextPendingStep?.label ?? "İçeriğe geç");
-  const statusSidebarCard = (
-    <div className={cardClass}>
-      <p className={labelClass}>Not Durumu</p>
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
-        <p className="text-sm font-semibold text-[var(--text-primary)]">
-          {title || "Başlık bekliyor"}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
-            {categoryLabel}
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
-            {status}
-          </span>
-          {externalRating !== null && (
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
-              Dış puan: {externalRating}
-            </span>
-          )}
-        </div>
-        <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-          {title ? "Not görünür hale geliyor." : footerHint}
-        </p>
 
-        <div className="mt-4 border-t border-[var(--border)] pt-4">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
-              Puan
-            </span>
-            {rating > 0 && (
-              <button
-                type="button"
-                onClick={() => setRating(0)}
-                className="text-[11px] text-[var(--text-muted)] transition-colors duration-150 hover:text-[var(--danger)]"
-              >
-                Sıfırla
-              </button>
-            )}
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-3">
-            <StarRating rating={rating} interactive onRate={setRating} size={26} />
-            <span className="text-sm font-medium text-[var(--text-secondary)]">
-              {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
-            </span>
-          </div>
-        </div>
-
-        {supportsSpoiler && (
-          <label className="mt-4 flex cursor-pointer items-start gap-3 border-t border-[var(--border)] pt-4">
-            <input
-              type="checkbox"
-              checked={hasSpoiler}
-              onChange={(event) => setHasSpoiler(event.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#10b981] focus:ring-[#10b981]"
-            />
-            <span className="min-w-0">
-              <span className="block text-sm font-semibold text-[var(--text-primary)]">
-                Spoiler uyarısı ekle
-              </span>
-              <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
-                İçerik detay sayfasında önce onayla açılır.
-              </span>
-            </span>
-          </label>
-        )}
-      </div>
-    </div>
-  );
-
-  const coverSidebarCard = (
-    <div className={cardClass}>
-      <label className={labelClass}>Kapak Görseli</label>
-      <input
-        type="url"
-        value={image}
-        onChange={(event) => setImage(event.target.value)}
-        className={`${ic("image")} mt-0.5`}
-        placeholder="https://..."
+  const sidebarCards = (
+    <>
+      <StatusSidebar
+        title={title}
+        categoryLabel={categoryLabel}
+        status={status}
+        rating={rating}
+        externalRating={externalRating}
+        hasSpoiler={hasSpoiler}
+        supportsSpoiler={supportsSpoiler}
+        footerHint={footerHint}
+        onRatingChange={setRating}
+        onSpoilerChange={setHasSpoiler}
       />
-      <p className={helperTextClass}>{guidance.imageHint}</p>
-
-      {image ? (
-        <div className="mt-3 overflow-hidden rounded-xl border border-[var(--border-subtle)]">
-          <div className="relative h-52 w-full bg-[var(--media-panel-bg)]">
-            <Image
-              loader={customLoader}
-              src={image}
-              alt=""
-              fill
-              aria-hidden
-              className="scale-110 object-cover opacity-40 blur-2xl"
-              unoptimized
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(135deg, var(--media-panel-sheen) 0%, transparent 50%, var(--media-panel-sheen) 100%)",
-              }}
-            />
-            <Image
-              loader={customLoader}
-              src={image}
-              alt="Kapak önizleme"
-              fill
-              className={isLandscape ? "object-cover" : "object-contain"}
-              style={
-                isLandscape
-                  ? { objectPosition: imagePosition }
-                  : {
-                      objectPosition: imagePosition,
-                      filter: "drop-shadow(0 20px 32px rgba(0,0,0,0.5))",
-                    }
-              }
-              unoptimized
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent 40%, var(--media-overlay-mid) 75%, var(--media-overlay-strong) 100%)",
-              }}
-            />
-            <span
-              className="absolute left-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-semibold backdrop-blur-md"
-              style={{
-                borderColor: "var(--media-control-border)",
-                background: "var(--media-control-bg)",
-                color: "var(--gold)",
-              }}
-            >
-              Kapak Önizleme
-            </span>
-            <span
-              className="absolute bottom-3 right-3 rounded-md border px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm"
-              style={{
-                borderColor: "var(--media-control-border)",
-                background: "var(--media-control-bg)",
-                color: "var(--media-control-text)",
-              }}
-            >
-              {isLandscape ? "Yatay" : "Poster"}
-            </span>
-          </div>
-          <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-raised)] px-3.5 py-2">
-            <p className="text-[11px] text-[var(--text-muted)]">
-              {isLandscape
-                ? "Yatay görsel. Üst odaklı kadraj uygulandı."
-                : "Poster görsel. Merkez odak korunuyor."}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-          Kapak şu an boş. Arama sonucu, yer seçimi ya da manuel URL ile dolabilir.
-        </p>
-      )}
-    </div>
-  );
-
-  const tagsSidebarCard = (
-    <div className={cardClass}>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className={labelClass}>Etiketler</p>
-        <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
-          {tags.length}/10
-        </span>
-      </div>
-
-      <TagInput value={tags} onChange={setTags} />
-      <p className={`${helperTextClass} mt-3`}>
-        Etiketler notu daha sonra ararken ve kategori içinde daraltırken işini kolaylaştırır.
-      </p>
-
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {exampleTags.map((tagName) => {
-          const isAdded = tags.includes(tagName);
-          return (
-            <button
-              key={tagName}
-              type="button"
-              onClick={() => handleAddPopularTag(tagName)}
-              disabled={isAdded || tags.length >= 10}
-              className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
-                isAdded
-                  ? "border-[#10b981]/40 bg-[#10b981]/10 text-[#34d399]"
-                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/35 hover:text-[#34d399]"
-              }`}
-            >
-              #{tagName}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+      <CoverSidebar
+        image={image}
+        imagePosition={imagePosition}
+        isLandscape={isLandscape}
+        inputClassName={ic("image")}
+        imageHint={guidance.imageHint}
+        onImageChange={setImage}
+      />
+      <TagsSidebar
+        tags={tags}
+        exampleTags={exampleTags}
+        onTagsChange={setTags}
+      />
+    </>
   );
 
   return (
@@ -573,7 +390,7 @@ export default function NewPostPage() {
             </span>
             {autofillDone && (
               <span className="bg-[#2bbf6a]/8 inline-flex items-center gap-1.5 rounded-full border border-[#2bbf6a]/25 px-2.5 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" />{" "}
                 Otomatik dolduruldu
               </span>
             )}
@@ -595,295 +412,62 @@ export default function NewPostPage() {
 
         <form className="grid gap-4 pt-5 sm:pt-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="order-1 min-w-0 space-y-4">
-            <section
-              className={`${cardClass} overflow-hidden`}
-              style={{
-                background:
-                  "radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 34%), var(--bg-card)",
-              }}
-            >
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="max-w-2xl">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-                      İlk aksiyon
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-[var(--text-primary)] sm:text-[1.35rem]">
-                      {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
-                    </h2>
-                    <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-secondary)]">
-                      {supportsAutofill
-                        ? "Kategori seç, arama sonucunu al ve sonra alt alandaki başlık ile durum bilgilerini tamamla."
-                        : guidance.manualHint}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
-                      {completedStepCount}/4 adım hazır
-                    </span>
-                    <span className="border-[var(--gold)]/24 bg-[var(--gold)]/10 rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
-                      Sıradaki: {nextActionText}
-                    </span>
-                  </div>
-                </div>
+            <CategorySearchSection
+              category={category}
+              supportsAutofill={supportsAutofill}
+              guidance={guidance}
+              lockedSearchTab={lockedSearchTab}
+              autofillDone={autofillDone}
+              isTravelCat={isTravelCategory(category)}
+              title={title}
+              flashFields={flashFields}
+              completedStepCount={completedStepCount}
+              nextActionText={nextActionText}
+              onCategoryChange={handleCategoryChange}
+              onMediaSelect={handleMediaSelect}
+              onTitleChange={setTitle}
+            />
 
-                <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
-                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5">
-                    <label className={labelClass}>Kategori</label>
-                    <select
-                      value={category}
-                      onChange={(event) => handleCategoryChange(event.target.value)}
-                      className={ic("category")}
-                    >
-                      {FIXED_CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {getCategoryLabel(cat)}
-                        </option>
-                      ))}
-                    </select>
-                    <p className={helperTextClass}>
-                      Seçtiğin kategori aramayı, şablonu ve görünür alanları ayarlar.
-                    </p>
-                  </div>
+            <FieldsSection
+              supportsAutofill={supportsAutofill}
+              title={title}
+              status={status}
+              creator={creator}
+              years={years}
+              category={category}
+              config={config}
+              guidance={guidance}
+              statusOptions={statusOptions}
+              flashFields={flashFields}
+              lat={lat}
+              lng={lng}
+              locationLabel={locationLabel}
+              hasLocation={hasLocation}
+              onTitleChange={setTitle}
+              onStatusChange={setStatus}
+              onCreatorChange={setCreator}
+              onYearsChange={setYears}
+              onPlaceSelect={handlePlaceSelect}
+            />
 
-                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5 sm:p-4">
-                    <div className="mb-3">
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">
-                        {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
-                      </p>
-                      <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
-                        {supportsAutofill
-                          ? guidance.searchDescription
-                          : "Bu kategoride otomatik arama yok. Önce başlığı ver, sonra aşağıdaki alanlarla notu tamamla."}
-                      </p>
-                    </div>
-
-                    {supportsAutofill ? (
-                      <>
-                        <MediaSearch
-                          category={category}
-                          lockedTab={lockedSearchTab}
-                          onSelect={handleMediaSelect}
-                        />
-                        <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-                          {autofillDone
-                            ? "Temel alanlar doldu. Aşağıda sadece başlığı ve durumu gözden geçirmen yeterli."
-                            : isTravelCategory(category)
-                              ? "Doğru yeri seçtiğinde koordinatlar görünür ve gezi notu haritayla bağ kurar."
-                              : "Arama başlangıcı hızlandırır; istersen sonucu seçmeden de devam edebilirsin."}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <input
-                          type="text"
-                          value={title}
-                          onChange={(event) => setTitle(event.target.value)}
-                          className={ic("title")}
-                          placeholder={guidance.titlePlaceholder}
-                        />
-                        <p className={helperTextClass}>
-                          {title
-                            ? "Başlık hazır. Aşağıda durum ve diğer alanları tamamlayabilirsin."
-                            : guidance.titleHint}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div className={cardClass}>
-              <div className="flex flex-col gap-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-                  3. adım
-                </p>
-                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                  {supportsAutofill
-                    ? "Başlığı ve temel durumu netleştir"
-                    : "Durum ve temel alanları tamamla"}
-                </h3>
-              </div>
-
-              {supportsAutofill && (
-                <div className="mt-4">
-                  <label className={labelClass}>Başlık</label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                    className={ic("title")}
-                    placeholder={guidance.titlePlaceholder}
-                  />
-                  <p className={helperTextClass}>
-                    {title
-                      ? "Başlık görünür durumda. İstersen tonu daha kişisel hale getirebilirsin."
-                      : guidance.titleHint}
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,0.8fr)_1fr_1fr]">
-                <div>
-                  <label className={labelClass}>Durum</label>
-                  <select
-                    value={status}
-                    onChange={(event) => setStatus(event.target.value)}
-                    className={ic("status")}
-                  >
-                    {statusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  <p className={helperTextClass}>{guidance.statusHint}</p>
-                </div>
-
-                {config.showCreator && (
-                  <div>
-                    <label className={labelClass}>
-                      {config.creatorLabel}
-                      {config.creatorRequired && (
-                        <span className="ml-1 text-[var(--danger)]">*</span>
-                      )}
-                    </label>
-                    <input
-                      type="text"
-                      value={creator}
-                      onChange={(event) => setCreator(event.target.value)}
-                      className={ic("creator")}
-                      placeholder="—"
-                    />
-                    <p className={helperTextClass}>
-                      {creator
-                        ? `${config.creatorLabel} bilgisi görünür durumda kalır.`
-                        : `${config.creatorLabel} alanı bu kategori için ${config.creatorRequired ? "zorunlu" : "opsiyonel"} tutulur.`}
-                    </p>
-                  </div>
-                )}
-
-                <div className={!config.showCreator ? "lg:col-span-2" : ""}>
-                  <label className={labelClass}>
-                    {config.yearsLabel}
-                    {config.yearsRequired && <span className="ml-1 text-[var(--danger)]">*</span>}
-                  </label>
-                  <input
-                    type="text"
-                    value={years}
-                    onChange={(event) => setYears(event.target.value)}
-                    className={ic("years")}
-                    placeholder={config.yearsPlaceholder}
-                  />
-                  <p className={helperTextClass}>
-                    {years
-                      ? `${config.yearsLabel} alanı kayda hazır.`
-                      : `${config.yearsLabel} alanı ${config.yearsRequired ? "bu kategori için zorunlu." : "istersen boş bırakılabilir."}`}
-                  </p>
-                </div>
-              </div>
-
-              {isTravelCategory(category) && (
-                <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
-                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <p className={labelClass}>Konum</p>
-                      <p className="-mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
-                        {guidance.locationHint}
-                      </p>
-                    </div>
-                    {hasLocation && (
-                      <a
-                        href={buildOpenStreetMapLink(lat as number, lng as number)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--text-primary)]"
-                      >
-                        Haritada aç
-                      </a>
-                    )}
-                  </div>
-                  <PlaceSearch onSelect={handlePlaceSelect} />
-                  <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
-                    {hasLocation ? (
-                      <div className="space-y-1.5">
-                        <p className="font-medium text-[var(--text-secondary)]">
-                          {locationLabel || title || "Konum seçildi"}
-                        </p>
-                        <p>
-                          {formatCoordinate(lat as number)}, {formatCoordinate(lng as number)}
-                        </p>
-                      </div>
-                    ) : (
-                      <p>{guidance.locationHint}</p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className={cardClass}>
-              <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-                    4. adım
-                  </p>
-                  <label className={`${labelClass} mb-0 mt-1`}>İçerik</label>
-                  <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
-                    {activeTemplate ? activeTemplate.description : guidance.contentHint}
-                  </p>
-                </div>
-                {activeTemplate && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const currentSignature = getTemplateSignature(content);
-                      if (
-                        currentSignature !== "" &&
-                        !isTemplateActive &&
-                        !window.confirm(
-                          "Mevcut içerik değişecek. Kategori şablonunu yeniden uygulamak istiyor musun?"
-                        )
-                      ) {
-                        return;
-                      }
-
-                      applyTemplate(category, { force: true });
-                    }}
-                    className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
-                      isTemplateActive
-                        ? "border-[#10b981]/35 bg-[#10b981]/10 text-[var(--gold)]"
-                        : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
-                    }`}
-                  >
-                    {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}
-                  </button>
-                )}
-              </div>
-              <div className="dn-compose-editor mt-1 overflow-hidden rounded-lg border border-[var(--border)]">
-                <ReactQuill theme="snow" value={content} onChange={setContent} />
-              </div>
-              <p className={helperTextClass}>
-                {isTemplateActive
-                  ? guidance.contentTemplateHint
-                  : plainContent
-                    ? guidance.contentHint
-                    : "İlk paragrafı boş bırakma; neden kaydettiğini söyleyen tek bir cümle bile yeterli."}
-              </p>
-            </div>
+            <ContentSection
+              content={content}
+              plainContent={plainContent}
+              activeTemplate={activeTemplate}
+              isTemplateActive={isTemplateActive}
+              category={category}
+              guidance={guidance}
+              onContentChange={setContent}
+              onApplyTemplate={applyTemplate}
+            />
           </div>
 
           <aside className="order-2 hidden min-w-0 space-y-4 xl:sticky xl:top-24 xl:block xl:self-start">
-            {statusSidebarCard}
-            {coverSidebarCard}
-            {tagsSidebarCard}
+            {sidebarCards}
           </aside>
 
           <div className="order-2 min-w-0 space-y-4 xl:hidden">
-            {statusSidebarCard}
-            {coverSidebarCard}
-            {tagsSidebarCard}
+            {sidebarCards}
           </div>
         </form>
       </div>
