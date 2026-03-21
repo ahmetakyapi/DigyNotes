@@ -1,28 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { handleApiError } from "@/lib/api-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  const title = searchParams.get("title");
-  const creator = searchParams.get("creator");
+  try {
+    const { searchParams } = req.nextUrl;
+    const title = searchParams.get("title");
+    const creator = searchParams.get("creator");
 
-  if (!title) return NextResponse.json({ count: 0, avgRating: 0 });
+    if (!title) return NextResponse.json({ count: 0, avgRating: 0 });
 
-  const posts = await prisma.post.findMany({
-    where: {
-      title: { equals: title, mode: "insensitive" },
-      ...(creator ? { creator: { equals: creator, mode: "insensitive" } } : {}),
-      user: { isPublic: true },
-    },
-    select: { rating: true },
-  });
+    const posts = await prisma.post.findMany({
+      where: {
+        title: { equals: title, mode: "insensitive" },
+        ...(creator ? { creator: { equals: creator, mode: "insensitive" } } : {}),
+        user: { isPublic: true },
+      },
+      select: { rating: true },
+    });
 
-  const count = posts.length;
-  const avgRating =
-    count > 0 ? Math.round((posts.reduce((s, p) => s + p.rating, 0) / count) * 10) / 10 : 0;
+    const count = posts.length;
+    const avgRating =
+      count > 0 ? Math.round((posts.reduce((s, p) => s + p.rating, 0) / count) * 10) / 10 : 0;
 
-  return NextResponse.json({ count, avgRating });
+    return NextResponse.json({ count, avgRating });
+  } catch (error) {
+    return handleApiError(error, "Topluluk istatistikleri alınamadı.");
+  }
 }

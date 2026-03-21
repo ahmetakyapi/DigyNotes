@@ -390,7 +390,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* ══ Sağ kolon: App window + Remotion player ══ */}
+        {/* ══ Sağ kolon: Remotion player ══ */}
         <motion.div
           className="relative flex w-full flex-col gap-3"
           initial={{ opacity: 0, x: 48, scale: 0.94 }}
@@ -406,32 +406,28 @@ export function HeroSection() {
             }}
           />
 
-          {/* ── Mobile: bare Remotion player ── */}
-          <div className="w-full overflow-hidden rounded-2xl lg:hidden">
-            <DigyNotesPlayer />
-          </div>
-
-          {/* ── Desktop: App window frame with chrome bar ── */}
+          {/*
+            Single player instance.
+            - Mobile: rounded video, no chrome bar
+            - Desktop: full app-window frame with chrome bar
+          */}
           <div
-            className="relative hidden w-full overflow-hidden rounded-[18px] border border-[var(--border)] lg:block"
+            className="relative w-full overflow-hidden rounded-2xl lg:rounded-[18px] lg:border lg:border-[var(--border)]"
             style={{
-              boxShadow:
-                "0 2px 0 rgba(255,255,255,0.05) inset, 0 24px 64px rgba(16,185,129,0.10), 0 8px 32px rgba(0,0,0,0.2)",
+              boxShadow: "none",
             }}
+            // Desktop-only shadow applied via a class override below
           >
-            {/* Chrome bar */}
+            {/* Chrome bar — desktop only */}
             <div
-              className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5"
+              className="hidden items-center gap-3 border-b border-[var(--border)] px-4 py-2.5 lg:flex"
               style={{ background: "var(--bg-header)" }}
             >
-              {/* Traffic lights */}
               <div className="flex flex-shrink-0 items-center gap-1.5">
                 <div className="h-3 w-3 rounded-full bg-red-400/70" />
                 <div className="h-3 w-3 rounded-full bg-amber-400/70" />
                 <div className="h-3 w-3 rounded-full bg-emerald-400/70" />
               </div>
-
-              {/* URL bar */}
               <div className="flex-1">
                 <div
                   className="mx-auto flex h-6 max-w-[220px] items-center justify-center gap-1.5 rounded-md border border-[var(--border)] px-3"
@@ -445,7 +441,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Remotion player */}
+            {/* Remotion player — single instance */}
             <DigyNotesPlayer />
           </div>
         </motion.div>

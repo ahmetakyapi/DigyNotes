@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
-import {
-  consumeRateLimit,
-  createRateLimitErrorResponse,
-} from "@/lib/rate-limit";
+import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -49,165 +45,166 @@ function transformPost(bookmark: {
 }
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    const postId = request.nextUrl.searchParams.get("postId");
+    const paginate = request.nextUrl.searchParams.get("paginate") === "1";
+    const cursor = request.nextUrl.searchParams.get("cursor");
+    const limit = Math.min(
+      Math.max(Number.parseInt(request.nextUrl.searchParams.get("limit") ?? "12", 10) || 12, 1),
+      24
+    );
+    if (postId) {
+      const access = await getPostReadAccess(postId, userId);
+      if (!access.post || !access.canRead) {
+        return NextResponse.json({ bookmarked: false });
+      }
 
-  const postId = request.nextUrl.searchParams.get("postId");
-  const paginate = request.nextUrl.searchParams.get("paginate") === "1";
-  const cursor = request.nextUrl.searchParams.get("cursor");
-  const limit = Math.min(
-    Math.max(parseInt(request.nextUrl.searchParams.get("limit") ?? "12", 10) || 12, 1),
-    24
-  );
-  if (postId) {
-    const access = await getPostReadAccess(postId, userId);
-    if (!access.post || !access.canRead) {
-      return NextResponse.json({ bookmarked: false });
+      const bookmark = await prisma.bookmark.findUnique({
+        where: { userId_postId: { userId, postId } },
+        select: { postId: true },
+      });
+
+      return NextResponse.json({ bookmarked: !!bookmark });
     }
 
-    const bookmark = await prisma.bookmark.findUnique({
-      where: { userId_postId: { userId, postId } },
-      select: { postId: true },
-    });
+    const where = {
+      userId,
+      OR: [{ post: { userId: null } }, { post: { user: { isPublic: true } } }],
+    };
 
-    return NextResponse.json({ bookmarked: !!bookmark });
-  }
-
-  const where = {
-    userId,
-    OR: [{ post: { userId: null } }, { post: { user: { isPublic: true } } }],
-  };
-
-  const include = {
-    post: {
-      include: {
-        tags: { include: { tag: true } },
-        user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+    const include = {
+      post: {
+        include: {
+          tags: { include: { tag: true } },
+          user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        },
       },
-    },
-  };
+    };
 
-  if (!paginate) {
+    if (!paginate) {
+      const bookmarks = await prisma.bookmark.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        include,
+      });
+
+      return NextResponse.json(bookmarks.map(transformPost));
+    }
+
     const bookmarks = await prisma.bookmark.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ createdAt: "desc" }, { postId: "desc" }],
+      take: limit + 1,
+      ...(cursor
+        ? {
+            cursor: {
+              userId_postId: {
+                userId,
+                postId: cursor,
+              },
+            },
+            skip: 1,
+          }
+        : {}),
       include,
     });
 
-    return NextResponse.json(bookmarks.map(transformPost));
+    let nextCursor: string | null = null;
+    if (bookmarks.length > limit) {
+      bookmarks.pop();
+      nextCursor = bookmarks.at(-1)?.postId ?? null;
+    }
+
+    return NextResponse.json({
+      items: bookmarks.map(transformPost),
+      nextCursor,
+    });
+  } catch (error) {
+    return handleApiError(error, "Yer işaretleri alınamadı.");
   }
-
-  const bookmarks = await prisma.bookmark.findMany({
-    where,
-    orderBy: [{ createdAt: "desc" }, { postId: "desc" }],
-    take: limit + 1,
-    ...(cursor
-      ? {
-          cursor: {
-            userId_postId: {
-              userId,
-              postId: cursor,
-            },
-          },
-          skip: 1,
-        }
-      : {}),
-    include,
-  });
-
-  let nextCursor: string | null = null;
-  if (bookmarks.length > limit) {
-    bookmarks.pop();
-    nextCursor = bookmarks[bookmarks.length - 1]?.postId ?? null;
-  }
-
-  return NextResponse.json({
-    items: bookmarks.map(transformPost),
-    nextCursor,
-  });
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rateLimit = await consumeRateLimit({
+      action: "bookmark-toggle",
+      req: request,
+      userId,
+      limit: 60,
+      windowMs: 60_000,
+    });
+    if (!rateLimit.success) {
+      return createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla kaydetme işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
+
+    const body = await safeParseBody<{ postId?: string }>(request);
+    if (!body?.postId || typeof body.postId !== "string") {
+      return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
+    }
+
+    const { postId } = body;
+    const access = await getPostReadAccess(postId, userId);
+    const post = access.post;
+
+    if (!post || !access.canRead) {
+      return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
+    }
+
+    if (post.userId === userId) {
+      return NextResponse.json({ error: "Kendi notunuzu kaydedemezsiniz" }, { status: 400 });
+    }
+
+    await prisma.bookmark.upsert({
+      where: { userId_postId: { userId, postId } },
+      create: { userId, postId },
+      update: {},
+    });
+
+    return NextResponse.json({ success: true, bookmarked: true });
+  } catch (error) {
+    return handleApiError(error, "Yer işareti eklenemedi.");
   }
-
-  const rateLimit = await consumeRateLimit({
-    action: "bookmark-toggle",
-    req: request,
-    userId,
-    limit: 60,
-    windowMs: 60_000,
-  });
-  if (!rateLimit.success) {
-    return createRateLimitErrorResponse(
-      rateLimit,
-      "Çok fazla kaydetme işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
-    );
-  }
-
-  const { postId } = await request.json();
-  if (!postId || typeof postId !== "string") {
-    return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
-  }
-
-  const access = await getPostReadAccess(postId, userId);
-  const post = access.post;
-
-  if (!post || !access.canRead) {
-    return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
-  }
-
-  if (post.userId === userId) {
-    return NextResponse.json({ error: "Kendi notunuzu kaydedemezsiniz" }, { status: 400 });
-  }
-
-  await prisma.bookmark.upsert({
-    where: { userId_postId: { userId, postId } },
-    create: { userId, postId },
-    update: {},
-  });
-
-  return NextResponse.json({ success: true, bookmarked: true });
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rateLimit = await consumeRateLimit({
+      action: "bookmark-toggle",
+      req: request,
+      userId,
+      limit: 60,
+      windowMs: 60_000,
+    });
+    if (!rateLimit.success) {
+      return createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla işlem yaptınız. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
+
+    const body = await safeParseBody<{ postId?: string }>(request);
+    if (!body?.postId || typeof body.postId !== "string") {
+      return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
+    }
+
+    await prisma.bookmark.deleteMany({
+      where: { userId, postId: body.postId },
+    });
+
+    return NextResponse.json({ success: true, bookmarked: false });
+  } catch (error) {
+    return handleApiError(error, "Yer işareti kaldırılamadı.");
   }
-
-  const rateLimit = await consumeRateLimit({
-    action: "bookmark-toggle",
-    req: request,
-    userId,
-    limit: 60,
-    windowMs: 60_000,
-  });
-  if (!rateLimit.success) {
-    return createRateLimitErrorResponse(
-      rateLimit,
-      "Çok fazla işlem yaptınız. Lütfen biraz sonra tekrar deneyin."
-    );
-  }
-
-  const { postId } = await request.json();
-  if (!postId || typeof postId !== "string") {
-    return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
-  }
-
-  await prisma.bookmark.deleteMany({
-    where: { userId, postId },
-  });
-
-  return NextResponse.json({ success: true, bookmarked: false });
 }
