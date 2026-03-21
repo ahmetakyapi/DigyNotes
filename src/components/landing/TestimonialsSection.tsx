@@ -4,46 +4,46 @@ import { EASE } from "@/lib/variants";
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { LuShield, LuHeart, LuGlobe, LuClock, LuLock, LuSmartphone } from "react-icons/lu";
+import { ShieldIcon, HeartIcon, GlobeIcon, ClockIcon, LockIcon, DeviceMobileIcon } from "@phosphor-icons/react";
 
 const REASONS = [
   {
-    Icon: LuHeart,
+    Icon: HeartIcon,
     title: "Tamamen Ücretsiz",
     desc: "Reklam yok, gizli ücret yok. Tüm özellikler herkese açık.",
     accent: "#10b981",
     accentBg: "rgba(16,185,129,0.08)",
   },
   {
-    Icon: LuGlobe,
+    Icon: GlobeIcon,
     title: "Her Şey Tek Yerde",
     desc: "Film, dizi, oyun, kitap ve gezi — ayrı ayrı uygulama kullanmana gerek yok.",
     accent: "#6888c0",
     accentBg: "rgba(14,165,233,0.08)",
   },
   {
-    Icon: LuClock,
+    Icon: ClockIcon,
     title: "Anında Başla",
     desc: "Kayıt ol, kategorini seç, notunu yaz. Beş dakikada hazırsın.",
     accent: "#0ea5e9",
     accentBg: "rgba(14,165,233,0.08)",
   },
   {
-    Icon: LuSmartphone,
+    Icon: DeviceMobileIcon,
     title: "Her Cihazdan Eriş",
     desc: "Mobil ve masaüstünde aynı deneyim. Nerede olursan ol notların yanında.",
     accent: "#6888c0",
     accentBg: "rgba(14,165,233,0.08)",
   },
   {
-    Icon: LuShield,
+    Icon: ShieldIcon,
     title: "Verini Sen Kontrol Et",
     desc: "Notların sadece sana ait. İstediğin zaman düzenle, sil veya paylaş.",
     accent: "#f59e0b",
     accentBg: "rgba(245,158,11,0.08)",
   },
   {
-    Icon: LuLock,
+    Icon: LockIcon,
     title: "Gizlilik Öncelikli",
     desc: "Verilerini üçüncü taraflarla paylaşmıyoruz. Basit ve güvenli.",
     accent: "#10b981",
@@ -84,7 +84,7 @@ export function TestimonialsSection() {
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <LuShield size={12} />
+            <ShieldIcon size={12} />
             Avantajlar
           </motion.div>
         </div>

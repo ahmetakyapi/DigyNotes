@@ -2,30 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { transformPostTags, sanitizeRating, sanitizePostContent } from "@/lib/api-utils";
 import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
 import { buildPostSearchWhere } from "@/lib/search";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-import sanitizeHtml from "sanitize-html";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const sanitizeConfig: sanitizeHtml.IOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    img: ["src", "alt", "width", "height"],
-    "*": ["class"],
-  },
-};
-
-function transformPostTags(
-  post: { tags: { tag: { id: string; name: string } }[] } & Record<string, unknown>
-) {
-  const { tags, ...rest } = post;
-  return { ...rest, tags: tags.map((pt) => pt.tag) };
-}
 
 function encodePostsCursor(post: { createdAt: Date; id: string }) {
   return Buffer.from(
@@ -145,6 +133,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimit = await consumeRateLimit({
+    action: "post-create",
+    req: request,
+    userId,
+    limit: 20,
+    windowMs: 10 * 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla not oluşturdunuz. Lütfen biraz sonra tekrar deneyin."
+    );
+  }
+
   const body = await request.json();
   const normalizedCategory = normalizeCategory(body.category);
   const {
@@ -168,7 +170,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
+  // Input uzunluk kontrolleri
+  if (typeof title === "string" && title.length > 500) {
+    return NextResponse.json({ error: "Başlık çok uzun (max 500 karakter)" }, { status: 400 });
+  }
+  if (typeof excerpt === "string" && excerpt.length > 2000) {
+    return NextResponse.json({ error: "Özet çok uzun (max 2000 karakter)" }, { status: 400 });
+  }
+
+  const sanitizedContent = sanitizePostContent(content ?? "");
 
   const tagNames: string[] = Array.isArray(tags)
     ? tags
@@ -183,14 +193,14 @@ export async function POST(request: NextRequest) {
 
   const post = await prisma.post.create({
     data: {
-      title,
+      title: String(title).slice(0, 500),
       category: normalizedCategory,
       image,
-      excerpt,
+      excerpt: String(excerpt).slice(0, 2000),
       content: sanitizedContent,
       creator: creator || null,
       years: years || null,
-      rating: rating ?? 0,
+      rating: sanitizeRating(rating),
       externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
       hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,

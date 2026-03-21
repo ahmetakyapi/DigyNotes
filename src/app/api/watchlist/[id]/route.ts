@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
@@ -9,6 +13,20 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await consumeRateLimit({
+    action: "watchlist-remove",
+    req: _req,
+    userId,
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla işlem yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
   }
 
   const item = await prisma.wishlist.findUnique({

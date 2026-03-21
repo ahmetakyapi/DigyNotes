@@ -2,23 +2,23 @@
 
 import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import {
-  Film,
-  Tv,
-  BookOpen,
-  Search,
-  Star,
-  TrendingUp,
-  Tag,
-  Bookmark,
-  List,
-  BarChart3,
-  Flame,
-  CheckCircle,
-  Clock,
-  Plus,
-  ArrowLeft,
-  type LucideIcon,
-} from "lucide-react";
+  FilmSlateIcon,
+  TelevisionIcon,
+  BookOpenIcon,
+  MagnifyingGlassIcon,
+  StarIcon,
+  TrendUpIcon,
+  TagIcon,
+  BookmarkIcon,
+  ListIcon,
+  ChartBarIcon,
+  FlameIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  PlusIcon,
+  ArrowLeftIcon,
+  type Icon as PhosphorIcon,
+} from "@phosphor-icons/react";
 
 /* ── Color palettes matching DigyNotes theme ── */
 const DARK = {
@@ -92,8 +92,8 @@ function sceneOpacity(frame: number, start: number) {
 }
 
 /* ── DigyNotes logo component ── */
-function DigyNotesLogo() {
-  return <Img src="/app-logo.png" style={{ height: 22, width: "auto", objectFit: "contain" }} />;
+function DigyNotesLogo({ height = 36 }: { readonly height?: number } = {}) {
+  return <Img src="/app-logo.png" style={{ height, width: "auto", objectFit: "contain" }} />;
 }
 
 /* ── Category chip ── */
@@ -132,7 +132,13 @@ function StarRating({
   return (
     <div style={{ display: "flex", gap: 2 }}>
       {Array.from({ length: total }, (_, i) => i + 1).map((i) => (
-        <Star key={i} size={9} color={color} fill={i <= count ? color : "none"} strokeWidth={1.5} />
+        <StarIcon
+          key={i}
+          size={9}
+          color={color}
+          fill={i <= count ? color : "none"}
+          strokeWidth={1.5}
+        />
       ))}
     </div>
   );
@@ -144,7 +150,7 @@ type PosterData = {
   subtitle: string;
   grad: string;
   accent: string;
-  Icon: LucideIcon;
+  Icon: PhosphorIcon;
   posterUrl: string;
 };
 
@@ -196,7 +202,7 @@ const OPPENHEIMER: PosterData = {
   subtitle: "2023 · Christopher Nolan",
   grad: "linear-gradient(160deg, #1a0500 0%, #7c2d12 55%, #ea580c 100%)",
   accent: "#fb923c",
-  Icon: Film,
+  Icon: FilmSlateIcon,
   posterUrl: "/landing/posters/oppenheimer.jpg",
 };
 const BREAKING_BAD: PosterData = {
@@ -204,7 +210,7 @@ const BREAKING_BAD: PosterData = {
   subtitle: "2008–2013 · AMC",
   grad: "linear-gradient(160deg, #052005 0%, #14532d 50%, #16a34a 100%)",
   accent: "#4ade80",
-  Icon: Tv,
+  Icon: TelevisionIcon,
   posterUrl: "/landing/posters/breaking-bad.jpg",
 };
 const DUNE: PosterData = {
@@ -212,7 +218,7 @@ const DUNE: PosterData = {
   subtitle: "Frank Herbert",
   grad: "linear-gradient(160deg, #1c1000 0%, #6b4c00 50%, #ca8a04 100%)",
   accent: "#fbbf24",
-  Icon: BookOpen,
+  Icon: BookOpenIcon,
   posterUrl: "/landing/posters/dune.jpg",
 };
 const INTERSTELLAR: PosterData = {
@@ -220,7 +226,7 @@ const INTERSTELLAR: PosterData = {
   subtitle: "2014 · Christopher Nolan",
   grad: "linear-gradient(160deg, #000814 0%, #0a1628 50%, #1e40af 100%)",
   accent: "#60a5fa",
-  Icon: Film,
+  Icon: FilmSlateIcon,
   posterUrl: "/landing/posters/interstellar.jpg",
 };
 const INCEPTION: PosterData = {
@@ -228,7 +234,7 @@ const INCEPTION: PosterData = {
   subtitle: "2010 · Christopher Nolan",
   grad: "linear-gradient(160deg, #0f0a1e 0%, #1e1248 50%, #4c1d95 100%)",
   accent: "#a78bfa",
-  Icon: Film,
+  Icon: FilmSlateIcon,
   posterUrl: "/landing/posters/inception.jpg",
 };
 const TENET: PosterData = {
@@ -236,7 +242,7 @@ const TENET: PosterData = {
   subtitle: "2020 · Christopher Nolan",
   grad: "linear-gradient(160deg, #000a1a 0%, #0a2040 50%, #1e3a78 100%)",
   accent: "#38bdf8",
-  Icon: Film,
+  Icon: FilmSlateIcon,
   posterUrl: "/landing/posters/tenet.jpg",
 };
 const POOR_THINGS: PosterData = {
@@ -244,7 +250,7 @@ const POOR_THINGS: PosterData = {
   subtitle: "2023 · Yorgos Lanthimos",
   grad: "linear-gradient(160deg, #1a0a1a 0%, #6b21a8 55%, #a855f7 100%)",
   accent: "#c084fc",
-  Icon: Film,
+  Icon: FilmSlateIcon,
   posterUrl: "/landing/posters/poor-things.jpg",
 };
 
@@ -330,7 +336,7 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
               gap: 4,
             }}
           >
-            <List size={9} color={C.textMuted} />
+            <ListIcon size={9} color={C.textMuted} />
             47 not · 12 kategori
           </p>
         </div>
@@ -348,7 +354,7 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
             fontWeight: 700,
           }}
         >
-          <Plus size={10} color={C.gold} />
+          <PlusIcon size={10} color={C.gold} />
           Yeni Not
         </div>
       </div>
@@ -403,9 +409,9 @@ function NotesFeedScene({ frame, fps, C }: SceneProps) {
         }}
       >
         {[
-          { label: "Toplam Not", value: "47", color: C.gold, Icon: List },
-          { label: "Film & Dizi", value: "29", color: C.cyan, Icon: Film },
-          { label: "Bu Ay", value: "8", color: C.blue, Icon: TrendingUp },
+          { label: "Toplam Not", value: "47", color: C.gold, Icon: ListIcon },
+          { label: "Film & Dizi", value: "29", color: C.cyan, Icon: FilmSlateIcon },
+          { label: "Bu Ay", value: "8", color: C.blue, Icon: TrendUpIcon },
         ].map((s) => (
           <div
             key={s.label}
@@ -484,7 +490,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-          <ArrowLeft size={11} color={C.textMuted} strokeWidth={2} />
+          <ArrowLeftIcon size={11} color={C.textMuted} strokeWidth={2} />
           <span style={{ color: C.textMuted, fontSize: 9 }}>Notlarım</span>
           <span style={{ color: C.border, fontSize: 9 }}>/</span>
           <span style={{ color: C.textSoft, fontSize: 9, fontWeight: 600 }}>Yeni Not</span>
@@ -526,7 +532,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
               gap: 4,
             }}
           >
-            <Clock size={9} color={C.textMuted} strokeWidth={2} />
+            <ClockIcon size={9} color={C.textMuted} strokeWidth={2} />
             2014 · Christopher Nolan
           </p>
           <Chip label="Film" color={C.cyan} />
@@ -546,7 +552,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
         <span style={{ color: C.textMuted, fontSize: 9, fontWeight: 600 }}>Puan:</span>
         <div style={{ display: "flex", gap: 5 }}>
           {[1, 2, 3, 4, 5].map((i) => (
-            <Star
+            <StarIcon
               key={i}
               size={18}
               color={i <= starsLit ? C.amber : `${C.textMuted}44`}
@@ -617,7 +623,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
               fontWeight: 600,
             }}
           >
-            <Tag size={8} color={C.textMuted} strokeWidth={2} />
+            <TagIcon size={8} color={C.textMuted} strokeWidth={2} />
             {tag}
           </div>
         ))}
@@ -635,7 +641,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
             fontWeight: 700,
           }}
         >
-          <Plus size={8} color={C.gold} />
+          <PlusIcon size={8} color={C.gold} />
           Etiket Ekle
         </div>
       </div>
@@ -659,7 +665,7 @@ function NoteWritingScene({ frame, fps, C }: SceneProps) {
           gap: 6,
         }}
       >
-        <CheckCircle size={11} color="white" strokeWidth={2.5} />
+        <CheckCircleIcon size={11} color="white" strokeWidth={2.5} />
         Kaydet
       </div>
     </AbsoluteFill>
@@ -687,9 +693,9 @@ function SearchScene({ frame, fps, C }: SceneProps) {
 
   const filters = [
     { label: "Tümü", active: false, color: C.textMuted },
-    { label: "Film", active: true, color: C.cyan, Icon: Film },
-    { label: "Dizi", active: false, color: C.gold, Icon: Tv },
-    { label: "Kitap", active: false, color: C.amber, Icon: BookOpen },
+    { label: "Film", active: true, color: C.cyan, Icon: FilmSlateIcon },
+    { label: "Dizi", active: false, color: C.gold, Icon: TelevisionIcon },
+    { label: "Kitap", active: false, color: C.amber, Icon: BookOpenIcon },
   ];
 
   const headerP = sp(frame, fps, 0);
@@ -752,7 +758,7 @@ function SearchScene({ frame, fps, C }: SceneProps) {
           boxShadow: `0 0 0 3px ${C.gold}10`,
         }}
       >
-        <Search size={13} color={C.textMuted} strokeWidth={2} />
+        <MagnifyingGlassIcon size={13} color={C.textMuted} strokeWidth={2} />
         <span style={{ color: C.textStrong, fontSize: 12, flex: 1 }}>
           {SEARCH_TEXT.slice(0, searchChars)}
           {searchChars < SEARCH_TEXT.length && (
@@ -783,7 +789,7 @@ function SearchScene({ frame, fps, C }: SceneProps) {
             gap: 3,
           }}
         >
-          <Film size={8} color={C.cyan} />4 sonuç
+          <FilmSlateIcon size={8} color={C.cyan} />4 sonuç
         </div>
       </div>
 
@@ -875,10 +881,10 @@ function StatsScene({ frame, fps, C }: SceneProps) {
   const maxV = 8;
 
   const cats = [
-    { label: "Film", count: 29, color: C.cyan, pct: 62, Icon: Film },
-    { label: "Kitap", count: 11, color: C.amber, pct: 23, Icon: BookOpen },
-    { label: "Dizi", count: 5, color: C.gold, pct: 11, Icon: Tv },
-    { label: "Oyun", count: 2, color: C.blue, pct: 4, Icon: Bookmark },
+    { label: "Film", count: 29, color: C.cyan, pct: 62, Icon: FilmSlateIcon },
+    { label: "Kitap", count: 11, color: C.amber, pct: 23, Icon: BookOpenIcon },
+    { label: "Dizi", count: 5, color: C.gold, pct: 11, Icon: TelevisionIcon },
+    { label: "Oyun", count: 2, color: C.blue, pct: 4, Icon: BookmarkIcon },
   ];
 
   const headerP = sp(frame, fps, 0);
@@ -914,7 +920,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
       >
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-            <BarChart3 size={11} color={C.gold} strokeWidth={2} />
+            <ChartBarIcon size={11} color={C.gold} strokeWidth={2} />
             <span
               style={{
                 color: C.gold,
@@ -956,7 +962,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
             transform: `translateX(${interpolate(streakP, [0, 1], [14, 0])}px)`,
           }}
         >
-          <Flame size={16} color={C.amber} strokeWidth={2} fill={`${C.amber}40`} />
+          <FlameIcon size={16} color={C.amber} strokeWidth={2} fill={`${C.amber}40`} />
           <strong style={{ color: C.amber, fontSize: 16, fontWeight: 900, lineHeight: 1 }}>
             12
           </strong>
@@ -979,7 +985,7 @@ function StatsScene({ frame, fps, C }: SceneProps) {
           gap: 4,
         }}
       >
-        <BarChart3 size={9} color={C.textMuted} />
+        <ChartBarIcon size={9} color={C.textMuted} />
         Aylık Not Sayısı
       </p>
 
@@ -1117,7 +1123,7 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       count: 12,
       desc: "Bekleyen filmler",
       color: C.cyan,
-      Icon: Film,
+      Icon: FilmSlateIcon,
       posters: [POOR_THINGS, TENET, INCEPTION],
     },
     {
@@ -1125,7 +1131,7 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       count: 8,
       desc: "Okuduğum kitaplar",
       color: C.amber,
-      Icon: BookOpen,
+      Icon: BookOpenIcon,
       posters: [DUNE],
     },
     {
@@ -1133,7 +1139,7 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
       count: 17,
       desc: "Tüm zamanların en iyileri",
       color: C.gold,
-      Icon: Star,
+      Icon: StarIcon,
       posters: [INTERSTELLAR, OPPENHEIMER, INCEPTION],
     },
   ];
@@ -1198,7 +1204,7 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
             fontWeight: 700,
           }}
         >
-          <Plus size={10} color={C.gold} />
+          <PlusIcon size={10} color={C.gold} />
           Yeni Liste
         </div>
       </div>
@@ -1320,7 +1326,7 @@ function CollectionsScene({ frame, fps, C }: SceneProps) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <List size={11} color={C.textSoft} strokeWidth={2} />
+          <ListIcon size={11} color={C.textSoft} strokeWidth={2} />
           <span style={{ color: C.textSoft, fontSize: 10 }}>Toplam takip edilen içerik</span>
         </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>

@@ -1,5 +1,5 @@
 "use client";
-import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { StarIcon, StarHalfIcon } from "@phosphor-icons/react";
 
 interface StarRatingProps {
   rating: number;
@@ -37,11 +37,11 @@ export default function StarRating({
                 onClick={() => onRate?.(starNum)}
               />
               {starNum <= fullStars ? (
-                <FaStar className="text-[#10b981]" />
+                <StarIcon size={size} weight="fill" className="text-[#10b981]" />
               ) : starNum === fullStars + 1 && hasHalf ? (
-                <FaStarHalfAlt className="text-[#10b981]" />
+                <StarHalfIcon size={size} weight="fill" className="text-[#10b981]" />
               ) : (
-                <FaRegStar className="text-[#4a5568]" />
+                <StarIcon size={size} className="text-[#4a5568]" />
               )}
             </span>
           );
@@ -55,11 +55,11 @@ export default function StarRating({
       {Array.from({ length: 5 }, (_, i) => {
         const starNum = i + 1;
         return starNum <= fullStars ? (
-          <FaStar key={starNum} className="text-[#10b981]" style={{ fontSize: size }} />
+          <StarIcon key={starNum} size={size} weight="fill" className="text-[#10b981]" />
         ) : starNum === fullStars + 1 && hasHalf ? (
-          <FaStarHalfAlt key={starNum} className="text-[#10b981]" style={{ fontSize: size }} />
+          <StarHalfIcon key={starNum} size={size} weight="fill" className="text-[#10b981]" />
         ) : (
-          <FaRegStar key={starNum} className="text-[#4a5568]" style={{ fontSize: size }} />
+          <StarIcon key={starNum} size={size} className="text-[#4a5568]" />
         );
       })}
     </span>

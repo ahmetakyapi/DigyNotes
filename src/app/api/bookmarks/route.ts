@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -135,6 +139,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimit = await consumeRateLimit({
+    action: "bookmark-toggle",
+    req: request,
+    userId,
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla kaydetme işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
+  }
+
   const { postId } = await request.json();
   if (!postId || typeof postId !== "string") {
     return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
@@ -166,6 +184,20 @@ export async function DELETE(request: NextRequest) {
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await consumeRateLimit({
+    action: "bookmark-toggle",
+    req: request,
+    userId,
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla işlem yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
   }
 
   const { postId } = await request.json();

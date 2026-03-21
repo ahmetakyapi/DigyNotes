@@ -11,6 +11,7 @@ const manrope = Manrope({
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ConditionalAppShell from "@/components/ConditionalAppShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
@@ -101,7 +102,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider>
             <SessionProviderWrapper>
               <ServiceWorkerRegistration />
-              <ConditionalAppShell>{children}</ConditionalAppShell>
+              <ErrorBoundary>
+                <ConditionalAppShell>{children}</ConditionalAppShell>
+              </ErrorBoundary>
               <PwaInstallPrompt />
             </SessionProviderWrapper>
           </ThemeProvider>

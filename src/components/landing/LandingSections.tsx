@@ -7,19 +7,19 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
 import {
-  LuFilm,
-  LuTv,
-  LuBookOpen,
-  LuGamepad2,
-  LuMapPin,
-  LuStar,
-  LuSearch,
-  LuTag,
-  LuUsers,
-  LuArrowRight,
-  LuSparkles,
-  LuZap,
-} from "react-icons/lu";
+  FilmSlateIcon,
+  TelevisionIcon,
+  BookOpenIcon,
+  GameControllerIcon,
+  MapPinIcon,
+  StarIcon,
+  MagnifyingGlassIcon,
+  TagIcon,
+  UsersThreeIcon,
+  ArrowRightIcon,
+  SparkleIcon,
+  LightningIcon,
+} from "@phosphor-icons/react";
 import { FeatureCard } from "./FeatureCard";
 import { MagneticButton } from "./MagneticButton";
 
@@ -28,7 +28,7 @@ import { MagneticButton } from "./MagneticButton";
    ──────────────────────────────────────────── */
 const FEATURES = [
   {
-    Icon: LuFilm,
+    Icon: FilmSlateIcon,
     title: "Film",
     desc: "İzlediğin filmleri puanla, yönetmen ve yıl bilgisiyle birlikte kaydet.",
     iconColor: "#6888c0",
@@ -36,7 +36,7 @@ const FEATURES = [
     iconBorder: "rgba(56,88,168,0.2)",
   },
   {
-    Icon: LuTv,
+    Icon: TelevisionIcon,
     title: "Dizi",
     desc: "Devam eden ya da biten dizileri durumlarıyla takip et.",
     iconColor: "#c8b090",
@@ -44,7 +44,7 @@ const FEATURES = [
     iconBorder: "rgba(200,176,144,0.2)",
   },
   {
-    Icon: LuGamepad2,
+    Icon: GameControllerIcon,
     title: "Oyun",
     desc: "Oynadığın ya da oynamak istediğin oyunları RAWG veritabanıyla kaydet.",
     iconColor: "#0ea5e9",
@@ -52,7 +52,7 @@ const FEATURES = [
     iconBorder: "rgba(14,165,233,0.2)",
   },
   {
-    Icon: LuBookOpen,
+    Icon: BookOpenIcon,
     title: "Kitap",
     desc: "Okuduğun ya da okumak istediğin kitapları listele, notlar al.",
     iconColor: "#10b981",
@@ -60,7 +60,7 @@ const FEATURES = [
     iconBorder: "rgba(16,185,129,0.2)",
   },
   {
-    Icon: LuMapPin,
+    Icon: MapPinIcon,
     title: "Gezi",
     desc: "Gezdiğin şehirleri, ülkeleri ve mekânları puanla, anılarını kaydet.",
     iconColor: "#60a88a",
@@ -72,20 +72,20 @@ const FEATURES = [
 const SUB_FEATURES = [
   {
     label: "Tam Metin Arama",
-    Icon: LuSearch,
+    Icon: MagnifyingGlassIcon,
     color: "var(--gold)",
     accent: "rgba(16,185,129,0.1)",
   },
-  { label: "Kaydet & Etiketle", Icon: LuTag, color: "#0ea5e9", accent: "rgba(14,165,233,0.1)" },
+  { label: "Kaydet & Etiketle", Icon: TagIcon, color: "#0ea5e9", accent: "rgba(14,165,233,0.1)" },
   {
     label: "Bildirimler & Keşfet",
-    Icon: LuUsers,
+    Icon: UsersThreeIcon,
     color: "#6888c0",
     accent: "rgba(14,165,233,0.1)",
   },
   {
     label: "Kişisel İstatistikler",
-    Icon: LuStar,
+    Icon: StarIcon,
     color: "var(--gold)",
     accent: "rgba(16,185,129,0.1)",
   },
@@ -137,7 +137,7 @@ export function FeaturesSection() {
               animate={isInView ? { rotate: [0, 15, -15, 0] } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <LuSparkles size={12} />
+              <SparkleIcon size={12} />
             </motion.span>
             Özellikler
           </motion.div>
@@ -241,7 +241,7 @@ const STEPS = [
     desc: "E-posta ve kullanıcı adınla kayıt ol. Beş saniye yeterli.",
     accent: "#6888c0",
     accentBg: "rgba(14,165,233,0.08)",
-    icon: LuZap,
+    icon: LightningIcon,
   },
   {
     step: "2",
@@ -249,7 +249,7 @@ const STEPS = [
     desc: "Film, dizi, oyun, kitap veya gezi — kategorini seç, notunu yaz.",
     accent: "#10b981",
     accentBg: "rgba(16,185,129,0.08)",
-    icon: LuTag,
+    icon: TagIcon,
   },
   {
     step: "3",
@@ -257,7 +257,7 @@ const STEPS = [
     desc: "Puanla, etiketle ve yıllar sonra aynı duyguyla geri dön.",
     accent: "#0ea5e9",
     accentBg: "rgba(14,165,233,0.08)",
-    icon: LuStar,
+    icon: StarIcon,
   },
 ];
 
@@ -407,7 +407,7 @@ export function HowItWorksSection() {
               animate={isInView ? { rotate: [0, 360] } : {}}
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             >
-              <LuZap size={12} />
+              <LightningIcon size={12} />
             </motion.span>
             Nasıl Çalışır
           </motion.div>
@@ -556,7 +556,7 @@ export function BottomCtaSection() {
             animate={isInView ? { rotate: [0, 360] } : {}}
             transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
           >
-            <LuSparkles size={22} style={{ color: "var(--gold)" }} />
+            <SparkleIcon size={22} style={{ color: "var(--gold)" }} />
           </motion.div>
         </motion.div>
 
@@ -619,7 +619,7 @@ export function BottomCtaSection() {
                 }}
               />
               <span className="relative z-10">Hesap Oluştur</span>
-              <LuArrowRight
+              <ArrowRightIcon
                 className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"
                 size={16}
               />

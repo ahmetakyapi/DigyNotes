@@ -1,30 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { transformPostTags, sanitizeRating, sanitizePostContent } from "@/lib/api-utils";
 import { normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-import sanitizeHtml from "sanitize-html";
+import {
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const sanitizeConfig: sanitizeHtml.IOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    img: ["src", "alt", "width", "height"],
-    "*": ["class"],
-  },
-};
-
-function transformPostTags(
-  post: { tags: { tag: { id: string; name: string } }[] } & Record<string, unknown>
-) {
-  const { tags, ...rest } = post;
-  return { ...rest, tags: tags.map((pt) => pt.tag) };
-}
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
@@ -57,6 +45,20 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const rateLimit = await consumeRateLimit({
+    action: "post-update",
+    req: request,
+    userId,
+    limit: 30,
+    windowMs: 10 * 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla güncelleme yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
+  }
+
   const body = await request.json();
   const normalizedCategory = normalizeCategory(body.category);
   const {
@@ -86,7 +88,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const sanitizedContent = sanitizeHtml(content ?? "", sanitizeConfig);
+  const sanitizedContent = sanitizePostContent(content ?? "");
 
   const tagNames: string[] = Array.isArray(tags)
     ? tags
@@ -104,15 +106,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   const post = await prisma.post.update({
     where: { id: params.id },
-    data: {
-      title,
+        data: {
+      title: String(title).slice(0, 500),
       category: normalizedCategory,
       image,
-      excerpt,
+      excerpt: String(excerpt).slice(0, 2000),
       content: sanitizedContent,
       creator,
       years,
-      rating,
+      rating: sanitizeRating(rating),
       externalRating: typeof externalRating === "number" ? externalRating : null,
       status: status || null,
       hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,
@@ -143,6 +145,20 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rateLimit = await consumeRateLimit({
+    action: "post-delete",
+    req: _req,
+    userId,
+    limit: 10,
+    windowMs: 10 * 60_000,
+  });
+  if (!rateLimit.success) {
+    return createRateLimitErrorResponse(
+      rateLimit,
+      "Çok fazla silme işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+    );
   }
 
   const [postToDelete, currentUser] = await Promise.all([
