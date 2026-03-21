@@ -2289,7 +2289,7 @@ export default function AdminPage() {
 
       {/* ── Delete user confirm modal ── */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="admin-delete-user-title">
           <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
             <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#e53e3e]/20 bg-[#e53e3e]/10">
               <svg
@@ -2305,7 +2305,7 @@ export default function AdminPage() {
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>
             </div>
-            <h3 className="mb-1 text-base font-bold text-[var(--text-primary)]">Kullanıcıyı Sil</h3>
+            <h3 id="admin-delete-user-title" className="mb-1 text-base font-bold text-[var(--text-primary)]">Kullanıcıyı Sil</h3>
             <p className="mb-1 text-sm text-[var(--text-secondary)]">
               <span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span>{" "}
               silinecek.
@@ -2333,7 +2333,7 @@ export default function AdminPage() {
 
       {/* ── Delete post confirm modal ── */}
       {confirmDeletePost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="admin-delete-post-title">
           <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
             <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#e53e3e]/20 bg-[#e53e3e]/10">
               <svg
@@ -2349,7 +2349,7 @@ export default function AdminPage() {
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>
             </div>
-            <h3 className="mb-1 text-base font-bold text-[var(--text-primary)]">Notu Sil</h3>
+            <h3 id="admin-delete-post-title" className="mb-1 text-base font-bold text-[var(--text-primary)]">Notu Sil</h3>
             <p className="mb-1 text-sm text-[var(--text-secondary)]">
               <span className="font-semibold text-[var(--text-primary)]">
                 {confirmDeletePost.title}
