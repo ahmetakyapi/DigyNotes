@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { XIcon } from "@phosphor-icons/react";
 import FollowButton from "@/components/FollowButton";
 import { AvatarImage } from "@/components/AvatarImage";
 
@@ -80,7 +81,9 @@ export default function FollowListModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
           <div>
-            <h2 id="follow-list-title" className="font-semibold text-[var(--text-primary)]">{title}</h2>
+            <h2 id="follow-list-title" className="font-semibold text-[var(--text-primary)]">
+              {title}
+            </h2>
             <p className="mt-1 text-xs text-[var(--text-muted)]">{subtitle}</p>
           </div>
           <button
@@ -89,14 +92,7 @@ export default function FollowListModal({
             aria-label="Listeyi kapat"
             className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <XIcon size={16} />
           </button>
         </div>
 

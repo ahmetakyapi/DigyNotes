@@ -1,5 +1,6 @@
 "use client";
 import React, { Component, type ReactNode } from "react";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -34,20 +35,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="flex min-h-[40vh] flex-col items-center justify-center px-4 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e53e3e]/10">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#e53e3e"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
+            <WarningCircleIcon size={28} weight="duotone" color="#e53e3e" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Bir şeyler ters gitti

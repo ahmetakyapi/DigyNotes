@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { DownloadSimpleIcon } from "@phosphor-icons/react";
 
 interface DeferredBeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -101,14 +102,7 @@ export function PwaInstallPrompt() {
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
       <div className="border-[#10b981]/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgba(3,8,20,0.38)] backdrop-blur-xl">
         <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-[#10b981]/25 bg-[#10b981]/10 text-[var(--gold)]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path
-              d="M12 16V4m0 0-4 4m4-4 4 4M4 14v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <DownloadSimpleIcon size={18} />
         </div>
 
         <div className="min-w-0 flex-1">

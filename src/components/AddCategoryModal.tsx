@@ -60,7 +60,9 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
       }}
     >
       <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
-        <h2 id="add-category-title" className="mb-5 text-base font-bold text-[var(--text-primary)]">Yeni Kategori</h2>
+        <h2 id="add-category-title" className="mb-5 text-base font-bold text-[var(--text-primary)]">
+          Yeni Kategori
+        </h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"

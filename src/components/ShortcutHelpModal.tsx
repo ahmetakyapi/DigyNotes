@@ -61,7 +61,10 @@ export default function ShortcutHelpModal() {
             <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
               <KeyboardIcon size={18} weight="duotone" />
             </div>
-            <h2 id="shortcut-help-title" className="text-base font-semibold text-[var(--text-primary)]">
+            <h2
+              id="shortcut-help-title"
+              className="text-base font-semibold text-[var(--text-primary)]"
+            >
               Klavye Kısayolları
             </h2>
           </div>

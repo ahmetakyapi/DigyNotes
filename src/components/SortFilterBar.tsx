@@ -1,16 +1,17 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 
-export type SortOption = "newest" | "oldest" | "rating_desc" | "rating_asc" | "az" | "za";
+export type { SortOption, SortFilterState } from "@/lib/sort-filter-utils";
+export {
+  extractYearRange,
+  createSortFilterState,
+  hasActiveSortFilters,
+  matchesAdvancedFilters,
+  applySortFilter,
+} from "@/lib/sort-filter-utils";
 
-export interface SortFilterState {
-  sort: SortOption;
-  minRating: number;
-  maxRating: number;
-  yearFrom: string;
-  yearTo: string;
-  statuses: string[];
-}
+import type { SortOption, SortFilterState } from "@/lib/sort-filter-utils";
+import { createSortFilterState } from "@/lib/sort-filter-utils";
 
 interface SortFilterBarProps {
   value: SortFilterState;
@@ -46,77 +47,6 @@ const MAX_RATING_OPTIONS = [
   { value: 4, label: "4" },
   { value: 5, label: "5" },
 ];
-
-function parseYear(value: string) {
-  const numeric = parseInt(value.trim(), 10);
-  return Number.isFinite(numeric) ? numeric : null;
-}
-
-export function extractYearRange(input?: string | null) {
-  if (!input) return null;
-
-  const matches = input.match(/\b(19|20)\d{2}\b/g);
-  if (!matches || matches.length === 0) return null;
-
-  const years = matches.map((item) => parseInt(item, 10)).filter(Number.isFinite);
-  if (years.length === 0) return null;
-
-  return {
-    from: Math.min(...years),
-    to: Math.max(...years),
-  };
-}
-
-export function createSortFilterState(sort: SortOption = "newest"): SortFilterState {
-  return {
-    sort,
-    minRating: 0,
-    maxRating: 0,
-    yearFrom: "",
-    yearTo: "",
-    statuses: [],
-  };
-}
-
-export function hasActiveSortFilters(
-  state: SortFilterState,
-  defaultValue: SortFilterState = createSortFilterState()
-) {
-  return (
-    state.sort !== defaultValue.sort ||
-    state.minRating !== defaultValue.minRating ||
-    state.maxRating !== defaultValue.maxRating ||
-    state.yearFrom.trim() !== defaultValue.yearFrom.trim() ||
-    state.yearTo.trim() !== defaultValue.yearTo.trim() ||
-    state.statuses.length !== defaultValue.statuses.length ||
-    state.statuses.some((status) => !defaultValue.statuses.includes(status))
-  );
-}
-
-export function matchesAdvancedFilters<
-  T extends { rating: number; status?: string | null; years?: string | null; date?: string | null },
->(post: T, state: SortFilterState) {
-  if (post.rating < state.minRating) return false;
-  if (state.maxRating > 0 && post.rating > state.maxRating) return false;
-
-  if (state.statuses.length > 0) {
-    if (!post.status || !state.statuses.includes(post.status)) {
-      return false;
-    }
-  }
-
-  const yearFrom = parseYear(state.yearFrom);
-  const yearTo = parseYear(state.yearTo);
-
-  if (yearFrom !== null || yearTo !== null) {
-    const range = extractYearRange(post.years) ?? extractYearRange(post.date);
-    if (!range) return false;
-    if (yearFrom !== null && range.to < yearFrom) return false;
-    if (yearTo !== null && range.from > yearTo) return false;
-  }
-
-  return true;
-}
 
 export function SortFilterBar({
   value,
@@ -222,7 +152,10 @@ export function SortFilterBar({
             >
               <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">
                 <div>
-                  <h3 id="sort-filter-title" className="text-lg font-semibold text-[var(--text-primary)]">
+                  <h3
+                    id="sort-filter-title"
+                    className="text-lg font-semibold text-[var(--text-primary)]"
+                  >
                     Filtreleri Düzenle
                   </h3>
                   <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
@@ -343,33 +276,4 @@ export function SortFilterBar({
       )}
     </>
   );
-}
-
-export function applySortFilter<T extends { rating: number; title: string; createdAt: string }>(
-  posts: T[],
-  state: SortFilterState
-): T[] {
-  const filtered = [...posts];
-
-  switch (state.sort) {
-    case "newest":
-      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      break;
-    case "oldest":
-      filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      break;
-    case "rating_desc":
-      filtered.sort((a, b) => b.rating - a.rating);
-      break;
-    case "rating_asc":
-      filtered.sort((a, b) => a.rating - b.rating);
-      break;
-    case "az":
-      filtered.sort((a, b) => a.title.localeCompare(b.title, "tr"));
-      break;
-    case "za":
-      filtered.sort((a, b) => b.title.localeCompare(a.title, "tr"));
-      break;
-  }
-  return filtered;
 }
