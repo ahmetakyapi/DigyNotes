@@ -51,7 +51,7 @@ const REASONS = [
   },
 ] as const;
 
-export function TestimonialsSection() {
+export function AdvantagesSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 

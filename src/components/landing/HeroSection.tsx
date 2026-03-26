@@ -5,11 +5,19 @@ import { useRef } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/ThemeProvider";
 import { useSpotlight } from "@/hooks/useSpotlight";
-import { EASE } from "@/lib/variants";
+import { EASE, CTA_GRADIENT } from "@/lib/variants";
+import {
+  FilmSlateIcon,
+  TelevisionIcon,
+  GameControllerIcon,
+  BookOpenIcon,
+  MapPinIcon,
+} from "@phosphor-icons/react";
 import { MagneticButton } from "./MagneticButton";
 import { RotatingWord } from "./RotatingWord";
 import { FloatingParticles } from "./FloatingParticles";
 import { DigyNotesPlayer } from "@/components/DigyNotesPlayer";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const LIGHT_THEME = {
   glowBg:
@@ -31,11 +39,10 @@ const LIGHT_THEME = {
     "linear-gradient(135deg, #1e40af 0%, #1e3a8a 22%, #1d4ed8 44%, #2563eb 66%, #1e40af 100%)",
   headingLine3:
     "linear-gradient(90deg, #059669 0%, #047857 18%, #065f46 38%, #059669 58%, #10b981 80%, #34d399 100%)",
-  ctaBtnBg: "linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%)",
-  ctaBtnBgHover: "linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%)",
+  ctaBtnBg: CTA_GRADIENT.light.bg,
+  ctaBtnBgHover: CTA_GRADIENT.light.bgHover,
   ctaBtnTextColor: "#ffffff",
-  ctaBtnShadow:
-    "0 8px 28px rgba(5,150,105,0.28), 0 0 0 1px rgba(16,185,129,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset",
+  ctaBtnShadow: CTA_GRADIENT.light.shadow,
   ctaBtnHoverShadow: "0 16px 48px rgba(5, 150, 105, 0.48)",
   statsBg: "rgba(255,255,255,0.7)",
   statsBorder: "rgba(16,185,129,0.2)",
@@ -62,28 +69,28 @@ const DARK_THEME = {
     "linear-gradient(135deg, #38bdf8 0%, #0ea5e9 22%, #0284c7 44%, #0369a1 66%, #0c4a6e 100%)",
   headingLine3:
     "linear-gradient(90deg, #a7f3d0 0%, #34d399 16%, #10b981 36%, #059669 56%, #34d399 76%, #a7f3d0 100%)",
-  ctaBtnBg: "linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%)",
-  ctaBtnBgHover: "linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%)",
+  ctaBtnBg: CTA_GRADIENT.dark.bg,
+  ctaBtnBgHover: CTA_GRADIENT.dark.bgHover,
   ctaBtnTextColor: "#ffffff",
-  ctaBtnShadow:
-    "0 8px 28px rgba(16,185,129,0.32), 0 0 0 1px rgba(52,211,153,0.1) inset, 0 1px 0 rgba(255,255,255,0.14) inset",
+  ctaBtnShadow: CTA_GRADIENT.dark.shadow,
   ctaBtnHoverShadow: "0 16px 48px rgba(16, 185, 129, 0.52)",
   statsBg: "rgba(255,255,255,0.04)",
   statsBorder: "rgba(255,255,255,0.08)",
 } as const;
 
 const FEATURE_PILLS = [
-  { emoji: "🎬", label: "Film" },
-  { emoji: "📺", label: "Dizi" },
-  { emoji: "🎮", label: "Oyun" },
-  { emoji: "📚", label: "Kitap" },
-  { emoji: "🗺️", label: "Gezi" },
-];
+  { Icon: FilmSlateIcon, label: "Film" },
+  { Icon: TelevisionIcon, label: "Dizi" },
+  { Icon: GameControllerIcon, label: "Oyun" },
+  { Icon: BookOpenIcon, label: "Kitap" },
+  { Icon: MapPinIcon, label: "Gezi" },
+] as const;
 
 export function HeroSection() {
   const { theme } = useTheme();
   const isLight = theme === "light";
   const t = isLight ? LIGHT_THEME : DARK_THEME;
+  const prefersReducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const spotlight = useSpotlight(680, isLight ? "rgba(16,185,129,0.05)" : "rgba(16,185,129,0.07)");
   const { scrollYProgress } = useScroll({
@@ -134,47 +141,49 @@ export function HeroSection() {
         />
       </motion.div>
 
-      {/* ── Floating Particles ── */}
-      <FloatingParticles count={20} />
+      {/* ── Floating Particles (skip if reduced motion) ── */}
+      {!prefersReducedMotion && <FloatingParticles count={20} />}
 
-      {/* ── Floating geometric shapes (desktop only) ── */}
-      <div className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block">
-        <motion.div
-          className="absolute right-[12%] top-[18%] h-20 w-20 rounded-full border"
-          style={{ borderColor: t.geomCircle }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-[22%] left-[8%] h-6 w-6 rotate-45 rounded-sm border"
-          style={{ borderColor: t.geomSquare }}
-          animate={{ y: [0, -20, 0], opacity: [0.3, 0.7, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute right-[22%] top-[65%] h-3 w-3 rounded-full"
-          style={{ background: t.geomDot }}
-          animate={{ y: [0, -15, 0], scale: [1, 1.5, 1] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-        <motion.div
-          className="absolute bottom-[30%] left-[18%] h-32 w-32 rounded-full border"
-          style={{ borderColor: t.geomRing }}
-          animate={{ rotate: -360, scale: [1, 1.05, 1] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute left-[45%] top-[12%]"
-          animate={{ rotate: [0, 90, 180, 270, 360], opacity: [0.15, 0.4, 0.15] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="h-px w-5" style={{ background: t.geomCross }} />
-          <div
-            className="absolute left-1/2 top-1/2 h-5 w-px -translate-x-1/2 -translate-y-1/2"
-            style={{ background: t.geomCross }}
+      {/* ── Floating geometric shapes (desktop only, skip if reduced motion) ── */}
+      {!prefersReducedMotion && (
+        <div className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block" aria-hidden="true">
+          <motion.div
+            className="absolute right-[12%] top-[18%] h-20 w-20 rounded-full border"
+            style={{ borderColor: t.geomCircle }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
           />
-        </motion.div>
-      </div>
+          <motion.div
+            className="absolute bottom-[22%] left-[8%] h-6 w-6 rotate-45 rounded-sm border"
+            style={{ borderColor: t.geomSquare }}
+            animate={{ y: [0, -20, 0], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute right-[22%] top-[65%] h-3 w-3 rounded-full"
+            style={{ background: t.geomDot }}
+            animate={{ y: [0, -15, 0], scale: [1, 1.5, 1] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          />
+          <motion.div
+            className="absolute bottom-[30%] left-[18%] h-32 w-32 rounded-full border"
+            style={{ borderColor: t.geomRing }}
+            animate={{ rotate: -360, scale: [1, 1.05, 1] }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute left-[45%] top-[12%]"
+            animate={{ rotate: [0, 90, 180, 270, 360], opacity: [0.15, 0.4, 0.15] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <div className="h-px w-5" style={{ background: t.geomCross }} />
+            <div
+              className="absolute left-1/2 top-1/2 h-5 w-px -translate-x-1/2 -translate-y-1/2"
+              style={{ background: t.geomCross }}
+            />
+          </motion.div>
+        </div>
+      )}
 
       {/* ══════════════════════════════════════
           İçerik — 2 kolon (lg+)
@@ -299,7 +308,7 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.58, ease: EASE }}
           >
-            {FEATURE_PILLS.map((pill, i) => (
+            {FEATURE_PILLS.map((pill) => (
               <div
                 key={pill.label}
                 className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold"
@@ -307,10 +316,9 @@ export function HeroSection() {
                   background: t.statsBg,
                   borderColor: t.statsBorder,
                   color: "var(--text-secondary)",
-                  animationDelay: `${i * 60}ms`,
                 }}
               >
-                <span className="text-[12px]">{pill.emoji}</span>
+                <pill.Icon size={13} weight="duotone" style={{ color: "var(--gold)" }} />
                 {pill.label}
               </div>
             ))}
@@ -449,6 +457,7 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <motion.div
+        aria-hidden="true"
         className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 sm:bottom-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

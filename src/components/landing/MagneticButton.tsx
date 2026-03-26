@@ -7,14 +7,12 @@ interface MagneticButtonProps {
   readonly children: React.ReactNode;
   readonly className?: string;
   readonly strength?: number;
-  readonly as?: "div" | "span";
 }
 
 export function MagneticButton({
   children,
   className,
   strength = 0.35,
-  as: Tag = "div",
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);

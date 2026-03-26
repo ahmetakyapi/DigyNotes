@@ -45,15 +45,14 @@ export const metadata: Metadata = {
     siteName: "DigyNotes",
     locale: "tr_TR",
     title: "DigyNotes",
-    description: "Film, dizi ve kitap notlarını tut, derecelendir ve kategorilere ayır.",
-    images: [
-      {
-        url: "/favicon-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "DigyNotes",
-      },
-    ],
+    description: "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DigyNotes — Kişisel Not Defteri" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DigyNotes",
+    description: "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
+    images: ["/opengraph-image"],
   },
   icons: {
     icon: [

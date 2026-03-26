@@ -35,7 +35,7 @@ export function FeatureCard({
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
-      className="glass group relative h-full overflow-hidden rounded-2xl p-6 transition-shadow hover:shadow-xl sm:p-7"
+      className="glass group relative h-full overflow-hidden rounded-2xl border border-[var(--border)] p-6 transition-colors hover:border-[#10b981]/30 sm:p-7"
     >
       {/* Holographic shine */}
       <motion.div className="pointer-events-none absolute inset-0" style={{ background: shine }} />
