@@ -31,6 +31,7 @@ import {
 } from "@/lib/post-form";
 import { getPostTemplate, getTemplateSignature } from "@/lib/post-templates";
 import { stripHtml } from "@/lib/text";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 const inputBase =
   "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 focus:bg-[var(--bg-card)]";
@@ -70,6 +71,44 @@ export default function NewPostPage() {
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefillAppliedRef = useRef(false);
+  const draftRestoredRef = useRef(false);
+  const { updateDraft, loadDraft, clearDraft, lastSavedAt, saveDraft } = useAutoSave();
+
+  // Taslak yükle (ilk açılışta)
+  useEffect(() => {
+    if (draftRestoredRef.current) return;
+    const hasPrefill = Boolean(searchParams.get("title") || searchParams.get("category"));
+    if (hasPrefill) return;
+
+    const draft = loadDraft();
+    if (!draft) return;
+
+    draftRestoredRef.current = true;
+    setTitle(draft.title);
+    setCategory(draft.category);
+    setRating(draft.rating);
+    setStatus(draft.status);
+    setImage(draft.image);
+    setContent(draft.content);
+    setCreator(draft.creator);
+    setYears(draft.years);
+    setHasSpoiler(draft.hasSpoiler);
+    setLat(draft.lat);
+    setLng(draft.lng);
+    setLocationLabel(draft.locationLabel);
+    setTags(draft.tags);
+    setExternalRating(draft.externalRating);
+    setImagePosition(draft.imagePosition);
+    toast.success("Önceki taslağınız geri yüklendi");
+  }, [loadDraft, searchParams]);
+
+  // Her değişiklikte taslağı güncelle
+  useEffect(() => {
+    updateDraft({
+      title, category, rating, status, image, content, creator,
+      years, hasSpoiler, lat, lng, locationLabel, tags, externalRating, imagePosition,
+    });
+  }, [title, category, rating, status, image, content, creator, years, hasSpoiler, lat, lng, locationLabel, tags, externalRating, imagePosition, updateDraft]);
 
   useEffect(() => {
     if (!image) {
@@ -326,6 +365,7 @@ export default function NewPostPage() {
         },
         "Not kaydedilemedi."
       );
+      clearDraft();
       toast.success("Not başarıyla kaydedildi!");
       router.push("/notes");
     } catch (error) {
@@ -405,7 +445,7 @@ export default function NewPostPage() {
           </div>
         )}
 
-        <form className="grid gap-4 pt-5 sm:pt-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <form className="grid gap-4 pt-5 sm:pt-6 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="order-1 min-w-0 space-y-4">
             <CategorySearchSection
               category={category}
@@ -457,11 +497,20 @@ export default function NewPostPage() {
             />
           </div>
 
-          <aside className="order-2 hidden min-w-0 space-y-4 xl:sticky xl:top-24 xl:block xl:self-start">
+          <aside className="order-2 hidden min-w-0 space-y-4 lg:sticky lg:top-24 lg:block lg:self-start">
             {sidebarCards}
           </aside>
 
-          <div className="order-2 min-w-0 space-y-4 xl:hidden">{sidebarCards}</div>
+          <details className="order-2 min-w-0 lg:hidden group">
+            <summary className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] list-none [&::-webkit-details-marker]:hidden">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-200 group-open:rotate-90" strokeLinecap="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+              Puan, Kapak & Etiketler
+              {rating > 0 && <span className="ml-auto text-xs text-[var(--gold)]">{rating}/5</span>}
+            </summary>
+            <div className="mt-3 space-y-4">{sidebarCards}</div>
+          </details>
         </form>
       </div>
 
@@ -483,6 +532,18 @@ export default function NewPostPage() {
           </div>
 
           <div className="flex flex-shrink-0 items-center gap-2">
+            {lastSavedAt && (
+              <span className="hidden text-[10px] text-[var(--text-muted)] sm:inline">
+                Taslak kaydedildi
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => { saveDraft(); toast.success("Taslak kaydedildi"); }}
+              className="rounded-lg px-3 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+            >
+              Taslak Kaydet
+            </button>
             <button
               type="button"
               onClick={() => router.back()}

@@ -4,53 +4,58 @@ import { authOptions } from "@/lib/auth";
 import { serializePost } from "@/lib/api-utils";
 import { prisma } from "@/lib/prisma";
 import { buildPostSearchWhere } from "@/lib/search";
+import { handleApiError } from "@/lib/api-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
-  const q = request.nextUrl.searchParams.get("q");
-  const scope = request.nextUrl.searchParams.get("scope") ?? "me";
-  const limit = Math.min(parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10), 50);
+  try {
+    const session = await getServerSession(authOptions);
+    const userId = (session?.user as { id?: string })?.id;
+    const q = request.nextUrl.searchParams.get("q");
+    const scope = request.nextUrl.searchParams.get("scope") ?? "me";
+    const limit = Math.min(parseInt(request.nextUrl.searchParams.get("limit") ?? "20", 10), 50);
 
-  if (!q?.trim()) {
-    return NextResponse.json([]);
-  }
+    if (!q?.trim() || q.length > 500) {
+      return NextResponse.json([]);
+    }
 
-  if (scope === "public") {
+    if (scope === "public") {
+      const posts = await prisma.post.findMany({
+        where: {
+          user: { isPublic: true },
+          ...buildPostSearchWhere(q, { includeUserFields: true }),
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        include: {
+          tags: { include: { tag: true } },
+          user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        },
+      });
+
+      return NextResponse.json(posts.map(serializePost));
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const posts = await prisma.post.findMany({
       where: {
-        user: { isPublic: true },
-        ...buildPostSearchWhere(q, { includeUserFields: true }),
+        userId,
+        ...buildPostSearchWhere(q),
       },
       orderBy: { createdAt: "desc" },
       take: limit,
       include: {
         tags: { include: { tag: true } },
-        user: { select: { id: true, name: true, username: true, avatarUrl: true } },
       },
     });
 
     return NextResponse.json(posts.map(serializePost));
+  } catch (error) {
+    return handleApiError(error, "Arama yapılırken bir hata oluştu.");
   }
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const posts = await prisma.post.findMany({
-    where: {
-      userId,
-      ...buildPostSearchWhere(q),
-    },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    include: {
-      tags: { include: { tag: true } },
-    },
-  });
-
-  return NextResponse.json(posts.map(serializePost));
 }

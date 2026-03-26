@@ -67,6 +67,26 @@ export async function requireAuth(): Promise<[string, null] | [null, NextRespons
   return [userId, null];
 }
 
+// ── Admin auth helper ────────────────────────────────────────────────
+
+/**
+ * Admin yetki kontrolü.
+ * Admin ise userId döner, değilse null.
+ */
+export async function requireAdmin(): Promise<string | null> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return null;
+
+  const userId = (session.user as { id: string }).id;
+  const { prisma } = await import("@/lib/prisma");
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { isAdmin: true },
+  });
+
+  return user?.isAdmin ? userId : null;
+}
+
 // ── Prisma error helpers ────────────────────────────────────────────
 
 type PrismaKnownError = {

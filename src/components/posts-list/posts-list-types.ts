@@ -3,13 +3,17 @@ import type { SortFilterState } from "@/components/SortFilterBar";
 
 /* ── Props ── */
 
+export type PostsTab = "notlar" | "kaydedilenler" | "taslaklar" | "arsiv";
+
 export interface PostsListProps {
   readonly allPosts: Post[];
   readonly initialActiveCategory?: string;
-  readonly initialActiveTab?: "notlar" | "kaydedilenler";
+  readonly initialActiveTab?: PostsTab;
   readonly initialActiveTags?: string[];
   readonly searchQuery?: string;
   readonly savedPosts?: Post[];
+  readonly draftPosts?: Post[];
+  readonly archivedPosts?: Post[];
   readonly hasMorePosts?: boolean;
   readonly hasMoreSavedPosts?: boolean;
   readonly isLoadingMorePosts?: boolean;
@@ -23,7 +27,7 @@ export type PostsViewMode = "grid" | "list";
 /* ── Sort/filter context passed to sub-components ── */
 
 export interface PostsListContext {
-  readonly activeTab: "notlar" | "kaydedilenler";
+  readonly activeTab: PostsTab;
   readonly activeCategory: string;
   readonly activeTags: string[];
   readonly viewMode: PostsViewMode;

@@ -26,12 +26,12 @@ function PostMeta({ post }: { readonly post: Post }) {
 
 /* ── Featured card (hero, grid-only, no search) ── */
 
-export function FeaturedCard({
+export const FeaturedCard = React.memo(function FeaturedCard({
   post,
   activeTab,
 }: {
   readonly post: Post;
-  readonly activeTab: "notlar" | "kaydedilenler";
+  readonly activeTab: string;
 }) {
   return (
     <Link href={`/posts/${post.id}`} className="group mb-4 block">
@@ -97,11 +97,11 @@ export function FeaturedCard({
       </article>
     </Link>
   );
-}
+});
 
 /* ── Grid card ── */
 
-export function PostGridCard({
+export const PostGridCard = React.memo(function PostGridCard({
   post,
   index,
   showIndex,
@@ -147,6 +147,21 @@ export function PostGridCard({
               <span className="flex-shrink-0 rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
+              {post.isPinned && (
+                <span className="flex-shrink-0 rounded-sm border border-[var(--gold)]/25 bg-[var(--gold)]/8 px-1.5 py-0.5 text-[9px] font-bold text-[var(--gold)]">
+                  📌 Sabit
+                </span>
+              )}
+              {post.isDraft && (
+                <span className="flex-shrink-0 rounded-sm border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-1.5 py-0.5 text-[9px] font-bold text-[#f59e0b]">
+                  Taslak
+                </span>
+              )}
+              {post.isArchived && (
+                <span className="flex-shrink-0 rounded-sm border border-[var(--text-muted)]/25 bg-[var(--text-muted)]/8 px-1.5 py-0.5 text-[9px] font-bold text-[var(--text-muted)]">
+                  Arşiv
+                </span>
+              )}
               {post.years && (
                 <span className="text-[11px] text-[var(--text-muted)]">{post.years}</span>
               )}
@@ -195,11 +210,11 @@ export function PostGridCard({
       </article>
     </Link>
   );
-}
+});
 
 /* ── List card ── */
 
-export function PostListCard({
+export const PostListCard = React.memo(function PostListCard({
   post,
   activeTags,
   onToggleTag,
@@ -255,4 +270,4 @@ export function PostListCard({
       </article>
     </Link>
   );
-}
+});

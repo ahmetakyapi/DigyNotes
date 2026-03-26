@@ -7,53 +7,75 @@ import { SortFilterBar } from "@/components/SortFilterBar";
 import TagBadge from "@/components/TagBadge";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { FIXED_CATEGORIES, getCategoryLabel } from "@/lib/categories";
-import type { PostsViewMode } from "./posts-list-types";
+import type { PostsViewMode, PostsTab } from "./posts-list-types";
 
-/* ── Tab switcher (Notlar / Kaydettiklerim) ── */
+/* ── Tab switcher (Notlar / Kaydettiklerim / Taslaklar / Arşiv) ── */
+
+const TAB_CONFIG: { key: PostsTab; label: string; countKey: string }[] = [
+  { key: "notlar", label: "Notlar", countKey: "totalNotes" },
+  { key: "kaydedilenler", label: "Kaydettiklerim", countKey: "totalSaved" },
+  { key: "taslaklar", label: "Taslaklar", countKey: "totalDrafts" },
+  { key: "arsiv", label: "Arşiv", countKey: "totalArchived" },
+];
 
 export function PostsTabSwitcher({
   activeTab,
   totalNotes,
   totalSaved,
+  totalDrafts = 0,
+  totalArchived = 0,
   avgRating,
   onTabChange,
 }: {
-  readonly activeTab: "notlar" | "kaydedilenler";
+  readonly activeTab: PostsTab;
   readonly totalNotes: number;
   readonly totalSaved: number;
+  readonly totalDrafts?: number;
+  readonly totalArchived?: number;
   readonly avgRating: number;
-  readonly onTabChange: (tab: "notlar" | "kaydedilenler") => void;
+  readonly onTabChange: (tab: PostsTab) => void;
 }) {
+  const counts: Record<string, number> = {
+    totalNotes,
+    totalSaved,
+    totalDrafts,
+    totalArchived,
+  };
+
+  const activeCount = counts[TAB_CONFIG.find((t) => t.key === activeTab)?.countKey ?? ""] ?? 0;
+  const activeLabel =
+    activeTab === "notlar" ? "not" : activeTab === "kaydedilenler" ? "kayıt" : activeTab === "taslaklar" ? "taslak" : "arşiv";
+
+  // Taslaklar ve Arşiv sekmelerini sadece içerik varsa göster
+  const visibleTabs = TAB_CONFIG.filter(
+    (t) => t.key === "notlar" || t.key === "kaydedilenler" || counts[t.countKey] > 0 || activeTab === t.key
+  );
+
   return (
     <div className="flex min-w-0 items-center gap-2 sm:gap-3">
       <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-1 shadow-[var(--shadow-soft)]">
-        <button
-          onClick={() => onTabChange("notlar")}
-          className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
-            activeTab === "notlar"
-              ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
-              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-          }`}
-        >
-          Notlar
-        </button>
-        <button
-          onClick={() => onTabChange("kaydedilenler")}
-          className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
-            activeTab === "kaydedilenler"
-              ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
-              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-          }`}
-        >
-          Kaydettiklerim
-        </button>
+        {visibleTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => onTabChange(tab.key)}
+            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
+              activeTab === tab.key
+                ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
+                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            }`}
+          >
+            {tab.label}
+            {(tab.key === "taslaklar" || tab.key === "arsiv") && counts[tab.countKey] > 0 && (
+              <span className="ml-1.5 text-[10px] opacity-70">{counts[tab.countKey]}</span>
+            )}
+          </button>
+        ))}
       </div>
 
       <div className="hidden items-center gap-3 sm:flex">
         <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#10b981] to-transparent" />
         <span className="text-xs text-[var(--text-muted)]">
-          {activeTab === "notlar" ? totalNotes : totalSaved}{" "}
-          {activeTab === "notlar" ? "not" : "kayıt"}
+          {activeCount} {activeLabel}
           {activeTab === "notlar" && avgRating > 0 && (
             <>
               {" · "}
@@ -225,7 +247,7 @@ export function PostsEmptyState({
   onLoadMore,
 }: {
   readonly hasVisiblePosts: boolean;
-  readonly activeTab: "notlar" | "kaydedilenler";
+  readonly activeTab: PostsTab;
   readonly hasSearch: boolean;
   readonly hasMore: boolean;
   readonly isLoadingMore: boolean;

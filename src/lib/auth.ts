@@ -67,6 +67,15 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         (session.user as { id: string } & typeof session.user).id = token.id as string;
+
+        // Banlanmış kullanıcıyı aktif oturumdan da düşür
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { isBanned: true },
+        });
+        if (dbUser?.isBanned) {
+          return null as unknown as typeof session;
+        }
       }
       return session;
     },

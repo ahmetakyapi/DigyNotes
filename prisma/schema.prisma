@@ -32,6 +32,7 @@ model User {
   wishlistItems Wishlist[]
   notifications Notification[]
 
+  @@index([username])
   @@map("users")
 }
 
@@ -70,6 +71,11 @@ model Post {
   externalRating    Float?
   status            String?
   hasSpoiler        Boolean          @default(false)
+  isDraft           Boolean          @default(false)
+  isPinned          Boolean          @default(false)
+  isArchived        Boolean          @default(false)
+  isDeleted         Boolean          @default(false)
+  deletedAt         DateTime?
   lat               Float?
   lng               Float?
   imagePosition     String?          @default("center")
@@ -85,6 +91,10 @@ model Post {
   updatedAt         DateTime         @updatedAt
 
   @@index([category, lat, lng])
+  @@index([userId, createdAt])
+  @@index([userId, isDraft])
+  @@index([userId, isPinned, createdAt])
+  @@index([userId, isDeleted])
   @@map("posts")
 }
 
@@ -120,6 +130,7 @@ model Comment {
   updatedAt DateTime  @updatedAt
 
   @@index([postId, parentId, createdAt])
+  @@index([userId])
   @@map("comments")
 }
 

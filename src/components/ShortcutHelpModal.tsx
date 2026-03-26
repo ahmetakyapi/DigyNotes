@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { KeyboardIcon, XIcon } from "@phosphor-icons/react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const SHORTCUT_HELP_EVENT = "dn:shortcut-help";
 
@@ -21,6 +22,7 @@ const SHORTCUTS: Shortcut[] = [
 
 export default function ShortcutHelpModal() {
   const [open, setOpen] = useState(false);
+  const trapRef = useFocusTrap(open);
 
   const toggle = useCallback(() => setOpen((prev) => !prev), []);
 
@@ -52,6 +54,7 @@ export default function ShortcutHelpModal() {
       onClick={() => setOpen(false)}
     >
       <div
+        ref={trapRef}
         className="relative mx-4 w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]"
         onClick={(e) => e.stopPropagation()}
       >

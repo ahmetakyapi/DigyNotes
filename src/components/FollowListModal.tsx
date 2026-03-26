@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { XIcon } from "@phosphor-icons/react";
 import FollowButton from "@/components/FollowButton";
 import { AvatarImage } from "@/components/AvatarImage";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface FollowUser {
   id: string;
@@ -35,6 +36,8 @@ export default function FollowListModal({
   const currentUsername = (session?.user as { username?: string } | undefined)?.username ?? null;
   const [users, setUsers] = useState<FollowUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const trapRef = useFocusTrap(true);
 
   const title = type === "followers" ? "Takipçiler" : "Takip Edilenler";
   const subtitle =
@@ -44,13 +47,20 @@ export default function FollowListModal({
 
   const load = useCallback(() => {
     setLoading(true);
+    setError(false);
     fetch(`/api/users/${username}/${type}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error("fetch failed");
+        return r.json();
+      })
       .then((data) => {
         setUsers(data.users ?? []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [username, type]);
 
   useEffect(() => {
@@ -77,7 +87,7 @@ export default function FollowListModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
+      <div ref={trapRef} className="flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
           <div>
@@ -109,6 +119,16 @@ export default function FollowListModal({
                   </div>
                 </div>
               ))}
+            </div>
+          ) : error ? (
+            <div className="py-12 text-center">
+              <p className="mb-3 text-sm text-[var(--text-muted)]">Liste yüklenemedi.</p>
+              <button
+                onClick={load}
+                className="text-xs text-[var(--gold)] transition-colors hover:text-[#e0c068]"
+              >
+                Tekrar dene
+              </button>
             </div>
           ) : users.length === 0 ? (
             <div className="py-12 text-center">

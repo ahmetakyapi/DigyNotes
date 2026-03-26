@@ -12,7 +12,7 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const { id: postId } = params;
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
@@ -22,15 +22,30 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
   }
 
+  const { searchParams } = req.nextUrl;
+  const limit = Math.min(Math.max(Number.parseInt(searchParams.get("limit") ?? "30", 10) || 30, 1), 100);
+  const cursor = searchParams.get("cursor");
+
   const comments = await prisma.comment.findMany({
-    where: { postId },
+    where: {
+      postId,
+      ...(cursor ? { createdAt: { gt: new Date(cursor) } } : {}),
+    },
     include: {
       user: { select: { id: true, name: true, username: true, avatarUrl: true } },
     },
     orderBy: { createdAt: "asc" },
+    take: limit + 1,
   });
 
-  return NextResponse.json(comments);
+  let nextCursor: string | null = null;
+  if (comments.length > limit) {
+    comments.pop();
+    const last = comments.at(-1);
+    nextCursor = last ? last.createdAt.toISOString() : null;
+  }
+
+  return NextResponse.json({ items: comments, nextCursor });
 }
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {

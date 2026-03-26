@@ -36,6 +36,10 @@ export default function ProfileSettingsPage() {
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
   const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null);
   const [exportMessage, setExportMessage] = useState<{
     tone: "success" | "error";
@@ -141,6 +145,42 @@ export default function ProfileSettingsPage() {
       toast.error("Bir hata oluştu");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!currentPassword || !newPassword) {
+      toast.error("Tüm alanları doldurun");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("Yeni şifre en az 8 karakter olmalı");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Yeni şifreler eşleşmiyor");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const res = await fetch("/api/users/me/password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.error ?? "Şifre değiştirilemedi");
+        return;
+      }
+      toast.success("Şifre başarıyla güncellendi");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch {
+      toast.error("Bir hata oluştu");
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -329,6 +369,63 @@ export default function ProfileSettingsPage() {
                     isPublic ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
+              </button>
+            </div>
+          </div>
+
+          {/* ── Şifre Değiştir ── */}
+          <div className={sectionClass}>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              Güvenlik
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className={labelClass}>Mevcut Şifre</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className={inputBase}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Yeni Şifre</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className={inputBase}
+                  placeholder="En az 8 karakter"
+                  minLength={8}
+                  autoComplete="new-password"
+                />
+                {newPassword.length > 0 && newPassword.length < 8 && (
+                  <p className="mt-1 text-xs text-[#e53e3e]">En az 8 karakter gerekli</p>
+                )}
+              </div>
+              <div>
+                <label className={labelClass}>Yeni Şifre (Tekrar)</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={inputBase}
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                />
+                {confirmPassword && newPassword !== confirmPassword && (
+                  <p className="mt-1 text-xs text-[#e53e3e]">Şifreler eşleşmiyor</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handlePasswordChange}
+                disabled={changingPassword || !currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 8}
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors hover:border-[#10b981]/30 hover:text-[#34d399] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {changingPassword ? "Güncelleniyor..." : "Şifreyi Güncelle"}
               </button>
             </div>
           </div>

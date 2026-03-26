@@ -1,17 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return null;
-  const user = await prisma.user.findUnique({
-    where: { id: (session.user as { id: string }).id },
-    select: { isAdmin: true },
-  });
-  return user?.isAdmin ? (session.user as { id: string }).id : null;
-}
 
 type RangeKey = "24h" | "7d" | "30d" | "90d" | "365d";
 const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
@@ -87,139 +76,151 @@ function buildBuckets(range: RangeKey, logs: { createdAt: Date }[]) {
 }
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const adminId = await requireAdmin();
-  if (!adminId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    const adminId = await requireAdmin();
+    if (!adminId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(_req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const rawRange = searchParams.get("range") || "24h";
+    const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey)
+      ? (rawRange as RangeKey)
+      : "24h";
+    const limit = 30;
+    const skip = (page - 1) * limit;
+
+    const user = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        bio: true,
+        avatarUrl: true,
+        isAdmin: true,
+        isBanned: true,
+        isPublic: true,
+        createdAt: true,
+        lastLoginAt: true,
+        lastLogoutAt: true,
+        _count: { select: { posts: true, followers: true, following: true, activityLogs: true } },
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+    }
+
+    const rangeStart = getRangeStart(range);
+
+    const [logs, logsTotal, chartLogs, actionBreakdown] = await Promise.all([
+      prisma.activityLog.findMany({
+        where: { userId: params.id },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.activityLog.count({ where: { userId: params.id } }),
+      prisma.activityLog.findMany({
+        where: { userId: params.id, createdAt: { gte: rangeStart } },
+        select: { createdAt: true, action: true },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.activityLog.groupBy({
+        by: ["action"],
+        where: { userId: params.id },
+        _count: { id: true },
+        orderBy: { _count: { id: "desc" } },
+      }),
+    ]);
+
+    return NextResponse.json({
+      user: {
+        ...user,
+        postCount: user._count.posts,
+        followerCount: user._count.followers,
+        followingCount: user._count.following,
+        activityCount: user._count.activityLogs,
+      },
+      logs,
+      logsTotal,
+      page,
+      totalPages: Math.ceil(logsTotal / limit),
+      chartData: buildBuckets(range, chartLogs),
+      range,
+      actionBreakdown: actionBreakdown.map((a) => ({ action: a.action, count: a._count.id })),
+    });
+  } catch (error) {
+    return handleApiError(error);
   }
-
-  const { searchParams } = new URL(_req.url);
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const rawRange = searchParams.get("range") || "24h";
-  const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey)
-    ? (rawRange as RangeKey)
-    : "24h";
-  const limit = 30;
-  const skip = (page - 1) * limit;
-
-  const user = await prisma.user.findUnique({
-    where: { id: params.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      username: true,
-      bio: true,
-      avatarUrl: true,
-      isAdmin: true,
-      isBanned: true,
-      isPublic: true,
-      createdAt: true,
-      lastLoginAt: true,
-      lastLogoutAt: true,
-      _count: { select: { posts: true, followers: true, following: true, activityLogs: true } },
-    },
-  });
-
-  if (!user) {
-    return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
-  }
-
-  const rangeStart = getRangeStart(range);
-
-  const [logs, logsTotal, chartLogs, actionBreakdown] = await Promise.all([
-    prisma.activityLog.findMany({
-      where: { userId: params.id },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
-    }),
-    prisma.activityLog.count({ where: { userId: params.id } }),
-    prisma.activityLog.findMany({
-      where: { userId: params.id, createdAt: { gte: rangeStart } },
-      select: { createdAt: true, action: true },
-      orderBy: { createdAt: "asc" },
-    }),
-    prisma.activityLog.groupBy({
-      by: ["action"],
-      where: { userId: params.id },
-      _count: { id: true },
-      orderBy: { _count: { id: "desc" } },
-    }),
-  ]);
-
-  return NextResponse.json({
-    user: {
-      ...user,
-      postCount: user._count.posts,
-      followerCount: user._count.followers,
-      followingCount: user._count.following,
-      activityCount: user._count.activityLogs,
-    },
-    logs,
-    logsTotal,
-    page,
-    totalPages: Math.ceil(logsTotal / limit),
-    chartData: buildBuckets(range, chartLogs),
-    range,
-    actionBreakdown: actionBreakdown.map((a) => ({ action: a.action, count: a._count.id })),
-  });
 }
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const adminId = await requireAdmin();
-  if (!adminId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    const adminId = await requireAdmin();
+    if (!adminId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { isAdmin, isBanned } = body;
+
+    if (params.id === adminId && isAdmin === false) {
+      return NextResponse.json({ error: "Kendi admin yetkini kaldıramazsın" }, { status: 400 });
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (typeof isAdmin === "boolean") updateData.isAdmin = isAdmin;
+    if (typeof isBanned === "boolean") updateData.isBanned = isBanned;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: { id: true },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: params.id },
+      data: updateData,
+      select: { id: true, name: true, email: true, isAdmin: true, isBanned: true },
+    });
+
+    return NextResponse.json(user);
+  } catch (error) {
+    return handleApiError(error);
   }
-
-  const body = await request.json();
-  const { isAdmin, isBanned } = body;
-
-  if (params.id === adminId && isAdmin === false) {
-    return NextResponse.json({ error: "Kendi admin yetkini kaldıramazsın" }, { status: 400 });
-  }
-
-  const updateData: Record<string, unknown> = {};
-  if (typeof isAdmin === "boolean") updateData.isAdmin = isAdmin;
-  if (typeof isBanned === "boolean") updateData.isBanned = isBanned;
-
-  const existingUser = await prisma.user.findUnique({
-    where: { id: params.id },
-    select: { id: true },
-  });
-
-  if (!existingUser) {
-    return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
-  }
-
-  const user = await prisma.user.update({
-    where: { id: params.id },
-    data: updateData,
-    select: { id: true, name: true, email: true, isAdmin: true, isBanned: true },
-  });
-
-  return NextResponse.json(user);
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const adminId = await requireAdmin();
-  if (!adminId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try {
+    const adminId = await requireAdmin();
+    if (!adminId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (params.id === adminId) {
+      return NextResponse.json({ error: "Kendi hesabını silemezsin" }, { status: 400 });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: { id: true },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+    }
+
+    await prisma.user.delete({ where: { id: params.id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return handleApiError(error);
   }
-
-  if (params.id === adminId) {
-    return NextResponse.json({ error: "Kendi hesabını silemezsin" }, { status: 400 });
-  }
-
-  const existingUser = await prisma.user.findUnique({
-    where: { id: params.id },
-    select: { id: true },
-  });
-
-  if (!existingUser) {
-    return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
-  }
-
-  await prisma.user.delete({ where: { id: params.id } });
-
-  return NextResponse.json({ success: true });
 }

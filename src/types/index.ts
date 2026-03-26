@@ -16,6 +16,10 @@ export interface Post {
   externalRating?: number | null;
   status: string | null;
   hasSpoiler?: boolean;
+  isDraft?: boolean;
+  isPinned?: boolean;
+  isArchived?: boolean;
+  isDeleted?: boolean;
   lat?: number | null;
   lng?: number | null;
   imagePosition: string | null;
