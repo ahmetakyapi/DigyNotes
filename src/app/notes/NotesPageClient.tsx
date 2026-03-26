@@ -98,7 +98,7 @@ export default function NotesPageClient({
       setSavedError(null);
 
       const [postsResult, savedResult, draftsResult, archivedResult] = await Promise.allSettled([
-        fetchPaginated(buildPostsUrl(initialQuery, "", [])),
+        fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags)),
         fetchPaginated(`/api/bookmarks?paginate=1&limit=${PAGE_SIZE}`),
         fetchPaginated(`/api/posts?paginate=1&limit=${PAGE_SIZE}&drafts=1`),
         fetchPaginated(`/api/posts?paginate=1&limit=${PAGE_SIZE}&archived=1`),
@@ -146,14 +146,15 @@ export default function NotesPageClient({
     return () => {
       cancelled = true;
     };
-  }, [initialQuery]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery, initialCategory, initialTags.join(",")]);
 
   const loadMorePosts = async () => {
     if (!postsCursor || loadingMorePosts) return;
 
     setLoadingMorePosts(true);
     try {
-      const data = await fetchPaginated(buildPostsUrl(initialQuery, "", [], postsCursor));
+      const data = await fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags, postsCursor));
 
       setPosts((prev) => mergePosts(prev, data.items));
       setPostsCursor(data.nextCursor);

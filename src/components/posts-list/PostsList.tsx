@@ -12,6 +12,7 @@ import {
 import type { PostsListProps, PostsViewMode, PostsTab } from "./posts-list-types";
 import { POSTS_VIEW_STORAGE_KEY } from "./posts-list-types";
 import { matchesQuery, postMatchesTags } from "./posts-list-utils";
+import { getCategoryVariants } from "@/lib/categories";
 import { FeaturedCard, PostGridCard, PostListCard } from "./PostCards";
 import {
   PostsTabSwitcher,
@@ -155,7 +156,10 @@ export function PostsList({
     const q = localQuery.trim();
     let result = q ? visiblePosts.filter((p) => matchesQuery(p, q)) : visiblePosts;
     if (activeCategory.trim()) {
-      result = result.filter((p) => p.category === activeCategory.trim());
+      const variants = getCategoryVariants(activeCategory.trim());
+      result = variants.length > 0
+        ? result.filter((p) => variants.includes(p.category))
+        : result.filter((p) => p.category === activeCategory.trim());
     }
     result = result.filter((p) => matchesAdvancedFilters(p, sortFilter));
     result = result.filter((p) => postMatchesTags(p, activeTags));
@@ -195,7 +199,7 @@ export function PostsList({
 
   /* ── Early return ── */
 
-  if (allPosts.length === 0 && savedPosts.length === 0) return null;
+  if (allPosts.length === 0 && savedPosts.length === 0 && draftPosts.length === 0 && archivedPosts.length === 0) return null;
 
   /* ── Handlers ── */
 
