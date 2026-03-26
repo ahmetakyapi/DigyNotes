@@ -1,6 +1,6 @@
 "use client";
 
-import { EASE } from "@/lib/variants";
+import { EASE, CTA_GRADIENT } from "@/lib/variants";
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
@@ -457,16 +457,11 @@ export function HowItWorksSection() {
 export function BottomCtaSection() {
   const { theme } = useTheme();
   const isLight = theme === "light";
-  const ctaBg = isLight
-    ? "linear-gradient(160deg, #10b981 0%, #059669 40%, #047857 75%, #065f46 100%)"
-    : "linear-gradient(160deg, #34d399 0%, #10b981 30%, #059669 65%, #047857 100%)";
-  const ctaBgHover = isLight
-    ? "linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%)"
-    : "linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 60%, #059669 100%)";
+  const g = isLight ? CTA_GRADIENT.light : CTA_GRADIENT.dark;
+  const ctaBg = g.bg;
+  const ctaBgHover = g.bgHover;
   const ctaTextColor = "#ffffff";
-  const ctaShadow = isLight
-    ? "0 8px 28px rgba(5,150,105,0.28), 0 0 0 1px rgba(16,185,129,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset"
-    : "0 8px 28px rgba(16,185,129,0.32), 0 0 0 1px rgba(52,211,153,0.1) inset, 0 1px 0 rgba(255,255,255,0.14) inset";
+  const ctaShadow = g.shadow;
 
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });

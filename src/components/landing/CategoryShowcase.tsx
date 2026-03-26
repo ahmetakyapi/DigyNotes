@@ -158,15 +158,31 @@ function Stars({
   const emptyStroke = isLight ? "#d1d5db" : "#2a2a2a";
   return (
     <div className="flex gap-0.5">
-      {[1, 2, 3, 4, 5].map((step) => (
-        <StarIcon
-          key={step}
-          size={14}
-          weight={step <= count ? "fill" : "regular"}
-          color={step <= count ? color : emptyStroke}
-          style={{ opacity: step <= count ? 1 : 0.3 }}
-        />
-      ))}
+      {[1, 2, 3, 4, 5].map((step) => {
+        const isFull = step <= Math.floor(count);
+        const isHalf = !isFull && step === Math.floor(count) + 1 && count % 1 >= 0.5;
+
+        if (isHalf) {
+          return (
+            <span key={step} className="relative inline-block" style={{ width: 14, height: 14 }}>
+              <StarIcon size={14} weight="regular" color={emptyStroke} style={{ opacity: 0.3, position: "absolute", top: 0, left: 0 }} />
+              <span style={{ position: "absolute", top: 0, left: 0, width: "50%", overflow: "hidden" }}>
+                <StarIcon size={14} weight="fill" color={color} />
+              </span>
+            </span>
+          );
+        }
+
+        return (
+          <StarIcon
+            key={step}
+            size={14}
+            weight={isFull ? "fill" : "regular"}
+            color={isFull ? color : emptyStroke}
+            style={{ opacity: isFull ? 1 : 0.3 }}
+          />
+        );
+      })}
     </div>
   );
 }

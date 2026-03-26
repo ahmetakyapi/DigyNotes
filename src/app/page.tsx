@@ -11,7 +11,7 @@ import {
   HowItWorksSection,
   BottomCtaSection,
 } from "@/components/landing/LandingSections";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { AdvantagesSection } from "@/components/landing/TestimonialsSection";
 
 // Client-only components
 const SplashCursor = dynamic(
@@ -122,7 +122,7 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════
           KULLANICI YORUMLARI
       ══════════════════════════════════════ */}
-      <TestimonialsSection />
+      <AdvantagesSection />
 
       {/* ══════════════════════════════════════
           BOTTOM CTA
