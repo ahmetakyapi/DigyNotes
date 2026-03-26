@@ -9,7 +9,7 @@ import {
   matchesAdvancedFilters,
   type SortFilterState,
 } from "@/components/SortFilterBar";
-import type { PostsListProps, PostsViewMode } from "./posts-list-types";
+import type { PostsListProps, PostsViewMode, PostsTab } from "./posts-list-types";
 import { POSTS_VIEW_STORAGE_KEY } from "./posts-list-types";
 import { matchesQuery, postMatchesTags } from "./posts-list-utils";
 import { FeaturedCard, PostGridCard, PostListCard } from "./PostCards";
@@ -26,8 +26,8 @@ import {
 
 function buildSearchParams(
   base: string,
-  current: { q: string; category: string; tags: string[]; tab: "notlar" | "kaydedilenler" },
-  updates: { q?: string; category?: string; tags?: string[]; tab?: "notlar" | "kaydedilenler" }
+  current: { q: string; category: string; tags: string[]; tab: PostsTab },
+  updates: { q?: string; category?: string; tags?: string[]; tab?: PostsTab }
 ): string {
   const params = new URLSearchParams(base);
   const q = (updates.q ?? current.q).trim();
@@ -54,6 +54,8 @@ export function PostsList({
   initialActiveTags = [],
   searchQuery = "",
   savedPosts = [],
+  draftPosts = [],
+  archivedPosts = [],
   hasMorePosts = false,
   hasMoreSavedPosts = false,
   isLoadingMorePosts = false,
@@ -65,7 +67,7 @@ export function PostsList({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const urlQuery = searchQuery || searchParams.get("q") || "";
-  const resolvedInitialTab =
+  const resolvedInitialTab: PostsTab =
     initialActiveTab ??
     (urlQuery.trim() === "" && allPosts.length === 0 && savedPosts.length > 0
       ? "kaydedilenler"
@@ -78,7 +80,7 @@ export function PostsList({
   const [activeCategory, setActiveCategory] = useState(initialActiveCategory);
   const [activeTags, setActiveTags] = useState<string[]>(initialActiveTags);
   const [viewMode, setViewMode] = useState<PostsViewMode>("grid");
-  const [activeTab, setActiveTab] = useState<"notlar" | "kaydedilenler">(resolvedInitialTab);
+  const [activeTab, setActiveTab] = useState<PostsTab>(resolvedInitialTab);
 
   /* ── URL sync ── */
 
@@ -86,7 +88,7 @@ export function PostsList({
     (updates: {
       category?: string;
       q?: string;
-      tab?: "notlar" | "kaydedilenler";
+      tab?: PostsTab;
       tags?: string[];
     }) => {
       const qs = buildSearchParams(
@@ -127,11 +129,15 @@ export function PostsList({
 
   /* ── Derived data ── */
 
-  const visiblePosts = activeTab === "kaydedilenler" ? savedPosts : allPosts;
-  const currentHasMore = activeTab === "kaydedilenler" ? hasMoreSavedPosts : hasMorePosts;
+  const visiblePosts =
+    activeTab === "kaydedilenler" ? savedPosts :
+    activeTab === "taslaklar" ? draftPosts :
+    activeTab === "arsiv" ? archivedPosts :
+    allPosts;
+  const currentHasMore = activeTab === "kaydedilenler" ? hasMoreSavedPosts : activeTab === "notlar" ? hasMorePosts : false;
   const currentIsLoadingMore =
-    activeTab === "kaydedilenler" ? isLoadingMoreSavedPosts : isLoadingMorePosts;
-  const currentLoadMore = activeTab === "kaydedilenler" ? onLoadMoreSavedPosts : onLoadMorePosts;
+    activeTab === "kaydedilenler" ? isLoadingMoreSavedPosts : activeTab === "notlar" ? isLoadingMorePosts : false;
+  const currentLoadMore = activeTab === "kaydedilenler" ? onLoadMoreSavedPosts : activeTab === "notlar" ? onLoadMorePosts : undefined;
 
   const availableStatuses = useMemo(
     () =>
@@ -193,7 +199,7 @@ export function PostsList({
 
   /* ── Handlers ── */
 
-  const handleTabChange = (tab: "notlar" | "kaydedilenler") => {
+  const handleTabChange = (tab: PostsTab) => {
     setActiveTab(tab);
     updateNotesUrl({ tab });
   };
@@ -226,6 +232,8 @@ export function PostsList({
           activeTab={activeTab}
           totalNotes={stats.total}
           totalSaved={savedPosts.length}
+          totalDrafts={draftPosts.length}
+          totalArchived={archivedPosts.length}
           avgRating={stats.avgRating}
           onTabChange={handleTabChange}
         />

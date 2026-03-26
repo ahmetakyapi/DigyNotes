@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Category } from "@/types";
 import toast from "react-hot-toast";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface Props {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface Props {
 const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const trapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -59,7 +61,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
+      <div ref={trapRef} className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
         <h2 id="add-category-title" className="mb-5 text-base font-bold text-[var(--text-primary)]">
           Yeni Kategori
         </h2>
@@ -83,7 +85,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !name.trim()}
               className="rounded-md bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:opacity-50"
             >
               {isLoading ? "Ekleniyor..." : "Ekle"}

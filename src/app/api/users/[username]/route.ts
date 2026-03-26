@@ -45,11 +45,13 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    // Step 2: get posts, follower/following counts, and isFollowing in parallel
-    const [rawPosts, rawCollections, followerCount, followingCount, followRow] = await Promise.all([
+    // Step 2: get posts (paginated), stats, collections, follow info in parallel
+    const postLimit = 30;
+    const [rawPosts, rawCollections, followerCount, followingCount, followRow, postCount, avgRatingResult] = await Promise.all([
       prisma.post.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, isDeleted: false, isDraft: false },
         orderBy: { createdAt: "desc" },
+        take: postLimit,
         include: { tags: { include: { tag: true } } },
       }),
       prisma.collection.findMany({
@@ -66,6 +68,11 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
             },
           })
         : Promise.resolve(null),
+      prisma.post.count({ where: { userId: user.id, isDeleted: false, isDraft: false } }),
+      prisma.post.aggregate({
+        where: { userId: user.id, isDeleted: false, isDraft: false, rating: { gt: 0 } },
+        _avg: { rating: true },
+      }),
     ]);
 
     const posts = rawPosts.map(({ tags, ...rest }) => ({
@@ -75,8 +82,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       tags: tags.map((pt) => pt.tag),
     }));
 
-    const ratings = posts.filter((p) => p.rating > 0).map((p) => p.rating);
-    const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+    const avgRating = avgRatingResult._avg.rating ?? 0;
 
     return NextResponse.json({
       user: {
@@ -88,7 +94,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
         isPublic: user.isPublic,
         createdAt: user.createdAt,
         lastLoginAt: user.lastLoginAt,
-        postCount: posts.length,
+        postCount,
         avgRating: Math.round(avgRating * 10) / 10,
         followerCount,
         followingCount,

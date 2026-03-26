@@ -135,6 +135,14 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
   return (
     <>
+      {/* ─── SKIP LINK ─── */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-[var(--bg-card)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-[var(--gold)] focus:shadow-lg focus:ring-1 focus:ring-[var(--border)]"
+      >
+        Ana içeriğe geç
+      </a>
+
       {/* ─── HEADER ─── */}
       <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--bg-header)] backdrop-blur-xl">
         <div className="mx-auto max-w-5xl pl-0 pr-2.5 sm:px-6">
@@ -230,7 +238,9 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    title={session.user?.name ?? ""}
+                    aria-label={`Kullanıcı menüsü — ${session.user?.name ?? ""}`}
+                    aria-expanded={showUserMenu}
+                    aria-haspopup="true"
                     className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[12px] font-bold text-[#34d399] transition-all duration-150 sm:h-10 sm:w-10 sm:text-[13px] sm:shadow-none ${
                       showUserMenu
                         ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_#10b981,0_8px_20px_rgba(3,8,20,0.28)]"
@@ -327,7 +337,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
       </header>
 
       {/* ─── MAIN ─── */}
-      <main className={hideMobileBottomTabs ? "pb-0" : "pb-20 sm:pb-0"}>{children}</main>
+      <main id="main-content" className={hideMobileBottomTabs ? "pb-0" : "pb-20 sm:pb-0"}>{children}</main>
 
       {/* ─── MOBILE BOTTOM TAB BAR ─── */}
       {!hideMobileBottomTabs && (

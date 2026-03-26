@@ -19,8 +19,6 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   themeColor: "#0f1117",
-  maximumScale: 1,
-  userScalable: false,
 };
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";

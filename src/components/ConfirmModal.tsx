@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -21,6 +22,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   cancelLabel = "Vazgeç",
   variant = "danger",
 }) => {
+  const trapRef = useFocusTrap(isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
@@ -42,7 +45,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
+      <div ref={trapRef} className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
         <h3 id="confirm-modal-title" className="mb-2 text-base font-bold text-[var(--text-primary)]">{title}</h3>
         <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">{message}</p>
         <div className="flex justify-end gap-3">

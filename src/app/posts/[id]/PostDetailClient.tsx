@@ -689,6 +689,50 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   size="sm"
                   className="border-[var(--media-control-border)] bg-[var(--media-control-bg)] text-[var(--media-control-text)] backdrop-blur-md hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)]"
                 />
+                <button
+                  onClick={async () => {
+                    const action = post.isPinned ? "unpin" : "pin";
+                    const res = await fetch(`/api/posts/${post.id}/actions`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action }),
+                    });
+                    if (res.ok) {
+                      post.isPinned = !post.isPinned;
+                      toast.success(post.isPinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
+                    }
+                  }}
+                  className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                  style={{
+                    borderColor: "var(--media-control-border)",
+                    background: "var(--media-control-bg)",
+                    color: "var(--media-control-text)",
+                  }}
+                >
+                  {post.isPinned ? "📌 Sabit" : "📌 Sabitle"}
+                </button>
+                <button
+                  onClick={async () => {
+                    const action = post.isArchived ? "unarchive" : "archive";
+                    const res = await fetch(`/api/posts/${post.id}/actions`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ action }),
+                    });
+                    if (res.ok) {
+                      post.isArchived = !post.isArchived;
+                      toast.success(post.isArchived ? "Arşivlendi" : "Arşivden çıkarıldı");
+                    }
+                  }}
+                  className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                  style={{
+                    borderColor: "var(--media-control-border)",
+                    background: "var(--media-control-bg)",
+                    color: "var(--media-control-text)",
+                  }}
+                >
+                  {post.isArchived ? "Arşivden Çıkar" : "Arşivle"}
+                </button>
                 <Link
                   href={`/posts/${post.id}/edit`}
                   className="flex items-center gap-1.5 rounded-lg border px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"

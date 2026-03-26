@@ -472,7 +472,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
         <form
           ref={formRef}
-          className="grid items-start gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]"
+          className="grid items-start gap-3.5 lg:grid-cols-[minmax(0,1.42fr)_minmax(300px,0.9fr)]"
         >
           {/* ── Sol kolon: meta + etiketler + içerik ── */}
           <div className="min-w-0 space-y-3.5 sm:space-y-4">
@@ -621,8 +621,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* ── Sağ kolon: özet, kapak, puan, etiketler ── */}
-          <aside className="min-w-0 space-y-3.5 sm:space-y-4">
+          {/* ── Sağ kolon: özet, kapak, puan — lg+ sidebar, mobilde collapsible ── */}
+          <aside className="hidden min-w-0 space-y-3.5 sm:space-y-4 lg:block">
             <div className={sectionClass}>
               <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 Düzenleme Özeti
@@ -762,6 +762,61 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               </div>
             )}
           </aside>
+
+          {/* ── Mobil sidebar: collapsible ── */}
+          <details className="min-w-0 lg:hidden group">
+            <summary className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] list-none [&::-webkit-details-marker]:hidden">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-200 group-open:rotate-90" strokeLinecap="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+              Kapak, Puan & Ayarlar
+              {rating > 0 && <span className="ml-auto text-xs text-[var(--gold)]">{rating}/5</span>}
+            </summary>
+            <div className="mt-3 space-y-3.5">
+              <div className={sectionClass}>
+                <label className={labelClass}>Kapak Görseli URL</label>
+                <input
+                  type="url"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className={inputBase}
+                />
+              </div>
+              <div className={sectionClass}>
+                <label className={labelClass}>Puan</label>
+                <div className="mt-1 flex flex-wrap items-center gap-3">
+                  <StarRating rating={rating} interactive onRate={setRating} size={24} />
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
+                  </span>
+                  {rating > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setRating(0)}
+                      className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+                    >
+                      Sıfırla
+                    </button>
+                  )}
+                </div>
+              </div>
+              {supportsSpoiler && (
+                <div className={sectionClass}>
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#10b981]/25">
+                    <input
+                      type="checkbox"
+                      checked={hasSpoiler}
+                      onChange={(e) => setHasSpoiler(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#10b981] focus:ring-[#10b981]"
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-[var(--text-primary)]">Spoiler uyarısı</span>
+                    </span>
+                  </label>
+                </div>
+              )}
+            </div>
+          </details>
         </form>
       </div>
 

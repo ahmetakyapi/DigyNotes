@@ -1,7 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
 import { MagnifyingGlassIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import UserCard from "@/components/UserCard";
+import StarRating from "@/components/StarRating";
+import { getCategoryLabel } from "@/lib/categories";
+import type { Post } from "@/types";
 
 interface PublicUser {
   id: string;
@@ -16,6 +20,7 @@ interface PublicUser {
 export default function DiscoverPageClient() {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<PublicUser[]>([]);
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -35,6 +40,11 @@ export default function DiscoverPageClient() {
 
   useEffect(() => {
     fetchUsers("");
+    // Trending postları da çek
+    fetch("/api/public/posts?sort=rating&limit=6&paginate=0")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setTrendingPosts(Array.isArray(data) ? data : []))
+      .catch(() => {});
   }, [fetchUsers]);
 
   const handleSearch = (val: string) => {
@@ -70,6 +80,65 @@ export default function DiscoverPageClient() {
             />
           </label>
         </header>
+
+        {/* Trending Notlar */}
+        {trendingPosts.length > 0 && !query.trim() && (
+          <section className="mb-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Popüler Notlar</h2>
+              <Link
+                href="/discover"
+                className="text-xs text-[var(--gold)] transition-colors hover:text-[#e0c068]"
+              >
+                Tümü
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {trendingPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/posts/${post.id}`}
+                  className="group flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5 transition-all duration-200 hover:border-[#10b981]/30"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1.5 flex items-center gap-1.5">
+                      <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                        {getCategoryLabel(post.category)}
+                      </span>
+                      {post.user?.username && (
+                        <span className="text-[10px] text-[var(--text-muted)]">@{post.user.username}</span>
+                      )}
+                    </div>
+                    <h3 className="mb-1 line-clamp-1 text-sm font-medium text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
+                      {post.title}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <StarRating rating={post.rating} size={11} />
+                      {post.rating > 0 && (
+                        <span className="text-[10px] text-[var(--text-muted)]">{post.rating}/5</span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Kategori Hızlı Filtreleri */}
+        {!query.trim() && (
+          <div className="mb-6 flex flex-wrap gap-2">
+            {["film", "dizi", "kitap", "oyun", "gezi"].map((cat) => (
+              <Link
+                key={cat}
+                href={`/tag/${cat}`}
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2 text-xs font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[#10b981]/30 hover:text-[var(--gold)]"
+              >
+                {getCategoryLabel(cat)}
+              </Link>
+            ))}
+          </div>
+        )}
 
         {loading ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">

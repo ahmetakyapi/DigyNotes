@@ -54,6 +54,20 @@ Film, dizi, oyun ve kitap notlarını takip etmek için kişisel dijital not def
 
 - **Global Tag Sistemi** — Notlara etiket ekle, etikete göre filtrele; `/tag/[name]` sayfaları
 - **Arama & Sıralama** — Notlarda arama, tarihe/puana göre sıralama
+- **Taslak & Arşiv** — Notları taslak olarak kaydet, tamamlanmış notları arşivle; ayrı sekmelerden yönet
+- **Sabitleme** — Önemli notları listenin üstüne sabitle
+- **Koleksiyonlar** — Notları tematik koleksiyonlarda grupla
+- **Kaydetme (Bookmark)** — Başkalarının notlarını hızlı erişim için kaydet
+- **İstek Listesi (Watchlist)** — İzlemek/okumak/oynamak istediğin içerikleri listele
+- **Otomatik Kaydetme** — Yeni not formunda localStorage tabanlı taslak kurtarma
+
+### Güvenlik & Altyapı
+
+- **Rate Limiting** — Hassas endpoint'lerde (login, register, şifre değiştirme, profil güncelleme) istek sınırlaması
+- **Soft Delete** — Notlar kalıcı silinmez, geri getirilebilir
+- **Erişilebilirlik** — Modal focus trap, skip-to-content link, aria etiketleri
+- **Hata Sınırları** — Sayfa bazlı error boundary'ler; tek sayfa hatası tüm uygulamayı çökertmez
+- **Şifre Değiştirme** — Profil ayarlarından güvenli şifre güncelleme
 
 ### Landing Page
 

@@ -104,6 +104,8 @@ export async function GET(req: NextRequest) {
   const { orderBy, cursorWhere } = getPaginationConfig(sort, cursor);
   const where: Prisma.PostWhereInput = {
     user: { isPublic: true },
+    isDeleted: false,
+    isDraft: false,
     ...(tag
       ? {
           tags: {
