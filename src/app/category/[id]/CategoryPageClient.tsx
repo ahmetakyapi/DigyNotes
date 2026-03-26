@@ -38,8 +38,11 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       setLoading(true);
       try {
         const res = await fetch(`/api/posts?category=${encodeURIComponent(categoryName)}`);
-        const postsData: Post[] = await res.json();
-        setPosts(postsData);
+        if (!res.ok) {
+          throw new Error(`API ${res.status}`);
+        }
+        const postsData = await res.json();
+        setPosts(Array.isArray(postsData) ? postsData : []);
       } catch {
         toast.error("Veriler yüklenemedi");
       } finally {
