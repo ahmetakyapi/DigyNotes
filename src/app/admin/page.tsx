@@ -17,6 +17,27 @@ import {
   CartesianGrid,
 } from "recharts";
 import toast from "react-hot-toast";
+import {
+  SquaresFour,
+  Users,
+  FileText,
+  Pulse,
+  GearSix,
+  UserPlus,
+  Wrench,
+  Star,
+  Heart,
+  Tag,
+  Notebook,
+  TrendUp,
+  ChartPie,
+  ChartBar,
+  MagnifyingGlass,
+  PencilSimple,
+  Trash,
+  CaretLeft,
+  CaretRight,
+} from "@phosphor-icons/react";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 import type {
@@ -35,14 +56,29 @@ import {
   fmtTime,
   KpiCard,
   Card,
-  WorkspaceGuide,
   ActionFeedbackBanner,
   DarkTooltip,
   Spinner,
   RangePills,
+  Pagination,
+  ConfirmModal,
 } from "./admin-components";
 
-/* ─────────────────────────── main page ─────────────────────── */
+/* ═══════════════════════════════════════════════
+   Tab config
+   ═══════════════════════════════════════════════ */
+
+const TABS = [
+  { key: "overview" as const, label: "Genel Bakış", icon: <SquaresFour size={14} weight="duotone" /> },
+  { key: "users" as const, label: "Kullanıcılar", icon: <Users size={14} weight="duotone" /> },
+  { key: "content" as const, label: "İçerikler", icon: <FileText size={14} weight="duotone" /> },
+  { key: "activity" as const, label: "Aktivite", icon: <Pulse size={14} weight="duotone" /> },
+  { key: "settings" as const, label: "Ayarlar", icon: <GearSix size={14} weight="duotone" /> },
+] as const;
+
+/* ═══════════════════════════════════════════════
+   Main page
+   ═══════════════════════════════════════════════ */
 
 export default function AdminPage() {
   const router = useRouter();
@@ -475,244 +511,31 @@ export default function AdminPage() {
     );
   };
 
-  const tabs = [
-    {
-      key: "overview" as const,
-      label: "Genel Bakış",
-      icon: (
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-        </svg>
-      ),
-    },
-    {
-      key: "users" as const,
-      label: "Kullanıcılar",
-      icon: (
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      ),
-    },
-    {
-      key: "content" as const,
-      label: "İçerikler",
-      icon: (
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="9" y1="13" x2="15" y2="13" />
-        </svg>
-      ),
-    },
-    {
-      key: "activity" as const,
-      label: "Aktivite",
-      icon: (
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-        </svg>
-      ),
-    },
-    {
-      key: "settings" as const,
-      label: "Ayarlar",
-      icon: (
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      ),
-    },
-  ];
-
-  const currentGuide =
-    tab === "overview"
-      ? {
-          eyebrow: "Genel Bakış",
-          title: "Paneli önce oku, sonra ilgili sekmede aksiyon al",
-          description:
-            "Bu alan yön bulmak için var. Trend, yoğunluk ve dağılımlar karar desteği sağlar; gerçek moderasyon ve ayar değişiklikleri alt sekmelerde yapılır.",
-          cards: [
-            {
-              label: "Aksiyon alınabilir",
-              text: "Buradan kullanıcılar, içerikler ve ayarlar sekmesine hangi sırayla ineceğine karar ver.",
-            },
-            {
-              label: "Bilgilendirme",
-              text: "Grafikler ve KPI kartları yalnızca yön gösterir; tek başına moderasyon kararı değildir.",
-            },
-            {
-              label: "Dikkat noktası",
-              text: "Ani artış veya düşüş gördüğünde ilgili sekmede örnek kayıtları tek tek doğrula.",
-            },
-          ],
-        }
-      : tab === "users"
-        ? {
-            eyebrow: "Kullanıcı Yönetimi",
-            title: "Kullanıcı kararları burada aksiyonel, metrikler yalnızca bağlam",
-            description:
-              "Admin yetkisi, ban ve silme işlemleri doğrudan etkili olur. Takipçi, not sayısı ve katılım tarihi ise karar verirken kullanacağın destek bilgisidir.",
-            cards: [
-              {
-                label: "Aksiyon alınabilir",
-                text: `${selectedUsers.size > 0 ? `${selectedUsers.size} seçili kullanıcı üzerinde toplu işlem yapabilirsin.` : "Satır bazında admin, ban ve silme işlemleri yapabilirsin."}`,
-              },
-              {
-                label: "Bilgilendirme",
-                text: `${usersTotal} toplam kullanıcı içinde bu sayfada ${users.filter((u) => u.isAdmin).length} admin ve ${users.filter((u) => u.isBanned).length} banlı kullanıcı görünüyor.`,
-              },
-              {
-                label: "Hassas veri",
-                text: `${users.filter((u) => !u.isPublic).length} gizli profil var. Ban ve gizlilik etiketlerini birlikte okuyup yanlış pozitiften kaçın.`,
-              },
-            ],
-          }
-        : tab === "content"
-          ? {
-              eyebrow: "İçerik Moderasyonu",
-              title: "İçerik ekranı silme kararı için bağlam toplar",
-              description:
-                "Buradaki ana aksiyon not silmektir. Başlık, kategori, yazar ve durum alanları kararı destekler; durumsuz kayıtlar özellikle ayrıca gözden geçirilmelidir.",
-              cards: [
-                {
-                  label: "Aksiyon alınabilir",
-                  text: "Notu açabilir, düzenleme ekranına geçebilir veya doğrudan kaldırabilirsin.",
-                },
-                {
-                  label: "Bilgilendirme",
-                  text: `${postsTotal} not içinde bu sayfada ${posts.filter((post) => post.status).length} durumlu kayıt ve ${posts.filter((post) => !post.status).length} durum bilgisi eksik kayıt var.`,
-                },
-                {
-                  label: "Hassas veri",
-                  text: "Durum etiketi olmayan veya yazarı belirsiz görünen kayıtları silmeden önce detay sayfasında doğrula.",
-                },
-              ],
-            }
-          : tab === "activity"
-            ? {
-                eyebrow: "Aktivite Görünürlüğü",
-                title: "Aktivite sekmesi bilgilendiricidir; aksiyon başka sekmede alınır",
-                description:
-                  "Log kayıtları ne olduğunu ve ne zaman olduğunu gösterir. Buradan doğrudan moderasyon yapılmaz; yalnızca doğru kullanıcı ya da içerik yüzeyine yönlenilir.",
-                cards: [
-                  {
-                    label: "Aksiyon alınabilir",
-                    text: "Şüpheli kayıt gördüğünde ilgili kullanıcıyı veya içeriği başka sekmede açıp karar ver.",
-                  },
-                  {
-                    label: "Bilgilendirme",
-                    text: `${logsTotal} kayıt ${logsFilter ? `"${ACTION_META[logsFilter]?.label ?? logsFilter}"` : "tüm aksiyonlar"} filtresiyle izleniyor.`,
-                  },
-                  {
-                    label: "Dikkat noktası",
-                    text: "Loglar bağlam verir ama nihai moderasyon kararı için ilgili kaynağı ayrıca incelemek gerekir.",
-                  },
-                ],
-              }
-            : {
-                eyebrow: "Operasyon Ayarları",
-                title: "Ayar değişiklikleri canlı davranışı etkiler",
-                description:
-                  "Bu sekmedeki işlemler doğrudan kullanıcı deneyimini değiştirir. Özellikle kayıt ve bakım modu kararlarında sonucu ayrı bir oturumla doğrulamak gerekir.",
-                cards: [
-                  {
-                    label: "Aksiyon alınabilir",
-                    text: "Kayıt akışını ve bakım modunu açıp kapatabilir, bakım mesajını güncelleyebilirsin.",
-                  },
-                  {
-                    label: "Bilgilendirme",
-                    text: `Şu an kayıt ${settings?.registrationEnabled === "true" ? "açık" : "kapalı"}, bakım modu ${settings?.maintenanceMode === "true" ? "aktif" : "pasif"}.`,
-                  },
-                  {
-                    label: "Dikkat noktası",
-                    text: "Ayarı kaydettikten sonra admin olmayan deneyimi ayrı bir oturumda doğrulamak güvenlidir.",
-                  },
-                ],
-              };
-
   return (
     <main className="min-h-screen bg-[var(--bg-base)] pb-20">
-      {/* ── sticky header ── */}
-      <div className="bg-[var(--bg-base)]/95 sticky top-0 z-30 border-b border-[var(--border)] backdrop-blur-md">
+      {/* ═══ Sticky Header ═══ */}
+      <div className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-md">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#10b981]/20 bg-[#10b981]/10">
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#10b981"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#10b981]/20 bg-[#10b981]/10">
+                <Star size={14} weight="fill" className="text-[#10b981]" />
               </div>
               <span className="text-sm font-bold text-[var(--text-primary)]">Admin Paneli</span>
-              <span className="hidden rounded-md border border-[#10b981]/20 bg-[#10b981]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981] sm:inline">
+              <span className="hidden rounded-lg border border-[#10b981]/20 bg-[#10b981]/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981] sm:inline">
                 DigyNotes
               </span>
             </div>
 
-            {/* tabs */}
+            {/* Tab navigation */}
             <nav className="flex items-center gap-1">
-              {tabs.map((t) => (
+              {TABS.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => setTab(t.key)}
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-150 ${
+                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-200 ${
                     tab === t.key
-                      ? "bg-[#10b981] text-[var(--text-on-accent)] shadow-[0_2px_10px_rgba(16,185,129,0.3)]"
+                      ? "bg-[var(--gold)] text-white shadow-[0_2px_10px_rgba(16,185,129,0.3)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -727,147 +550,65 @@ export default function AdminPage() {
 
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
         {panelError && (
-          <div className="bg-[#e53e3e]/8 mb-5 rounded-2xl border border-[#e53e3e]/20 px-4 py-3 text-sm text-[#e53e3e]">
+          <div className="mb-5 rounded-2xl border border-[#e53e3e]/20 bg-[#e53e3e]/8 px-4 py-3 text-sm text-[#e53e3e]">
             {panelError}
           </div>
         )}
 
-        <div className="mb-5 space-y-4">
-          <WorkspaceGuide
-            eyebrow={currentGuide.eyebrow}
-            title={currentGuide.title}
-            description={currentGuide.description}
-            cards={currentGuide.cards}
-          />
-          {adminFeedback && <ActionFeedbackBanner feedback={adminFeedback} />}
-        </div>
+        {adminFeedback && (
+          <div className="mb-6">
+            <ActionFeedbackBanner feedback={adminFeedback} />
+          </div>
+        )}
 
         {/* ══════════════ OVERVIEW ══════════════ */}
         {tab === "overview" && (
-          <div className="space-y-5">
+          <div className="space-y-6">
             {loadingStats ? (
               <Spinner />
             ) : stats ? (
               <>
                 {/* KPI row */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                   <KpiCard
                     value={stats.kpi.totalUsers}
                     label="Kullanıcı"
                     color="#10b981"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                      </svg>
-                    }
+                    icon={<Users size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.totalPosts}
                     label="Not"
                     color="#34d399"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                      </svg>
-                    }
+                    icon={<Notebook size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.totalCategories}
                     label="Kategori"
-                    color="#34d399"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <rect x="3" y="3" width="7" height="7" />
-                        <rect x="14" y="3" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" />
-                      </svg>
-                    }
+                    color="#6888c0"
+                    icon={<SquaresFour size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.totalTags}
                     label="Etiket"
                     color="#f472b6"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                        <line x1="7" y1="7" x2="7.01" y2="7" />
-                      </svg>
-                    }
+                    icon={<Tag size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.totalFollows}
                     label="Takip"
                     color="#fb923c"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                      </svg>
-                    }
+                    icon={<Heart size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.todayActivity}
                     label="Bugün"
                     color="#60a5fa"
-                    icon={
-                      <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                      </svg>
-                    }
+                    icon={<Pulse size={16} weight="duotone" />}
                   />
                 </div>
 
-                {/* Series range selector */}
+                {/* Series range */}
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-[var(--text-muted)]">Trend periyodu:</span>
                   <RangePills
@@ -879,94 +620,66 @@ export default function AdminPage() {
 
                 {/* Charts row 1 */}
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  <Card title={`Not Aktivitesi — Son ${SERIES_LABELS[seriesRange]}`}>
+                  <Card
+                    title={`Not Aktivitesi — Son ${SERIES_LABELS[seriesRange]}`}
+                    icon={<TrendUp size={14} weight="bold" className="text-[#34d399]" />}
+                    accent="#34d399"
+                  >
                     <ResponsiveContainer width="100%" height={200}>
                       <AreaChart
                         data={stats.dailySeries}
                         margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
                       >
                         <defs>
-                          <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                          <linearGradient id="adminG1" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#34d399" stopOpacity={0.25} />
                             <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--border)"
-                          vertical={false}
-                        />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                         <XAxis
                           dataKey="date"
                           tickFormatter={fmtShortDate}
-                          tick={{ fill: "#3a3a5a", fontSize: 10 }}
+                          tick={{ fill: "var(--text-muted)", fontSize: 10 }}
                           interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
                           axisLine={false}
                           tickLine={false}
                         />
-                        <YAxis
-                          tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                          axisLine={false}
-                          tickLine={false}
-                          allowDecimals={false}
-                        />
+                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Area
-                          type="monotone"
-                          dataKey="posts"
-                          name="Not"
-                          stroke="#34d399"
-                          strokeWidth={2}
-                          fill="url(#g1)"
-                          dot={false}
-                          activeDot={{ r: 4, fill: "#34d399", strokeWidth: 0 }}
-                        />
+                        <Area type="monotone" dataKey="posts" name="Not" stroke="#34d399" strokeWidth={2} fill="url(#adminG1)" dot={false} activeDot={{ r: 4, fill: "#34d399", strokeWidth: 0 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Card>
 
-                  <Card title={`Yeni Kullanıcı — Son ${SERIES_LABELS[seriesRange]}`}>
+                  <Card
+                    title={`Yeni Kullanıcı — Son ${SERIES_LABELS[seriesRange]}`}
+                    icon={<UserPlus size={14} weight="bold" className="text-[#10b981]" />}
+                    accent="#10b981"
+                  >
                     <ResponsiveContainer width="100%" height={200}>
                       <AreaChart
                         data={stats.dailySeries}
                         margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
                       >
                         <defs>
-                          <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+                          <linearGradient id="adminG2" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
                             <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--border)"
-                          vertical={false}
-                        />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                         <XAxis
                           dataKey="date"
                           tickFormatter={fmtShortDate}
-                          tick={{ fill: "#3a3a5a", fontSize: 10 }}
+                          tick={{ fill: "var(--text-muted)", fontSize: 10 }}
                           interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
                           axisLine={false}
                           tickLine={false}
                         />
-                        <YAxis
-                          tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                          axisLine={false}
-                          tickLine={false}
-                          allowDecimals={false}
-                        />
+                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Area
-                          type="monotone"
-                          dataKey="users"
-                          name="Kullanıcı"
-                          stroke="#10b981"
-                          strokeWidth={2}
-                          fill="url(#g2)"
-                          dot={false}
-                          activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}
-                        />
+                        <Area type="monotone" dataKey="users" name="Kullanıcı" stroke="#10b981" strokeWidth={2} fill="url(#adminG2)" dot={false} activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Card>
@@ -975,62 +688,32 @@ export default function AdminPage() {
                 {/* Charts row 2 */}
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
                   <div className="lg:col-span-2">
-                    <Card title="Durum Dağılımı">
+                    <Card
+                      title="Durum Dağılımı"
+                      icon={<ChartPie size={14} weight="bold" className="text-[#10b981]" />}
+                      accent="#10b981"
+                    >
                       <div className="flex items-center gap-3">
                         <ResponsiveContainer width={140} height={140}>
                           <PieChart>
-                            <Pie
-                              data={stats.postStatusDistribution}
-                              dataKey="count"
-                              nameKey="status"
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={40}
-                              outerRadius={64}
-                              strokeWidth={0}
-                              paddingAngle={2}
-                            >
+                            <Pie data={stats.postStatusDistribution} dataKey="count" nameKey="status" cx="50%" cy="50%" innerRadius={40} outerRadius={64} strokeWidth={0} paddingAngle={2}>
                               {stats.postStatusDistribution.map((e, i) => (
-                                <Cell
-                                  key={e.status}
-                                  fill={
-                                    STATUS_COLORS[e.status] ?? PIE_COLORS[i % PIE_COLORS.length]
-                                  }
-                                />
+                                <Cell key={e.status} fill={STATUS_COLORS[e.status] ?? PIE_COLORS[i % PIE_COLORS.length]} />
                               ))}
                             </Pie>
-                            <Tooltip
-                              contentStyle={{
-                                background: "#080a10",
-                                border: "1px solid #252d40",
-                                borderRadius: 10,
-                                fontSize: 12,
-                              }}
-                              labelStyle={{ color: "#888" }}
-                            />
+                            <Tooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12, boxShadow: "0 12px 32px rgba(0,0,0,0.4)" }} />
                           </PieChart>
                         </ResponsiveContainer>
                         <div className="flex flex-1 flex-col gap-1.5">
                           {stats.postStatusDistribution.map((s, i) => {
-                            const color =
-                              STATUS_COLORS[s.status] ?? PIE_COLORS[i % PIE_COLORS.length];
-                            const total = stats.postStatusDistribution.reduce(
-                              (a, b) => a + b.count,
-                              0
-                            );
+                            const color = STATUS_COLORS[s.status] ?? PIE_COLORS[i % PIE_COLORS.length];
+                            const total = stats.postStatusDistribution.reduce((a, b) => a + b.count, 0);
                             return (
                               <div key={s.status} className="flex items-center gap-2">
-                                <div
-                                  className="h-2 w-2 flex-shrink-0 rounded-sm"
-                                  style={{ background: color }}
-                                />
-                                <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">
-                                  {s.status}
-                                </span>
-                                <span className="text-[11px] font-bold text-[var(--text-primary)]">
-                                  {s.count}
-                                </span>
-                                <span className="w-7 text-right text-[9px] text-[var(--text-muted)]">
+                                <div className="h-2 w-2 flex-shrink-0 rounded-sm" style={{ background: color }} />
+                                <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">{s.status}</span>
+                                <span className="text-[11px] font-bold tabular-nums text-[var(--text-primary)]">{s.count}</span>
+                                <span className="w-7 text-right text-[9px] tabular-nums text-[var(--text-muted)]">
                                   {total ? Math.round((s.count / total) * 100) : 0}%
                                 </span>
                               </div>
@@ -1042,36 +725,17 @@ export default function AdminPage() {
                   </div>
 
                   <div className="lg:col-span-3">
-                    <Card title="Kategorilere Göre Not (Top 10)">
+                    <Card
+                      title="Kategorilere Göre Not (Top 10)"
+                      icon={<ChartBar size={14} weight="bold" className="text-[#6888c0]" />}
+                      accent="#6888c0"
+                    >
                       <ResponsiveContainer width="100%" height={200}>
-                        <BarChart
-                          data={stats.postsPerCategory}
-                          layout="vertical"
-                          margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
-                        >
-                          <XAxis
-                            type="number"
-                            tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                            axisLine={false}
-                            tickLine={false}
-                            allowDecimals={false}
-                          />
-                          <YAxis
-                            type="category"
-                            dataKey="category"
-                            tick={{ fill: "var(--text-dim)", fontSize: 11 }}
-                            width={68}
-                            axisLine={false}
-                            tickLine={false}
-                          />
+                        <BarChart data={stats.postsPerCategory} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
+                          <XAxis type="number" tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                          <YAxis type="category" dataKey="category" tick={{ fill: "var(--text-secondary)", fontSize: 11 }} width={68} axisLine={false} tickLine={false} />
                           <Tooltip content={<DarkTooltip />} />
-                          <Bar
-                            dataKey="count"
-                            name="Not"
-                            fill="#10b981"
-                            radius={[0, 4, 4, 0]}
-                            barSize={14}
-                          />
+                          <Bar dataKey="count" name="Not" fill="#10b981" radius={[0, 6, 6, 0]} barSize={14} />
                         </BarChart>
                       </ResponsiveContainer>
                     </Card>
@@ -1080,28 +744,29 @@ export default function AdminPage() {
 
                 {/* Top users + Rating */}
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  <Card title="En Aktif Kullanıcılar">
+                  <Card
+                    title="En Aktif Kullanıcılar"
+                    icon={<Users size={14} weight="bold" className="text-[#10b981]" />}
+                    accent="#10b981"
+                  >
                     <div className="space-y-2.5">
                       {stats.topUsers.map((u, i) => {
                         const maxPosts = stats.topUsers[0]?.postCount ?? 1;
                         const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
-                        const rankColors = ["#10b981", "#a0a0c0", "#b08060"];
-                        const rc = rankColors[i] ?? "#2a2a4a";
+                        const rankColors = ["#10b981", "#94a8c8", "#c8b090"];
+                        const rc = rankColors[i] ?? "var(--text-muted)";
                         return (
                           <div
                             key={u.id}
-                            className="flex cursor-pointer items-center gap-3"
+                            className="flex cursor-pointer items-center gap-3 rounded-lg px-1 py-1 transition-colors duration-200 hover:bg-[var(--bg-raised)]"
                             onClick={() => router.push(`/admin/users/${u.id}`)}
                           >
-                            <span
-                              className="w-5 shrink-0 text-center text-xs font-black"
-                              style={{ color: rc }}
-                            >
+                            <span className="w-5 shrink-0 text-center text-xs font-black tabular-nums" style={{ color: rc }}>
                               {i + 1}
                             </span>
                             <div
-                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-[#10b981]"
-                              style={{ background: `${rc}15`, border: `1px solid ${rc}25` }}
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                              style={{ background: `${rc}15`, border: `1px solid ${rc}25`, color: rc }}
                             >
                               {u.name.charAt(0).toUpperCase()}
                             </div>
@@ -1111,14 +776,10 @@ export default function AdminPage() {
                             <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
                               <div
                                 className="h-full rounded-full transition-all duration-700"
-                                style={{
-                                  width: `${pct}%`,
-                                  background: rc,
-                                  boxShadow: `0 0 8px ${rc}50`,
-                                }}
+                                style={{ width: `${pct}%`, background: rc, boxShadow: `0 0 8px ${rc}50` }}
                               />
                             </div>
-                            <span className="w-6 shrink-0 text-right text-[12px] font-black text-[var(--text-primary)]">
+                            <span className="w-6 shrink-0 text-right text-[12px] font-black tabular-nums text-[var(--text-primary)]">
                               {u.postCount}
                             </span>
                           </div>
@@ -1127,38 +788,20 @@ export default function AdminPage() {
                     </div>
                   </Card>
 
-                  <Card title="Puan Dağılımı">
+                  <Card
+                    title="Puan Dağılımı"
+                    icon={<Star size={14} weight="fill" className="text-[#c8b090]" />}
+                    accent="#c8b090"
+                  >
                     <ResponsiveContainer width="100%" height={200}>
-                      <BarChart
-                        data={stats.ratingDistribution}
-                        margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
-                      >
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--border)"
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="label"
-                          tick={{ fill: "#555", fontSize: 11 }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                          axisLine={false}
-                          tickLine={false}
-                          allowDecimals={false}
-                        />
+                      <BarChart data={stats.ratingDistribution} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                        <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Bar dataKey="count" name="Not" fill="#34d399" radius={[4, 4, 0, 0]}>
+                        <Bar dataKey="count" name="Not" fill="#34d399" radius={[6, 6, 0, 0]}>
                           {stats.ratingDistribution.map((_, i) => (
-                            <Cell
-                              key={i}
-                              fill={
-                                i === stats.ratingDistribution.length - 1 ? "#10b981" : "#34d399"
-                              }
-                            />
+                            <Cell key={i} fill={i === stats.ratingDistribution.length - 1 ? "#10b981" : "#34d399"} />
                           ))}
                         </Bar>
                       </BarChart>
@@ -1167,7 +810,11 @@ export default function AdminPage() {
                 </div>
 
                 {/* Tag cloud */}
-                <Card title="Popüler Etiketler">
+                <Card
+                  title="Popüler Etiketler"
+                  icon={<Tag size={14} weight="bold" className="text-[#34d399]" />}
+                  accent="#34d399"
+                >
                   <div className="flex flex-wrap gap-2">
                     {stats.topTags.map((tag) => {
                       const max = stats.topTags[0]?.count ?? 1;
@@ -1175,7 +822,7 @@ export default function AdminPage() {
                       return (
                         <span
                           key={tag.name}
-                          className="rounded-lg border px-2.5 py-1 text-xs font-medium"
+                          className="rounded-lg border px-2.5 py-1 text-xs font-medium transition-all duration-200 hover:scale-105"
                           style={{
                             borderColor: `rgba(16,185,129,${t * 0.35})`,
                             background: `rgba(16,185,129,${t * 0.08})`,
@@ -1183,7 +830,7 @@ export default function AdminPage() {
                           }}
                         >
                           #{tag.name}
-                          <span className="ml-1.5 text-[10px] opacity-50">{tag.count}</span>
+                          <span className="ml-1.5 text-[10px] tabular-nums opacity-50">{tag.count}</span>
                         </span>
                       );
                     })}
@@ -1200,208 +847,73 @@ export default function AdminPage() {
             {/* Search + total */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative min-w-0 flex-1 sm:max-w-xs">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--text-muted)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
+                <MagnifyingGlass size={14} weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   value={userSearch}
-                  onChange={(e) => {
-                    setUserSearch(e.target.value);
-                    setUsersPage(1);
-                  }}
+                  onChange={(e) => { setUserSearch(e.target.value); setUsersPage(1); }}
                   placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
-                <span className="font-bold text-[var(--text-primary)]">{usersTotal}</span> kullanıcı
+                <span className="font-bold tabular-nums text-[var(--text-primary)]">{usersTotal}</span> kullanıcı
               </div>
             </div>
 
             {/* Bulk action bar */}
             {selectedUsers.size > 0 && (
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#10b981]/20 bg-[#10b981]/5 px-4 py-2.5">
-                <span className="text-sm font-semibold text-[#10b981]">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--gold)]/20 bg-[var(--gold)]/5 px-4 py-2.5">
+                <span className="text-sm font-semibold text-[var(--gold)]">
                   {selectedUsers.size} seçildi
                 </span>
                 <div className="flex flex-wrap gap-2 sm:ml-auto">
-                  <button
-                    onClick={() => runBulkAction("ban")}
-                    disabled={bulkLoading}
-                    className="rounded-lg border border-[#fb923c]/30 bg-[#fb923c]/10 px-3 py-1.5 text-[12px] font-semibold text-[#fb923c] transition-all hover:bg-[#fb923c]/20 disabled:opacity-50"
-                  >
-                    Banla
-                  </button>
-                  <button
-                    onClick={() => runBulkAction("unban")}
-                    disabled={bulkLoading}
-                    className="rounded-lg border border-[#34d399]/30 bg-[#34d399]/10 px-3 py-1.5 text-[12px] font-semibold text-[#34d399] transition-all hover:bg-[#34d399]/20 disabled:opacity-50"
-                  >
-                    Ban Kaldır
-                  </button>
-                  <button
-                    onClick={() => runBulkAction("delete")}
-                    disabled={bulkLoading}
-                    className="rounded-lg border border-[#e53e3e]/30 bg-[#e53e3e]/10 px-3 py-1.5 text-[12px] font-semibold text-[#e53e3e] transition-all hover:bg-[#e53e3e]/20 disabled:opacity-50"
-                  >
-                    Sil
-                  </button>
-                  <button
-                    onClick={() => setSelectedUsers(new Set())}
-                    className="rounded-lg px-3 py-1.5 text-[12px] text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-                  >
-                    İptal
-                  </button>
+                  <button onClick={() => runBulkAction("ban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#fb923c]/30 bg-[#fb923c]/10 px-3 py-1.5 text-[12px] font-semibold text-[#fb923c] transition-all duration-200 hover:bg-[#fb923c]/20 disabled:opacity-50">Banla</button>
+                  <button onClick={() => runBulkAction("unban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#34d399]/30 bg-[#34d399]/10 px-3 py-1.5 text-[12px] font-semibold text-[#34d399] transition-all duration-200 hover:bg-[#34d399]/20 disabled:opacity-50">Ban Kaldır</button>
+                  <button onClick={() => runBulkAction("delete")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#e53e3e]/30 bg-[#e53e3e]/10 px-3 py-1.5 text-[12px] font-semibold text-[#e53e3e] transition-all duration-200 hover:bg-[#e53e3e]/20 disabled:opacity-50">Sil</button>
+                  <button onClick={() => setSelectedUsers(new Set())} className="cursor-pointer rounded-lg px-3 py-1.5 text-[12px] text-[var(--text-muted)] hover:text-[var(--text-secondary)]">İptal</button>
                 </div>
               </div>
             )}
 
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* ── Mobile kart listesi (md altı) ── */}
+              {/* Mobile card list */}
               <div className="md:hidden">
                 <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
-                  <input
-                    type="checkbox"
-                    className="accent-[#10b981]"
-                    checked={users.length > 0 && selectedUsers.size === users.length}
-                    onChange={toggleSelectAll}
-                  />
-                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">
-                    Tümünü Seç
-                  </span>
+                  <input type="checkbox" className="accent-[#10b981]" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} />
+                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">Tümünü Seç</span>
                 </div>
                 {loadingUsers ? (
-                  <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                  </div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {users.map((u) => (
-                      <div
-                        key={u.id}
-                        className={`flex items-start gap-3 p-4 transition-colors hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}
-                      >
-                        <input
-                          type="checkbox"
-                          className="mt-1.5 accent-[#10b981]"
-                          checked={selectedUsers.has(u.id)}
-                          onChange={() => toggleSelectUser(u.id)}
-                        />
-                        <div
-                          className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#10b981]"
-                          onClick={() => router.push(`/admin/users/${u.id}`)}
-                        >
+                      <div key={u.id} className={`flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
+                        <input type="checkbox" className="mt-1.5 accent-[#10b981]" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} />
+                        <div className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#10b981]" onClick={() => router.push(`/admin/users/${u.id}`)}>
                           {u.name.charAt(0).toUpperCase()}
                         </div>
-                        <div
-                          className="min-w-0 flex-1 cursor-pointer"
-                          onClick={() => router.push(`/admin/users/${u.id}`)}
-                        >
+                        <div className="min-w-0 flex-1 cursor-pointer" onClick={() => router.push(`/admin/users/${u.id}`)}>
                           <div className="flex flex-wrap items-center gap-1.5">
                             <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
-                            {u.isAdmin && (
-                              <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
-                                admin
-                              </span>
-                            )}
-                            {u.isBanned && (
-                              <span className="rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">
-                                ban
-                              </span>
-                            )}
-                            <span
-                              className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
-                                u.isPublic
-                                  ? "bg-[#34d399]/15 text-[#34d399]"
-                                  : "bg-[var(--bg-raised)] text-[var(--text-muted)]"
-                              }`}
-                            >
-                              {u.isPublic ? "açık profil" : "gizli profil"}
-                            </span>
+                            {u.isAdmin && <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">admin</span>}
+                            {u.isBanned && <span className="rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
+                            <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-[#34d399]/15 text-[#34d399]" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık profil" : "gizli profil"}</span>
                           </div>
-                          {u.username && (
-                            <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>
-                          )}
-                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">
-                            {u.email}
-                          </p>
+                          {u.username && <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>}
+                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">{u.email}</p>
                           <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-[var(--text-muted)]">
-                            <span>
-                              <span className="font-semibold text-[var(--text-secondary)]">
-                                {u.postCount}
-                              </span>{" "}
-                              not
-                            </span>
-                            <span>
-                              <span className="font-semibold text-[var(--text-secondary)]">
-                                {u.followerCount}
-                              </span>{" "}
-                              takipçi
-                            </span>
-                            <span>
-                              {new Date(u.createdAt).toLocaleDateString("tr-TR", {
-                                day: "numeric",
-                                month: "short",
-                                year: "2-digit",
-                              })}
-                            </span>
+                            <span><span className="font-semibold tabular-nums text-[var(--text-secondary)]">{u.postCount}</span> not</span>
+                            <span><span className="font-semibold tabular-nums text-[var(--text-secondary)]">{u.followerCount}</span> takipçi</span>
+                            <span>{new Date(u.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "2-digit" })}</span>
                           </div>
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-2.5">
                           <div className="flex items-center gap-3">
-                            <div className="flex flex-col items-center gap-0.5">
-                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                Admin
-                              </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleAdmin(u);
-                                }}
-                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}
-                              >
-                                <span
-                                  className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
-                                />
-                              </button>
-                            </div>
-                            <div className="flex flex-col items-center gap-0.5">
-                              <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                Ban
-                              </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleBan(u);
-                                }}
-                                className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
-                              >
-                                <span
-                                  className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`}
-                                />
-                              </button>
-                            </div>
+                            <ToggleSwitch label="Admin" active={u.isAdmin} color="#10b981" onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} />
+                            <ToggleSwitch label="Ban" active={u.isBanned} color="#e53e3e" onClick={(e) => { e.stopPropagation(); toggleBan(u); }} />
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setConfirmDelete(u);
-                            }}
-                            className="rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
-                          >
-                            Sil
-                          </button>
+                          <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
                         </div>
                       </div>
                     ))}
@@ -1409,150 +921,54 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* ── Desktop tablo (md ve üzeri) ── */}
+              {/* Desktop table */}
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
-                      <th className="px-4 py-3">
-                        <input
-                          type="checkbox"
-                          className="accent-[#10b981]"
-                          checked={users.length > 0 && selectedUsers.size === users.length}
-                          onChange={toggleSelectAll}
-                        />
-                      </th>
-                      {[
-                        "Kullanıcı",
-                        "E-posta",
-                        "Not",
-                        "Takipçi",
-                        "Katılım",
-                        "Admin",
-                        "Ban",
-                        "İşlem",
-                      ].map((h) => (
-                        <th
-                          key={h}
-                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                        >
-                          {h}
-                        </th>
+                      <th className="px-4 py-3"><input type="checkbox" className="accent-[#10b981]" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} /></th>
+                      {["Kullanıcı", "E-posta", "Not", "Takipçi", "Katılım", "Admin", "Ban", "İşlem"].map((h) => (
+                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {loadingUsers ? (
-                      <tr>
-                        <td colSpan={9} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                        </td>
-                      </tr>
+                      <tr><td colSpan={9} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
                     ) : (
                       users.map((u) => (
-                        <tr
-                          key={u.id}
-                          className={`group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)] ${u.isBanned ? "opacity-60" : ""}`}
-                        >
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              className="accent-[#10b981]"
-                              checked={selectedUsers.has(u.id)}
-                              onChange={() => toggleSelectUser(u.id)}
-                            />
-                          </td>
-                          <td
-                            className="cursor-pointer px-4 py-3"
-                            onClick={() => router.push(`/admin/users/${u.id}`)}
-                          >
+                        <tr key={u.id} className={`group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}><input type="checkbox" className="accent-[#10b981]" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} /></td>
+                          <td className="cursor-pointer px-4 py-3" onClick={() => router.push(`/admin/users/${u.id}`)}>
                             <div className="flex items-center gap-2.5">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#10b981]">
-                                {u.name.charAt(0).toUpperCase()}
-                              </div>
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#10b981]">{u.name.charAt(0).toUpperCase()}</div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <p className="truncate font-medium text-[var(--text-primary)]">
-                                    {u.name}
-                                  </p>
-                                  {u.isAdmin && (
-                                    <span className="shrink-0 rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
-                                      admin
-                                    </span>
-                                  )}
-                                  {u.isBanned && (
-                                    <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">
-                                      ban
-                                    </span>
-                                  )}
-                                  <span
-                                    className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
-                                      u.isPublic
-                                        ? "bg-[#34d399]/15 text-[#34d399]"
-                                        : "bg-[var(--bg-raised)] text-[var(--text-muted)]"
-                                    }`}
-                                  >
-                                    {u.isPublic ? "açık" : "gizli"}
-                                  </span>
+                                  <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
+                                  {u.isAdmin && <span className="shrink-0 rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">admin</span>}
+                                  {u.isBanned && <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
+                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-[#34d399]/15 text-[#34d399]" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık" : "gizli"}</span>
                                 </div>
-                                {u.username && (
-                                  <p className="text-[10px] text-[var(--text-muted)]">
-                                    @{u.username}
-                                  </p>
-                                )}
+                                {u.username && <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>}
                               </div>
                             </div>
                           </td>
                           <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
-                          <td className="px-4 py-3 text-center text-sm font-bold text-[var(--text-primary)]">
-                            {u.postCount}
-                          </td>
-                          <td className="px-4 py-3 text-center text-sm text-[var(--text-muted)]">
-                            {u.followerCount}
-                          </td>
-                          <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">
-                            {new Date(u.createdAt).toLocaleDateString("tr-TR", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </td>
+                          <td className="px-4 py-3 text-center text-sm font-bold tabular-nums text-[var(--text-primary)]">{u.postCount}</td>
+                          <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">{u.followerCount}</td>
+                          <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">{new Date(u.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" })}</td>
                           <td className="px-4 py-3 text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleAdmin(u);
-                              }}
-                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}
-                            >
-                              <span
-                                className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`}
-                              />
+                            <button onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}>
+                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleBan(u);
-                              }}
-                              className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}
-                            >
-                              <span
-                                className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`}
-                              />
+                            <button onClick={(e) => { e.stopPropagation(); toggleBan(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}>
+                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setConfirmDelete(u);
-                              }}
-                              className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
-                            >
-                              Sil
-                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
                           </td>
                         </tr>
                       ))
@@ -1561,36 +977,7 @@ export default function AdminPage() {
                 </table>
               </div>
 
-              {usersTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-                  <span className="text-xs text-[var(--text-muted)]">
-                    Sayfa {usersPage} / {usersTotalPages}
-                  </span>
-                  <div className="flex gap-2">
-                    {[
-                      {
-                        label: "← Önceki",
-                        fn: () => setUsersPage((p) => Math.max(1, p - 1)),
-                        disabled: usersPage === 1,
-                      },
-                      {
-                        label: "Sonraki →",
-                        fn: () => setUsersPage((p) => Math.min(usersTotalPages, p + 1)),
-                        disabled: usersPage === usersTotalPages,
-                      },
-                    ].map((btn) => (
-                      <button
-                        key={btn.label}
-                        onClick={btn.fn}
-                        disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
-                      >
-                        {btn.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <Pagination page={usersPage} totalPages={usersTotalPages} onPrev={() => setUsersPage((p) => Math.max(1, p - 1))} onNext={() => setUsersPage((p) => Math.min(usersTotalPages, p + 1))} />
             </div>
           </div>
         )}
@@ -1598,109 +985,46 @@ export default function AdminPage() {
         {/* ══════════════ CONTENT ══════════════ */}
         {tab === "content" && (
           <div className="space-y-5">
-            {/* Post search */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative min-w-0 flex-1 sm:max-w-sm">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--text-muted)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.35-4.35" />
-                </svg>
+                <MagnifyingGlass size={14} weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   value={postSearch}
-                  onChange={(e) => {
-                    setPostSearch(e.target.value);
-                    setPostsPage(1);
-                  }}
+                  onChange={(e) => { setPostSearch(e.target.value); setPostsPage(1); }}
                   placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
                 />
               </div>
               <div className="text-sm text-[var(--text-muted)]">
-                <span className="font-bold text-[var(--text-primary)]">{postsTotal}</span> not
+                <span className="font-bold tabular-nums text-[var(--text-primary)]">{postsTotal}</span> not
               </div>
             </div>
 
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* ── Mobile kart listesi (md altı) ── */}
+              {/* Mobile */}
               <div className="md:hidden">
                 {loadingPosts ? (
-                  <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                  </div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
                 ) : posts.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">
-                    Not bulunamadı
-                  </div>
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {posts.map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-start gap-3 p-4 transition-colors hover:bg-[var(--bg-raised)]"
-                      >
+                      <div key={p.id} className="flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)]">
                         <div className="min-w-0 flex-1">
-                          <p
-                            className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors hover:text-[#10b981]"
-                            onClick={() => router.push(`/posts/${p.id}`)}
-                          >
-                            {p.title}
-                          </p>
+                          <p className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]" onClick={() => router.push(`/posts/${p.id}`)}>{p.title}</p>
                           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
                             <span>{p.category}</span>
-                            {p.user && (
-                              <span className="flex items-center gap-1">
-                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#10b981]">
-                                  {p.user.name.charAt(0).toUpperCase()}
-                                </span>
-                                {p.user.name}
-                              </span>
-                            )}
+                            {p.user && <span className="flex items-center gap-1"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#10b981]">{p.user.name.charAt(0).toUpperCase()}</span>{p.user.name}</span>}
                             <span>{fmtShortDate(p.createdAt)}</span>
-                            {p.rating > 0 && (
-                              <span className="text-[#10b981]">★ {p.rating.toFixed(1)}</span>
-                            )}
+                            {p.rating > 0 && <span className="text-[var(--gold)]">★ {p.rating.toFixed(1)}</span>}
                           </div>
-                          {p.status && (
-                            <span
-                              className="inline-flex rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
-                              style={{
-                                borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
-                                background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
-                                color: STATUS_COLORS[p.status] ?? "var(--text-dim)",
-                              }}
-                            >
-                              {p.status}
-                            </span>
-                          )}
-                          {!p.status && (
-                            <span className="inline-flex rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
-                              Durum yok
-                            </span>
-                          )}
+                          <StatusBadge status={p.status} />
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-1.5">
-                          <button
-                            onClick={() => router.push(`/posts/${p.id}/edit`)}
-                            className="rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[#10b981]"
-                          >
-                            Düzenle
-                          </button>
-                          <button
-                            onClick={() => setConfirmDeletePost(p)}
-                            className="rounded-lg border border-[#e53e3e]/20 px-2.5 py-1.5 text-[11px] font-medium text-[#e53e3e]/70 transition-colors hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
-                          >
-                            Sil
-                          </button>
+                          <button onClick={() => router.push(`/posts/${p.id}/edit`)} className="cursor-pointer rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:border-[var(--gold)]/30 hover:text-[var(--gold)]">Düzenle</button>
+                          <button onClick={() => setConfirmDeletePost(p)} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1.5 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
                         </div>
                       </div>
                     ))}
@@ -1708,105 +1032,46 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* ── Desktop tablo (md ve üzeri) ── */}
+              {/* Desktop table */}
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
-                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map(
-                        (h) => (
-                          <th
-                            key={h}
-                            className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                          >
-                            {h}
-                          </th>
-                        )
-                      )}
+                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
+                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
                     {loadingPosts ? (
-                      <tr>
-                        <td colSpan={7} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                        </td>
-                      </tr>
+                      <tr><td colSpan={7} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
                     ) : posts.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={7}
-                          className="py-16 text-center text-sm text-[var(--text-muted)]"
-                        >
-                          Not bulunamadı
-                        </td>
-                      </tr>
+                      <tr><td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</td></tr>
                     ) : (
                       posts.map((p) => (
-                        <tr
-                          key={p.id}
-                          className="group border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
-                        >
-                          <td
-                            className="cursor-pointer px-4 py-3"
-                            onClick={() => router.push(`/posts/${p.id}`)}
-                          >
-                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors hover:text-[#10b981]">
-                              {p.title}
-                            </p>
+                        <tr key={p.id} className="group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)]">
+                          <td className="cursor-pointer px-4 py-3" onClick={() => router.push(`/posts/${p.id}`)}>
+                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]">{p.title}</p>
                           </td>
-                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">
-                            {p.category}
-                          </td>
+                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
                           <td className="px-4 py-3">
                             {p.user ? (
                               <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">
-                                  {p.user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <span className="text-[11px] text-[var(--text-muted)]">
-                                  {p.user.name}
-                                </span>
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">{p.user.name.charAt(0).toUpperCase()}</div>
+                                <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
                               </div>
-                            ) : (
-                              <span className="text-xs text-[var(--text-muted)]">Durum yok</span>
-                            )}
+                            ) : <span className="text-xs text-[var(--text-muted)]">—</span>}
                           </td>
-                          <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">
-                            {fmtShortDate(p.createdAt)}
-                          </td>
-                          <td className="px-4 py-3">
-                            {p.status ? (
-                              <span
-                                className="rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
-                                style={{
-                                  borderColor: `${STATUS_COLORS[p.status] ?? "#555"}25`,
-                                  background: `${STATUS_COLORS[p.status] ?? "#555"}0c`,
-                                  color: STATUS_COLORS[p.status] ?? "var(--text-dim)",
-                                }}
-                              >
-                                {p.status}
-                              </span>
-                            ) : (
-                              <span className="text-xs text-[var(--text-muted)]">—</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-center text-sm text-[var(--text-secondary)]">
-                            {p.rating > 0 ? p.rating.toFixed(1) : "—"}
-                          </td>
+                          <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">{fmtShortDate(p.createdAt)}</td>
+                          <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
+                          <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-secondary)]">{p.rating > 0 ? p.rating.toFixed(1) : "—"}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1">
-                              <button
-                                onClick={() => router.push(`/posts/${p.id}/edit`)}
-                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[#10b981]"
-                              >
-                                Düzenle
+                              <button onClick={() => router.push(`/posts/${p.id}/edit`)} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--gold)]">
+                                <PencilSimple size={13} weight="bold" />
                               </button>
-                              <button
-                                onClick={() => setConfirmDeletePost(p)}
-                                className="rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]"
-                              >
-                                Sil
+                              <button onClick={() => setConfirmDeletePost(p)} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">
+                                <Trash size={13} weight="bold" />
                               </button>
                             </div>
                           </td>
@@ -1817,36 +1082,7 @@ export default function AdminPage() {
                 </table>
               </div>
 
-              {postsTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-                  <span className="text-xs text-[var(--text-muted)]">
-                    Sayfa {postsPage} / {postsTotalPages}
-                  </span>
-                  <div className="flex gap-2">
-                    {[
-                      {
-                        label: "← Önceki",
-                        fn: () => setPostsPage((p) => Math.max(1, p - 1)),
-                        disabled: postsPage === 1,
-                      },
-                      {
-                        label: "Sonraki →",
-                        fn: () => setPostsPage((p) => Math.min(postsTotalPages, p + 1)),
-                        disabled: postsPage === postsTotalPages,
-                      },
-                    ].map((btn) => (
-                      <button
-                        key={btn.label}
-                        onClick={btn.fn}
-                        disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
-                      >
-                        {btn.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <Pagination page={postsPage} totalPages={postsTotalPages} onPrev={() => setPostsPage((p) => Math.max(1, p - 1))} onNext={() => setPostsPage((p) => Math.min(postsTotalPages, p + 1))} />
             </div>
           </div>
         )}
@@ -1854,44 +1090,26 @@ export default function AdminPage() {
         {/* ══════════════ ACTIVITY ══════════════ */}
         {tab === "activity" && (
           <div className="space-y-5">
-            {/* Range selector */}
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-xs text-[var(--text-muted)]">Aktivite periyodu:</span>
-              <RangePills
-                value={activityRange}
-                options={RANGE_LABELS}
-                onChange={(v) => {
-                  setActivityRange(v);
-                  setLogsPage(1);
-                }}
-              />
+              <RangePills value={activityRange} options={RANGE_LABELS} onChange={(v) => { setActivityRange(v); setLogsPage(1); }} />
             </div>
 
-            {/* Chart */}
-            <Card title={`Aktivite — ${RANGE_LABELS[activityRange]}`}>
+            <Card
+              title={`Aktivite — ${RANGE_LABELS[activityRange]}`}
+              icon={<Pulse size={14} weight="bold" className="text-[#60a5fa]" />}
+              accent="#60a5fa"
+            >
               {loadingLogs ? (
-                <div className="flex h-32 items-center justify-center">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                </div>
+                <div className="flex h-32 items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
               ) : (
                 <ResponsiveContainer width="100%" height={160}>
                   <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                      interval={Math.max(Math.floor(chartData.length / 8) - 1, 0)}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: "#3a3a5a", fontSize: 10 }}
-                      axisLine={false}
-                      tickLine={false}
-                      allowDecimals={false}
-                    />
+                    <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 10 }} interval={Math.max(Math.floor(chartData.length / 8) - 1, 0)} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                     <Tooltip content={<DarkTooltip />} />
-                    <Bar dataKey="count" name="Aktivite" radius={[3, 3, 0, 0]}>
+                    <Bar dataKey="count" name="Aktivite" radius={[4, 4, 0, 0]}>
                       {chartData.map((d, i) => (
                         <Cell key={i} fill={d.count > 0 ? "#60a5fa" : "var(--border)"} />
                       ))}
@@ -1904,103 +1122,44 @@ export default function AdminPage() {
             {/* Filter tabs */}
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-1">
-                <button
-                  onClick={() => {
-                    setLogsFilter("");
-                    setLogsPage(1);
-                  }}
-                  className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${!logsFilter ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}
-                >
-                  Tümü
-                </button>
+                <button onClick={() => { setLogsFilter(""); setLogsPage(1); }} className={`cursor-pointer rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${!logsFilter ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Tümü</button>
                 {Object.entries(ACTION_META).map(([key, val]) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      setLogsFilter(key);
-                      setLogsPage(1);
-                    }}
-                    className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${logsFilter === key ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}
-                  >
-                    {val.label}
-                  </button>
+                  <button key={key} onClick={() => { setLogsFilter(key); setLogsPage(1); }} className={`cursor-pointer rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${logsFilter === key ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>{val.label}</button>
                 ))}
               </div>
-              <span className="text-xs text-[var(--text-muted)]">
-                <span className="font-bold text-[var(--text-secondary)]">{logsTotal}</span> kayıt
-              </span>
+              <span className="text-xs text-[var(--text-muted)]"><span className="font-bold tabular-nums text-[var(--text-secondary)]">{logsTotal}</span> kayıt</span>
             </div>
 
             {/* Log table */}
             <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* ── Mobile kart listesi (md altı) ── */}
+              {/* Mobile */}
               <div className="md:hidden">
                 {loadingLogs ? (
-                  <div className="flex justify-center py-12">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                  </div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
                 ) : logs.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">
-                    Henüz aktivite kaydı yok
-                  </div>
+                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {logs.map((log) => {
-                      const meta = ACTION_META[log.action] ?? {
-                        label: log.action,
-                        color: "#555",
-                        icon: "·",
-                      };
+                      const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
                       const data = log.metadata as Record<string, string> | null;
                       return (
                         <div key={log.id} className="flex items-start gap-3 p-4">
-                          <span
-                            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border text-xs"
-                            style={{
-                              borderColor: `${meta.color}25`,
-                              background: `${meta.color}0c`,
-                              color: meta.color,
-                            }}
-                          >
-                            {meta.icon}
-                          </span>
+                          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border text-xs" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>{meta.icon}</span>
                           <div className="min-w-0 flex-1">
                             <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
-                              <span
-                                className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
-                                style={{
-                                  borderColor: `${meta.color}25`,
-                                  background: `${meta.color}0c`,
-                                  color: meta.color,
-                                }}
-                              >
-                                {meta.label}
-                              </span>
-                              <span className="text-[11px] text-[var(--text-muted)]">
-                                {fmtTime(log.createdAt)}
-                              </span>
+                              <span className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>{meta.label}</span>
+                              <span className="text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</span>
                             </div>
                             {log.user && (
                               <div className="flex items-center gap-1.5">
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#10b981]">
-                                  {log.user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <span className="text-[12px] text-[var(--text-secondary)]">
-                                  {log.user.name}
-                                </span>
-                                {log.user.username && (
-                                  <span className="text-[10px] text-[var(--text-muted)]">
-                                    @{log.user.username}
-                                  </span>
-                                )}
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#10b981]">{log.user.name.charAt(0).toUpperCase()}</div>
+                                <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
+                                {log.user.username && <span className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</span>}
                               </div>
                             )}
                             {(data?.title ?? data?.name ?? data?.targetUsername) && (
-                              <p className="mt-1 truncate text-[11px] text-[var(--text-muted)]">
-                                {data?.title ??
-                                  data?.name ??
-                                  (data?.targetUsername ? `→ @${data.targetUsername}` : null)}
-                              </p>
+                              <p className="mt-1 truncate text-[11px] text-[var(--text-muted)]">{data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : null)}</p>
                             )}
                           </div>
                         </div>
@@ -2010,92 +1169,46 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* ── Desktop tablo (md ve üzeri) ── */}
+              {/* Desktop table */}
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
                       {["Zaman", "Kullanıcı", "Aksiyon", "Detay"].map((h) => (
-                        <th
-                          key={h}
-                          className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]"
-                        >
-                          {h}
-                        </th>
+                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {loadingLogs ? (
-                      <tr>
-                        <td colSpan={4} className="py-16 text-center">
-                          <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
-                        </td>
-                      </tr>
+                      <tr><td colSpan={4} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
                     ) : logs.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={4}
-                          className="py-16 text-center text-sm text-[var(--text-muted)]"
-                        >
-                          Henüz aktivite kaydı yok
-                        </td>
-                      </tr>
+                      <tr><td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</td></tr>
                     ) : (
                       logs.map((log) => {
-                        const meta = ACTION_META[log.action] ?? {
-                          label: log.action,
-                          color: "#555",
-                          icon: "·",
-                        };
+                        const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
                         const data = log.metadata as Record<string, string> | null;
                         return (
-                          <tr
-                            key={log.id}
-                            className="border-b border-[var(--border)] transition-colors hover:bg-[var(--bg-card)]"
-                          >
-                            <td className="whitespace-nowrap px-4 py-3 text-[11px] text-[var(--text-muted)]">
-                              {fmtTime(log.createdAt)}
-                            </td>
+                          <tr key={log.id} className="border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)]">
+                            <td className="whitespace-nowrap px-4 py-3 text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</td>
                             <td className="px-4 py-3">
                               {log.user ? (
                                 <div className="flex items-center gap-2">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">
-                                    {log.user.name.charAt(0).toUpperCase()}
-                                  </div>
+                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">{log.user.name.charAt(0).toUpperCase()}</div>
                                   <div>
-                                    <p className="text-[12px] text-[var(--text-secondary)]">
-                                      {log.user.name}
-                                    </p>
-                                    {log.user.username && (
-                                      <p className="text-[10px] text-[var(--text-muted)]">
-                                        @{log.user.username}
-                                      </p>
-                                    )}
+                                    <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
+                                    {log.user.username && <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>}
                                   </div>
                                 </div>
-                              ) : (
-                                <span className="text-xs text-[var(--text-muted)]">—</span>
-                              )}
+                              ) : <span className="text-xs text-[var(--text-muted)]">—</span>}
                             </td>
                             <td className="px-4 py-3">
-                              <span
-                                className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
-                                style={{
-                                  borderColor: `${meta.color}25`,
-                                  background: `${meta.color}0c`,
-                                  color: meta.color,
-                                }}
-                              >
+                              <span className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[11px] font-semibold" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>
                                 <span className="text-xs leading-none">{meta.icon}</span>
                                 {meta.label}
                               </span>
                             </td>
-                            <td className="max-w-[200px] truncate px-4 py-3 text-[12px] text-[var(--text-muted)]">
-                              {data?.title ??
-                                data?.name ??
-                                (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}
-                            </td>
+                            <td className="max-w-[200px] truncate px-4 py-3 text-[12px] text-[var(--text-muted)]">{data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}</td>
                           </tr>
                         );
                       })
@@ -2104,36 +1217,7 @@ export default function AdminPage() {
                 </table>
               </div>
 
-              {logsTotalPages > 1 && (
-                <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-                  <span className="text-xs text-[var(--text-muted)]">
-                    Sayfa {logsPage} / {logsTotalPages}
-                  </span>
-                  <div className="flex gap-2">
-                    {[
-                      {
-                        label: "← Önceki",
-                        fn: () => setLogsPage((p) => Math.max(1, p - 1)),
-                        disabled: logsPage === 1,
-                      },
-                      {
-                        label: "Sonraki →",
-                        fn: () => setLogsPage((p) => Math.min(logsTotalPages, p + 1)),
-                        disabled: logsPage === logsTotalPages,
-                      },
-                    ].map((btn) => (
-                      <button
-                        key={btn.label}
-                        onClick={btn.fn}
-                        disabled={btn.disabled}
-                        className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-25"
-                      >
-                        {btn.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <Pagination page={logsPage} totalPages={logsTotalPages} onPrev={() => setLogsPage((p) => Math.max(1, p - 1))} onNext={() => setLogsPage((p) => Math.min(logsTotalPages, p + 1))} />
             </div>
           </div>
         )}
@@ -2146,105 +1230,46 @@ export default function AdminPage() {
             ) : settings ? (
               <>
                 {/* Registration */}
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
+                <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#34d399]/20 bg-[#34d399]/10">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#34d399"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="8.5" cy="7" r="4" />
-                        <line x1="20" y1="8" x2="20" y2="14" />
-                        <line x1="23" y1="11" x2="17" y2="11" />
-                      </svg>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#34d399]/20 bg-[#34d399]/10">
+                      <UserPlus size={16} weight="duotone" className="text-[#34d399]" />
                     </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                        Yeni Kayıt
-                      </h3>
-                      <p className="text-xs text-[var(--text-muted)]">
-                        Yeni kullanıcı kaydını aç veya kapat
-                      </p>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Yeni Kayıt</h3>
+                      <p className="text-xs text-[var(--text-muted)]">Yeni kullanıcı kaydını aç veya kapat</p>
                     </div>
-                    <div className="ml-auto">
-                      <button
-                        onClick={() =>
-                          saveSettings({
-                            registrationEnabled:
-                              settings.registrationEnabled === "true" ? "false" : "true",
-                          })
-                        }
-                        disabled={savingSettings}
-                        className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.registrationEnabled === "true" ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}
-                      >
-                        <span
-                          className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.registrationEnabled === "true" ? "left-[22px]" : "left-[3px]"}`}
-                        />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => saveSettings({ registrationEnabled: settings.registrationEnabled === "true" ? "false" : "true" })}
+                      disabled={savingSettings}
+                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.registrationEnabled === "true" ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}
+                    >
+                      <span className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.registrationEnabled === "true" ? "left-[22px]" : "left-[3px]"}`} />
+                    </button>
                   </div>
-                  <div
-                    className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${
-                      settings.registrationEnabled === "true"
-                        ? "border-[#34d399]/20 bg-[#34d399]/10 text-[#34d399]"
-                        : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"
-                    }`}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{
-                        background: settings.registrationEnabled === "true" ? "#34d399" : "#e53e3e",
-                      }}
-                    />
+                  <div className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${settings.registrationEnabled === "true" ? "border-[#34d399]/20 bg-[#34d399]/10 text-[#34d399]" : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"}`}>
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: settings.registrationEnabled === "true" ? "#34d399" : "#e53e3e" }} />
                     {settings.registrationEnabled === "true" ? "Kayıt Açık" : "Kayıt Kapalı"}
                   </div>
                 </div>
 
-                {/* Maintenance Mode */}
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
+                {/* Maintenance */}
+                <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#fb923c]/20 bg-[#fb923c]/10">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#fb923c"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      >
-                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                      </svg>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#fb923c]/20 bg-[#fb923c]/10">
+                      <Wrench size={16} weight="duotone" className="text-[#fb923c]" />
                     </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                        Bakım Modu
-                      </h3>
-                      <p className="text-xs text-[var(--text-muted)]">
-                        Yöneticiler dışında tüm kullanıcılar bakım sayfasına yönlendirilir
-                      </p>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Bakım Modu</h3>
+                      <p className="text-xs text-[var(--text-muted)]">Yöneticiler dışında tüm kullanıcılar bakım sayfasına yönlendirilir</p>
                     </div>
-                    <div className="ml-auto">
-                      <button
-                        onClick={() =>
-                          saveSettings({
-                            maintenanceMode: settings.maintenanceMode === "true" ? "false" : "true",
-                          })
-                        }
-                        disabled={savingSettings}
-                        className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.maintenanceMode === "true" ? "bg-[#fb923c]" : "bg-[var(--bg-raised)]"}`}
-                      >
-                        <span
-                          className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.maintenanceMode === "true" ? "left-[22px]" : "left-[3px]"}`}
-                        />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => saveSettings({ maintenanceMode: settings.maintenanceMode === "true" ? "false" : "true" })}
+                      disabled={savingSettings}
+                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.maintenanceMode === "true" ? "bg-[#fb923c]" : "bg-[var(--bg-raised)]"}`}
+                    >
+                      <span className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.maintenanceMode === "true" ? "left-[22px]" : "left-[3px]"}`} />
+                    </button>
                   </div>
 
                   {settings.maintenanceMode === "true" && (
@@ -2254,27 +1279,20 @@ export default function AdminPage() {
                     </div>
                   )}
 
-                  {/* Maintenance message */}
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[var(--text-muted)]">
-                      Bakım Mesajı
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        defaultValue={settings.maintenanceMessage}
-                        onBlur={(e) => {
-                          if (e.target.value !== settings.maintenanceMessage) {
-                            saveSettings({ maintenanceMessage: e.target.value });
-                          }
-                        }}
-                        className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all placeholder:text-[var(--text-muted)] focus:border-[#10b981]/40 focus:outline-none focus:ring-1 focus:ring-[#10b981]/15 sm:text-sm"
-                        placeholder="Bakım mesajı..."
-                      />
-                    </div>
-                    <p className="text-[10px] text-[var(--text-muted)]">
-                      Odak dışına çıkınca otomatik kaydedilir
-                    </p>
+                    <label className="text-xs font-semibold text-[var(--text-muted)]">Bakım Mesajı</label>
+                    <input
+                      type="text"
+                      defaultValue={settings.maintenanceMessage}
+                      onBlur={(e) => {
+                        if (e.target.value !== settings.maintenanceMessage) {
+                          saveSettings({ maintenanceMessage: e.target.value });
+                        }
+                      }}
+                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
+                      placeholder="Bakım mesajı..."
+                    />
+                    <p className="text-[10px] text-[var(--text-muted)]">Odak dışına çıkınca otomatik kaydedilir</p>
                   </div>
                 </div>
               </>
@@ -2283,113 +1301,74 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* ── Delete user confirm modal ── */}
+      {/* ── Delete user confirm ── */}
       {confirmDelete && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="admin-delete-user-title"
-        >
-          <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#e53e3e]/20 bg-[#e53e3e]/10">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#e53e3e"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-            </div>
-            <h3
-              id="admin-delete-user-title"
-              className="mb-1 text-base font-bold text-[var(--text-primary)]"
-            >
-              Kullanıcıyı Sil
-            </h3>
-            <p className="mb-1 text-sm text-[var(--text-secondary)]">
-              <span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span>{" "}
-              silinecek.
-            </p>
-            <p className="mb-5 text-xs text-[var(--text-muted)]">
-              Bu işlem geri alınamaz. Tüm notları ve kategorileri de silinir.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-              >
-                İptal
-              </button>
-              <button
-                onClick={() => deleteUser(confirmDelete.id)}
-                className="rounded-lg bg-[#e53e3e] px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-[#f05252] active:scale-95"
-              >
-                Evet, Sil
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          title="Kullanıcıyı Sil"
+          message={<><span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span> silinecek.</>}
+          detail="Bu işlem geri alınamaz. Tüm notları ve kategorileri de silinir."
+          onCancel={() => setConfirmDelete(null)}
+          onConfirm={() => deleteUser(confirmDelete.id)}
+        />
       )}
 
-      {/* ── Delete post confirm modal ── */}
+      {/* ── Delete post confirm ── */}
       {confirmDeletePost && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="admin-delete-post-title"
-        >
-          <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-[#e53e3e]/20 bg-[#e53e3e]/10">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#e53e3e"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-            </div>
-            <h3
-              id="admin-delete-post-title"
-              className="mb-1 text-base font-bold text-[var(--text-primary)]"
-            >
-              Notu Sil
-            </h3>
-            <p className="mb-1 text-sm text-[var(--text-secondary)]">
-              <span className="font-semibold text-[var(--text-primary)]">
-                {confirmDeletePost.title}
-              </span>{" "}
-              silinecek.
-            </p>
-            <p className="mb-5 text-xs text-[var(--text-muted)]">Bu işlem geri alınamaz.</p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setConfirmDeletePost(null)}
-                className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-              >
-                İptal
-              </button>
-              <button
-                onClick={() => deletePost(confirmDeletePost.id)}
-                className="rounded-lg bg-[#e53e3e] px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-[#f05252] active:scale-95"
-              >
-                Evet, Sil
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          title="Notu Sil"
+          message={<><span className="font-semibold text-[var(--text-primary)]">{confirmDeletePost.title}</span> silinecek.</>}
+          detail="Bu işlem geri alınamaz."
+          onCancel={() => setConfirmDeletePost(null)}
+          onConfirm={() => deletePost(confirmDeletePost.id)}
+        />
       )}
     </main>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   Inline sub-components
+   ══════════════════════════════════════════════ */
+
+function ToggleSwitch({
+  label,
+  active,
+  color,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  color: string;
+  onClick: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">{label}</span>
+      <button
+        onClick={onClick}
+        className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${active ? "" : "bg-[var(--bg-raised)]"}`}
+        style={active ? { backgroundColor: color } : undefined}
+      >
+        <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${active ? "left-[18px]" : "left-[3px]"}`} />
+      </button>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string | null }) {
+  if (!status) {
+    return <span className="inline-flex rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">Durum yok</span>;
+  }
+  return (
+    <span
+      className="inline-flex rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
+      style={{
+        borderColor: `${STATUS_COLORS[status] ?? "#555"}25`,
+        background: `${STATUS_COLORS[status] ?? "#555"}0c`,
+        color: STATUS_COLORS[status] ?? "var(--text-muted)",
+      }}
+    >
+      {status}
+    </span>
   );
 }

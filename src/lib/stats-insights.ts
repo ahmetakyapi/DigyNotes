@@ -31,20 +31,20 @@ export function getRecentMomentum(monthlySeries: MonthlyCount[]) {
   if (recent.count === previous.count) {
     return {
       direction: "flat" as const,
-      label: `${recent.month} ile bir önceki dönem aynı ritimde`,
+      label: `${recent.month} döneminde bir önceki ayla aynı tempoda devam ediyorsun.`,
     };
   }
 
   if (recent.count > previous.count) {
     return {
       direction: "up" as const,
-      label: `${recent.month} döneminde ritim yukarı çıkmış`,
+      label: `${recent.month} döneminde önceki aya göre daha aktifsin.`,
     };
   }
 
   return {
     direction: "down" as const,
-    label: `${recent.month} döneminde tempo yavaşlamış`,
+    label: `${recent.month} döneminde bir önceki aya göre daha az not ekledin.`,
   };
 }
 
@@ -65,11 +65,11 @@ export function getSparseDataLabel(totalPosts: number, activeMonths: number) {
   }
 
   if (totalPosts < 3) {
-    return "Özet erken aşamada; biraz daha not eklendiğinde trendler belirginleşecek.";
+    return "Henüz yeterli veri yok — birkaç not daha eklediğinde trendler belirginleşecek.";
   }
 
   if (activeMonths < 2) {
-    return "Veri tek bir döneme yığılıyor; farklı zamanlarda not eklemek özetleri daha anlamlı yapar.";
+    return "Notların tek bir döneme yoğunlaşmış — farklı zamanlarda da eklersen istatistikler daha anlamlı olur.";
   }
 
   return null;
