@@ -104,7 +104,7 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 pb-4 pt-[3.8rem] sm:px-4 sm:pt-16"
+      className="relative flex h-[100svh] flex-col items-center overflow-hidden px-4 pb-4 pt-[68px] sm:h-auto sm:min-h-[100svh] sm:justify-center sm:px-4 sm:pb-4 sm:pt-16"
     >
       {/* Mouse spotlight */}
       <motion.div
@@ -119,7 +119,7 @@ export function HeroSection() {
       >
         {/* Central background glow */}
         <div
-          className="dn-aurora-float-3 absolute bottom-[18%] left-1/2 h-[200px] w-[340px] -translate-x-1/2 rounded-full opacity-[0.10] blur-[120px] sm:h-[300px] sm:w-[600px] sm:opacity-[0.12]"
+          className="dn-aurora-float-3 absolute bottom-[18%] left-1/2 h-[160px] w-[280px] -translate-x-1/2 rounded-full opacity-[0.08] blur-[100px] sm:h-[300px] sm:w-[600px] sm:opacity-[0.12]"
           style={{ background: t.glowBg }}
         />
         {/* Top-right accent glow */}
@@ -189,14 +189,15 @@ export function HeroSection() {
           İçerik — 2 kolon (lg+)
       ══════════════════════════════════════ */}
       <motion.div
-        className="relative z-10 flex w-full max-w-[400px] flex-col items-center gap-5 sm:max-w-5xl sm:gap-8 lg:grid lg:grid-cols-[1fr,1.1fr] lg:items-center lg:gap-14 xl:max-w-7xl xl:gap-20"
+        className="relative z-10 flex w-full max-w-[440px] flex-1 flex-col items-center justify-center sm:max-w-5xl sm:flex-initial sm:gap-8 lg:grid lg:grid-cols-[1fr,1.1fr] lg:items-center lg:gap-14 xl:max-w-7xl xl:gap-20"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         {/* ══ Sol kolon: metin + CTA ══ */}
-        <div className="flex w-full flex-col items-center gap-0 text-center lg:items-start lg:text-left">
+        <div className="flex w-full flex-col items-center gap-6 text-center sm:gap-0 lg:items-start lg:text-left">
+
           {/* Badge */}
           <motion.div
-            className="mb-3 sm:mb-6"
+            className="sm:mb-6"
             initial={{ opacity: 0, y: -14, scale: 0.88 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.05, ease: EASE }}
@@ -230,9 +231,14 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Başlık */}
-          <h1 className="mb-3 w-full overflow-visible pb-[0.06em] text-center text-[clamp(2rem,9vw,2.8rem)] font-black leading-[1.1] tracking-[-0.038em] sm:mb-6 sm:text-[clamp(3.2rem,5.8vw,4.8rem)] sm:leading-[1.1] lg:text-left xl:text-[clamp(3.6rem,5vw,5.2rem)]">
-            {/* Line 1: rotating word */}
+          {/* Heading */}
+          <h1 className="relative w-full overflow-visible pb-[0.06em] text-center text-[clamp(3.2rem,15vw,5.4rem)] font-black leading-[0.98] tracking-[-0.05em] sm:mb-6 sm:text-[clamp(3.2rem,5.8vw,4.8rem)] sm:leading-[1.1] sm:tracking-[-0.04em] lg:text-left xl:text-[clamp(3.6rem,5vw,5.2rem)]">
+            {/* Heading arkası glow */}
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[120%] w-[110%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-[0.06] blur-[60px] sm:opacity-0"
+              style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }}
+            />
+
             <motion.span
               className="mb-0.5 block sm:mb-1.5"
               initial={{ opacity: 0, y: 28 }}
@@ -242,7 +248,6 @@ export function HeroSection() {
               <RotatingWord innerClassName="justify-center lg:justify-start" />
             </motion.span>
 
-            {/* Line 2: Sana Kalanlar */}
             <motion.span
               className="mb-0.5 block sm:mb-1.5"
               initial={{ opacity: 0, y: 28 }}
@@ -264,10 +269,9 @@ export function HeroSection() {
               </span>
             </motion.span>
 
-            {/* Line 3: Tek Yerde */}
             <motion.span
               className="block"
-              style={{ fontSize: "1.06em" }}
+              style={{ fontSize: "1.08em" }}
               initial={{ opacity: 0, y: 28, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.85, delay: 0.38, ease: EASE }}
@@ -292,7 +296,7 @@ export function HeroSection() {
 
           {/* Açıklama */}
           <motion.p
-            className="mb-4 max-w-[320px] text-center text-[0.9rem] font-medium leading-[1.7] text-[var(--text-secondary)] sm:mb-6 sm:max-w-md sm:text-[1.06rem] sm:leading-[1.84] lg:text-left"
+            className="max-w-[300px] text-center text-[0.88rem] font-medium leading-[1.65] text-[var(--text-secondary)] sm:max-w-md sm:text-[1.06rem] sm:leading-[1.84] lg:text-left"
             initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.85, delay: 0.52, ease: EASE }}
@@ -304,7 +308,7 @@ export function HeroSection() {
 
           {/* Feature pills */}
           <motion.div
-            className="mb-5 flex flex-wrap justify-center gap-1.5 sm:mb-7 sm:gap-2 lg:justify-start"
+            className="flex justify-center gap-1.5 sm:mb-7 sm:flex-wrap sm:gap-2 lg:justify-start"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.58, ease: EASE }}
@@ -312,14 +316,14 @@ export function HeroSection() {
             {FEATURE_PILLS.map((pill) => (
               <div
                 key={pill.label}
-                className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
+                className="flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px]"
                 style={{
                   background: t.statsBg,
                   borderColor: t.statsBorder,
                   color: "var(--text-secondary)",
                 }}
               >
-                <pill.Icon size={12} weight="duotone" className="sm:!h-[13px] sm:!w-[13px]" style={{ color: "var(--gold)" }} />
+                <pill.Icon size={11} weight="duotone" className="sm:!h-[13px] sm:!w-[13px]" style={{ color: "var(--gold)" }} />
                 {pill.label}
               </div>
             ))}
@@ -335,7 +339,7 @@ export function HeroSection() {
             <MagneticButton className="flex-1 sm:flex-none sm:w-auto">
               <Link
                 href="/register"
-                className="dn-cta-primary group relative block w-full overflow-hidden rounded-xl py-3 text-center text-[0.88rem] font-semibold tracking-[0.01em] transition-all duration-300 sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
+                className="dn-cta-primary group relative block w-full overflow-hidden rounded-2xl py-3 text-center text-[0.88rem] font-semibold tracking-[0.01em] transition-all duration-300 sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
                 style={{
                   background: t.ctaBtnBg,
                   color: t.ctaBtnTextColor,
@@ -361,7 +365,7 @@ export function HeroSection() {
             <MagneticButton className="flex-1 sm:flex-none sm:w-auto">
               <Link
                 href="/login"
-                className="dn-cta-ghost block w-full rounded-xl border border-[var(--border)] py-3 text-center text-[0.86rem] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:rounded-2xl sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
+                className="dn-cta-ghost block w-full rounded-2xl border border-[var(--border)] py-3 text-center text-[0.85rem] font-medium tracking-[0.01em] text-[var(--text-primary)] backdrop-blur-sm transition-all duration-300 hover:bg-[var(--surface-strong)] sm:px-10 sm:py-4 sm:text-[15px] 2xl:px-12 2xl:py-[1.1rem]"
                 style={{ background: "color-mix(in srgb, var(--bg-card) 92%, white 8%)" }}
               >
                 Giriş Yap
@@ -371,7 +375,7 @@ export function HeroSection() {
 
           {/* Mini stats strip */}
           <motion.div
-            className="mt-4 flex items-center justify-center gap-4 sm:mt-7 sm:gap-5 lg:justify-start"
+            className="flex items-center justify-center gap-4 sm:mt-3 sm:gap-5 lg:justify-start"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.82, ease: EASE }}
@@ -381,8 +385,8 @@ export function HeroSection() {
               { value: "∞", label: "Not" },
               { value: "100%", label: "Ücretsiz" },
             ].map((s, i) => (
-              <div key={s.label} className="flex items-center gap-4 sm:gap-5">
-                {i > 0 && <div className="h-4 w-px sm:h-5" style={{ background: "var(--border)" }} />}
+              <div key={s.label} className="flex items-center gap-3.5 sm:gap-5">
+                {i > 0 && <div className="h-3.5 w-px sm:h-5" style={{ background: "var(--border)" }} />}
                 <div className="flex flex-col">
                   <span
                     className="text-base font-black leading-none tracking-tight sm:text-xl"
@@ -450,7 +454,7 @@ export function HeroSection() {
       {/* Scroll indicator */}
       <motion.div
         aria-hidden="true"
-        className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 sm:bottom-8"
+        className="absolute bottom-4 left-1/2 z-10 hidden -translate-x-1/2 sm:bottom-8 sm:block"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.6 }}
