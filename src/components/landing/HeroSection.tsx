@@ -375,7 +375,8 @@ export function HeroSection() {
 
           {/* Mini stats strip */}
           <motion.div
-            className="flex items-center justify-center gap-4 sm:mt-3 sm:gap-5 lg:justify-start"
+            className="grid w-full grid-cols-3 divide-x divide-[var(--border)] rounded-2xl border border-[var(--border)] px-2 py-5 sm:mt-3 sm:flex sm:w-auto sm:divide-x-0 sm:border-0 sm:px-0 sm:py-0 sm:gap-5 lg:justify-start"
+            style={{ background: "var(--bg-card)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.82, ease: EASE }}
@@ -384,20 +385,17 @@ export function HeroSection() {
               { value: "5", label: "Kategori" },
               { value: "∞", label: "Not" },
               { value: "100%", label: "Ücretsiz" },
-            ].map((s, i) => (
-              <div key={s.label} className="flex items-center gap-3.5 sm:gap-5">
-                {i > 0 && <div className="h-3.5 w-px sm:h-5" style={{ background: "var(--border)" }} />}
-                <div className="flex flex-col">
-                  <span
-                    className="text-base font-black leading-none tracking-tight sm:text-xl"
-                    style={{ color: "var(--gold)" }}
-                  >
-                    {s.value}
-                  </span>
-                  <span className="mt-0.5 text-[10px] font-medium text-[var(--text-muted)] sm:mt-1 sm:text-sm">
-                    {s.label}
-                  </span>
-                </div>
+            ].map((s) => (
+              <div key={s.label} className="flex flex-col items-center gap-1.5 sm:flex-row sm:items-center sm:gap-5">
+                <span
+                  className="text-[1.6rem] font-black leading-none tracking-tight sm:text-xl"
+                  style={{ color: "var(--gold)" }}
+                >
+                  {s.value}
+                </span>
+                <span className="text-xs font-medium text-[var(--text-muted)] sm:text-sm">
+                  {s.label}
+                </span>
               </div>
             ))}
           </motion.div>
