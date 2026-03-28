@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     if (!paginate) {
       const posts = await prisma.post.findMany({
         where,
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }, { id: "desc" }],
         include,
       });
 

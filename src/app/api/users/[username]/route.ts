@@ -50,7 +50,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
     const [rawPosts, rawCollections, followerCount, followingCount, followRow, postCount, avgRatingResult] = await Promise.all([
       prisma.post.findMany({
         where: { userId: user.id, isDeleted: false, isDraft: false },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
         take: postLimit,
         include: { tags: { include: { tag: true } } },
       }),

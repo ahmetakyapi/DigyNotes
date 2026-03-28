@@ -161,16 +161,16 @@ export default function RecentlyViewed() {
   if (dismissed || items.length === 0) return null;
 
   return (
-    <section className="mb-1">
+    <section className="mb-0.5 sm:mb-1">
       {/* Header */}
-      <div className="mb-1.5 flex items-center gap-2">
+      <div className="mb-1 flex items-center gap-1.5 sm:mb-1.5 sm:gap-2">
         <ClockCounterClockwiseIcon
-          size={13}
+          size={12}
           weight="bold"
           className="flex-shrink-0 text-[var(--text-muted)]"
         />
-        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
-          Kaldığın yerden devam et
+        <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] sm:text-[11px]">
+          Son görüntülenenler
         </span>
 
         <div className="ml-auto flex items-center gap-1">
@@ -217,7 +217,7 @@ export default function RecentlyViewed() {
 
         <div
           ref={scrollRef}
-          className="scrollbar-hide -mx-1 flex cursor-grab gap-3 overflow-x-auto px-1 pb-1"
+          className="scrollbar-hide -mx-1 flex cursor-grab gap-1.5 overflow-x-auto px-1 pb-1 sm:gap-3"
           style={{ touchAction: "pan-x" }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -227,9 +227,9 @@ export default function RecentlyViewed() {
         >
           {items.map((item) => (
             <Link key={item.id} href={`/posts/${item.id}`} className="group flex-shrink-0">
-              <div className="hover:border-[var(--gold)]/25 w-[calc(25%-6px)] min-w-[180px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgba(16,185,129,0.06)]">
+              <div className="hover:border-[var(--gold)]/25 min-w-[160px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgba(16,185,129,0.06)] sm:min-w-[180px]">
                 {/* Poster */}
-                <div className="relative h-16 w-full overflow-hidden sm:h-20">
+                <div className="relative h-14 w-full overflow-hidden sm:h-20">
                   <ResilientImage
                     src={getPostImageSrc(item.image, item.category)}
                     alt={item.title}
@@ -251,11 +251,11 @@ export default function RecentlyViewed() {
                 </div>
 
                 {/* Bilgi */}
-                <div className="px-2 py-1.5">
-                  <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
+                <div className="px-1.5 py-1 sm:px-2 sm:py-1.5">
+                  <p className="truncate text-[11px] font-semibold leading-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)] sm:text-xs">
                     {item.title}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">
+                  <p className="mt-0.5 text-[9px] text-[var(--text-muted)] sm:text-[10px]">
                     {timeAgo(item.viewedAt)}
                   </p>
                 </div>

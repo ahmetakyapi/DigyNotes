@@ -109,7 +109,7 @@ export function FeaturesSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative mx-auto w-full max-w-5xl px-3 pb-14 pt-2 sm:px-6 sm:pb-24 sm:pt-4"
+      className="relative mx-auto w-full max-w-5xl px-4 pb-14 pt-2 sm:px-6 sm:pb-24 sm:pt-4"
     >
       {/* Section decorative line — animated width */}
       <motion.div
@@ -183,7 +183,7 @@ export function FeaturesSection() {
             key={f.title}
             className={
               i === FEATURES.length - 1
-                ? "col-span-2 mx-auto h-full w-full max-w-[calc(50%-6px)] sm:col-span-1 sm:mx-0 sm:max-w-none lg:col-span-1"
+                ? "col-span-2 h-full sm:col-span-1 lg:col-span-1"
                 : "h-full"
             }
           >
@@ -358,7 +358,7 @@ function TimelineStep({
         {step.title}
       </motion.h3>
       <motion.p
-        className="mx-auto max-w-[220px] text-[13px] leading-relaxed text-[var(--text-secondary)] sm:max-w-[220px] sm:text-[13px]"
+        className="mx-auto max-w-[260px] text-[13px] leading-relaxed text-[var(--text-secondary)] sm:max-w-[220px] sm:text-[13px]"
         initial={{ opacity: 0, y: 10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.4 + index * 0.2, duration: 0.5 }}
@@ -382,7 +382,7 @@ export function HowItWorksSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative mx-auto w-full max-w-4xl px-3 pb-16 pt-6 sm:px-6 sm:pb-28 sm:pt-12"
+      className="relative mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-6 sm:pb-28 sm:pt-12"
     >
       {/* Section divider glow — animated */}
       <motion.div
@@ -442,7 +442,7 @@ export function HowItWorksSection() {
       </motion.div>
 
       {/* Timeline grid */}
-      <div className="relative grid gap-8 sm:grid-cols-3 sm:gap-10">
+      <div className="relative grid gap-10 sm:grid-cols-3 sm:gap-10">
         {STEPS.map((step, i) => (
           <TimelineStep key={step.step} step={step} index={i} total={STEPS.length} />
         ))}
@@ -476,7 +476,7 @@ export function BottomCtaSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex flex-col items-center overflow-hidden px-3 pb-20 pt-4 text-center sm:px-4 sm:pb-24 sm:pt-8"
+      className="relative flex flex-col items-center overflow-hidden px-4 pb-20 pt-6 text-center sm:px-4 sm:pb-24 sm:pt-8"
     >
       {/* Top separator line — animated */}
       <motion.div

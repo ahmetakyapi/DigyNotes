@@ -59,7 +59,7 @@ export function SortFilterBar({
 }: SortFilterBarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const selectClass =
-    "h-10 min-w-[112px] rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#10b981]/30 focus:border-[#10b981]/40 cursor-pointer";
+    "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#10b981]/30 focus:border-[#10b981]/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
   const inputClass =
     "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#10b981]/30 focus:border-[#10b981]/40";
   const activeFilterCount = useMemo(() => {
@@ -105,9 +105,9 @@ export function SortFilterBar({
   return (
     <>
       <div className="w-full sm:w-auto">
-        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:justify-normal">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           {filteredCount < totalCount && (
-            <span className="mr-1 text-[11px] text-[var(--text-muted)]">
+            <span className="text-[10px] tabular-nums text-[var(--text-muted)] sm:text-[11px]">
               {filteredCount}/{totalCount}
             </span>
           )}
@@ -123,10 +123,11 @@ export function SortFilterBar({
             ))}
           </select>
           {inlineContent}
+          <div className="flex-1 sm:hidden" />
           <button
             type="button"
             onClick={() => setShowAdvanced(true)}
-            className={`rounded-xl border px-3 py-2 text-xs font-semibold transition-colors ${
+            className={`h-9 cursor-pointer rounded-xl border px-2.5 text-xs font-semibold transition-colors sm:h-10 sm:px-3 ${
               showAdvanced || activeFilterCount > 0
                 ? "bg-[#10b981]/8 border-[#10b981]/35 text-[var(--gold)]"
                 : "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"

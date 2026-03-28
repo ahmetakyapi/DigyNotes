@@ -9,6 +9,9 @@ interface ShareButtonProps {
   url?: string;
   className?: string;
   size?: "sm" | "md";
+  /** When provided, renders as a rectangular button with icon + label instead of a square icon button */
+  label?: string;
+  style?: React.CSSProperties;
 }
 
 /**
@@ -21,6 +24,8 @@ export default function ShareButton({
   url,
   className = "",
   size = "md",
+  label,
+  style,
 }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
@@ -53,7 +58,26 @@ export default function ShareButton({
     }
   }, [title, text, shareUrl]);
 
-  const iconSize = size === "sm" ? 14 : 16;
+  const iconSize = label ? 12 : size === "sm" ? 14 : 16;
+
+  if (label) {
+    return (
+      <button
+        onClick={handleShare}
+        title="Paylaş"
+        className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs backdrop-blur-md transition-all duration-200 active:scale-95 ${className}`}
+        style={style}
+      >
+        {copied ? (
+          <CheckIcon size={iconSize} weight="bold" className="text-[#48bb78]" />
+        ) : (
+          <ShareNetworkIcon size={iconSize} weight="regular" />
+        )}
+        {copied ? "Kopyalandı" : label}
+      </button>
+    );
+  }
+
   const btnClass = size === "sm" ? "h-8 w-8 rounded-lg" : "h-9 w-9 rounded-xl sm:h-10 sm:w-10";
 
   return (
@@ -61,6 +85,7 @@ export default function ShareButton({
       onClick={handleShare}
       title="Paylaş"
       className={`hover:border-[var(--gold)]/30 flex items-center justify-center border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-all duration-200 hover:text-[var(--gold)] active:scale-95 ${btnClass} ${className}`}
+      style={style}
     >
       {copied ? (
         <CheckIcon size={iconSize} weight="bold" className="text-[#48bb78]" />

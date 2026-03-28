@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { BookmarkSimpleIcon, MagnifyingGlassIcon, SparkleIcon } from "@phosphor-icons/react";
+import { BookmarkSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
   getCategoryLabel,
@@ -227,200 +227,135 @@ export default function WatchlistPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <header
-        className="mb-6 rounded-[32px] border border-[var(--border)] p-6 shadow-[var(--shadow-soft)] sm:p-7"
-        style={{
-          background:
-            "radial-gradient(circle at top left, rgba(16,185,129,0.1), transparent 30%), var(--bg-card)",
-        }}
-      >
-        <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
-          İstek Listesi
-        </span>
-        <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
-          Sonra Dönmek İstediklerini Kaydet
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
-          Film, dizi, kitap, oyun ve gezi planlarını tek yerde topla. Kategori seçip ara, sonra
-          gerektiğinde kolayca geri dön.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-            {items.length} kayıt
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-            {getCategoryLabel(activeCategory)}: {countsByCategory[activeCategory] ?? 0}
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-            {populatedCategoryCount} dolu kategori
-          </span>
+      {/* ── Header ── */}
+      <header className="mb-6">
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+              İstek Listesi
+            </h1>
+            {!loading && (
+              <span className="text-sm text-[var(--text-muted)]">
+                {items.length} kayıt · {populatedCategoryCount} kategori
+              </span>
+            )}
+          </div>
         </div>
+        <div className="mt-3 h-px w-full bg-[var(--border)]" />
       </header>
 
-      <section className="rounded-[32px] border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-              İlk aksiyon
-            </p>
-            <h2 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">
-              Kategori seç, ara ve ekle
-            </h2>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              Önce kategoriyi belirle, sonra arama sonucunu tek dokunuşla istek listesine ekle.
-            </p>
-          </div>
-          <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1.5 text-xs text-[var(--text-secondary)]">
-            <SparkleIcon size={14} weight="duotone" className="text-[var(--gold)]" />
-            Şu an: {getCategoryLabel(activeCategory)}
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
-            1. Kategori
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
-            2. Ara
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
-            3. Listeye ekle
-          </span>
-        </div>
-
-        <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+      {/* ── Kategori seçimi + Arama ── */}
+      <section className="mb-6">
+        <div className="mb-4 flex gap-2 overflow-x-auto">
           {WATCHLIST_CATEGORIES.map((category) => (
             <button
               key={category}
               type="button"
               onClick={() => setActiveCategory(category)}
-              className={`min-w-[144px] rounded-2xl border px-4 py-3 text-left transition-colors ${
+              className={`flex shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors duration-200 ${
                 activeCategory === category
-                  ? "border-[#10b981]/28 bg-[#10b981]/10 text-[var(--text-primary)]"
-                  : "hover:border-[#10b981]/18 border-[var(--border)] bg-[var(--bg-base)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  ? "border-[#10b981]/30 bg-[#10b981]/10 text-[var(--text-primary)]"
+                  : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#10b981]/20 hover:text-[var(--text-primary)]"
               }`}
             >
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold">{getCategoryLabel(category)}</span>
-                <span className="text-xs text-[var(--text-faint)]">
-                  {countsByCategory[category] ?? 0}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-[var(--text-faint)]">{getPlannedLabel(category)}</p>
+              {getCategoryLabel(category)}
+              <span className="text-[var(--text-faint)]">{countsByCategory[category] ?? 0}</span>
             </button>
           ))}
         </div>
 
-        <div className="mt-5 rounded-[28px] border border-[var(--border)] bg-[var(--bg-base)] p-4 sm:p-5">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
           <MediaSearch
             category={activeCategory}
             lockedTab={getSearchTabForCategory(activeCategory) ?? "film"}
             onSelect={setSelectedResult}
             onAction={addToWatchlist}
-            actionLabel={pendingExternalId ? "Ekleniyor..." : "İstek listesine ekle"}
+            actionLabel={pendingExternalId ? "Ekleniyor..." : "Listeye ekle"}
           />
         </div>
 
         {selectedResult && (
-          <div className="mt-4 rounded-[28px] border border-[var(--border)] bg-[var(--bg-raised)] p-4 sm:p-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {selectedResult.image ? (
-                <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-2xl border border-[var(--border)]">
-                  <ResilientImage
-                    src={selectedResult.image}
-                    alt={selectedResult.title}
-                    fill
-                    sizes="96px"
-                    className="object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-24 w-20 shrink-0 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] text-xl font-semibold text-[var(--text-faint)]">
-                  {selectedResult.title.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-[#10b981]/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
-                    {getCategoryLabel(activeCategory)}
-                  </span>
-                  <StatusBadge status={getPlannedLabel(activeCategory)} />
-                </div>
-                <h3 className="mt-3 line-clamp-2 text-lg font-semibold text-[var(--text-primary)]">
-                  {selectedResult.title}
-                </h3>
-                {(selectedResult.creator || selectedResult.years) && (
-                  <p className="mt-1 text-sm text-[var(--text-muted)]">
-                    {[selectedResult.creator, selectedResult.years].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-                {selectedResult.excerpt && (
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--text-secondary)]">
-                    {selectedResult.excerpt}
-                  </p>
-                )}
+          <div className="mt-3 flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+            {selectedResult.image ? (
+              <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
+                <ResilientImage
+                  src={selectedResult.image}
+                  alt={selectedResult.title}
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
               </div>
-              <button
-                type="button"
-                onClick={() => addToWatchlist(selectedResult)}
-                disabled={pendingExternalId !== null || isSelectedResultSaved}
-                className="rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:opacity-50"
-              >
-                {isSelectedResultSaved
-                  ? "İstek listesinde"
-                  : pendingExternalId !== null
-                    ? "Ekleniyor..."
-                    : "İstek listesine ekle"}
-              </button>
+            ) : (
+              <div className="flex h-20 w-14 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--bg-base)] text-lg font-semibold text-[var(--text-faint)]">
+                {selectedResult.title.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)]">
+                {selectedResult.title}
+              </h3>
+              {(selectedResult.creator || selectedResult.years) && (
+                <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                  {[selectedResult.creator, selectedResult.years].filter(Boolean).join(" · ")}
+                </p>
+              )}
+              {selectedResult.excerpt && (
+                <p className="mt-1 line-clamp-1 text-xs text-[var(--text-secondary)]">
+                  {selectedResult.excerpt}
+                </p>
+              )}
             </div>
+            <button
+              type="button"
+              onClick={() => addToWatchlist(selectedResult)}
+              disabled={pendingExternalId !== null || isSelectedResultSaved}
+              className="shrink-0 rounded-lg bg-[#10b981] px-4 py-2 text-xs font-medium text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95 disabled:opacity-50"
+            >
+              {isSelectedResultSaved
+                ? "Listede"
+                : pendingExternalId !== null
+                  ? "Ekleniyor..."
+                  : "Ekle"}
+            </button>
           </div>
         )}
       </section>
 
-      <section className="mt-8">
-        <div className="mb-4 rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)]">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                {getCategoryLabel(activeCategory)} Listesi
-              </h2>
-              <p className="mt-1 text-sm text-[var(--text-faint)]">
-                {filteredItems.length}/{countsByCategory[activeCategory] ?? 0} içerik
-              </p>
-            </div>
-            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-              <label className="relative block w-full sm:min-w-[260px]">
-                <MagnifyingGlassIcon
-                  size={16}
-                  weight="bold"
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-faint)]"
-                />
-                <input
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Liste içinde ara..."
-                  className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] pl-10 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-sm"
-                />
-              </label>
-              <select
-                value={sortBy}
-                onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-                className="h-11 rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-sm"
-              >
-                <option value="recent">En yeni eklenen</option>
-                <option value="title">Başlığa göre</option>
-                <option value="rating">Puana göre</option>
-              </select>
-              {searchQuery.trim() && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="h-11 rounded-xl border border-[var(--border)] px-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
-                >
-                  Temizle
-                </button>
-              )}
-            </div>
+      {/* ── Liste ── */}
+      <section>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+              {getCategoryLabel(activeCategory)} Listesi
+            </h2>
+            <span className="text-xs text-[var(--text-muted)]">
+              {filteredItems.length}/{countsByCategory[activeCategory] ?? 0}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="relative block">
+              <MagnifyingGlassIcon
+                size={14}
+                weight="bold"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+              />
+              <input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Ara..."
+                className="h-9 w-44 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-xs"
+              />
+            </label>
+            <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
+              className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-[#10b981]/40 sm:text-xs"
+            >
+              <option value="recent">Yeni</option>
+              <option value="title">A-Z</option>
+              <option value="rating">Puan</option>
+            </select>
           </div>
         </div>
 
