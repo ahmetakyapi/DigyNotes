@@ -301,7 +301,7 @@ export default function NotesPageClient({
         </div>
       )}
 
-      <div className="mx-auto max-w-5xl px-3 pt-3 sm:px-6 sm:pt-4">
+      <div className="mx-auto max-w-5xl px-3 pt-2 sm:px-6 sm:pt-4">
         <RecentlyViewed />
       </div>
 

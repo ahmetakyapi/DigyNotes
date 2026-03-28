@@ -282,7 +282,7 @@ function CoverBackground({ cat }: { readonly cat: Category }) {
             {titleLines.map((line) => (
               <div
                 key={line}
-                className="text-[1.5rem] font-black leading-[0.94] tracking-[-0.045em] text-white sm:text-[3.2rem]"
+                className="text-[1.6rem] font-black leading-[0.94] tracking-[-0.045em] text-white sm:text-[3.2rem]"
               >
                 {line}
               </div>
@@ -507,7 +507,7 @@ export function CategoryShowcase() {
   return (
     <section
       ref={sectionRef}
-      className="relative mx-auto w-full max-w-4xl px-3 pb-16 pt-6 sm:px-6 sm:pb-24 sm:pt-12"
+      className="relative mx-auto w-full max-w-4xl px-4 pb-16 pt-6 sm:px-6 sm:pb-24 sm:pt-12"
     >
       <motion.div
         className="absolute left-1/2 top-0 h-px w-0 -translate-x-1/2"

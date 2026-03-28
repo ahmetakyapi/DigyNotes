@@ -53,12 +53,12 @@ export function PostsTabSwitcher({
 
   return (
     <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-      <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-1 shadow-[var(--shadow-soft)]">
+      <div className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 shadow-[var(--shadow-soft)] sm:gap-1 sm:p-1">
         {visibleTabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className={`shrink-0 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
+            className={`shrink-0 cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:py-1.5 sm:text-sm ${
               activeTab === tab.key
                 ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -123,11 +123,11 @@ export function PostsToolbar({
         availableStatuses={availableStatuses}
         defaultValue={defaultSortFilter}
         inlineContent={
-          <div className="inline-flex items-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-1 shadow-[var(--shadow-soft)]">
+          <div className="inline-flex h-9 items-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 sm:h-10 sm:p-1">
             <button
               onClick={() => onViewModeChange("grid")}
               aria-label="Grid görünüm"
-              className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+              className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "grid"
                   ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -138,7 +138,7 @@ export function PostsToolbar({
             <button
               onClick={() => onViewModeChange("list")}
               aria-label="Liste görünümü"
-              className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+              className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "list"
                   ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -170,7 +170,7 @@ export function CategoryPills({
     }`;
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2">
+    <div className="mb-4 hidden flex-wrap items-center gap-2 sm:flex">
       <button
         type="button"
         onClick={() => onCategoryChange("")}

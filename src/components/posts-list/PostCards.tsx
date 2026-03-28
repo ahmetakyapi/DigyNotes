@@ -7,6 +7,7 @@ import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
 import { ResilientImage } from "@/components/ResilientImage";
+import { PushPin } from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -148,8 +149,8 @@ export const PostGridCard = React.memo(function PostGridCard({
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
-                <span className="flex-shrink-0 rounded-sm border border-[var(--gold)]/25 bg-[var(--gold)]/8 px-1.5 py-0.5 text-[9px] font-bold text-[var(--gold)]">
-                  📌 Sabit
+                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-[#10b981]/25 bg-[#10b981]/8 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981]">
+                  <PushPin size={9} weight="fill" /> Sabit
                 </span>
               )}
               {post.isDraft && (

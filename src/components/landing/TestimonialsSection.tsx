@@ -58,7 +58,7 @@ export function AdvantagesSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative mx-auto w-full max-w-5xl px-3 pb-16 pt-6 sm:px-6 sm:pb-24 sm:pt-12"
+      className="relative mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6 sm:pb-24 sm:pt-12"
     >
       {/* Section divider */}
       <motion.div

@@ -127,27 +127,40 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       {/* ── Header ── */}
-      <div className="mb-6 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgba(16,185,129,0.12),rgba(12,18,31,0.94),rgba(16,185,129,0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors hover:text-[#10b981]">
+      <div className="mb-6">
+        <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+          <Link href="/notes" className="transition-colors duration-200 hover:text-[#10b981]">
             Notlar
           </Link>
-          <span className="opacity-40">›</span>
-          <span className="font-medium text-[var(--text-secondary)]">{categoryLabel}</span>
+          <span className="opacity-30">›</span>
+          <span className="text-[var(--text-secondary)]">{categoryLabel}</span>
         </nav>
 
-        <div>
-          <h1 className="mb-2 text-2xl font-bold text-[var(--text-primary)]">{categoryLabel}</h1>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#10b981] to-transparent" />
-            <span className="text-xs text-[var(--text-muted)]">{posts.length} not</span>
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+              {categoryLabel}
+            </h1>
+            <span className="text-sm text-[var(--text-muted)]">
+              {posts.length} not
+            </span>
             {travelCategory && (
-              <span className="text-xs text-[var(--text-muted)]">
-                · {mappedPosts.length} harita pini
+              <span className="text-sm text-[var(--text-muted)]">
+                · {mappedPosts.length} pin
               </span>
             )}
           </div>
+
+          {posts.filter(p => p.rating).length > 0 && (
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-sm font-semibold text-[var(--text-primary)]">
+                {(posts.reduce((sum, p) => sum + (p.rating || 0), 0) / posts.filter(p => p.rating).length).toFixed(1)}
+              </span>
+              <span className="text-xs text-[var(--text-muted)]">ort.</span>
+            </div>
+          )}
         </div>
+        <div className="mt-3 h-px w-full bg-[var(--border)]" />
       </div>
 
       {/* ── Arama + Sıralama satırı ── */}

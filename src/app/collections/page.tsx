@@ -125,115 +125,77 @@ export default function CollectionsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <section
-        className="mb-6 rounded-[32px] border border-[var(--border)] p-5 shadow-[var(--shadow-soft)] sm:p-6"
-        style={{
-          background:
-            "radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 32%), var(--bg-card)",
-        }}
-      >
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+      {/* ── Header ── */}
+      <header className="mb-6">
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
               Koleksiyonlar
-            </span>
-            <h1 className="mt-3 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
-              Notlarını koleksiyonlarda düzenle
             </h1>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-              Buradaki ana iş koleksiyon açmak ya da mevcut seçkine geri dönmek. Uzun açıklamalar
-              aşağıda, aksiyon alanı ise hemen burada.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-                {collections.length} koleksiyon
+            {!loading && (
+              <span className="text-sm text-[var(--text-muted)]">
+                {collections.length} koleksiyon · {totalPostCount} not
               </span>
-              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-                {totalPostCount} not
-              </span>
-              <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
-                {activeCollectionCount} aktif seçki
-              </span>
-            </div>
+            )}
           </div>
           <Link
             href="/notes"
-            className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
+            className="text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
           >
             Notlarıma dön
           </Link>
         </div>
-      </section>
+        <div className="mt-3 h-px w-full bg-[var(--border)]" />
+      </header>
 
-      <section className="mb-8 rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-              Yeni koleksiyon oluştur
-            </h2>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              Önce başlık ve kısa açıklamayı ver. Not ekleme işi sonra detay sayfasında devam eder.
-            </p>
+      {/* ── Yeni koleksiyon formu ── */}
+      <form
+        onSubmit={handleSubmit}
+        className="mb-6 grid items-end gap-3 sm:grid-cols-[1fr_1.4fr_auto]"
+      >
+        <label className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-[var(--text-secondary)]">Başlık</span>
+            <span className="text-[11px] text-[var(--text-faint)]">{title.length}/80</span>
           </div>
-          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 inline-flex w-fit rounded-full border px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
-            İlk aksiyon burada
-          </span>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="grid gap-4 lg:grid-cols-[1.1fr_1.4fr_auto] lg:items-end"
+          <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            maxLength={80}
+            placeholder="Örn. 2024'te izlediklerim"
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-sm"
+          />
+        </label>
+        <label className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-[var(--text-secondary)]">Açıklama</span>
+            <span className="text-[11px] text-[var(--text-faint)]">{description.length}/400</span>
+          </div>
+          <input
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            maxLength={400}
+            placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-sm"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={isCreating || loading || title.trim() === ""}
+          className="h-10 rounded-lg bg-[#10b981] px-5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <label className="space-y-2">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-medium text-[var(--text-secondary)]">Başlık</span>
-              <span className="text-[11px] text-[var(--text-faint)]">{title.length}/80</span>
-            </div>
-            <input
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              maxLength={80}
-              placeholder="Örn. 2024'te izlediklerim"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:text-sm"
-            />
-          </label>
-          <label className="space-y-2">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-medium text-[var(--text-secondary)]">Açıklama</span>
-              <span className="text-[11px] text-[var(--text-faint)]">{description.length}/400</span>
-            </div>
-            <input
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              maxLength={400}
-              placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:text-sm"
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={isCreating || loading || title.trim() === ""}
-            className="h-11 rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isCreating ? "Oluşturuluyor..." : "Koleksiyon oluştur"}
-          </button>
-        </form>
-      </section>
+          {isCreating ? "Oluşturuluyor..." : "Oluştur"}
+        </button>
+      </form>
 
+      {/* ── Arama ── */}
       {!loading && collections.length > 0 && (
-        <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-              Koleksiyonlarında ara
-            </h2>
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              Başlık, açıklama veya not adına göre filtrele.
-            </p>
-          </div>
+        <div className="mb-6">
           <input
             value={collectionQuery}
             onChange={(event) => setCollectionQuery(event.target.value)}
-            placeholder="Koleksiyon ara..."
-            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/50 sm:max-w-sm sm:text-sm"
+            placeholder="Koleksiyonlarda ara..."
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:max-w-sm sm:text-sm"
           />
         </div>
       )}

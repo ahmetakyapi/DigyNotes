@@ -229,9 +229,9 @@ export function PostsList({
   /* ── Render ── */
 
   return (
-    <div className="mx-auto max-w-5xl px-3 pb-4 pt-2 sm:px-6 sm:pb-5 sm:pt-3">
-      {/* Header */}
-      <div className="mb-3.5 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mx-auto max-w-5xl px-3 pb-4 pt-1 sm:px-6 sm:pb-5 sm:pt-3">
+      {/* Header — mobile: stacked compact, desktop: side by side */}
+      <div className="mb-2 space-y-2 sm:mb-4 sm:flex sm:items-end sm:justify-between sm:space-y-0">
         <PostsTabSwitcher
           activeTab={activeTab}
           totalNotes={stats.total}

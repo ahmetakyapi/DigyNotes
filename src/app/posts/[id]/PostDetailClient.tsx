@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { HeartIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArchiveIcon, HeartIcon, PencilSimpleIcon, PushPinIcon, TrashIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -107,6 +107,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [archived, setArchived] = useState(false);
   const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
   const [imgOrientation, setImgOrientation] = useState<"portrait" | "landscape" | null>(null);
   const [isSpoilerRevealed, setIsSpoilerRevealed] = useState(false);
@@ -144,6 +146,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         setPost(data);
+        if (data?.isPinned) setPinned(true);
+        if (data?.isArchived) setArchived(true);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -181,8 +185,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   /* Fetch comments */
   useEffect(() => {
     fetch(`/api/posts/${params.id}/comments`)
-      .then((r) => (r.ok ? r.json() : []))
-      .then(setComments)
+      .then((r) => (r.ok ? r.json() : { items: [] }))
+      .then((data) => setComments(Array.isArray(data) ? data : data.items ?? []))
       .catch(() => {});
   }, [params.id]);
 
@@ -496,67 +500,58 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         id={`comment-${comment.id}`}
         className={
           depth > 0
-            ? "ml-4 scroll-mt-24 border-l border-[var(--surface-strong-border)] pl-4 sm:ml-6 sm:pl-5"
+            ? "ml-5 scroll-mt-24 border-l-2 border-[var(--surface-strong-border)] pl-5 sm:ml-8 sm:pl-6"
             : "scroll-mt-24"
         }
       >
         <div
-          className={`rounded-2xl border bg-gradient-to-br from-[var(--surface-strong)] to-[var(--surface-strong-hover)] p-3 shadow-[var(--shadow-soft)] transition-colors sm:p-4 ${
+          className={`rounded-xl p-4 transition-colors ${
             isHighlighted
-              ? "border-[#10b981]/45 shadow-[0_0_0_1px_rgba(16,185,129,0.18)]"
-              : "border-[var(--surface-strong-border)]"
+              ? "bg-[#10b981]/5 ring-1 ring-[#10b981]/30"
+              : "hover:bg-[var(--surface-strong)]/50"
           }`}
         >
+          {/* Üst satır: Avatar + isim + tarih + aksiyonlar */}
           <div className="mb-2.5 flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <div className="bg-[#10b981]/12 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#10b981]/20 text-[11px] font-bold text-[var(--gold)]">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#10b981]/12 text-[11px] font-bold text-[#10b981] ring-1 ring-[#10b981]/20">
                 {comment.user.name?.charAt(0)?.toUpperCase() ?? "?"}
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[13px] font-semibold text-[var(--text-contrast)] sm:text-xs">
+                  <span className="text-[13px] font-semibold text-[var(--text-contrast)]">
                     {comment.user.name}
                   </span>
-                  {comment.user.username && (
-                    <span className="text-[10px] text-[var(--text-faint)]">
-                      @{comment.user.username}
-                    </span>
-                  )}
-                  {depth > 0 && (
-                    <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] text-[var(--text-faint)]">
-                      Yanıt
-                    </span>
-                  )}
                   {isPostAuthorComment && (
-                    <span className="bg-[#10b981]/8 rounded-full border border-[#10b981]/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
-                      Not sahibi
+                    <span className="rounded bg-[#10b981]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981] ring-1 ring-[#10b981]/20">
+                      Yazar
                     </span>
                   )}
                   {isOwn && !isPostAuthorComment && (
-                    <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                    <span className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--text-faint)] ring-1 ring-[var(--surface-strong-border)]">
                       Sen
                     </span>
                   )}
-                  {parentComment?.user && (
-                    <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[9px] text-[var(--text-faint)]">
-                      Yanıt:{" "}
-                      {parentComment.user.username
-                        ? `@${parentComment.user.username}`
-                        : parentComment.user.name}
-                    </span>
-                  )}
+                  <span className="text-[11px] text-[var(--text-faint)]">
+                    · {formatDate(comment.createdAt)}
+                  </span>
                 </div>
-                <span className="mt-1 inline-flex rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2 py-0.5 text-[10px] text-[var(--text-faint)]">
-                  {formatDate(comment.createdAt)}
-                </span>
+                {parentComment?.user && (
+                  <span className="text-[10px] text-[var(--text-faint)]">
+                    ↳{" "}
+                    {parentComment.user.username
+                      ? `@${parentComment.user.username}`
+                      : parentComment.user.name}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               {canCommentOnPost && (
                 <button
                   type="button"
                   onClick={() => toggleReply(comment.id)}
-                  className="hover:bg-[#10b981]/8 rounded-md border border-transparent px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:border-[#10b981]/20 hover:text-[var(--gold)]"
+                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[var(--surface-strong)] hover:text-[#10b981]"
                 >
                   {isReplying ? "Vazgeç" : "Yanıtla"}
                 </button>
@@ -566,47 +561,64 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   type="button"
                   onClick={() => deleteComment(comment.id)}
                   disabled={deletingCommentId === comment.id}
-                  className="hover:bg-[#e53e3e]/8 rounded-md border border-transparent px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:border-[#e53e3e]/20 hover:text-[#e53e3e] disabled:opacity-40"
+                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[#e53e3e]/8 hover:text-[#e53e3e] disabled:opacity-40"
                 >
-                  {deletingCommentId === comment.id ? "Siliniyor..." : "Sil"}
+                  {deletingCommentId === comment.id ? "..." : "Sil"}
                 </button>
               )}
             </div>
           </div>
-          <p className="whitespace-pre-wrap text-[13px] leading-6 text-[var(--text-dim)] sm:text-sm sm:leading-relaxed">
+
+          {/* Yorum içeriği */}
+          <p className="whitespace-pre-wrap pl-[42px] text-[13px] leading-relaxed text-[var(--text-dim)] sm:text-sm">
             {comment.content}
           </p>
 
+          {/* Inline yanıt alanı */}
           {isReplying && (
-            <div className="bg-[var(--bg-card)]/50 mt-3 rounded-xl border border-[var(--surface-strong-border)] p-3">
-              <textarea
-                ref={replyInputRef}
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder="Yanıtınızı yazın..."
-                rows={3}
-                maxLength={1000}
-                className="bg-[var(--bg-card)]/70 min-h-[88px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-[13px]"
-              />
-              <div className="mt-3 flex items-center justify-between gap-3">
-                <span className="text-[10px] text-[var(--text-faint)]">
-                  {replyText.length}/1000 karakter
-                </span>
-                <button
-                  type="button"
-                  onClick={() => submitComment(comment.id)}
-                  disabled={isSubmittingComment || !replyText.trim()}
-                  className="rounded-lg bg-gradient-to-r from-[#10b981] to-[#059669] px-3 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(16,185,129,0.3)] transition-all duration-200 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {isSubmittingComment ? "Gönderiliyor..." : "Yanıt Gönder"}
-                </button>
+            <div className="mt-3 pl-[42px]">
+              <div className="flex gap-2.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#10b981]/10 text-[9px] font-bold text-[#10b981]">
+                  {session?.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
+                </div>
+                <div className="flex-1">
+                  <textarea
+                    ref={replyInputRef}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Yanıtını yaz..."
+                    rows={2}
+                    maxLength={1000}
+                    className="w-full resize-none rounded-lg border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/20 sm:text-[13px]"
+                  />
+                  <div className="mt-2 flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReplyingToId(null);
+                        setReplyText("");
+                      }}
+                      className="rounded-md px-3 py-1 text-[11px] text-[var(--text-faint)] transition-colors hover:text-[var(--text-dim)]"
+                    >
+                      İptal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => submitComment(comment.id)}
+                      disabled={isSubmittingComment || !replyText.trim()}
+                      className="rounded-lg bg-[#10b981] px-3 py-1.5 text-[11px] font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-[#34d399] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      {isSubmittingComment ? "..." : "Yanıtla"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {hasReplies && (
-          <div className="mt-3 space-y-3">
+          <div className="mt-1 space-y-1">
             {comment.replies.map((reply) => renderCommentNode(reply, depth + 1))}
           </div>
         )}
@@ -680,82 +692,116 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           />
 
           {/* Top controls */}
-          <div className="absolute left-0 right-0 top-0 flex items-center justify-end gap-2 px-4 pt-4 sm:px-5">
+          <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4 pt-4 sm:px-5">
             {isOwnPost && (
               <>
-                <ShareButton
-                  title={post.title}
-                  text={`${post.title} — DigyNotes`}
-                  size="sm"
-                  className="border-[var(--media-control-border)] bg-[var(--media-control-bg)] text-[var(--media-control-text)] backdrop-blur-md hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)]"
-                />
-                <button
-                  onClick={async () => {
-                    const action = post.isPinned ? "unpin" : "pin";
-                    const res = await fetch(`/api/posts/${post.id}/actions`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ action }),
-                    });
-                    if (res.ok) {
-                      post.isPinned = !post.isPinned;
-                      toast.success(post.isPinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
+                {/* Sol grup: Sabitle + Arşivle */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={async () => {
+                      const action = pinned ? "unpin" : "pin";
+                      const res = await fetch(`/api/posts/${post.id}/actions`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action }),
+                      });
+                      if (res.ok) {
+                        setPinned(!pinned);
+                        toast.success(!pinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
+                      }
+                    }}
+                    className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                      pinned
+                        ? "border-[#059669] bg-[#059669] text-white shadow-[0_2px_10px_rgba(5,150,105,0.3)]"
+                        : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    }`}
+                    style={
+                      pinned
+                        ? undefined
+                        : {
+                            borderColor: "var(--media-control-border)",
+                            background: "var(--media-control-bg)",
+                            color: "var(--media-control-text)",
+                          }
                     }
-                  }}
-                  className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
-                  style={{
-                    borderColor: "var(--media-control-border)",
-                    background: "var(--media-control-bg)",
-                    color: "var(--media-control-text)",
-                  }}
-                >
-                  {post.isPinned ? "📌 Sabit" : "📌 Sabitle"}
-                </button>
-                <button
-                  onClick={async () => {
-                    const action = post.isArchived ? "unarchive" : "archive";
-                    const res = await fetch(`/api/posts/${post.id}/actions`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ action }),
-                    });
-                    if (res.ok) {
-                      post.isArchived = !post.isArchived;
-                      toast.success(post.isArchived ? "Arşivlendi" : "Arşivden çıkarıldı");
+                  >
+                    <PushPinIcon
+                      size={12}
+                      weight={pinned ? "fill" : "regular"}
+                      className={`transition-transform duration-200 ${pinned ? "rotate-0" : "-rotate-45"}`}
+                    />
+                    {pinned ? "Sabitlendi" : "Sabitle"}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const action = archived ? "unarchive" : "archive";
+                      const res = await fetch(`/api/posts/${post.id}/actions`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action }),
+                      });
+                      if (res.ok) {
+                        setArchived(!archived);
+                        toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
+                      }
+                    }}
+                    className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                      archived
+                        ? "border-[#f59e0b]/50 bg-[#f59e0b]/15 text-[#f59e0b]"
+                        : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    }`}
+                    style={
+                      archived
+                        ? undefined
+                        : {
+                            borderColor: "var(--media-control-border)",
+                            background: "var(--media-control-bg)",
+                            color: "var(--media-control-text)",
+                          }
                     }
-                  }}
-                  className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
-                  style={{
-                    borderColor: "var(--media-control-border)",
-                    background: "var(--media-control-bg)",
-                    color: "var(--media-control-text)",
-                  }}
-                >
-                  {post.isArchived ? "Arşivden Çıkar" : "Arşivle"}
-                </button>
-                <Link
-                  href={`/posts/${post.id}/edit`}
-                  className="flex items-center gap-1.5 rounded-lg border px-4 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
-                  style={{
-                    borderColor: "var(--media-control-border)",
-                    background: "var(--media-control-bg)",
-                    color: "var(--media-control-text)",
-                  }}
-                >
-                  <PencilSimpleIcon size={11} weight="fill" /> Düzenle
-                </Link>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  disabled={isDeleting}
-                  className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs shadow-sm backdrop-blur-md transition-all hover:border-[#e53e3e]/70 hover:bg-[#3a151a]/80 hover:text-[#ff9a9a] disabled:opacity-40"
-                  style={{
-                    borderColor: "var(--media-control-border)",
-                    background: "var(--media-control-bg)",
-                    color: "var(--media-control-text)",
-                  }}
-                >
-                  <TrashIcon size={10} weight="fill" /> Sil
-                </button>
+                  >
+                    <ArchiveIcon size={12} weight={archived ? "fill" : "regular"} />
+                    {archived ? "Arşivde" : "Arşivle"}
+                  </button>
+                </div>
+
+                {/* Sağ grup: Paylaş + Düzenle + Sil */}
+                <div className="flex items-center gap-2">
+                  <ShareButton
+                    title={post.title}
+                    text={`${post.title} — DigyNotes`}
+                    label="Paylaş"
+                    className="font-semibold shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    style={{
+                      borderColor: "var(--media-control-border)",
+                      background: "var(--media-control-bg)",
+                      color: "var(--media-control-text)",
+                    }}
+                  />
+                  <Link
+                    href={`/posts/${post.id}/edit`}
+                    className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    style={{
+                      borderColor: "var(--media-control-border)",
+                      background: "var(--media-control-bg)",
+                      color: "var(--media-control-text)",
+                    }}
+                  >
+                    <PencilSimpleIcon size={11} weight="fill" /> Düzenle
+                  </Link>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    disabled={isDeleting}
+                    className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[#e53e3e]/70 hover:bg-[#3a151a]/80 hover:text-[#ff9a9a] disabled:opacity-40"
+                    style={{
+                      borderColor: "var(--media-control-border)",
+                      background: "var(--media-control-bg)",
+                      color: "var(--media-control-text)",
+                    }}
+                  >
+                    <TrashIcon size={10} weight="fill" /> Sil
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -889,85 +935,6 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         </div>
 
         <CommunityStatsCard title={displayTitle} creator={displayCreator} />
-
-        <section className="mb-6 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-soft)] sm:p-5">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Link
-              href={`/category/${encodeURIComponent(categorySlug)}`}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
-            >
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                Kategori
-              </p>
-              <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                {categoryLabel}
-              </p>
-            </Link>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                Arşive giriş
-              </p>
-              <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                {createdLabel}
-              </p>
-            </div>
-            {authorProfileHref ? (
-              <Link
-                href={authorProfileHref}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)]"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Profil
-                </p>
-                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                  @{post.user?.username}
-                </p>
-              </Link>
-            ) : (
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  Etiket
-                </p>
-                <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-                  {tagCount > 0 ? `${tagCount} bağlantı noktası` : "Etiket yok"}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-4 border-t border-[var(--border)] pt-4">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                Etiket yolları
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {post.tags.map((tag) => (
-                  <TagBadge key={tag.id} tag={tag} href={`/tag/${encodeURIComponent(tag.name)}`} />
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
-
-        <div className="mb-6 flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
-            {likeData.count} beğeni
-          </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
-            {comments.length} yorum
-          </span>
-          {interactionMessage && (
-            <span
-              className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${
-                interactionMessage.tone === "like"
-                  ? "bg-[#e53e3e]/8 border-[#e53e3e]/20 text-[#ffb2b2]"
-                  : "bg-[#10b981]/8 border-[#10b981]/20 text-[var(--gold)]"
-              }`}
-            >
-              {interactionMessage.text}
-            </span>
-          )}
-        </div>
 
         {typeof post.lat === "number" && typeof post.lng === "number" && (
           <section className="mb-6 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
@@ -1109,13 +1076,117 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           </article>
         </div>
 
+        {/* ─── Ayırıcı ─── */}
+        <div className="mt-14 flex items-center gap-4">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--surface-strong-border)] to-transparent" />
+          <div className="flex items-center gap-1.5">
+            <span className="h-1 w-1 rounded-full bg-[#10b981]/40" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]/60" />
+            <span className="h-1 w-1 rounded-full bg-[#10b981]/40" />
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--surface-strong-border)] to-transparent" />
+        </div>
+
         {/* ─── Yorumlar ─── */}
-        <div className="mt-12 border-t border-[var(--surface-strong-border)] pt-8">
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="bg-[#10b981]/12 flex h-7 w-7 items-center justify-center rounded-full border border-[#10b981]/25">
+        <div className="mt-10">
+          {/* Başlık */}
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#10b981]/10 ring-1 ring-[#10b981]/20">
+              <svg
+                className="h-4 w-4 text-[#10b981]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.8}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-base font-semibold text-[var(--text-contrast)]">
+                Yorumlar
+              </h2>
+              {comments.length > 0 && (
+                <span className="text-sm text-[var(--text-faint)]">
+                  ({comments.length})
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Yorum Yazma Alanı — üstte */}
+          {session?.user ? (
+            <div className="mb-8">
+              {replyingToId && (
+                <div className="mb-3 flex items-center justify-between rounded-lg bg-[#10b981]/8 px-3.5 py-2.5 ring-1 ring-[#10b981]/20">
+                  <span className="text-xs text-[#10b981]">Bir yoruma yanıt yazıyorsun</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setReplyingToId(null);
+                      setReplyText("");
+                    }}
+                    className="text-xs font-medium text-[#10b981] transition-colors hover:text-[#34d399]"
+                  >
+                    İptal
+                  </button>
+                </div>
+              )}
+              <div className="flex gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#10b981]/12 text-xs font-bold text-[#10b981] ring-1 ring-[#10b981]/20">
+                  {session.user.name?.charAt(0)?.toUpperCase() ?? "?"}
+                </div>
+                <div className="flex-1">
+                  <textarea
+                    ref={commentInputRef}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Düşüncelerini paylaş..."
+                    rows={3}
+                    maxLength={1000}
+                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/20 sm:text-sm sm:leading-relaxed"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && e.metaKey) submitComment();
+                    }}
+                  />
+                  <div className="mt-2.5 flex items-center justify-between">
+                    <span className="text-[10px] text-[var(--text-faint)]">
+                      {commentText.length > 0 && `${commentText.length}/1000`}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => submitComment()}
+                      disabled={isSubmittingComment || !commentText.trim()}
+                      className="rounded-lg bg-[#10b981] px-4 py-2 text-xs font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-[#34d399] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 sm:py-1.5"
+                    >
+                      {isSubmittingComment ? "Gönderiliyor..." : "Gönder"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-8 flex items-center justify-between rounded-xl bg-[var(--surface-strong)] px-5 py-4 ring-1 ring-[var(--surface-strong-border)]">
+              <p className="text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yap</p>
+              <Link
+                href="/login"
+                className="rounded-lg bg-[#10b981]/10 px-4 py-1.5 text-xs font-medium text-[#10b981] ring-1 ring-[#10b981]/20 transition-colors hover:bg-[#10b981]/20"
+              >
+                Giriş Yap
+              </Link>
+            </div>
+          )}
+
+          {/* Boş durum */}
+          {comments.length === 0 && (
+            <div className="flex flex-col items-center py-12 text-center">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface-strong)] ring-1 ring-[var(--surface-strong-border)]">
                 <svg
-                  className="h-3.5 w-3.5 text-[var(--gold)]"
+                  className="h-6 w-6 text-[var(--text-faint)]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1123,86 +1194,24 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={1.8}
+                    strokeWidth={1.5}
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
               </div>
-              <h2 className="text-[13px] font-semibold text-[var(--text-dim)] sm:text-sm">
-                Yorumlar
-              </h2>
-            </div>
-            <span className="rounded-full border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-2.5 py-0.5 text-[10px] text-[var(--text-faint)]">
-              {comments.length}
-            </span>
-          </div>
-
-          {comments.length === 0 && (
-            <div className="bg-[var(--surface-strong)]/40 mb-6 rounded-xl border border-dashed border-[var(--surface-strong-border)] px-4 py-3 text-center text-xs text-[var(--text-faint)]">
-              {isOwnPost
-                ? "Henüz yorum yok. Bu alanda diğer kullanıcıların yorumları görünecek."
-                : "Henüz yorum yok. İlk yorumu sen bırak."}
+              <p className="text-sm text-[var(--text-dim)]">Henüz yorum yok</p>
+              <p className="mt-1 text-xs text-[var(--text-faint)]">
+                {isOwnPost
+                  ? "Diğer kullanıcıların yorumları burada görünecek"
+                  : "İlk yorumu sen bırak"}
+              </p>
             </div>
           )}
 
+          {/* Yorum listesi */}
           {threadedComments.length > 0 && (
-            <div className="mb-6 space-y-3">
+            <div className="space-y-4">
               {threadedComments.map((comment) => renderCommentNode(comment))}
-            </div>
-          )}
-
-          {session?.user ? (
-            <div className="bg-[var(--surface-strong)]/85 rounded-2xl border border-[var(--surface-strong-border)] p-3.5 shadow-[var(--shadow-soft)] sm:p-4">
-              {replyingToId && (
-                <div className="bg-[#10b981]/8 mb-3 flex items-center justify-between rounded-xl border border-[#10b981]/20 px-3 py-2 text-[11px] text-[var(--gold)]">
-                  <span>Şu anda bir yoruma yanıt yazıyorsun.</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setReplyingToId(null);
-                      setReplyText("");
-                    }}
-                    className="font-semibold transition-colors hover:text-[var(--gold-light)]"
-                  >
-                    İptal et
-                  </button>
-                </div>
-              )}
-              <textarea
-                ref={commentInputRef}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Yorumunuzu yazın..."
-                rows={3}
-                maxLength={1000}
-                className="bg-[var(--bg-card)]/70 min-h-[96px] w-full resize-none rounded-xl border border-[var(--surface-strong-border)] px-3 py-2.5 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors focus:border-[#10b981]/45 sm:text-[13px] sm:leading-relaxed"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && e.metaKey) submitComment();
-                }}
-              />
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-[10px] text-[var(--text-faint)]">
-                  {commentText.length}/1000 karakter
-                </span>
-                <button
-                  type="button"
-                  onClick={() => submitComment()}
-                  disabled={isSubmittingComment || !commentText.trim()}
-                  className="h-11 w-full rounded-lg bg-gradient-to-r from-[#10b981] to-[#059669] px-4 text-xs font-bold text-white shadow-[0_2px_8px_rgba(16,185,129,0.3)] transition-all duration-200 hover:brightness-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:py-1.5"
-                >
-                  {isSubmittingComment ? "Gönderiliyor..." : "Yorum Yap"}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-5 text-center shadow-[var(--shadow-soft)]">
-              <p className="mb-2 text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yapın.</p>
-              <Link
-                href="/login"
-                className="text-xs font-medium text-[#34d399] transition-colors hover:text-[#10b981]"
-              >
-                Giriş Yap →
-              </Link>
             </div>
           )}
         </div>

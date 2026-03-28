@@ -52,16 +52,25 @@ export default function RecommendedPageClient() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <header className="mb-8 rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-        <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
-          Öneriler
-        </span>
-        <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
-          Senin İçin Seçilen İçerikler
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
-          Notlarındaki etiketlere göre topluluktan eşleşen içerikleri tek akışta gör.
-        </p>
+      <header className="mb-6">
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+              Öneriler
+            </h1>
+            {!loading && posts.length > 0 && (
+              <span className="text-sm text-[var(--text-muted)]">
+                {posts.length} öneri · {categoryCount} kategori
+              </span>
+            )}
+          </div>
+          {!loading && authorCount > 0 && (
+            <span className="text-xs text-[var(--text-muted)]">
+              {authorCount} profil
+            </span>
+          )}
+        </div>
+        <div className="mt-3 h-px w-full bg-[var(--border)]" />
       </header>
 
       {loading ? (
@@ -128,13 +137,6 @@ export default function RecommendedPageClient() {
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)]">
-            <span>{posts.length} öneri</span>
-            <span className="text-[var(--text-faint)]">·</span>
-            <span>{categoryCount} kategori</span>
-            <span className="text-[var(--text-faint)]">·</span>
-            <span>{authorCount} profil</span>
-          </div>
         </section>
       )}
     </main>

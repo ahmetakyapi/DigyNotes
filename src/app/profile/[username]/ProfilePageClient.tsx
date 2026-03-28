@@ -14,6 +14,7 @@ import { formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { ResilientImage } from "@/components/ResilientImage";
 import { AvatarImage } from "@/components/AvatarImage";
+import { PushPin } from "@phosphor-icons/react";
 
 interface PublicUser {
   id: string;
@@ -461,7 +462,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {filteredPosts.map((post) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#10b981]/30 sm:flex-row">
+                  <article className={`flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-card)] transition-all duration-300 hover:border-[#10b981]/30 sm:flex-row ${post.isPinned ? "border-[#10b981]/20" : "border-[var(--border)]"}`}>
                     {/* Cover */}
                     <div
                       className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
@@ -485,6 +486,11 @@ export default function ProfilePageClient({ username }: { readonly username: str
                           <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#10b981]">
                             {getCategoryLabel(post.category)}
                           </span>
+                          {post.isPinned && (
+                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-[#10b981]/25 bg-[#10b981]/8 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981]">
+                              <PushPin size={9} weight="fill" /> Sabit
+                            </span>
+                          )}
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
                         <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#10b981]">

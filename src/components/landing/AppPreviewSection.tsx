@@ -51,7 +51,7 @@ export function AppPreviewSection() {
   ] as const;
 
   return (
-    <section ref={sectionRef} className="relative px-3 pb-16 pt-4 sm:px-4 sm:pb-20 sm:pt-6">
+    <section ref={sectionRef} className="relative px-4 pb-12 pt-2 sm:px-4 sm:pb-20 sm:pt-6">
       <div className="relative mx-auto w-full max-w-4xl">
         {/* Üstten gelen glow çizgisi */}
         <div
@@ -200,7 +200,7 @@ export function AppPreviewSection() {
 
             {/* Sahte öne çıkan kart */}
             <motion.div
-              className="relative mb-2.5 flex h-28 items-end overflow-hidden rounded-xl p-3 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
+              className="relative mb-3 flex h-32 items-end overflow-hidden rounded-xl p-3.5 sm:mb-4 sm:h-44 sm:rounded-2xl sm:p-5"
               style={{
                 background: isLight
                   ? "linear-gradient(135deg, color-mix(in srgb, var(--surface-strong) 86%, #f2e6d3 14%), color-mix(in srgb, var(--bg-card) 82%, #dae5f8 18%), color-mix(in srgb, var(--bg-soft) 88%, #efe0ca 12%))"
@@ -257,11 +257,11 @@ export function AppPreviewSection() {
             </motion.div>
 
             {/* Sahte kart grid — stagger reveal */}
-            <div className="grid grid-cols-2 gap-1.5 sm:gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {mockCards.map((c, i) => (
                 <motion.div
                   key={c.id}
-                  className="flex h-[4.5rem] overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
+                  className="flex h-20 overflow-hidden rounded-lg sm:h-24 sm:rounded-xl"
                   style={{ background: "var(--surface-strong)", border: `1px solid ${c.border}` }}
                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}

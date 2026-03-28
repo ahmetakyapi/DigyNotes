@@ -504,4 +504,50 @@ await prisma.follow.deleteMany({ where: { ... } });
 
 ---
 
-*Last updated: 2026-03-11*
+## ERR-DB-005: Neon (production) DB schema out of sync — `ColumnNotFound`
+
+**First seen**: 2026-03-28
+**Symptom**: `PrismaClientKnownRequestError: The column (not available) does not exist in the current database` — API'ler 500 döner, posts/bookmarks gibi sayfalar yüklenmez.
+**Root cause**: Schema değişiklikleri (yeni kolonlar, indexler) sadece local DB'ye `prisma db push` ile uygulanmış ama Neon production DB'ye hiç push edilmemiş. Local'de çalışan kod production'da olmayan kolonları sorguluyor.
+**Fix**:
+1. Eksik kolonları tespit et — local vs Neon tablo şemalarını karşılaştır:
+```bash
+# Local
+PGPASSWORD=digynotes_secret psql -h localhost -U digynotes -d digynotes -c "\d posts"
+# Neon
+psql "<NEON_CONNECTION_STRING>" -c "\d posts"
+```
+2. Eksik kolonları Neon'a ekle:
+```sql
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS "isDraft" BOOLEAN NOT NULL DEFAULT false;
+-- ... diğer eksik kolonlar
+```
+3. Dev server'ı restart et.
+
+**Prevention**:
+- Schema değişikliği yaptıktan sonra **hem local hem Neon'a** uygulandığından emin ol
+- `prisma db push` sadece `DATABASE_URL`'in gösterdiği DB'ye push yapar — her iki DB'ye de push et
+- Yeni kolon/tablo eklerken checklist: `local push ✓ → neon push ✓ → generate ✓ → restart ✓`
+- Migration kullanıyorsan: `prisma migrate deploy` ile production'a da uygula
+
+**Files**: `prisma/schema.prisma`, `.env` (DATABASE_URL)
+
+---
+
+## ERR-ENV-001: NEXTAUTH_URL / NEXTAUTH_SECRET eksik — login çalışmaz
+
+**First seen**: 2026-03-28
+**Symptom**: Login formu submit edildiğinde sessiz hata, `[next-auth][warn][NEXTAUTH_URL]` ve `[next-auth][warn][NO_SECRET]` uyarıları server loglarında görünür.
+**Root cause**: `.env` dosyasında `NEXTAUTH_URL` ve `NEXTAUTH_SECRET` tanımlı değil. NextAuth JWT imzalayamaz ve callback URL'ini bulamaz.
+**Fix**:
+`.env` dosyasına ekle:
+```
+NEXTAUTH_URL=http://localhost:4300
+NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
+```
+**Prevention**: Yeni bir ortam kurulurken `.env.example` dosyasını kontrol et, tüm gerekli env var'ları ekle.
+**Files**: `.env`, `src/lib/auth.ts`
+
+---
+
+*Last updated: 2026-03-28*

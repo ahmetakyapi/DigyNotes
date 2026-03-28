@@ -143,16 +143,23 @@ export default function FeedPageClient() {
         </div>
       ) : (
         <section className="space-y-4">
-          <div className="rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.88),rgba(10,16,30,0.72))] p-6 shadow-[var(--shadow-soft)] sm:p-7">
-            <span className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
-              Akış
-            </span>
-            <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-4xl">
-              Son Güncellemeler
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)] sm:text-[15px]">
-              Takip ettiğin kişilerden gelen en yeni notlar burada görünür.
-            </p>
+          <div className="mb-2">
+            <div className="flex items-baseline justify-between gap-4">
+              <div className="flex items-baseline gap-3">
+                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
+                  Akış
+                </h1>
+                <span className="text-sm text-[var(--text-muted)]">
+                  {posts.length} not · {uniqueAuthors} kişi
+                </span>
+              </div>
+              {thisWeekCount > 0 && (
+                <span className="text-xs text-[var(--text-muted)]">
+                  Bu hafta {thisWeekCount} yeni
+                </span>
+              )}
+            </div>
+            <div className="mt-3 h-px w-full bg-[var(--border)]" />
           </div>
 
           <div className="space-y-4">
@@ -184,13 +191,6 @@ export default function FeedPageClient() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-[var(--text-muted)]">
-            <span>{posts.length} not</span>
-            <span className="text-[var(--text-faint)]">·</span>
-            <span>{uniqueAuthors} kişi</span>
-            <span className="text-[var(--text-faint)]">·</span>
-            <span>Bu hafta {thisWeekCount}</span>
-          </div>
         </section>
       )}
     </main>
