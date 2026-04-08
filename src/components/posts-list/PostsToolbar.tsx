@@ -60,7 +60,7 @@ export function PostsTabSwitcher({
             onClick={() => onTabChange(tab.key)}
             className={`shrink-0 cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:py-1.5 sm:text-sm ${
               activeTab === tab.key
-                ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
+                ? "bg-[#10b981] text-white"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
@@ -73,7 +73,7 @@ export function PostsTabSwitcher({
       </div>
 
       <div className="hidden items-center gap-3 sm:flex">
-        <div className="h-0.5 w-8 rounded-full bg-gradient-to-r from-[#10b981] to-transparent" />
+        <div className="h-0.5 w-8 rounded-full bg-[#10b981]/60" />
         <span className="text-xs text-[var(--text-muted)]">
           {activeCount} {activeLabel}
           {activeTab === "notlar" && avgRating > 0 && (
@@ -129,7 +129,7 @@ export function PostsToolbar({
               aria-label="Grid görünüm"
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "grid"
-                  ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
+                  ? "bg-[#10b981] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -140,7 +140,7 @@ export function PostsToolbar({
               aria-label="Liste görünümü"
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "list"
-                  ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white"
+                  ? "bg-[#10b981] text-white"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >

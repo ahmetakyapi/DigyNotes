@@ -278,7 +278,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                   onClick={() => router.push("/notes")}
                   className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-4 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                     activeCategory === "all"
-                      ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white shadow-[0_3px_14px_rgba(16,185,129,0.28)]"
+                      ? "bg-[#10b981] text-white"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                   }`}
                 >
@@ -292,7 +292,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                       onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
                       className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-3.5 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
                         isActive
-                          ? "bg-gradient-to-r from-[#10b981] to-[#059669] text-white shadow-[0_3px_14px_rgba(16,185,129,0.28)]"
+                          ? "bg-[#10b981] text-white"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                       }`}
                     >

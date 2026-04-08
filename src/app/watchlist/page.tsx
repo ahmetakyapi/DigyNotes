@@ -216,7 +216,7 @@ export default function WatchlistPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
+            className="mt-4 inline-flex rounded-xl bg-[#10b981] hover:bg-[#059669] px-4 py-2 text-sm font-semibold text-white transition-all"
           >
             Giriş Yap
           </Link>

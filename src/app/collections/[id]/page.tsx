@@ -335,7 +335,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   type="button"
                   onClick={saveCollection}
                   disabled={isSaving || !hasUnsavedChanges || title.trim() === ""}
-                  className="rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl bg-[#10b981] hover:bg-[#059669] px-4 py-2 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSaving
                     ? "Kaydediliyor..."
@@ -472,7 +472,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       type="button"
                       onClick={() => mutatePost(post.id, "POST")}
                       disabled={pendingPostId === post.id}
-                      className="rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-3 py-2 text-xs font-semibold text-white shadow-[0_3px_10px_rgba(16,185,129,0.25)] transition-all hover:brightness-110 disabled:opacity-50"
+                      className="rounded-xl bg-[#10b981] hover:bg-[#059669] px-3 py-2 text-xs font-semibold text-white transition-all disabled:opacity-50"
                     >
                       {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona ekle"}
                     </button>

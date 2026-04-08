@@ -229,7 +229,7 @@ export default function NotesPageClient({
             </Link>
             <Link
               href="/new-post"
-              className="rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:shadow-[0_6px_20px_rgba(16,185,129,0.38)] hover:brightness-110"
+              className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-5 py-2.5 text-sm font-semibold text-white transition-all"
             >
               Yeni not ekle
             </Link>
@@ -275,7 +275,7 @@ export default function NotesPageClient({
 
         <Link
           href="/new-post"
-          className="rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-6 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:shadow-[0_6px_20px_rgba(16,185,129,0.38)] hover:brightness-110"
+          className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-6 py-3 text-sm font-semibold text-white transition-all"
         >
           İlk notu ekle
         </Link>
