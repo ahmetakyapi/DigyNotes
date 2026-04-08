@@ -4,7 +4,11 @@ import Link from "next/link";
 import { MagnifyingGlassIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import UserCard from "@/components/UserCard";
 import StarRating from "@/components/StarRating";
+import { ResilientImage } from "@/components/ResilientImage";
+import { StatusBadge } from "@/components/StatusBadge";
 import { getCategoryLabel } from "@/lib/categories";
+import { formatDisplayTitle } from "@/lib/display-text";
+import { getPostImageSrc } from "@/lib/post-image";
 import type { Post } from "@/types";
 
 interface PublicUser {
@@ -186,34 +190,50 @@ export default function DiscoverPageClient() {
         {/* ── Popüler Notlar ── */}
         {trendingPosts.length > 0 && !query.trim() && (
           <section>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {trendingPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/posts/${post.id}`}
-                  className="group flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5 transition-all duration-200 hover:border-[#10b981]/30"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1.5 flex items-center gap-1.5">
-                      <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
-                        {getCategoryLabel(post.category)}
-                      </span>
-                      {post.user?.username && (
-                        <span className="text-[10px] text-[var(--text-muted)]">@{post.user.username}</span>
-                      )}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {trendingPosts.map((post) => {
+                const displayTitle = formatDisplayTitle(post.title);
+                return (
+                  <Link
+                    key={post.id}
+                    href={`/posts/${post.id}`}
+                    className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#10b981]/30"
+                  >
+                    <div className="relative h-36 overflow-hidden bg-[var(--bg-raised)]">
+                      <ResilientImage
+                        src={getPostImageSrc(post.image, post.category)}
+                        alt={displayTitle}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        style={{ objectPosition: post.imagePosition ?? "center" }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.85)] via-transparent to-transparent" />
+                      <div className="absolute left-3 top-3 flex items-center gap-2">
+                        <span className="rounded-full border border-[#10b981]/20 bg-[rgba(7,10,18,0.68)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                          {getCategoryLabel(post.category)}
+                        </span>
+                        {post.status && <StatusBadge status={post.status} />}
+                      </div>
                     </div>
-                    <h3 className="mb-1 line-clamp-1 text-sm font-medium text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
-                      {post.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={post.rating} size={11} />
-                      {post.rating > 0 && (
-                        <span className="text-[10px] text-[var(--text-muted)]">{post.rating}/5</span>
-                      )}
+                    <div className="p-4">
+                      <h3 className="mb-1.5 line-clamp-1 text-sm font-medium text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
+                        {displayTitle}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <StarRating rating={post.rating} size={11} />
+                          {post.rating > 0 && (
+                            <span className="text-[10px] text-[var(--text-muted)]">{post.rating}/5</span>
+                          )}
+                        </div>
+                        {post.user?.username && (
+                          <span className="text-[10px] text-[var(--text-muted)]">@{post.user.username}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

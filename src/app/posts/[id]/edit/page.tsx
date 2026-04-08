@@ -847,7 +847,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.3)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#10b981] hover:bg-[#059669] px-6 py-2.5 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
             >
               {isSubmitting ? (
                 <>

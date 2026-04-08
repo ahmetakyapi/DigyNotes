@@ -12,6 +12,7 @@ import TagBadge from "@/components/TagBadge";
 import CommunityStatsCard from "@/components/CommunityStatsCard";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ActionTooltip } from "@/components/ActionTooltip";
+import { AvatarImage } from "@/components/AvatarImage";
 import ShareButton from "@/components/ShareButton";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
@@ -514,8 +515,15 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {/* Üst satır: Avatar + isim + tarih + aksiyonlar */}
           <div className="mb-2.5 flex items-start justify-between gap-2">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#10b981]/12 text-[11px] font-bold text-[#10b981] ring-1 ring-[#10b981]/20">
-                {comment.user.name?.charAt(0)?.toUpperCase() ?? "?"}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/12 ring-1 ring-[#10b981]/20">
+                <AvatarImage
+                  src={comment.user.avatarUrl}
+                  alt={comment.user.name}
+                  name={comment.user.name}
+                  size={32}
+                  className="h-full w-full object-cover"
+                  textClassName="text-[11px] font-bold text-[#10b981]"
+                />
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">
@@ -578,8 +586,15 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {isReplying && (
             <div className="mt-3 pl-[42px]">
               <div className="flex gap-2.5">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#10b981]/10 text-[9px] font-bold text-[#10b981]">
-                  {session?.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/10">
+                  <AvatarImage
+                    src={null}
+                    alt={session?.user?.name ?? ""}
+                    name={session?.user?.name ?? "?"}
+                    size={28}
+                    className="h-full w-full object-cover"
+                    textClassName="text-[9px] font-bold text-[#10b981]"
+                  />
                 </div>
                 <div className="flex-1">
                   <textarea
@@ -1137,8 +1152,15 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 </div>
               )}
               <div className="flex gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#10b981]/12 text-xs font-bold text-[#10b981] ring-1 ring-[#10b981]/20">
-                  {session.user.name?.charAt(0)?.toUpperCase() ?? "?"}
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/12 ring-1 ring-[#10b981]/20">
+                  <AvatarImage
+                    src={null}
+                    alt={session.user.name ?? ""}
+                    name={session.user.name ?? "?"}
+                    size={36}
+                    className="h-full w-full object-cover"
+                    textClassName="text-xs font-bold text-[#10b981]"
+                  />
                 </div>
                 <div className="flex-1">
                   <textarea

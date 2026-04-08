@@ -172,7 +172,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             </div>
             <Link
               href={`/posts/${selectedPost.id}`}
-              className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-3 py-2 text-xs font-semibold text-white shadow-[0_3px_10px_rgba(16,185,129,0.25)] transition-all hover:brightness-110"
+              className="mt-4 inline-flex rounded-xl bg-[#10b981] hover:bg-[#059669] px-3 py-2 text-xs font-semibold text-white transition-all"
             >
               Notu Aç
             </Link>

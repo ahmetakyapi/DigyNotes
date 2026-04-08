@@ -83,7 +83,7 @@ export default function OfflinePage() {
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <RetryButton
             label="Yeniden dene"
-            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-gradient-to-r from-[#10b981] via-[#059669] to-[#047857] px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(16,185,129,0.28)] transition-all hover:brightness-110"
+            className="inline-flex min-w-[170px] justify-center rounded-2xl bg-[#10b981] hover:bg-[#059669] px-5 py-3 text-sm font-semibold text-white transition-all"
           />
           <Link
             href="/notes"
