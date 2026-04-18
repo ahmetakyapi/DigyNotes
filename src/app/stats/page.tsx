@@ -268,7 +268,7 @@ export default function PersonalStatsPage() {
           </div>
 
           {sparseDataLabel && (
-            <div className="mt-5 rounded-xl border border-dashed border-[var(--border)] bg-[rgba(0,0,0,0.15)] px-4 py-3 text-xs leading-5 text-[var(--text-muted)]">
+            <div className="mt-5 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-inset-soft)] px-4 py-3 text-xs leading-5 text-[var(--text-secondary)]">
               {sparseDataLabel}
             </div>
           )}
@@ -543,7 +543,7 @@ function InsightMiniCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.5)] px-5 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-inset)] px-5 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
       <div className="mb-2 flex items-center gap-2">
         {icon}
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-faint)]">

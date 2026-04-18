@@ -166,7 +166,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const body = await request.json();
-    const { isAdmin, isBanned } = body;
+    const { isAdmin, isBanned, isPublic } = body;
 
     if (params.id === adminId && isAdmin === false) {
       return NextResponse.json({ error: "Kendi admin yetkini kaldıramazsın" }, { status: 400 });
@@ -175,6 +175,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updateData: Record<string, unknown> = {};
     if (typeof isAdmin === "boolean") updateData.isAdmin = isAdmin;
     if (typeof isBanned === "boolean") updateData.isBanned = isBanned;
+    if (typeof isPublic === "boolean") updateData.isPublic = isPublic;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "Geçerli alan gönderilmedi" }, { status: 400 });
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { id: params.id },
@@ -188,7 +193,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const user = await prisma.user.update({
       where: { id: params.id },
       data: updateData,
-      select: { id: true, name: true, email: true, isAdmin: true, isBanned: true },
+      select: { id: true, name: true, email: true, isAdmin: true, isBanned: true, isPublic: true },
     });
 
     return NextResponse.json(user);

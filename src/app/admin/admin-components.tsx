@@ -135,7 +135,7 @@ export function WorkspaceGuide({
           {cards.map((card) => (
             <div
               key={card.label}
-              className="rounded-2xl border border-[var(--border)] bg-[rgba(7,12,22,0.42)] px-4 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_15%,transparent)]"
+              className="rounded-2xl border border-[var(--border)] bg-[var(--bg-inset)] px-4 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_15%,transparent)]"
             >
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
                 {card.label}

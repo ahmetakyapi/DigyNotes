@@ -330,6 +330,44 @@ export default function AdminPage() {
     }
   }
 
+  /* ── toggle public/private ── */
+  async function togglePublic(user: UserRow) {
+    try {
+      const updated = await requestJson<UserRow>(
+        `/api/admin/users/${user.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isPublic: !user.isPublic }),
+        },
+        "Profil görünürlüğü güncellenemedi."
+      );
+      toast.success(
+        updated.isPublic
+          ? `${updated.name} profili artık herkese açık`
+          : `${updated.name} profili artık gizli`
+      );
+      setAdminFeedback({
+        tone: "success",
+        title: updated.isPublic ? "Profil herkese açık" : "Profil gizlendi",
+        detail: updated.isPublic
+          ? `${updated.name} profili artık tüm ziyaretçilere görünür.`
+          : `${updated.name} profili yalnızca kendisi ve adminler tarafından görüntülenebilir.`,
+        followUp: "Değişiklik anında uygulanır; gerekirse profil sayfasını yenile.",
+      });
+      await fetchUsers(usersPage, userSearch);
+    } catch (error) {
+      const message = getClientErrorMessage(error, "Profil görünürlüğü güncellenemedi.");
+      toast.error(message);
+      setAdminFeedback({
+        tone: "error",
+        title: "Profil görünürlüğü güncellenemedi",
+        detail: message,
+        followUp: "Değişiklik uygulanmadı; tekrar dene.",
+      });
+    }
+  }
+
   /* ── delete user ── */
   async function deleteUser(id: string) {
     try {
@@ -911,6 +949,7 @@ export default function AdminPage() {
                         <div className="flex shrink-0 flex-col items-end gap-2.5">
                           <div className="flex items-center gap-3">
                             <ToggleSwitch label="Admin" active={u.isAdmin} color="#10b981" onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} />
+                            <ToggleSwitch label="Açık" active={u.isPublic} color="#34d399" onClick={(e) => { e.stopPropagation(); togglePublic(u); }} />
                             <ToggleSwitch label="Ban" active={u.isBanned} color="#e53e3e" onClick={(e) => { e.stopPropagation(); toggleBan(u); }} />
                           </div>
                           <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
@@ -927,14 +966,14 @@ export default function AdminPage() {
                   <thead>
                     <tr className="border-b border-[var(--border)]">
                       <th className="px-4 py-3"><input type="checkbox" className="accent-[#10b981]" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} /></th>
-                      {["Kullanıcı", "E-posta", "Not", "Takipçi", "Katılım", "Admin", "Ban", "İşlem"].map((h) => (
+                      {["Kullanıcı", "E-posta", "Not", "Takipçi", "Katılım", "Admin", "Açık", "Ban", "İşlem"].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {loadingUsers ? (
-                      <tr><td colSpan={9} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
+                      <tr><td colSpan={10} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
                     ) : (
                       users.map((u) => (
                         <tr key={u.id} className={`group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
@@ -960,6 +999,11 @@ export default function AdminPage() {
                           <td className="px-4 py-3 text-center">
                             <button onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}>
                               <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili gizle" : "Profili herkese aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}>
+                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isPublic ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">

@@ -42,6 +42,11 @@ export default function ProfilePageClient({ username }: { readonly username: str
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [privateProfile, setPrivateProfile] = useState<{
+    name: string;
+    username: string;
+    avatarUrl: string | null;
+  } | null>(null);
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [activeTab, setActiveTab] = useState<"posts" | "collections" | "liked">("posts");
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,8 +55,20 @@ export default function ProfilePageClient({ username }: { readonly username: str
   const [likedLoaded, setLikedLoaded] = useState(false);
 
   useEffect(() => {
+    setNotFound(false);
+    setPrivateProfile(null);
     fetch(`/api/users/${username}`)
-      .then((r) => {
+      .then(async (r) => {
+        if (r.status === 403) {
+          const body = await r.json().catch(() => null);
+          if (body?.isPrivate && body.profile) {
+            setPrivateProfile(body.profile);
+          } else {
+            setNotFound(true);
+          }
+          setLoading(false);
+          return null;
+        }
         if (!r.ok) {
           setNotFound(true);
           setLoading(false);
@@ -221,6 +238,47 @@ export default function ProfilePageClient({ username }: { readonly username: str
     );
   }
 
+  if (privateProfile) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-soft)]">
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
+            <AvatarImage
+              src={privateProfile.avatarUrl}
+              alt={privateProfile.name}
+              name={privateProfile.name}
+              size={80}
+              className="h-full w-full object-cover"
+              textClassName="text-2xl font-bold text-[var(--text-secondary)]"
+            />
+          </div>
+          <p className="text-lg font-semibold text-[var(--text-primary)]">
+            {privateProfile.name}
+          </p>
+          <p className="mb-5 text-xs text-[var(--text-muted)]">@{privateProfile.username}</p>
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+            Bu profil gizli
+          </div>
+          <p className="mb-5 text-xs leading-5 text-[var(--text-muted)]">
+            Bu kullanıcının notlarını görmek için takip etmen veya kullanıcının profilini herkese
+            açık yapması gerekiyor.
+          </p>
+          <Link href="/discover" className="text-xs text-[var(--gold)] hover:underline">
+            ← Kullanıcıları keşfet
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (notFound || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -242,9 +300,9 @@ export default function ProfilePageClient({ username }: { readonly username: str
           </div>
           <p className="mb-1 font-medium text-[var(--text-secondary)]">Profil bulunamadı</p>
           <p className="mb-4 text-xs text-[var(--text-muted)]">
-            @{username} adlı profil mevcut değil veya gizli.
+            @{username} adlı kullanıcı mevcut değil.
           </p>
-          <Link href="/discover" className="text-xs text-[#10b981] hover:underline">
+          <Link href="/discover" className="text-xs text-[var(--gold)] hover:underline">
             ← Kullanıcıları keşfet
           </Link>
         </div>
