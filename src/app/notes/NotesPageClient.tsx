@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Post } from "@/types";
 import { PostsList } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import { WelcomeHeader } from "@/components/WelcomeHeader";
 
 const PAGE_SIZE = 12;
 
@@ -300,6 +301,8 @@ export default function NotesPageClient({
           </div>
         </div>
       )}
+
+      <WelcomeHeader posts={posts} />
 
       <div className="mx-auto max-w-5xl px-3 pt-2 sm:px-6 sm:pt-4">
         <RecentlyViewed />

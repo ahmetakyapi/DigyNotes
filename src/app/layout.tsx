@@ -15,6 +15,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MaintenanceGuard } from "@/components/MaintenanceGuard";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
+import { GradientMesh } from "@/components/GradientMesh";
+import CommandPalette from "@/components/CommandPalette";
 import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
@@ -95,17 +97,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen">
-        <MaintenanceGuard>
-          <ThemeProvider>
-            <SessionProviderWrapper>
-              <ServiceWorkerRegistration />
-              <ErrorBoundary>
-                <ConditionalAppShell>{children}</ConditionalAppShell>
-              </ErrorBoundary>
-              <PwaInstallPrompt />
-            </SessionProviderWrapper>
-          </ThemeProvider>
-        </MaintenanceGuard>
+        <GradientMesh />
+        <div className="relative z-10">
+          <MaintenanceGuard>
+            <ThemeProvider>
+              <SessionProviderWrapper>
+                <ServiceWorkerRegistration />
+                <ErrorBoundary>
+                  <ConditionalAppShell>{children}</ConditionalAppShell>
+                </ErrorBoundary>
+                <CommandPalette />
+                <PwaInstallPrompt />
+              </SessionProviderWrapper>
+            </ThemeProvider>
+          </MaintenanceGuard>
+        </div>
         <Analytics />
       </body>
     </html>
