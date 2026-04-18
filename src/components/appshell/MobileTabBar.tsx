@@ -59,7 +59,7 @@ export function MobileTabBar({
           onClick={() =>
             router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
           }
-          className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
+          className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-3 transition-all duration-150 ${
             isProfile ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
           }`}
         >
@@ -93,7 +93,7 @@ function MobileTab({
   return (
     <Link
       href={href}
-      className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-2.5 transition-all duration-150 ${
+      className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-3 transition-all duration-150 ${
         active ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
       }`}
     >

@@ -50,6 +50,26 @@
   --new-note-glow: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
   --new-note-glow-breathe: 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(16, 185, 129, 0.1);
   --new-note-glow-strong: 0 0 0 1px rgba(16, 185, 129, 0.3), 0 4px 12px rgba(16, 185, 129, 0.14);
+
+  /* ── Component Spacing ── */
+  --space-card-sm: 1rem;
+  --space-card-md: 1.5rem;
+  --space-card-lg: 2rem;
+
+  /* ── Transition Presets ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* ── Focus Rings ── */
+  --ring-accent: 0 0 0 2px rgba(16, 185, 129, 0.4);
+  --ring-danger: 0 0 0 2px rgba(229, 62, 62, 0.4);
+
+  /* ── Z-index Scale ── */
+  --z-dropdown: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-pwa-prompt: 70;
 }
 
 html.light,
@@ -98,6 +118,26 @@ html[data-theme="light"] {
   --new-note-glow: 0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
   --new-note-glow-breathe: 0 0 0 1px rgba(5, 150, 105, 0.18), 0 2px 8px rgba(5, 150, 105, 0.08);
   --new-note-glow-strong: 0 0 0 1px rgba(5, 150, 105, 0.28), 0 4px 12px rgba(5, 150, 105, 0.1);
+
+  /* ── Component Spacing ── */
+  --space-card-sm: 1rem;
+  --space-card-md: 1.5rem;
+  --space-card-lg: 2rem;
+
+  /* ── Transition Presets ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* ── Focus Rings ── */
+  --ring-accent: 0 0 0 2px rgba(5, 150, 105, 0.4);
+  --ring-danger: 0 0 0 2px rgba(220, 38, 38, 0.4);
+
+  /* ── Z-index Scale ── */
+  --z-dropdown: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-pwa-prompt: 70;
 }
 
 /* ── Mobile shadow overrides ── */
