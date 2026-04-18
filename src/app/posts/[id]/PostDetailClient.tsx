@@ -930,16 +930,16 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#e53e3e]/30 hover:text-[#e53e3e]"
                   }`}
                 >
-                  <motion.div
+                  <motion.span
+                    className="inline-flex"
                     animate={likeData.liked ? { scale: [1, 1.4, 1] } : { scale: 1 }}
                     transition={{ duration: 0.5, type: "spring", stiffness: 600, damping: 15 }}
                   >
                     <HeartIcon
                       size={16}
                       weight={likeData.liked ? "fill" : "regular"}
-                      className="transition-transform duration-150"
                     />
-                  </motion.div>
+                  </motion.span>
                   <span>{likeData.count > 0 ? likeData.count : ""}</span>
                 </button>
               </ActionTooltip>

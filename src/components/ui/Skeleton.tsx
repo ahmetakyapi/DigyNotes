@@ -36,20 +36,26 @@ export function Skeleton({
 interface SkeletonGroupProps {
   count?: number;
   variant?: SkeletonVariant;
-  gap?: string;
+  spacing?: "sm" | "md" | "lg";
   className?: string;
   stagger?: boolean;
 }
 
+const spacingClasses: Record<NonNullable<SkeletonGroupProps["spacing"]>, string> = {
+  sm: "space-y-2",
+  md: "space-y-4",
+  lg: "space-y-6",
+};
+
 export function SkeletonGroup({
   count = 3,
   variant = "text",
-  gap = "gap-4",
+  spacing = "md",
   className = "",
   stagger = false,
 }: SkeletonGroupProps) {
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`${spacingClasses[spacing]} ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
         <Skeleton
           key={i}
