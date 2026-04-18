@@ -149,7 +149,7 @@ function RecommendedCard({ post }: { post: Post }) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#10b981]/20 hover:shadow-[var(--shadow-card)]">
+    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#10b981]/20 hover:shadow-[var(--shadow-card)]">
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-48 overflow-hidden bg-[var(--bg-raised)]">
           <ResilientImage

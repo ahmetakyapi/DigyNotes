@@ -66,16 +66,18 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as { id: string } & typeof session.user).id = token.id as string;
+        const userWithId = session.user as { id: string; avatarUrl?: string | null } & typeof session.user;
+        userWithId.id = token.id as string;
 
-        // Banlanmış kullanıcıyı aktif oturumdan da düşür
+        // Banlanmış kullanıcıyı aktif oturumdan da düşür + avatar bilgisini session'a ekle
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { isBanned: true },
+          select: { isBanned: true, avatarUrl: true },
         });
         if (dbUser?.isBanned) {
           return null as unknown as typeof session;
         }
+        userWithId.avatarUrl = dbUser?.avatarUrl ?? null;
       }
       return session;
     },
