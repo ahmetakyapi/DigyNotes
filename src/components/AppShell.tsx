@@ -12,6 +12,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { UserDropdownMenu } from "@/components/appshell/UserDropdownMenu";
 import { MobileTabBar } from "@/components/appshell/MobileTabBar";
 import { DesktopGlobalNav } from "@/components/appshell/DesktopGlobalNav";
+import { AvatarImage } from "@/components/AvatarImage";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
@@ -132,6 +133,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
     pathname === "/new-post";
   const isProfile = pathname.startsWith("/profile");
   const userInitial = session?.user?.name?.charAt(0)?.toUpperCase() ?? "?";
+  const userAvatarUrl = session?.user?.avatarUrl ?? null;
 
   return (
     <>
@@ -241,13 +243,20 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     aria-label={`Kullanıcı menüsü — ${session.user?.name ?? ""}`}
                     aria-expanded={showUserMenu}
                     aria-haspopup="true"
-                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center rounded-full text-[12px] font-bold text-[#34d399] transition-all duration-150 sm:h-10 sm:w-10 sm:text-[13px] sm:shadow-none ${
+                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center overflow-hidden rounded-full transition-all duration-150 sm:h-10 sm:w-10 sm:shadow-none ${
                       showUserMenu
                         ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_#10b981,0_8px_20px_rgba(3,8,20,0.28)]"
                         : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgba(3,8,20,0.24)] hover:shadow-[0_0_0_1px_#10b981,0_8px_20px_rgba(3,8,20,0.28)]"
                     }`}
                   >
-                    {userInitial}
+                    <AvatarImage
+                      src={userAvatarUrl}
+                      alt={session.user?.name ?? "Avatar"}
+                      name={session.user?.name ?? ""}
+                      size={40}
+                      className="h-full w-full object-cover"
+                      textClassName="text-[12px] font-bold text-[#34d399] sm:text-[13px]"
+                    />
                   </button>
 
                   {/* ── Dropdown menu ── */}
@@ -255,7 +264,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     <UserDropdownMenu
                       session={session}
                       userUsername={userUsername}
-                      userInitial={userInitial}
+                      userAvatarUrl={userAvatarUrl}
                       isAdmin={isAdmin}
                       notificationCount={notificationCount}
                       theme={theme}

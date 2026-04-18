@@ -203,7 +203,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="hover:border-[#10b981]/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.96),rgba(10,16,29,0.92))] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
+    <article className="hover:border-[#10b981]/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
       {post.user && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-4">
           <div className="bg-[#10b981]/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-[#10b981]">

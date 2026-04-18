@@ -34,6 +34,7 @@
   --grid-line: rgba(180, 220, 255, 0.06);
   --shadow-card: 0 18px 40px rgba(2, 8, 18, 0.55);
   --shadow-soft: 0 8px 20px rgba(2, 8, 18, 0.35);
+  --card-surface: linear-gradient(180deg, rgba(18, 26, 45, 0.96), rgba(10, 16, 29, 0.92));
   --media-panel-bg: #0c1526;
   --media-panel-sheen: rgba(30, 60, 80, 0.3);
   --media-overlay-strong: rgba(8, 12, 22, 0.86);
@@ -103,6 +104,7 @@ html[data-theme="light"] {
   --grid-line: rgba(16, 185, 129, 0.08);
   --shadow-card: 0 14px 30px rgba(15, 23, 42, 0.06);
   --shadow-soft: 0 8px 18px rgba(15, 23, 42, 0.04);
+  --card-surface: linear-gradient(180deg, #ffffff, #f3f6fb);
   --media-panel-bg: #e6ecf2;
   --media-panel-sheen: rgba(16, 185, 129, 0.1);
   --media-overlay-strong: rgba(15, 23, 42, 0.72);

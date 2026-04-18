@@ -15,13 +15,14 @@ import {
   SunIcon,
   UserIcon,
 } from "@phosphor-icons/react";
+import { AvatarImage } from "@/components/AvatarImage";
 
 interface UserDropdownMenuProps {
   readonly session: {
     user?: { name?: string | null; email?: string | null } | null;
   };
   readonly userUsername: string | null;
-  readonly userInitial: string;
+  readonly userAvatarUrl: string | null;
   readonly isAdmin: boolean;
   readonly notificationCount: number;
   readonly theme: string;
@@ -32,7 +33,7 @@ interface UserDropdownMenuProps {
 export function UserDropdownMenu({
   session,
   userUsername,
-  userInitial,
+  userAvatarUrl,
   isAdmin,
   notificationCount,
   theme,
@@ -43,8 +44,15 @@ export function UserDropdownMenu({
     <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
       {/* User info */}
       <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#10b981]/20 bg-[#10b981]/10">
-          <span className="text-xs font-bold text-[#34d399]">{userInitial}</span>
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#10b981]/20 bg-[#10b981]/10">
+          <AvatarImage
+            src={userAvatarUrl}
+            alt={session.user?.name ?? "Avatar"}
+            name={session.user?.name ?? ""}
+            size={32}
+            className="h-full w-full object-cover"
+            textClassName="text-xs font-bold text-[#34d399]"
+          />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
@@ -147,7 +155,7 @@ export function UserDropdownMenu({
             localStorage.removeItem("dn_username");
             signOut({ callbackUrl: "/" });
           }}
-          className="hover:bg-[var(--danger)]/5 flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] text-[var(--text-muted)] transition-colors duration-100 hover:text-[var(--danger)]"
+          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] font-medium text-[var(--danger)] transition-colors duration-100 hover:bg-[var(--danger)]/10 hover:text-[var(--danger-light)]"
         >
           <SignOutIcon size={14} />
           Çıkış Yap
