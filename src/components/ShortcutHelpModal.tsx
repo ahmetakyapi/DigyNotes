@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { KeyboardIcon, XIcon } from "@phosphor-icons/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { modalBackdrop, modalPanel } from "@/lib/variants";
 
 const SHORTCUT_HELP_EVENT = "dn:shortcut-help";
 
@@ -43,21 +45,38 @@ export default function ShortcutHelpModal() {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [open]);
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="shortcut-help-title"
-      onClick={() => setOpen(false)}
-    >
-      <div
-        ref={trapRef}
-        className="relative mx-4 w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence mode="wait">
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="shortcut-help-title"
+          onClick={() => setOpen(false)}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={modalBackdrop}
+        >
+          <motion.div
+            className="backdrop-blur-sm absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            aria-hidden
+          />
+
+          <motion.div
+            ref={trapRef}
+            className="relative w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]"
+            onClick={(e) => e.stopPropagation()}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={modalPanel}
+          >
         {/* Başlık */}
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -95,10 +114,12 @@ export default function ShortcutHelpModal() {
           ))}
         </div>
 
-        <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
-          Kısayollar sadece metin alanı dışında çalışır.
-        </p>
-      </div>
-    </div>
+            <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
+              Kısayollar sadece metin alanı dışında çalışır.
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

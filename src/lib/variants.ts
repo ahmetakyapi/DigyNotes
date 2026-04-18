@@ -52,3 +52,20 @@ export const slideDown = {
   visible: { opacity: 1, y: 0,  scale: 1,   transition: { duration: 0.2, ease: EASE } },
   exit:    { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } },
 }
+
+export const modalBackdrop = {
+  hidden:  { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+  exit:    { opacity: 0, transition: { duration: 0.15 } },
+}
+
+export const modalPanel = {
+  hidden:  { opacity: 0, y: 16, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.25, ease: EASE } },
+  exit:    { opacity: 0, y: 8, scale: 0.97, transition: { duration: 0.15 } },
+}
+
+export const likeHeart = {
+  initial:  { scale: 1 },
+  animate:  { scale: [1, 1.35, 1], transition: { duration: 0.6, ease: EASE } },
+}

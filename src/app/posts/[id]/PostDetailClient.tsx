@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 import { ArchiveIcon, HeartIcon, PencilSimpleIcon, PushPinIcon, TrashIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
@@ -929,11 +930,16 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#e53e3e]/30 hover:text-[#e53e3e]"
                   }`}
                 >
-                  <HeartIcon
-                    size={16}
-                    weight={likeData.liked ? "fill" : "regular"}
-                    className="transition-transform duration-150"
-                  />
+                  <motion.div
+                    animate={likeData.liked ? { scale: [1, 1.4, 1] } : { scale: 1 }}
+                    transition={{ duration: 0.5, type: "spring", stiffness: 600, damping: 15 }}
+                  >
+                    <HeartIcon
+                      size={16}
+                      weight={likeData.liked ? "fill" : "regular"}
+                      className="transition-transform duration-150"
+                    />
+                  </motion.div>
                   <span>{likeData.count > 0 ? likeData.count : ""}</span>
                 </button>
               </ActionTooltip>
