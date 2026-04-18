@@ -230,6 +230,28 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     load(1, true, r);
   }
 
+  async function togglePublic() {
+    if (!data?.user) return;
+    const next = !data.user.isPublic;
+    try {
+      await requestJson(
+        `/api/admin/users/${params.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isPublic: next }),
+        },
+        "Profil görünürlüğü güncellenemedi."
+      );
+      setData((prev) =>
+        prev ? { ...prev, user: { ...prev.user, isPublic: next } } : prev
+      );
+      toast.success(next ? "Profil herkese açık" : "Profil gizlendi");
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, "Profil görünürlüğü güncellenemedi."));
+    }
+  }
+
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
@@ -551,6 +573,25 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
               <h3 className="mb-3 text-[13px] font-semibold text-[var(--text-primary)]">
                 Hızlı İşlemler
               </h3>
+              <div className="mb-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-3 py-2">
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-[var(--text-primary)]">
+                    Profil görünürlüğü
+                  </p>
+                  <p className="text-[10px] text-[var(--text-muted)]">
+                    {user.isPublic ? "Herkese açık — herkes görebilir" : "Gizli — sadece kendisi ve adminler"}
+                  </p>
+                </div>
+                <button
+                  onClick={togglePublic}
+                  title={user.isPublic ? "Profili gizle" : "Profili herkese aç"}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-all duration-200 ${user.isPublic ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}
+                >
+                  <span
+                    className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${user.isPublic ? "left-[18px]" : "left-[3px]"}`}
+                  />
+                </button>
+              </div>
               {user.username && (
                 <a
                   href={`/profile/${user.username}`}

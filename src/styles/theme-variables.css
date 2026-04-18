@@ -11,6 +11,8 @@
   --bg-raised: #182036;
   --bg-header: #080d1a;
   --bg-soft: #0e1626;
+  --bg-inset: rgba(7, 12, 22, 0.5);
+  --bg-inset-soft: rgba(0, 0, 0, 0.15);
   --bg-overlay: rgba(8, 12, 22, 0.76);
   --border: #1e3044;
   --border-subtle: #182840;
@@ -81,6 +83,8 @@ html[data-theme="light"] {
   --bg-raised: #eef2f7;
   --bg-header: #f8fafc;
   --bg-soft: #e8eef6;
+  --bg-inset: #f1f5fa;
+  --bg-inset-soft: rgba(15, 23, 42, 0.04);
   --bg-overlay: rgba(245, 247, 250, 0.92);
   --border: #d4dde8;
   --border-subtle: #e2e9f0;

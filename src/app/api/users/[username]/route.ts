@@ -42,7 +42,18 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       user.isPublic || currentUser?.id === user.id || currentUser?.isAdmin === true;
 
     if (!canViewPrivateProfile) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      return NextResponse.json(
+        {
+          error: "Profile is private",
+          isPrivate: true,
+          profile: {
+            name: user.name,
+            username: user.username,
+            avatarUrl: user.avatarUrl,
+          },
+        },
+        { status: 403 }
+      );
     }
 
     // Step 2: get posts (paginated), stats, collections, follow info in parallel
