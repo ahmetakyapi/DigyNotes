@@ -38,28 +38,22 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   }, [isOpen, onClose]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {isOpen && (
-        <motion.div
-          className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center px-4"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="confirm-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) onClose();
-          }}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={modalBackdrop}
         >
           <motion.div
-            className="backdrop-blur-sm absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={modalBackdrop}
             aria-hidden
+            onMouseDown={onClose}
           />
 
           <motion.div
@@ -87,7 +81,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 onClick={onConfirm}
                 className={`rounded-md px-5 py-3 text-sm font-semibold text-white transition-colors ${
                   variant === "danger"
-                    ? "bg-[#e53e3e] hover:bg-red-500"
+                    ? "bg-[var(--danger)] hover:bg-[var(--danger-light)]"
                     : "bg-[var(--gold)] hover:bg-[var(--gold-light)]"
                 }`}
               >
@@ -95,7 +89,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               </button>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );

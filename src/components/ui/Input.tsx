@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useId } from "react";
 
 interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -26,7 +26,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
-    const id = props.id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const autoId = useId();
+    const id = props.id || autoId;
 
     const inputClasses = `
       w-full px-3 py-2 rounded-lg border border-[var(--border)]

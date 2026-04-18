@@ -1,13 +1,14 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
-interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+type MotionButtonProps = Omit<HTMLMotionProps<"button">, "children">;
+
+interface ButtonProps extends MotionButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
@@ -19,13 +20,13 @@ interface ButtonProps
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[#0a0f1e] font-semibold shadow-sm hover:shadow-md disabled:bg-[var(--gold)] disabled:opacity-50",
+    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[#0a0f1e] font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
   secondary:
-    "border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--gold)]/60 text-[var(--text-primary)] disabled:opacity-50 disabled:border-[var(--border)]",
+    "border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--gold)]/60 text-[var(--text-primary)] disabled:opacity-50",
   ghost:
     "text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-50",
   danger:
-    "bg-[var(--danger)] hover:bg-red-600 text-white font-semibold shadow-sm hover:shadow-md disabled:bg-[var(--danger)] disabled:opacity-50",
+    "bg-[var(--danger)] hover:bg-[var(--danger-light)] text-white font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -45,6 +46,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       disabled,
       className = "",
+      type = "button",
       children,
       ...props
     },
@@ -53,34 +55,44 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || loading;
 
     const baseClasses =
-      "inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-base)] active:scale-95 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-medium transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-base)] disabled:cursor-not-allowed";
 
-    const classes = `
-      ${baseClasses}
-      ${variantStyles[variant]}
-      ${sizeStyles[size]}
-      ${fullWidth ? "w-full" : ""}
-      ${variant === "primary" ? "focus:ring-[var(--gold)]/40" : "focus:ring-[var(--text-primary)]/40"}
-      ${className}
-    `.trim();
+    const focusRing =
+      variant === "primary" || variant === "secondary"
+        ? "focus:ring-[var(--gold)]/40"
+        : variant === "danger"
+          ? "focus:ring-[var(--danger)]/40"
+          : "focus:ring-[var(--text-primary)]/30";
+
+    const classes = [
+      baseClasses,
+      variantStyles[variant],
+      sizeStyles[size],
+      fullWidth ? "w-full" : "",
+      focusRing,
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
       <motion.button
         ref={ref}
+        type={type}
         className={classes}
         disabled={isDisabled}
         whileTap={!isDisabled ? { scale: variant === "danger" ? 0.94 : 0.96 } : undefined}
         whileHover={!isDisabled ? { scale: 1.01 } : undefined}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        type="button"
-        {...(props as any)}
+        {...props}
       >
         {loading && (
           <svg
-            className="w-4 h-4 animate-spin"
+            className="h-4 w-4 animate-spin"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
+            aria-hidden
           >
             <circle
               className="opacity-25"
@@ -97,9 +109,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </svg>
         )}
-        {!loading && leftIcon && <span>{leftIcon}</span>}
+        {!loading && leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
         <span>{children}</span>
-        {!loading && rightIcon && <span>{rightIcon}</span>}
+        {!loading && rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
       </motion.button>
     );
   }

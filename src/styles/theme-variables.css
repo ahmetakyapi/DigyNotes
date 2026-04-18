@@ -22,6 +22,7 @@
   --text-secondary: #94a8c8;
   --text-muted: #6b7f9e;
   --danger: #e53e3e;
+  --danger-light: #ef5858;
   --surface-strong: #0e1828;
   --surface-strong-hover: #142236;
   --surface-strong-active: #1a2c44;
@@ -90,6 +91,7 @@ html[data-theme="light"] {
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --danger: #dc2626;
+  --danger-light: #ef4444;
   --surface-strong: #f8fafc;
   --surface-strong-hover: #f0f4f8;
   --surface-strong-active: #e6ecf2;

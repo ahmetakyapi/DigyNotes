@@ -46,79 +46,75 @@ export default function ShortcutHelpModal() {
   }, [open]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {open && (
-        <motion.div
-          className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center px-4"
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center px-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="shortcut-help-title"
-          onClick={() => setOpen(false)}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={modalBackdrop}
+          onMouseDown={() => setOpen(false)}
         >
           <motion.div
-            className="backdrop-blur-sm absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={modalBackdrop}
             aria-hidden
           />
 
           <motion.div
             ref={trapRef}
             className="relative w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]"
-            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             initial="hidden"
             animate="visible"
             exit="exit"
             variants={modalPanel}
           >
-        {/* Başlık */}
-        <div className="mb-5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
-              <KeyboardIcon size={18} weight="duotone" />
+            {/* Başlık */}
+            <div className="mb-5 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
+                  <KeyboardIcon size={18} weight="duotone" />
+                </div>
+                <h2
+                  id="shortcut-help-title"
+                  className="text-base font-semibold text-[var(--text-primary)]"
+                >
+                  Klavye Kısayolları
+                </h2>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Kısayol yardımını kapat"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              >
+                <XIcon size={16} />
+              </button>
             </div>
-            <h2
-              id="shortcut-help-title"
-              className="text-base font-semibold text-[var(--text-primary)]"
-            >
-              Klavye Kısayolları
-            </h2>
-          </div>
-          <button
-            onClick={() => setOpen(false)}
-            aria-label="Kısayol yardımını kapat"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-          >
-            <XIcon size={16} />
-          </button>
-        </div>
 
-        {/* Kısayol listesi */}
-        <div className="space-y-2">
-          {SHORTCUTS.map((shortcut) => (
-            <div
-              key={shortcut.key}
-              className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-[var(--bg-raised)]"
-            >
-              <span className="text-sm text-[var(--text-secondary)]">{shortcut.label}</span>
-              <kbd className="flex h-7 min-w-[28px] items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-2 font-mono text-xs font-medium text-[var(--text-primary)]">
-                {shortcut.key}
-              </kbd>
+            {/* Kısayol listesi */}
+            <div className="space-y-2">
+              {SHORTCUTS.map((shortcut) => (
+                <div
+                  key={shortcut.key}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-[var(--bg-raised)]"
+                >
+                  <span className="text-sm text-[var(--text-secondary)]">{shortcut.label}</span>
+                  <kbd className="flex h-7 min-w-[28px] items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-2 font-mono text-xs font-medium text-[var(--text-primary)]">
+                    {shortcut.key}
+                  </kbd>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
             <p className="mt-4 text-center text-xs text-[var(--text-muted)]">
               Kısayollar sadece metin alanı dışında çalışır.
             </p>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );
