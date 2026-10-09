@@ -81,63 +81,181 @@ function Reel({
   );
 }
 
-/* ── One-time (per session) intro curtain with a counter ── */
+/* ── One-time (per session) cinematic intro ──
+   ACT A (0 → 1.1s): ink stage; a small capsule "projector window" flicks through covers
+                     like a film reel while a mono counter runs 00 → 100.
+   ACT B (1.1 → 1.9s): the reel collapses; a giant "Dn." mark assembles (D rises, italic n
+                     slides in, accent dot pops).
+   ACT C (1.9 → 2.8s): the curtain splits — top half lifts, bottom half drops — revealing the page.
+   Flag is written only on completion (StrictMode-safe); a 4s safety timer always releases it. */
+const INTRO_REEL = [
+  `${MEDIA}/perfect-days.webp`,
+  `${MEDIA}/elden-ring.webp`,
+  `${MEDIA}/stoner.webp`,
+  `${MEDIA}/kyoto.webp`,
+  `${MEDIA}/severance.webp`,
+  `${MEDIA}/outer-wilds.webp`,
+  `${MEDIA}/aftersun.webp`,
+  `${MEDIA}/kurk-mantolu-madonna.webp`,
+];
+const SPLIT = [0.83, 0, 0.17, 1] as const;
+
+/* Module-level clock: survives StrictMode double effects and remounts (see ERR-UI-003). */
+let introStartedAt: number | null = null;
+let introDone = false;
+const INTRO_MARK_AT = 1150;
+const INTRO_SPLIT_AT = 1950;
+const INTRO_END_AT = 2900;
+
 function IntroCurtain() {
   const reduce = useReducedMotion();
-  const [show, setShow] = useState(false);
+  const [phase, setPhase] = useState<"off" | "reel" | "mark" | "split">("off");
   const [n, setN] = useState(0);
+  const [frame, setFrame] = useState(0);
+
   useEffect(() => {
-    if (reduce) return;
-    try {
-      if (sessionStorage.getItem("dn_intro_seen")) return;
-    } catch {
-      return;
+    if (reduce || introDone) return;
+    if (introStartedAt === null) {
+      try {
+        if (sessionStorage.getItem("dn_intro_seen")) {
+          introDone = true;
+          return;
+        }
+      } catch {
+        introDone = true;
+        return;
+      }
+      introStartedAt = performance.now();
     }
-    setShow(true);
-    const t0 = performance.now();
-    let raf = 0;
-    let hide: ReturnType<typeof setTimeout> | undefined;
+    const start = introStartedAt;
     const finish = () => {
+      introDone = true;
       try {
         sessionStorage.setItem("dn_intro_seen", "1");
       } catch {
-        /* storage unavailable: curtain simply shows again next time */
+        /* storage unavailable: intro simply plays again next visit */
       }
-      setShow(false);
+      setPhase("off");
     };
-    const safety = setTimeout(finish, 3000);
+    const phaseAt = (elapsed: number) =>
+      elapsed >= INTRO_SPLIT_AT ? "split" : elapsed >= INTRO_MARK_AT ? "mark" : "reel";
+    const elapsed0 = performance.now() - start;
+    if (elapsed0 >= INTRO_END_AT) {
+      finish();
+      return;
+    }
+    setPhase(phaseAt(elapsed0));
+    let raf = 0;
     const tick = (t: number) => {
-      const k = Math.min(1, (t - t0) / 1100);
-      setN(Math.round((1 - Math.pow(1 - k, 3)) * 100));
+      const elapsed = t - start;
+      const k = Math.min(1, elapsed / 1100);
+      setN(Math.round((1 - Math.pow(1 - k, 2)) * 100));
+      setFrame(Math.floor(elapsed / 120));
       if (k < 1) raf = requestAnimationFrame(tick);
-      else hide = setTimeout(finish, 180);
     };
     raf = requestAnimationFrame(tick);
+    const at = (ms: number, fn: () => void) => setTimeout(fn, Math.max(0, ms - elapsed0));
+    const timers = [
+      at(INTRO_MARK_AT, () => setPhase("mark")),
+      at(INTRO_SPLIT_AT, () => setPhase("split")),
+      at(INTRO_END_AT, finish),
+      at(4000, finish),
+    ];
     return () => {
       cancelAnimationFrame(raf);
-      clearTimeout(safety);
-      if (hide) clearTimeout(hide);
+      timers.forEach(clearTimeout);
     };
   }, [reduce]);
 
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          key="curtain"
-          className="fixed inset-0 z-[110] flex items-end justify-between bg-[#0b0b0a] p-6 sm:p-10"
-          exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
-          transition={{ duration: 0.9, ease: [0.83, 0, 0.17, 1] }}
-        >
-          <span className="text-[22vw] font-extrabold tabular-nums leading-[0.8] tracking-[-0.06em] text-[#f2efe8] sm:text-[14vw]">
-            {String(n).padStart(2, "0")}
-          </span>
-          <span className="dn-mono pb-3 text-[11px] uppercase tracking-[0.16em] text-[#77726a]">
-            Arşiv Açılıyor<span className="text-[#b9a8ff]">.</span>
-          </span>
-        </motion.div>
+  if (phase === "off") return null;
+
+  const stage = (
+    <>
+      {/* ACT A — reel window */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 h-[min(34vw,180px)] w-[min(56vw,300px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full ring-1 ring-white/10"
+        initial={{ scale: 0.6, opacity: 0 }}
+        animate={phase === "reel" ? { scale: 1, opacity: 1 } : { scale: 0.2, opacity: 0 }}
+        transition={{ duration: phase === "reel" ? 0.6 : 0.45, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {INTRO_REEL.map((src, i) => (
+          <Image
+            key={src}
+            src={src}
+            alt=""
+            fill
+            sizes="300px"
+            className={`object-cover ${frame % INTRO_REEL.length === i ? "opacity-100" : "opacity-0"}`}
+            priority={i < 3}
+          />
+        ))}
+      </motion.div>
+
+      {/* ACT B — mark */}
+      {phase !== "reel" && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex items-baseline text-[clamp(7rem,24vw,17rem)] leading-none text-[#f2efe8]">
+            <motion.span
+              className="font-extrabold tracking-[-0.06em]"
+              initial={{ y: "40%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            >
+              D
+            </motion.span>
+            <motion.span
+              className="dn-display -ml-[0.04em] text-[1.06em] italic"
+              initial={{ x: "-30%", opacity: 0 }}
+              animate={{ x: "0%", opacity: 1 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+            >
+              n
+            </motion.span>
+            <motion.span
+              className="ml-[0.06em] inline-block h-[0.16em] w-[0.16em] rounded-full bg-[#b9a8ff]"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 14, delay: 0.3 }}
+            />
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+
+      {/* counter + label */}
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6 sm:p-10">
+        <span className="dn-mono text-[11px] uppercase tabular-nums tracking-[0.16em] text-[#77726a]">
+          <span className="text-[#b9a8ff]">(DN)</span> {String(n).padStart(3, "0")}%
+        </span>
+        <span className="dn-mono text-[11px] uppercase tracking-[0.16em] text-[#77726a]">
+          Kişisel Kültür Arşivi
+        </span>
+      </div>
+    </>
+  );
+
+  const half = (top: boolean) => (
+    <motion.div
+      className={`absolute inset-x-0 overflow-hidden bg-[#0b0b0a] ${top ? "top-0 h-1/2" : "bottom-0 h-1/2"}`}
+      animate={phase === "split" ? { y: top ? "-101%" : "101%" } : { y: "0%" }}
+      transition={{ duration: 0.95, ease: SPLIT }}
+    >
+      <div className={`absolute inset-x-0 h-[100svh] ${top ? "top-0" : "bottom-0"}`}>{stage}</div>
+    </motion.div>
+  );
+
+  return (
+    <div aria-hidden className="fixed inset-0 z-[110]">
+      {half(true)}
+      {half(false)}
+      {phase === "split" && (
+        <motion.div
+          className="absolute inset-x-0 top-1/2 h-px bg-[#b9a8ff]"
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: 1, opacity: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        />
+      )}
+    </div>
   );
 }
 

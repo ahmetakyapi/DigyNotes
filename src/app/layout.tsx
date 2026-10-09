@@ -34,7 +34,10 @@ import CommandPalette from "@/components/CommandPalette";
 import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
-  themeColor: "var(--bg-base)",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0a" },
+    { media: "(prefers-color-scheme: light)", color: "#f1ede4" },
+  ],
 };
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -61,13 +64,17 @@ export const metadata: Metadata = {
     siteName: "DigyNotes",
     locale: "tr_TR",
     title: "DigyNotes",
-    description: "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "DigyNotes — Kişisel Not Defteri" }],
+    description:
+      "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
+    images: [
+      { url: "/opengraph-image", width: 1200, height: 630, alt: "DigyNotes — Kişisel Not Defteri" },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "DigyNotes",
-    description: "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
+    description:
+      "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
     images: ["/opengraph-image"],
   },
   icons: {
@@ -101,7 +108,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={`${sans.variable} ${display.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html
+      lang="tr"
+      className={`${sans.variable} ${display.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Prevent flash of wrong theme */}
         <script

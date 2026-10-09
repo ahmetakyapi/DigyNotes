@@ -1,5 +1,5 @@
 {
-  "name": "Digy Notes",
+  "name": "DigyNotes",
   "short_name": "DigyNotes",
   "icons": [
     {
@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#0f0f19",
-  "background_color": "#0f0f19",
+  "theme_color": "#0b0b0a",
+  "background_color": "#0b0b0a",
   "display": "standalone"
 }

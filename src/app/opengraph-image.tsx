@@ -1,100 +1,130 @@
 import { ImageResponse } from "next/og";
+import { loadBrandFonts } from "@/lib/og-fonts";
 
 export const runtime = "edge";
-export const alt = "DigyNotes — Kişisel Not Defteri";
+export const alt = "DigyNotes — Sana Kalan Her Şeyin Arşivi";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OgImage() {
+/* Satori cannot read CSS variables or WebP, so this card uses literal brand colours
+   and Google-hosted TTFs (fetched without a browser UA, Google serves TTF). */
+const INK = "#0b0b0a";
+const BONE = "#f2efe8";
+const MUTED = "#77726a";
+const LAVENDER = "#b9a8ff";
+
+/* LAYOUT: 1200×630 ink card.
+   TOP: "Dn." mark tile + mono label.  CENTER: two-line headline (grotesk + serif italic).
+   BOTTOM: category line left, domain right, hairline above. */
+export default async function OgImage() {
+  const sansText = "DSana Kalan Her Şeyin(DN)KİŞİSEL KÜLTÜR ARŞİVİFİLM—DİZİOYUNKTPGEZdigynotes.";
+  const fonts = await loadBrandFonts(sansText + "Arşivi.n");
+
   return new ImageResponse(
-    (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        background: INK,
+        padding: "64px 72px",
+        position: "relative",
+        fontFamily: "Hanken",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: -260,
+          left: -200,
+          width: 900,
+          height: 900,
+          borderRadius: 9999,
+          background: "radial-gradient(closest-side, rgba(185,168,255,0.22), rgba(185,168,255,0))",
+        }}
+      />
+
+      <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "center",
+            width: 84,
+            height: 84,
+            borderRadius: 22,
+            background: "#161613",
+            border: "1px solid #282722",
+            paddingTop: 10,
+          }}
+        >
+          <span style={{ color: BONE, fontSize: 50, fontWeight: 800, letterSpacing: -3 }}>D</span>
+          <span
+            style={{ color: BONE, fontSize: 52, fontFamily: "Instrument", fontStyle: "italic" }}
+          >
+            n
+          </span>
+          <span
+            style={{ width: 10, height: 10, borderRadius: 10, background: LAVENDER, marginLeft: 2 }}
+          />
+        </div>
+        <span style={{ color: MUTED, fontSize: 20, letterSpacing: 4 }}>
+          <span style={{ color: LAVENDER, marginRight: 14 }}>(DN)</span>KİŞİSEL KÜLTÜR ARŞİVİ
+        </span>
+      </div>
+
       <div
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(135deg, #0c0c0c 0%, var(--bg-base) 50%, #0c0c0c 100%)",
-          fontFamily: "sans-serif",
+          marginTop: "auto",
+          marginBottom: "auto",
         }}
       >
-        {/* Emerald glow */}
-        <div
+        <span
           style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            height: 400,
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgb(var(--gold-rgb)/0.14), transparent 70%)",
-          }}
-        />
-
-        {/* Title */}
-        <div
-          style={{
-            fontSize: 72,
+            color: BONE,
+            fontSize: 112,
             fontWeight: 800,
-            color: "#f0ede8",
-            letterSpacing: "-0.03em",
+            letterSpacing: -6,
+            lineHeight: 0.95,
           }}
         >
-          DigyNotes
-        </div>
-
-        {/* Subtitle */}
-        <div
-          style={{
-            fontSize: 26,
-            fontWeight: 500,
-            color: "#888888",
-            marginTop: 16,
-          }}
-        >
-          Film · Dizi · Oyun · Kitap · Gezi Notları
-        </div>
-
-        {/* Emerald line */}
-        <div
-          style={{
-            width: 400,
-            height: 2,
-            marginTop: 36,
-            background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
-          }}
-        />
-
-        {/* Badge */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginTop: 28,
-            padding: "10px 24px",
-            borderRadius: 20,
-            background: "rgb(var(--gold-rgb)/0.1)",
-            border: "1px solid rgb(var(--gold-rgb)/0.2)",
-          }}
-        >
-          <div
+          Sana Kalan Her Şeyin
+        </span>
+        <span style={{ display: "flex", alignItems: "baseline" }}>
+          <span
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: "var(--gold)",
+              color: BONE,
+              fontSize: 132,
+              fontFamily: "Instrument",
+              fontStyle: "italic",
+              lineHeight: 1,
+              letterSpacing: -3,
             }}
-          />
-          <span style={{ fontSize: 16, fontWeight: 600, color: "var(--gold)" }}>
-            Kişisel Dijital Not Defteri
+          >
+            Arşivi
           </span>
-        </div>
+          <span style={{ color: LAVENDER, fontSize: 132, fontWeight: 800, lineHeight: 1 }}>.</span>
+        </span>
       </div>
-    ),
-    { ...size }
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          borderTop: "1px solid #282722",
+          paddingTop: 22,
+          color: MUTED,
+          fontSize: 20,
+          letterSpacing: 4,
+        }}
+      >
+        <span>FİLM — DİZİ — OYUN — KİTAP — GEZİ</span>
+        <span style={{ color: BONE }}>digynotes</span>
+      </div>
+    </div>,
+    { ...size, fonts }
   );
 }

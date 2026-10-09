@@ -16,6 +16,8 @@ import { getStatusOptions } from "@/components/StatusBadge";
 import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import TagInput from "@/components/TagInput";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { ArrowLeftIcon, ArrowUpRightIcon, CaretRightIcon } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 import { customLoader } from "@/lib/image";
@@ -31,11 +33,13 @@ import { stripHtml } from "@/lib/text";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15";
+  "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 const labelClass =
-  "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
+  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
 const sectionClass =
-  "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5 sm:p-4 xl:p-5";
+  "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5 xl:p-6";
+const toggleCardClass =
+  "flex cursor-pointer items-start gap-3 rounded-[18px] border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 transition-colors duration-200 hover:border-accent/30";
 
 function createEditSnapshot(input: {
   title: string;
@@ -370,17 +374,17 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-[calc(100dvh-3.75rem)] py-4 sm:py-6 lg:py-8">
         <div className="mx-auto max-w-[1280px] space-y-3.5 px-3.5 sm:space-y-4 sm:px-5 lg:px-6">
-          <div className="mb-8 h-8 w-48 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
+          <div className="mb-8 h-10 w-56 animate-pulse rounded-full bg-[var(--bg-raised)]" />
           <div className="grid gap-3.5 xl:grid-cols-[minmax(0,1.42fr)_minmax(320px,0.95fr)]">
             <div className="space-y-3.5 sm:space-y-4">
               {[1, 2].map((i) => (
                 <div
                   key={i}
-                  className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
+                  className="space-y-3 rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5"
                 >
-                  <div className="h-3 w-24 animate-pulse rounded bg-[var(--bg-raised)]" />
-                  <div className="h-10 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
-                  <div className="h-36 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
+                  <div className="h-3 w-24 animate-pulse rounded-full bg-[var(--bg-raised)]" />
+                  <div className="h-10 animate-pulse rounded-2xl bg-[var(--bg-raised)]" />
+                  <div className="h-36 animate-pulse rounded-2xl bg-[var(--bg-raised)]" />
                 </div>
               ))}
             </div>
@@ -388,10 +392,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="space-y-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
+                  className="space-y-3 rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5"
                 >
-                  <div className="h-3 w-20 animate-pulse rounded bg-[var(--bg-raised)]" />
-                  <div className="h-8 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
+                  <div className="h-3 w-20 animate-pulse rounded-full bg-[var(--bg-raised)]" />
+                  <div className="h-8 animate-pulse rounded-2xl bg-[var(--bg-raised)]" />
                 </div>
               ))}
             </div>
@@ -410,16 +414,16 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]"
+              className="inline-flex h-11 cursor-pointer items-center rounded-full border border-[var(--border)] px-5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95"
             >
-              Geri dön
+              Geri Dön
             </button>
             <button
               type="button"
               onClick={() => router.push("/notes")}
-              className="rounded-lg bg-[var(--gold)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)]"
+              className="inline-flex h-11 cursor-pointer items-center rounded-full bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[var(--gold-light)] active:scale-95"
             >
-              Notlara git
+              Notlara Git
             </button>
           </div>
         </div>
@@ -430,39 +434,43 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   return (
     <main className="min-h-[calc(100dvh-3.75rem)] py-4 pb-36 sm:py-6 sm:pb-32 lg:pb-28 lg:pt-8">
       <div className="mx-auto max-w-[1280px] px-3.5 sm:px-5 lg:px-6">
-        {/* Page header */}
-        <div className="mb-5 border-b border-[var(--border)] pb-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="mb-1 flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">Yazıyı Düzenle</h1>
-                <span className="inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--gold)]">
-                  Düzenleniyor
+        {/* LAYOUT: shared editorial masthead — status badges + back link live in the action slot */}
+        <PageHeader
+          index="✎"
+          eyebrow="Notu Düzenle"
+          title={
+            <>
+              Yazıyı <Em>Düzenle</Em>
+              <Dot />
+            </>
+          }
+          description={title ? <span className="line-clamp-1">{title}</span> : undefined}
+          actions={
+            <>
+              <span className="dn-mono hidden items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)] sm:inline-flex">
+                Düzenleniyor
+              </span>
+              {isDirty && (
+                <span className="dn-mono inline-flex items-center gap-1.5 rounded-full border border-danger/25 bg-danger/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-danger">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--danger)]" />
+                  Kaydedilmedi
                 </span>
-                {isDirty && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[#e53e3e]/25 bg-[#e53e3e]/10 px-2 py-0.5 text-[10px] font-semibold text-[#e53e3e]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#e53e3e]" />
-                    Kaydedilmedi
-                  </span>
-                )}
-              </div>
-              {title && (
-                <p className="max-w-xs truncate text-sm text-[var(--text-muted)]">{title}</p>
               )}
-            </div>
-            <button
-              type="button"
-              onClick={() =>
-                navigateWithDirtyCheck(() =>
-                  router.push(`/category/${encodeURIComponent(originalCategory)}`)
-                )
-              }
-              className="flex-shrink-0 whitespace-nowrap text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
-            >
-              ← {originalCategory ? getCategoryLabel(originalCategory) : "Geri"}
-            </button>
-          </div>
-        </div>
+              <button
+                type="button"
+                onClick={() =>
+                  navigateWithDirtyCheck(() =>
+                    router.push(`/category/${encodeURIComponent(originalCategory)}`)
+                  )
+                }
+                className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
+              >
+                <ArrowLeftIcon size={12} weight="bold" />
+                {originalCategory ? getCategoryLabel(originalCategory) : "Geri"}
+              </button>
+            </>
+          }
+        />
 
         {submitError && (
           <div className="mb-4">
@@ -472,12 +480,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
         <form
           ref={formRef}
-          className="grid items-start gap-3.5 lg:grid-cols-[minmax(0,1.42fr)_minmax(300px,0.9fr)]"
+          className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.42fr)_minmax(300px,0.9fr)] lg:gap-5"
         >
           {/* ── Sol kolon: meta + etiketler + içerik ── */}
-          <div className="min-w-0 space-y-3.5 sm:space-y-4">
+          <div className="min-w-0 space-y-4 lg:space-y-5">
             <div className={sectionClass}>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <label className={labelClass}>Başlık</label>
                   <input
@@ -520,7 +528,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   <div>
                     <label className={labelClass}>
                       {config.creatorLabel}
-                      {config.creatorRequired && <span className="ml-1 text-[#e53e3e]">*</span>}
+                      {config.creatorRequired && <span className="ml-1 text-danger">*</span>}
                     </label>
                     <input
                       type="text"
@@ -535,7 +543,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <div className={config.showCreator ? "" : "sm:col-span-2"}>
                   <label className={labelClass}>
                     {config.yearsLabel}
-                    {config.yearsRequired && <span className="ml-1 text-[#e53e3e]">*</span>}
+                    {config.yearsRequired && <span className="ml-1 text-danger">*</span>}
                   </label>
                   <input
                     type="text"
@@ -547,11 +555,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   />
                 </div>
                 {isTravelCategory(category) && (
-                  <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5 sm:col-span-2">
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--bg-raised)] p-4 sm:col-span-2">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <div>
                         <p className={labelClass}>Konum</p>
-                        <p className="-mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
+                        <p className="-mt-1 text-[12px] leading-5 text-[var(--text-muted)]">
                           Harita görünümü için konumu güncelle.
                         </p>
                       </div>
@@ -560,20 +568,21 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           href={buildOpenStreetMapLink(lat, lng)}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
+                          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-1.5 text-[11.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-[var(--text-primary)] active:scale-95"
                         >
                           Haritada Aç
+                          <ArrowUpRightIcon size={11} weight="bold" />
                         </a>
                       )}
                     </div>
                     <PlaceSearch onSelect={handlePlaceSelect} />
-                    <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
+                    <div className="mt-3 rounded-2xl border border-dashed border-[var(--border)] px-4 py-3 text-xs text-[var(--text-muted)]">
                       {typeof lat === "number" && typeof lng === "number" ? (
                         <div className="space-y-1.5">
                           <p className="font-medium text-[var(--text-secondary)]">
                             {locationLabel || title || "Konum seçildi"}
                           </p>
-                          <p>
+                          <p className="dn-mono text-[11px] tracking-[0.04em]">
                             {formatCoordinate(lat)}, {formatCoordinate(lng)}
                           </p>
                         </div>
@@ -585,7 +594,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 )}
                 <div className="sm:col-span-2">
                   <label className={labelClass}>Etiketler</label>
-                  <div className="mb-2.5 flex flex-wrap gap-1.5">
+                  <div className="mb-3 flex flex-wrap gap-1.5">
                     {exampleTags.map((tagName) => {
                       const isAdded = tags.includes(tagName);
                       return (
@@ -597,10 +606,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                             setTags((prev) => [...prev, tagName]);
                           }}
                           disabled={isAdded || tags.length >= 10}
-                          className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
+                          className={`cursor-pointer rounded-full border px-2.5 py-1 text-[11.5px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                             isAdded
-                              ? "border-accent/40 bg-accent/10 text-accent-light"
-                              : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/35 hover:text-accent-light"
+                              ? "border-accent/40 bg-accent/10 text-accent"
+                              : "border-[var(--border)] text-[var(--text-secondary)] hover:border-accent/40 hover:text-accent"
                           }`}
                         >
                           #{tagName}
@@ -615,44 +624,44 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
             <div className={sectionClass}>
               <label className={labelClass}>İçerik</label>
-              <div className="dn-compose-editor overflow-hidden rounded-lg border border-[var(--border)]">
+              <div className="dn-compose-editor overflow-hidden rounded-2xl border border-[var(--border)]">
                 <ReactQuill theme="snow" value={content} onChange={setContent} />
               </div>
             </div>
           </div>
 
           {/* ── Sağ kolon: özet, kapak, puan — lg+ sidebar, mobilde collapsible ── */}
-          <aside className="hidden min-w-0 space-y-3.5 sm:space-y-4 lg:block">
+          <aside className="hidden min-w-0 space-y-4 lg:block lg:space-y-5">
             <div className={sectionClass}>
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                Düzenleme Özeti
+              <p className={labelClass}>
+                <span className="text-[var(--gold)]">(✎)</span> Düzenleme Özeti
               </p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+              <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--border)]">
+                <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
+                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                     Kategori
-                  </p>
-                  <p className="mt-0.5 truncate text-sm font-semibold text-[var(--text-primary)]">
+                  </dt>
+                  <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
                     {category ? getCategoryLabel(category) : "-"}
-                  </p>
+                  </dd>
                 </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+                <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
+                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                     Durum
-                  </p>
-                  <p className="mt-0.5 truncate text-sm font-semibold text-[var(--text-primary)]">
+                  </dt>
+                  <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
                     {status || "-"}
-                  </p>
+                  </dd>
                 </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-2">
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+                <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
+                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                     Puan
-                  </p>
-                  <p className="mt-0.5 text-sm font-semibold text-[var(--text-primary)]">
+                  </dt>
+                  <dd className="dn-display mt-0.5 text-xl italic leading-tight text-[var(--text-primary)]">
                     {rating > 0 ? `${rating} / 5` : "Yok"}
-                  </p>
+                  </dd>
                 </div>
-              </div>
+              </dl>
             </div>
 
             <div className={sectionClass}>
@@ -664,7 +673,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 className={inputClass}
               />
               {image && (
-                <div className="mt-3 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--shadow-soft)]">
+                <div className="mt-3 overflow-hidden rounded-[20px] border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--shadow-soft)]">
                   <div className="relative h-36 w-full sm:h-48 lg:h-52 xl:h-56">
                     <Image
                       loader={customLoader}
@@ -692,7 +701,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           ? { objectPosition: imagePosition }
                           : {
                               objectPosition: imagePosition,
-                              filter: "drop-shadow(0 16px 24px rgba(0,0,0,0.35))",
+                              filter: "drop-shadow(0 16px 24px rgb(var(--ink-rgb) / 0.35))",
                             }
                       }
                     />
@@ -703,15 +712,15 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 60%, var(--media-overlay-strong) 100%)",
                       }}
                     />
-                    <span className="absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] backdrop-blur-md">
+                    <span className="dn-mono absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--gold)] backdrop-blur-md">
                       Kapak Önizleme
                     </span>
-                    <span className="absolute bottom-3 right-3 rounded-md border border-white/25 bg-black/40 px-2 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
-                      {isLandscape ? "Yatay kadraj" : "Poster kadrajı"}
+                    <span className="dn-mono absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--media-control-text)] backdrop-blur-sm">
+                      {isLandscape ? "Yatay Kadraj" : "Poster Kadrajı"}
                     </span>
                   </div>
-                  <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-card)] px-3.5 py-2.5">
-                    <p className="text-[11px] text-[var(--text-secondary)]">
+                  <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-3">
+                    <p className="text-[12px] text-[var(--text-secondary)]">
                       {isLandscape
                         ? "Yatay görseller için üst odaklı kadraj otomatik uygulandı."
                         : "Poster tipindeki görseller için merkez odak korunuyor."}
@@ -725,14 +734,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               <label className={labelClass}>Puan</label>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                <span className="text-sm text-[var(--text-secondary)]">
+                <span className="dn-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-secondary)]">
                   {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
                   <button
                     type="button"
                     onClick={() => setRating(0)}
-                    className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+                    className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-muted)] transition-colors duration-200 hover:border-danger/30 hover:text-danger active:scale-95"
                   >
                     Sıfırla
                   </button>
@@ -743,12 +752,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             {supportsSpoiler && (
               <div className={sectionClass}>
                 <p className={labelClass}>Yayın Ayarları</p>
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-accent/25">
+                <label className={toggleCardClass}>
                   <input
                     type="checkbox"
                     checked={hasSpoiler}
                     onChange={(e) => setHasSpoiler(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-accent focus:ring-accent"
+                    className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[var(--border)] accent-accent"
                   />
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -764,15 +773,21 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           </aside>
 
           {/* ── Mobil sidebar: collapsible ── */}
-          <details className="min-w-0 lg:hidden group">
-            <summary className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] list-none [&::-webkit-details-marker]:hidden">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-200 group-open:rotate-90" strokeLinecap="round">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-              Kapak, Puan & Ayarlar
-              {rating > 0 && <span className="ml-auto text-xs text-[var(--gold)]">{rating}/5</span>}
+          <details className="group min-w-0 lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] [&::-webkit-details-marker]:hidden">
+              <CaretRightIcon
+                size={14}
+                weight="bold"
+                className="transition-transform duration-300 ease-out-expo group-open:rotate-90"
+              />
+              Kapak, Puan ve Ayarlar
+              {rating > 0 && (
+                <span className="dn-mono ml-auto text-[10.5px] uppercase tracking-[0.14em] text-[var(--gold)]">
+                  {rating}/5
+                </span>
+              )}
             </summary>
-            <div className="mt-3 space-y-3.5">
+            <div className="mt-3 space-y-4">
               <div className={sectionClass}>
                 <label className={labelClass}>Kapak Görseli URL</label>
                 <input
@@ -786,14 +801,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <label className={labelClass}>Puan</label>
                 <div className="mt-1 flex flex-wrap items-center gap-3">
                   <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                  <span className="text-sm text-[var(--text-secondary)]">
+                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-secondary)]">
                     {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                   </span>
                   {rating > 0 && (
                     <button
                       type="button"
                       onClick={() => setRating(0)}
-                      className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+                      className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-muted)] transition-colors duration-200 hover:border-danger/30 hover:text-danger active:scale-95"
                     >
                       Sıfırla
                     </button>
@@ -802,15 +817,17 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               </div>
               {supportsSpoiler && (
                 <div className={sectionClass}>
-                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-accent/25">
+                  <label className={toggleCardClass}>
                     <input
                       type="checkbox"
                       checked={hasSpoiler}
                       onChange={(e) => setHasSpoiler(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-accent focus:ring-accent"
+                      className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[var(--border)] accent-accent"
                     />
                     <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-[var(--text-primary)]">Spoiler uyarısı</span>
+                      <span className="block text-sm font-semibold text-[var(--text-primary)]">
+                        Spoiler Uyarısı Ekle
+                      </span>
                     </span>
                   </label>
                 </div>
@@ -820,26 +837,32 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </form>
       </div>
 
-      {/* ─── Sticky Save Bar ─── */}
-      <div className="bg-[var(--bg-base)]/95 fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1280px] flex-col gap-2.5 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5 lg:px-6">
+      {/* LAYOUT: floating glass pill action bar (matches /new-post) — context left, cancel/save right */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
+        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-              Düzenleniyor
+            <p className="dn-mono flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="text-[var(--gold)]">(✎)</span> Düzenleniyor
+              {isDirty && (
+                <span className="inline-flex items-center gap-1 text-danger">
+                  · <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+                  <span className="hidden sm:inline">Kaydedilmedi</span>
+                </span>
+              )}
             </p>
             {title ? (
-              <p className="max-w-[200px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
+              <p className="max-w-[130px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
                 {title}
               </p>
             ) : (
               <p className="text-sm italic text-[var(--text-muted)]">—</p>
             )}
           </div>
-          <div className="flex w-full flex-shrink-0 items-center gap-2 sm:w-auto">
+          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             <button
               type="button"
               onClick={() => navigateWithDirtyCheck(() => router.back())}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              className="cursor-pointer rounded-full px-3 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
               İptal
             </button>
@@ -847,7 +870,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-accent hover:bg-accent-dark px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+              className="flex cursor-pointer items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 ease-out-expo hover:bg-accent-dark active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 sm:px-5"
             >
               {isSubmitting ? (
                 <>
@@ -867,9 +890,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               ) : (
                 <>
                   {isDirty && (
-                    <span className="h-2 w-2 flex-shrink-0 rounded-full bg-[var(--bg-base)]/50" />
+                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--text-on-accent)] opacity-60" />
                   )}
-                  Değişiklikleri Kaydet
+                  <span className="sm:hidden">Kaydet</span>
+                  <span className="hidden sm:inline">Değişiklikleri Kaydet</span>
                 </>
               )}
             </button>

@@ -2,93 +2,93 @@ import { getSiteSetting } from "@/lib/site-settings";
 import Link from "next/link";
 import { RetryButton } from "@/components/RetryButton";
 
+/* LAYOUT: Full-screen centred editorial maintenance screen — mirrors the 404 page.
+   - mono eyebrow "(503) — Montaj Masası"
+   - giant "5 [capsule] 3": the zero is a dashed film frame labelled "Montajda" + apricot dot
+   - Title Case headline with serif-italic accent, then the admin-set maintenance message
+   - hairline-divided 3-cell strip with mono labels
+   - pill actions (retry primary, home ghost) and a mono footer line
+*/
 export default async function MaintenancePage() {
   const message = await getSiteSetting("maintenanceMessage");
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-base)] px-4 py-16 text-[var(--text-primary)]">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute -left-20 top-0 h-72 w-72 rounded-full opacity-[0.08] blur-[120px]"
-          style={{
-            background: "radial-gradient(circle, var(--gold) 0%, var(--gold-dark) 55%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute bottom-0 right-0 h-80 w-80 rounded-full opacity-[0.08] blur-[120px]"
-          style={{
-            background: "radial-gradient(circle, #4f6cc6 0%, #263764 55%, transparent 70%)",
-          }}
-        />
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)] px-5 py-16 text-center text-[var(--text-primary)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/3 h-[50vmin] w-[80vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--gold-rgb)/0.12),transparent)] blur-2xl"
+      />
+
+      <p className="dn-mono relative text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <span className="text-[var(--gold)]">(503)</span> — Montaj Masası
+      </p>
+
+      <div
+        aria-hidden
+        className="relative mt-6 flex items-center gap-[0.06em] text-[clamp(7rem,26vw,16rem)] font-extrabold leading-[0.8] tracking-[-0.06em] text-[var(--text-primary)]"
+      >
+        <span>5</span>
+        <span className="relative inline-flex h-[0.74em] w-[1.25em] items-center justify-center rounded-full border-2 border-dashed border-[var(--text-faint)]">
+          <span className="dn-mono text-[0.08em] uppercase tracking-[0.2em] text-[var(--text-muted)]">
+            Montajda
+          </span>
+          <span className="absolute -right-[0.02em] -top-[0.02em] h-[0.12em] w-[0.12em] animate-pulse rounded-full bg-[var(--accent-2)]" />
+        </span>
+        <span>3</span>
       </div>
 
-      <div className="bg-[var(--bg-card)]/94 relative w-full max-w-2xl rounded-[32px] border border-[var(--border)] p-8 shadow-[0_28px_80px_rgb(var(--ink-rgb)/0.34)] backdrop-blur-xl sm:p-10">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10">
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--gold)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-          </svg>
-        </div>
+      <h1 className="relative mt-8 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.045em] text-[var(--text-primary)]">
+        Sistem Kısa Süreliğine{" "}
+        <span className="dn-display font-normal italic tracking-[-0.02em]">Kurguda</span>
+        <span className="text-[var(--gold)]">.</span>
+      </h1>
+      <p className="relative mt-4 max-w-[480px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
+        {message}
+      </p>
 
-        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--gold)]">
-          Bakım Modu
-        </p>
-        <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--text-primary)] sm:text-4xl">
-          Sistem Kısa Süreliğine Düzenleniyor
-        </h1>
-        <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--text-secondary)] sm:text-[15px]">
-          {message}
-        </p>
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Neler oluyor?
+      <div className="relative mt-10 grid w-full max-w-[720px] gap-px overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--border)] text-left sm:grid-cols-3">
+        {[
+          {
+            n: "01",
+            label: "Neler Oluyor?",
+            text: "Erişim geçici olarak sınırlandı; amaç veri bütünlüğünü koruyarak güncelleme yapmak.",
+          },
+          {
+            n: "02",
+            label: "Bu Sırada?",
+            text: "Biraz sonra tekrar kontrol edebilir veya ana sayfaya dönüp genel durumu takip edebilirsin.",
+          },
+          {
+            n: "03",
+            label: "Veri Güvende mi?",
+            text: "Amaç tam olarak bu: notların ve arşivin korunurken sistem güvenli biçimde açılacak.",
+          },
+        ].map((c) => (
+          <div key={c.n} className="bg-[var(--bg-card)] px-5 py-5">
+            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="text-[var(--gold)]">({c.n})</span> {c.label}
             </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Erişim geçici olarak sınırlandı; amaç veri bütünlüğünü koruyarak güncelleme yapmak.
-            </p>
+            <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">{c.text}</p>
           </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Bu sırada ne yapabilirsin?
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Biraz sonra tekrar kontrol edebilir veya ana sayfaya dönüp genel durumu takip
-              edebilirsin.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              Veri güvende mi?
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              Amaç tam olarak bu: notların ve arşivin korunurken sistem güvenli biçimde açılacak.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <RetryButton
-            label="Durumu tekrar kontrol et"
-            className="inline-flex min-w-[220px] justify-center rounded-2xl bg-accent hover:bg-accent-dark px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
-          />
-          <Link
-            href="/"
-            className="inline-flex min-w-[180px] justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-5 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
-          >
-            Ana Sayfaya Dön
-          </Link>
-        </div>
+        ))}
       </div>
+
+      <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
+        <RetryButton
+          label="Durumu Tekrar Kontrol Et"
+          className="inline-flex h-12 cursor-pointer items-center rounded-full bg-[var(--gold)] px-6 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[var(--gold-light)] active:scale-95"
+        />
+        <Link
+          href="/"
+          className="inline-flex h-12 cursor-pointer items-center rounded-full border border-[var(--border)] px-6 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95"
+        >
+          Ana Sayfaya Dön
+        </Link>
+      </div>
+
+      <p className="dn-mono relative mt-12 text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+        HTTP 503 · Bakım · DigyNotes
+      </p>
     </main>
   );
 }

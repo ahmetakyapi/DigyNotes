@@ -589,7 +589,7 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 **Symptom**: Landing intro curtain freezes on "00" and covers the page in `next dev`.
 **Root cause**: The effect wrote the "seen" flag to sessionStorage before animating; StrictMode runs effect → cleanup → effect, so the second run saw the flag and returned early while `show` was already true.
 **Fix**: Write the flag only when the animation finishes, and add a 3s safety timeout that always hides the overlay (`src/components/landing/Hero.tsx` → `IntroCurtain`).
-**Prevention**: For "show once" UI, persist the flag at completion, never at start; always add a fail-safe hide.
+**Prevention**: For "show once" UI, persist the flag at completion, never at start; always add a fail-safe hide. Keep the timeline clock at module level (`startedAt` outside the component) so StrictMode double effects and remounts resume instead of restarting or freezing (same fix used by `WelcomeReveal` in `src/components/intro/Welcome.tsx`, which consumes a sessionStorage handoff).
 **Files**: `src/components/landing/Hero.tsx`
 
 ---
@@ -602,6 +602,17 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 **Fix**: The AppShell page transition animates `opacity` only.
 **Prevention**: Never animate transform/filter on wrappers that contain fixed UI.
 **Files**: `src/components/AppShell.tsx`
+
+---
+
+## ERR-UI-005: CSS variables inside next/og images or web manifest
+
+**First seen**: 2026-10-09
+**Symptom**: OG images render without accent colours; PWA theme colour ignored.
+**Root cause**: A colour codemod replaced hex values with `var(--…)` in files that are not rendered by a browser (Satori `ImageResponse`, `manifest.ts`, `viewport.themeColor`). These contexts need literal colours.
+**Fix**: Use literal hex/rgba there (`src/lib/og-fonts.ts` exports `OG` brand colours).
+**Prevention**: Exclude `opengraph-image.tsx`, `manifest.ts` and metadata/viewport exports from colour codemods.
+**Files**: `src/app/opengraph-image.tsx`, `src/app/posts/[id]/opengraph-image.tsx`, `src/app/manifest.ts`, `src/app/layout.tsx`
 
 ---
 

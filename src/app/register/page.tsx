@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { AuthShell } from "@/components/AuthShell";
-import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { WelcomeCover, queueWelcome } from "@/components/intro/Welcome";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import PasswordStrength from "@/components/PasswordStrength";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
@@ -65,6 +65,7 @@ export default function RegisterPage() {
         return;
       }
 
+      queueWelcome(name);
       setRedirecting(true);
       router.push("/notes");
       router.refresh();
@@ -77,7 +78,7 @@ export default function RegisterPage() {
 
   return (
     <AuthShell mode="register">
-      <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
+      <WelcomeCover show={redirecting} />
       <div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}

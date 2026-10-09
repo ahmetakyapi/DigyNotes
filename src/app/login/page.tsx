@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { AuthShell } from "@/components/AuthShell";
-import { FullScreenLoader } from "@/components/FullScreenLoader";
+import { WelcomeCover, queueWelcome } from "@/components/intro/Welcome";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 
 export default function LoginPage() {
@@ -39,6 +39,8 @@ export default function LoginPage() {
         return;
       }
 
+      const session = await getSession().catch(() => null);
+      queueWelcome(session?.user?.name);
       setRedirecting(true);
       router.push("/notes");
       router.refresh();
@@ -51,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <AuthShell mode="login">
-      <FullScreenLoader show={redirecting} message="Giriş yapılıyor..." />
+      <WelcomeCover show={redirecting} />
       <div>
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}

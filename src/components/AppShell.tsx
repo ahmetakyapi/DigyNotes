@@ -14,6 +14,7 @@ import { MobileTabBar } from "@/components/appshell/MobileTabBar";
 import { DesktopGlobalNav } from "@/components/appshell/DesktopGlobalNav";
 import { AvatarImage } from "@/components/AvatarImage";
 import { Wordmark } from "@/components/Wordmark";
+import { WelcomeReveal } from "@/components/intro/Welcome";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
@@ -139,6 +140,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
   return (
     <>
+      <WelcomeReveal />
+
       {/* ─── SKIP LINK ─── */}
       <a
         href="#main-content"
@@ -204,10 +207,10 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
+                    className="absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
-                    <div className="bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40" />
+                    <div className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40 bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)]" />
                   </div>
                 )}
                 <Link

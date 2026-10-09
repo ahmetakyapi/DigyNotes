@@ -1,19 +1,22 @@
 "use client";
 
-/* LAYOUT:
-   - Sticky back header
-   - Hero: avatar letter + name + email + badges
-   - 4 KPI row: notes / followers / following / total actions
-   - Two-column grid (lg:2/3 + 1/3):
-     - Left: Last 24h bar chart + activity log list (paginated)
-     - Right: Tarih/zaman kartı + eylem dağılımı
+/* LAYOUT: Editorial user dossier (max-w-5xl, inside AppShell).
+   ROW 1: pill back link "Admin Paneli" · mono eyebrow "(16) — Yönetim / Kullanıcı".
+   ROW 2: serif-italic initial disc, big grotesk name with accent dot, mono meta line
+          (@username · e-posta · üyelik), bio, then a hairline.
+   ROW 3: calm stat strip — 4 hairline-divided cells, serif italic numbers + mono labels.
+   ROW 4: two-column grid (lg 2/3 + 1/3):
+     - Left: range pills + activity bar chart card, activity log list (paginated)
+     - Right: time info card, action breakdown, quick actions
 */
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { ArrowLeftIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { Dot } from "@/components/ui/PageHeader";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 /* ─── types ─── */
@@ -82,12 +85,12 @@ const RANGE_LABELS: Record<RangeKey, string> = {
 };
 
 const ACTION_META: Record<string, { label: string; color: string }> = {
-  "post.create": { label: "Not oluşturuldu", color: "var(--gold-light)" },
-  "post.update": { label: "Not güncellendi", color: "#60a5fa" },
-  "post.delete": { label: "Not silindi", color: "#e53e3e" },
-  "user.register": { label: "Kayıt oldu", color: "var(--gold)" },
-  "category.create": { label: "Kategori oluşturuldu", color: "var(--gold-light)" },
-  "user.follow": { label: "Takip etti", color: "#f472b6" },
+  "post.create": { label: "Not Oluşturuldu", color: "var(--gold)" },
+  "post.update": { label: "Not Güncellendi", color: "rgb(var(--gold-rgb) / 0.55)" },
+  "post.delete": { label: "Not Silindi", color: "var(--danger)" },
+  "user.register": { label: "Kayıt Oldu", color: "var(--accent-2)" },
+  "category.create": { label: "Kategori Oluşturuldu", color: "rgb(var(--accent-2-rgb) / 0.6)" },
+  "user.follow": { label: "Takip Etti", color: "var(--text-muted)" },
 };
 
 /* ─── helpers ─── */
@@ -122,16 +125,15 @@ function timeAgo(iso: string | null) {
 }
 
 /* ─── sub-components ─── */
-function KpiCard({ value, label, color }: { value: number; label: string; color: string }) {
+function StatCell({ value, label, index }: { value: number; label: string; index: string }) {
   return (
-    <div
-      className="rounded-2xl border p-4 transition-all duration-200"
-      style={{ background: `${color}08`, borderColor: `${color}20` }}
-    >
-      <div className="text-[26px] font-black leading-none text-[var(--text-primary)]">{value}</div>
-      <div className="mt-1.5 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-        {label}
-      </div>
+    <div className="bg-[var(--bg-card)] px-5 py-5 transition-colors duration-300 ease-out-expo hover:bg-[var(--bg-raised)]">
+      <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <span className="text-[var(--gold)]">({index})</span> {label}
+      </p>
+      <p className="dn-display mt-3 text-[44px] italic tabular-nums leading-none tracking-[-0.02em] text-[var(--text-primary)]">
+        {value}
+      </p>
     </div>
   );
 }
@@ -146,15 +148,39 @@ function InfoRow({
   accent?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] py-2.5 last:border-0">
-      <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+    <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] py-3 last:border-0">
+      <span className="dn-mono shrink-0 pt-0.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         {label}
       </span>
       <span
-        className={`text-right text-xs ${accent ? "font-semibold text-accent" : "text-[var(--text-secondary)]"}`}
+        className={`text-right text-[13px] ${accent ? "font-semibold text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}
       >
         {value}
       </span>
+    </div>
+  );
+}
+
+function SectionTitle({
+  index,
+  title,
+  aside,
+}: {
+  index: string;
+  title: string;
+  aside?: React.ReactNode;
+}) {
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+          ({index})
+        </p>
+        <h3 className="mt-1 text-[15px] font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
+          {title}
+        </h3>
+      </div>
+      {aside}
     </div>
   );
 }
@@ -170,12 +196,16 @@ const DarkTooltip = ({
 }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2 text-xs">
-      {label && <p className="mb-1 text-[var(--text-muted)]">{label}</p>}
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
+      {label && (
+        <p className="dn-mono mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+          {label}
+        </p>
+      )}
       {payload.map((p) => (
-        <div key={p.name} className="flex items-center gap-1.5">
+        <div key={p.name} className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full" style={{ background: p.color }} />
-          <span className="font-bold" style={{ color: p.color }}>
+          <span className="dn-display text-base italic leading-none text-[var(--text-primary)]">
             {p.value}
           </span>
         </div>
@@ -183,6 +213,8 @@ const DarkTooltip = ({
     </div>
   );
 };
+
+const CARD = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 
 /* ─── main ─── */
 export default function UserDetailPage({ params }: { params: { id: string } }) {
@@ -243,9 +275,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
         },
         "Profil görünürlüğü güncellenemedi."
       );
-      setData((prev) =>
-        prev ? { ...prev, user: { ...prev.user, isPublic: next } } : prev
-      );
+      setData((prev) => (prev ? { ...prev, user: { ...prev.user, isPublic: next } } : prev));
       toast.success(next ? "Profil herkese açık" : "Profil gizlendi");
     } catch (error) {
       toast.error(getClientErrorMessage(error, "Profil görünürlüğü güncellenemedi."));
@@ -254,7 +284,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
+      <main className="flex min-h-[60vh] items-center justify-center">
         <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
       </main>
     );
@@ -262,7 +292,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
   if (!data?.user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
+      <main className="flex min-h-[60vh] items-center justify-center">
         <div className="w-full max-w-lg px-4">
           <FormStatusMessage message={error || "Kullanıcı bulunamadı."} />
         </div>
@@ -274,89 +304,81 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const chartTotal = chartData.reduce((s, h) => s + h.count, 0);
 
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] pb-20">
-      {/* ── sticky header ── */}
-      <div className="bg-[var(--bg-base)]/95 sticky top-0 z-30 border-b border-[var(--border)] backdrop-blur-md">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="flex h-14 items-center gap-3">
-            <button
-              onClick={() => router.push("/admin")}
-              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)] active:scale-95"
-            >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-              Admin Paneli
-            </button>
-            <span className="text-[var(--text-muted)]">/</span>
-            <span className="text-sm font-semibold text-[var(--text-primary)]">{user.name}</span>
-            {user.isAdmin && (
-              <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">
-                admin
-              </span>
-            )}
-          </div>
-        </div>
+    <main className="mx-auto max-w-5xl px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
+      {/* ── back + eyebrow ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => router.push("/admin")}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-[12px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95"
+        >
+          <ArrowLeftIcon size={12} weight="bold" />
+          Admin Paneli
+        </button>
+        <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <span className="text-[var(--gold)]">(16)</span>
+          <span className="h-px w-5 bg-[var(--border)]" />
+          Yönetim / Kullanıcı
+        </p>
       </div>
 
-      <div className="mx-auto max-w-5xl space-y-5 px-4 pt-6 sm:px-6">
+      {/* ── editorial header ── */}
+      <header className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end">
+        <span className="dn-display flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[44px] italic leading-none text-[var(--gold)]">
+          {user.name.charAt(0).toUpperCase()}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            {user.isAdmin && (
+              <span className="dn-mono rounded-full border border-accent/35 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] text-accent">
+                Admin
+              </span>
+            )}
+            <span
+              className={`dn-mono rounded-full border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] ${
+                user.isPublic
+                  ? "border-accent-2/35 text-accent-2"
+                  : "border-[var(--border)] text-[var(--text-muted)]"
+              }`}
+            >
+              {user.isPublic ? "Açık Profil" : "Gizli Profil"}
+            </span>
+          </div>
+          <h1 className="mt-3 break-words text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)]">
+            {user.name}
+            <Dot />
+          </h1>
+          <p className="dn-mono mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+            {user.username && (
+              <>
+                <span className="normal-case tracking-normal text-[var(--text-secondary)]">
+                  @{user.username}
+                </span>
+                <span className="text-[var(--text-faint)]">·</span>
+              </>
+            )}
+            <span className="normal-case tracking-normal">{user.email}</span>
+            <span className="text-[var(--text-faint)]">·</span>
+            <span>Üye · {fmtDate(user.createdAt)}</span>
+          </p>
+          {user.bio && (
+            <p className="mt-3 line-clamp-2 max-w-[560px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
+              {user.bio}
+            </p>
+          )}
+        </div>
+      </header>
+      <div className="mt-6 h-px w-full bg-[var(--border)]" />
+
+      <div className="mt-6 space-y-5">
         {error && <FormStatusMessage message={error} />}
 
-        {/* ── hero card ── */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10 text-xl font-black text-accent">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg font-bold text-[var(--text-primary)]">{user.name}</h1>
-                {user.isAdmin && (
-                  <span className="rounded bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
-                    admin
-                  </span>
-                )}
-                {!user.isPublic && (
-                  <span className="rounded border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">
-                    gizli
-                  </span>
-                )}
-              </div>
-              {user.username && (
-                <p className="text-sm text-[var(--text-muted)]">@{user.username}</p>
-              )}
-              <p className="mt-0.5 text-xs text-[var(--text-muted)]">{user.email}</p>
-              {user.bio && (
-                <p className="mt-1.5 line-clamp-2 text-xs text-[var(--text-secondary)]">
-                  {user.bio}
-                </p>
-              )}
-            </div>
-            <div className="shrink-0 text-right">
-              <p className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-                Üye tarihi
-              </p>
-              <p className="text-sm font-semibold text-[var(--text-secondary)]">
-                {fmtDate(user.createdAt)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── KPI row ── */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <KpiCard value={user.postCount} label="Not" color="var(--gold-light)" />
-          <KpiCard value={user.followerCount} label="Takipçi" color="#f472b6" />
-          <KpiCard value={user.followingCount} label="Takip" color="#fb923c" />
-          <KpiCard value={user.activityCount} label="Aksiyon" color="var(--gold)" />
+        {/* ── stat strip ── */}
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4">
+          <StatCell index="01" value={user.postCount} label="Not" />
+          <StatCell index="02" value={user.followerCount} label="Takipçi" />
+          <StatCell index="03" value={user.followingCount} label="Takip" />
+          <StatCell index="04" value={user.activityCount} label="Aksiyon" />
         </div>
 
         {/* ── two-column grid ── */}
@@ -364,40 +386,43 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           {/* left: charts + logs */}
           <div className="space-y-5 lg:col-span-2">
             {/* activity chart */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-[13px] font-semibold text-[var(--text-primary)]">
-                    {RANGE_LABELS[range]} Aktivitesi
-                  </h3>
-                  <span className="rounded-lg border border-accent/20 bg-accent/10 px-2 py-0.5 text-[11px] font-bold text-accent">
-                    {chartTotal} aksiyon
-                  </span>
-                </div>
-                <div className="flex gap-1">
-                  {RANGE_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => handleRangeChange(opt.key)}
-                      className={`rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors duration-150 ${
-                        range === opt.key
-                          ? "border border-accent/30 bg-accent/15 text-accent"
-                          : "border border-[var(--border)] text-[var(--text-muted)] hover:border-accent/20 hover:text-[var(--text-secondary)]"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
+            <section className={CARD}>
+              <SectionTitle
+                index="A"
+                title={`${RANGE_LABELS[range]} Aktivitesi`}
+                aside={
+                  <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                    <span className="dn-display text-2xl normal-case italic tracking-normal text-[var(--text-primary)]">
+                      {chartTotal}
+                    </span>
+                    Aksiyon
+                  </p>
+                }
+              />
+              <div className="mb-5 inline-flex flex-wrap rounded-full border border-[var(--border)] bg-[var(--bg-base)] p-1">
+                {RANGE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => handleRangeChange(opt.key)}
+                    className={`cursor-pointer rounded-full px-3.5 py-1.5 text-[11.5px] font-semibold transition-colors duration-200 ease-out-expo active:scale-95 ${
+                      range === opt.key
+                        ? "bg-accent text-[var(--text-on-accent)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
               {chartTotal === 0 ? (
-                <div className="flex h-32 items-center justify-center text-xs text-[var(--text-muted)]">
+                <div className="flex h-32 items-center justify-center rounded-[18px] border border-dashed border-[var(--border)] text-sm text-[var(--text-muted)]">
                   {RANGE_LABELS[range]} aktivite yok
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={140}>
                   <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <CartesianGrid strokeDasharray="2 4" stroke="var(--border)" vertical={false} />
                     <XAxis
                       dataKey="label"
                       tick={{ fill: "var(--text-muted)", fontSize: 9 }}
@@ -411,51 +436,62 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       tickLine={false}
                       allowDecimals={false}
                     />
-                    <Tooltip content={<DarkTooltip />} />
-                    <Bar dataKey="count" name="Aksiyon" fill="var(--gold)" radius={[3, 3, 0, 0]} />
+                    <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--bg-raised)" }} />
+                    <Bar
+                      dataKey="count"
+                      name="Aksiyon"
+                      fill="var(--gold)"
+                      radius={[999, 999, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               )}
-            </div>
+            </section>
 
             {/* activity log */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-[13px] font-semibold text-[var(--text-primary)]">
-                  Aktivite Geçmişi
-                </h3>
-                <span className="text-xs text-[var(--text-muted)]">{logsTotal} kayıt</span>
-              </div>
+            <section className={CARD}>
+              <SectionTitle
+                index="B"
+                title="Aktivite Geçmişi"
+                aside={
+                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                    {logsTotal} Kayıt
+                  </span>
+                }
+              />
 
               {logs.length === 0 ? (
-                <p className="py-8 text-center text-xs text-[var(--text-muted)]">
+                <p className="rounded-[18px] border border-dashed border-[var(--border)] py-10 text-center text-sm text-[var(--text-muted)]">
                   Henüz aktivite yok
                 </p>
               ) : (
-                <div className="space-y-0">
+                <div>
                   {logs.map((log) => {
-                    const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555" };
+                    const meta = ACTION_META[log.action] ?? {
+                      label: log.action,
+                      color: "var(--text-faint)",
+                    };
                     const postTitle = (log.metadata as { title?: string } | null)?.title;
                     return (
                       <div
                         key={log.id}
                         className="flex items-start gap-3 border-b border-[var(--border)] py-3 last:border-0"
                       >
-                        <div
-                          className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
-                          style={{ background: meta.color, boxShadow: `0 0 6px ${meta.color}50` }}
+                        <span
+                          className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: meta.color }}
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-xs font-medium text-[var(--text-primary)]">
+                          <p className="text-[13px] font-medium text-[var(--text-primary)]">
                             {meta.label}
                           </p>
                           {postTitle && (
-                            <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">
+                            <p className="mt-0.5 truncate text-[12px] text-[var(--text-muted)]">
                               {postTitle}
                             </p>
                           )}
                         </div>
-                        <span className="shrink-0 text-[10px] text-[var(--text-muted)]">
+                        <span className="dn-mono shrink-0 pt-0.5 text-[10px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
                           {new Date(log.createdAt).toLocaleString("tr-TR", {
                             day: "numeric",
                             month: "short",
@@ -471,29 +507,28 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
               {page < totalPages && (
                 <button
+                  type="button"
                   onClick={() => {
                     const next = page + 1;
                     setPage(next);
                     load(next);
                   }}
                   disabled={loadingMore}
-                  className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="mt-4 w-full cursor-pointer rounded-full border border-[var(--border)] py-2.5 text-[12.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {loadingMore ? "Yükleniyor…" : "Daha Fazla Göster"}
                 </button>
               )}
-            </div>
+            </section>
           </div>
 
           {/* right: dates + action breakdown */}
           <div className="space-y-5">
             {/* dates card */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-              <h3 className="mb-4 text-[13px] font-semibold text-[var(--text-primary)]">
-                Zaman Bilgileri
-              </h3>
+            <section className={CARD}>
+              <SectionTitle index="C" title="Zaman Bilgileri" />
               <div>
-                <InfoRow label="Üye oldu" value={fmtDate(user.createdAt)} />
+                <InfoRow label="Üye Oldu" value={fmtDate(user.createdAt)} />
                 <InfoRow
                   label="Son Giriş"
                   accent={!!user.lastLoginAt}
@@ -502,7 +537,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       <span>
                         <span className="block">{fmtFull(user.lastLoginAt)}</span>
                         {timeAgo(user.lastLoginAt) && (
-                          <span className="text-[10px] text-[var(--text-muted)]">
+                          <span className="dn-mono text-[10px] font-normal uppercase tracking-[0.12em] text-[var(--gold)]">
                             {timeAgo(user.lastLoginAt)}
                           </span>
                         )}
@@ -519,7 +554,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       <span>
                         <span className="block">{fmtFull(user.lastLogoutAt)}</span>
                         {timeAgo(user.lastLogoutAt) && (
-                          <span className="text-[10px] text-[var(--text-muted)]">
+                          <span className="dn-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
                             {timeAgo(user.lastLogoutAt)}
                           </span>
                         )}
@@ -530,65 +565,68 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   }
                 />
               </div>
-            </div>
+            </section>
 
             {/* action breakdown */}
             {actionBreakdown.length > 0 && (
-              <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-                <h3 className="mb-4 text-[13px] font-semibold text-[var(--text-primary)]">
-                  Eylem Dağılımı
-                </h3>
-                <div className="space-y-2.5">
+              <section className={CARD}>
+                <SectionTitle index="D" title="Eylem Dağılımı" />
+                <div className="space-y-3">
                   {actionBreakdown.map((a) => {
-                    const meta = ACTION_META[a.action] ?? { label: a.action, color: "#555" };
+                    const meta = ACTION_META[a.action] ?? {
+                      label: a.action,
+                      color: "var(--text-faint)",
+                    };
                     const max = actionBreakdown[0]?.count ?? 1;
                     const pct = (a.count / max) * 100;
                     return (
-                      <div key={a.action} className="flex items-center gap-2.5">
-                        <div
-                          className="h-1.5 w-1.5 shrink-0 rounded-full"
-                          style={{ background: meta.color }}
-                        />
-                        <span className="w-28 shrink-0 truncate text-[11px] text-[var(--text-secondary)]">
-                          {meta.label}
-                        </span>
-                        <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
+                      <div key={a.action}>
+                        <div className="mb-1.5 flex items-baseline justify-between gap-2">
+                          <span className="truncate text-[12.5px] text-[var(--text-secondary)]">
+                            {meta.label}
+                          </span>
+                          <span className="dn-display text-lg italic leading-none text-[var(--text-primary)]">
+                            {a.count}
+                          </span>
+                        </div>
+                        <div className="relative h-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
                           <div
-                            className="h-full rounded-full transition-all duration-700"
+                            className="h-full rounded-full transition-all duration-700 ease-out-expo"
                             style={{ width: `${pct}%`, background: meta.color }}
                           />
                         </div>
-                        <span className="w-5 shrink-0 text-right text-[11px] font-bold text-[var(--text-primary)]">
-                          {a.count}
-                        </span>
                       </div>
                     );
                   })}
                 </div>
-              </div>
+              </section>
             )}
 
             {/* quick actions */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-              <h3 className="mb-3 text-[13px] font-semibold text-[var(--text-primary)]">
-                Hızlı İşlemler
-              </h3>
-              <div className="mb-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-3 py-2">
+            <section className={CARD}>
+              <SectionTitle index="E" title="Hızlı İşlemler" />
+              <div className="flex w-full items-center justify-between gap-3 rounded-[18px] border border-[var(--border)] px-4 py-3">
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-[var(--text-primary)]">
-                    Profil görünürlüğü
+                  <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                    Profil Görünürlüğü
                   </p>
-                  <p className="text-[10px] text-[var(--text-muted)]">
-                    {user.isPublic ? "Herkese açık — herkes görebilir" : "Gizli — sadece kendisi ve adminler"}
+                  <p className="mt-0.5 text-[12px] text-[var(--text-muted)]">
+                    {user.isPublic
+                      ? "Herkese açık — herkes görebilir"
+                      : "Gizli — sadece kendisi ve adminler"}
                   </p>
                 </div>
                 <button
+                  type="button"
+                  role="switch"
+                  aria-checked={user.isPublic}
                   onClick={togglePublic}
                   title={user.isPublic ? "Profili Gizle" : "Profili Herkese Aç"}
-                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-all duration-200 ${user.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}
+                  aria-label={user.isPublic ? "Profili Gizle" : "Profili Herkese Aç"}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-300 ease-out-expo ${user.isPublic ? "border-transparent bg-accent-2" : "border-[var(--border)] bg-[var(--bg-raised)]"}`}
                 >
                   <span
-                    className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${user.isPublic ? "left-[18px]" : "left-[3px]"}`}
+                    className={`absolute h-3.5 w-3.5 rounded-full transition-all duration-300 ease-out-expo ${user.isPublic ? "left-[17px] bg-[var(--text-on-accent)]" : "left-[3px] bg-[var(--text-muted)]"}`}
                   />
                 </button>
               </div>
@@ -597,25 +635,13 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   href={`/profile/${user.username}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)]"
+                  className="mt-3 flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--border)] px-4 py-2.5 text-[12.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
                 >
                   Profil Sayfasına Git
-                  <svg
-                    width="11"
-                    height="11"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  >
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                  </svg>
+                  <ArrowUpRightIcon size={13} weight="bold" />
                 </a>
               )}
-            </div>
+            </section>
           </div>
         </div>
       </div>

@@ -18,26 +18,20 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import {
-  SquaresFour,
-  Users,
-  FileText,
-  Pulse,
-  GearSix,
-  UserPlus,
-  Wrench,
-  Star,
-  Heart,
-  Tag,
-  Notebook,
-  TrendUp,
-  ChartPie,
-  ChartBar,
-  MagnifyingGlass,
-  PencilSimple,
-  Trash,
-  CaretLeft,
-  CaretRight,
+  SquaresFourIcon,
+  UsersIcon,
+  FileTextIcon,
+  PulseIcon,
+  GearSixIcon,
+  UserPlusIcon,
+  WrenchIcon,
+  StarIcon,
+  MagnifyingGlassIcon,
+  PencilSimpleIcon,
+  TrashIcon,
 } from "@phosphor-icons/react";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 import type {
@@ -55,6 +49,8 @@ import {
   fmtShortDate,
   fmtTime,
   KpiCard,
+  KpiStrip,
+  AXIS_TICK,
   Card,
   ActionFeedbackBanner,
   DarkTooltip,
@@ -69,11 +65,11 @@ import {
    ═══════════════════════════════════════════════ */
 
 const TABS = [
-  { key: "overview" as const, label: "Genel Bakış", icon: <SquaresFour size={14} weight="duotone" /> },
-  { key: "users" as const, label: "Kullanıcılar", icon: <Users size={14} weight="duotone" /> },
-  { key: "content" as const, label: "İçerikler", icon: <FileText size={14} weight="duotone" /> },
-  { key: "activity" as const, label: "Aktivite", icon: <Pulse size={14} weight="duotone" /> },
-  { key: "settings" as const, label: "Ayarlar", icon: <GearSix size={14} weight="duotone" /> },
+  { key: "overview" as const, label: "Genel Bakış", icon: <SquaresFourIcon size={14} /> },
+  { key: "users" as const, label: "Kullanıcılar", icon: <UsersIcon size={14} /> },
+  { key: "content" as const, label: "İçerikler", icon: <FileTextIcon size={14} /> },
+  { key: "activity" as const, label: "Aktivite", icon: <PulseIcon size={14} /> },
+  { key: "settings" as const, label: "Ayarlar", icon: <GearSixIcon size={14} /> },
 ] as const;
 
 /* ═══════════════════════════════════════════════
@@ -549,783 +545,1301 @@ export default function AdminPage() {
     );
   };
 
+  /* LAYOUT: Editorial admin desk (max-w-6xl, inside AppShell).
+     ROW 1: shared PageHeader (16 · Yönetim) — "Admin Paneli." with serif accent.
+     ROW 2: pill segmented tab control (scrolls horizontally on phones).
+     ROW 3: error / feedback banners, then the active tab:
+       - overview: hairline KPI strip (serif italic numbers + mono labels), trend range pills,
+         lavender/apricot charts in rounded-[24px] hairline cards, ranked users, tag cloud
+       - users / content / activity: mono toolbar + rounded-[24px] table (cards on mobile)
+       - settings: two hairline setting cards with token-coloured switches
+  */
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] pb-20">
-      {/* ═══ Sticky Header ═══ */}
-      <div className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--bg-base)]/95 backdrop-blur-md">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex h-14 items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
-                <Star size={14} weight="fill" className="text-accent" />
-              </div>
-              <span className="text-sm font-bold text-[var(--text-primary)]">Admin Paneli</span>
-              <span className="hidden rounded-lg border border-accent/20 bg-accent/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent sm:inline">
-                DigyNotes
-              </span>
-            </div>
+    <main className="mx-auto min-h-screen max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
+      <PageHeader
+        index="16"
+        eyebrow="Yönetim"
+        title={
+          <>
+            Admin <Em>Paneli</Em>
+            <Dot />
+          </>
+        }
+        description="Kullanıcıları, içerikleri ve site ayarlarını tek bir masadan izle ve yönet."
+      />
 
-            {/* Tab navigation */}
-            <nav className="flex items-center gap-1">
-              {TABS.map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => setTab(t.key)}
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-200 ${
-                    tab === t.key
-                      ? "bg-[var(--gold)] text-white shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
-                      : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
-                  }`}
-                >
-                  {t.icon}
-                  <span className="hidden sm:inline">{t.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
+      {/* ═══ Tab navigation — pill segmented control ═══ */}
+      <div className="-mx-4 mb-8 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <nav
+          aria-label="Admin sekmeleri"
+          className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1"
+        >
+          {TABS.map((t, i) => (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              aria-current={tab === t.key ? "page" : undefined}
+              className={`flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-[12.5px] font-semibold transition-colors duration-300 ease-out-expo active:scale-95 ${
+                tab === t.key
+                  ? "bg-accent text-[var(--text-on-accent)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              <span className="dn-mono text-[10px] opacity-60">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              {t.icon}
+              {t.label}
+            </button>
+          ))}
+        </nav>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
-        {panelError && (
-          <div className="mb-5 rounded-2xl border border-[#e53e3e]/20 bg-[#e53e3e]/8 px-4 py-3 text-sm text-[#e53e3e]">
-            {panelError}
-          </div>
-        )}
+      {panelError && (
+        <div className="mb-6 flex items-center gap-2.5 rounded-[20px] border border-danger/30 bg-danger/5 px-5 py-3.5 text-sm text-danger">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-danger" />
+          {panelError}
+        </div>
+      )}
 
-        {adminFeedback && (
-          <div className="mb-6">
-            <ActionFeedbackBanner feedback={adminFeedback} />
-          </div>
-        )}
+      {adminFeedback && (
+        <div className="mb-6">
+          <ActionFeedbackBanner feedback={adminFeedback} />
+        </div>
+      )}
 
-        {/* ══════════════ OVERVIEW ══════════════ */}
-        {tab === "overview" && (
-          <div className="space-y-6">
-            {loadingStats ? (
-              <Spinner />
-            ) : stats ? (
-              <>
-                {/* KPI row */}
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                  <KpiCard
-                    value={stats.kpi.totalUsers}
-                    label="Kullanıcı"
-                    color="var(--gold)"
-                    icon={<Users size={16} weight="duotone" />}
-                  />
-                  <KpiCard
-                    value={stats.kpi.totalPosts}
-                    label="Not"
-                    color="var(--gold-light)"
-                    icon={<Notebook size={16} weight="duotone" />}
-                  />
-                  <KpiCard
-                    value={stats.kpi.totalCategories}
-                    label="Kategori"
-                    color="var(--accent-2)"
-                    icon={<SquaresFour size={16} weight="duotone" />}
-                  />
-                  <KpiCard
-                    value={stats.kpi.totalTags}
-                    label="Etiket"
-                    color="#f472b6"
-                    icon={<Tag size={16} weight="duotone" />}
-                  />
-                  <KpiCard
-                    value={stats.kpi.totalFollows}
-                    label="Takip"
-                    color="#fb923c"
-                    icon={<Heart size={16} weight="duotone" />}
-                  />
-                  <KpiCard
-                    value={stats.kpi.todayActivity}
-                    label="Bugün"
-                    color="#60a5fa"
-                    icon={<Pulse size={16} weight="duotone" />}
-                  />
-                </div>
+      {/* ══════════════ OVERVIEW ══════════════ */}
+      {tab === "overview" && (
+        <div className="space-y-6">
+          {loadingStats ? (
+            <Spinner />
+          ) : stats ? (
+            <>
+              <KpiStrip>
+                <KpiCard index="01" value={stats.kpi.totalUsers} label="Kullanıcı" />
+                <KpiCard index="02" value={stats.kpi.totalPosts} label="Not" />
+                <KpiCard index="03" value={stats.kpi.totalCategories} label="Kategori" />
+                <KpiCard index="04" value={stats.kpi.totalTags} label="Etiket" />
+                <KpiCard index="05" value={stats.kpi.totalFollows} label="Takip" />
+                <KpiCard index="06" value={stats.kpi.todayActivity} label="Bugün" />
+              </KpiStrip>
 
-                {/* Series range */}
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-[var(--text-muted)]">Trend periyodu:</span>
-                  <RangePills
-                    value={seriesRange}
-                    options={SERIES_LABELS}
-                    onChange={(v) => setSeriesRange(v)}
-                  />
-                </div>
+              {/* Series range */}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  Trend Periyodu ·{" "}
+                  <span className="text-[var(--text-primary)]">{SERIES_LABELS[seriesRange]}</span>
+                </p>
+                <RangePills
+                  value={seriesRange}
+                  options={SERIES_LABELS}
+                  onChange={(v) => setSeriesRange(v)}
+                />
+              </div>
 
-                {/* Charts row 1 */}
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  <Card
-                    title={`Not Aktivitesi — Son ${SERIES_LABELS[seriesRange]}`}
-                    icon={<TrendUp size={14} weight="bold" className="text-accent-light" />}
-                    accent="var(--gold-light)"
-                  >
-                    <ResponsiveContainer width="100%" height={200}>
-                      <AreaChart
-                        data={stats.dailySeries}
-                        margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient id="adminG1" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="var(--gold-light)" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="var(--gold-light)" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                        <XAxis
-                          dataKey="date"
-                          tickFormatter={fmtShortDate}
-                          tick={{ fill: "var(--text-muted)", fontSize: 10 }}
-                          interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                        <Tooltip content={<DarkTooltip />} />
-                        <Area type="monotone" dataKey="posts" name="Not" stroke="var(--gold-light)" strokeWidth={2} fill="url(#adminG1)" dot={false} activeDot={{ r: 4, fill: "var(--gold-light)", strokeWidth: 0 }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </Card>
-
-                  <Card
-                    title={`Yeni Kullanıcı — Son ${SERIES_LABELS[seriesRange]}`}
-                    icon={<UserPlus size={14} weight="bold" className="text-accent" />}
-                    accent="var(--gold)"
-                  >
-                    <ResponsiveContainer width="100%" height={200}>
-                      <AreaChart
-                        data={stats.dailySeries}
-                        margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient id="adminG2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                        <XAxis
-                          dataKey="date"
-                          tickFormatter={fmtShortDate}
-                          tick={{ fill: "var(--text-muted)", fontSize: 10 }}
-                          interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                        <Tooltip content={<DarkTooltip />} />
-                        <Area type="monotone" dataKey="users" name="Kullanıcı" stroke="var(--gold)" strokeWidth={2} fill="url(#adminG2)" dot={false} activeDot={{ r: 4, fill: "var(--gold)", strokeWidth: 0 }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </Card>
-                </div>
-
-                {/* Charts row 2 */}
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
-                  <div className="lg:col-span-2">
-                    <Card
-                      title="Durum Dağılımı"
-                      icon={<ChartPie size={14} weight="bold" className="text-accent" />}
-                      accent="var(--gold)"
+              {/* Charts row 1 */}
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <Card index="A" title={`Not Aktivitesi — Son ${SERIES_LABELS[seriesRange]}`}>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart
+                      data={stats.dailySeries}
+                      margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
                     >
-                      <div className="flex items-center gap-3">
-                        <ResponsiveContainer width={140} height={140}>
-                          <PieChart>
-                            <Pie data={stats.postStatusDistribution} dataKey="count" nameKey="status" cx="50%" cy="50%" innerRadius={40} outerRadius={64} strokeWidth={0} paddingAngle={2}>
-                              {stats.postStatusDistribution.map((e, i) => (
-                                <Cell key={e.status} fill={STATUS_COLORS[e.status] ?? PIE_COLORS[i % PIE_COLORS.length]} />
-                              ))}
-                            </Pie>
-                            <Tooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12, boxShadow: "0 12px 32px rgba(0,0,0,0.4)" }} />
-                          </PieChart>
-                        </ResponsiveContainer>
-                        <div className="flex flex-1 flex-col gap-1.5">
-                          {stats.postStatusDistribution.map((s, i) => {
-                            const color = STATUS_COLORS[s.status] ?? PIE_COLORS[i % PIE_COLORS.length];
-                            const total = stats.postStatusDistribution.reduce((a, b) => a + b.count, 0);
-                            return (
-                              <div key={s.status} className="flex items-center gap-2">
-                                <div className="h-2 w-2 flex-shrink-0 rounded-sm" style={{ background: color }} />
-                                <span className="flex-1 truncate text-[11px] text-[var(--text-secondary)]">{s.status}</span>
-                                <span className="text-[11px] font-bold tabular-nums text-[var(--text-primary)]">{s.count}</span>
-                                <span className="w-7 text-right text-[9px] tabular-nums text-[var(--text-muted)]">
-                                  {total ? Math.round((s.count / total) * 100) : 0}%
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
+                      <defs>
+                        <linearGradient id="adminG1" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.28} />
+                          <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        strokeDasharray="2 4"
+                        stroke="var(--border)"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={fmtShortDate}
+                        tick={AXIS_TICK}
+                        interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={AXIS_TICK}
+                        axisLine={false}
+                        tickLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip content={<DarkTooltip />} cursor={{ stroke: "var(--border)" }} />
+                      <Area
+                        type="monotone"
+                        dataKey="posts"
+                        name="Not"
+                        stroke="var(--gold)"
+                        strokeWidth={1.75}
+                        fill="url(#adminG1)"
+                        dot={false}
+                        activeDot={{ r: 4, fill: "var(--gold)", strokeWidth: 0 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </Card>
 
-                  <div className="lg:col-span-3">
-                    <Card
-                      title="Kategorilere Göre Not (Top 10)"
-                      icon={<ChartBar size={14} weight="bold" className="text-[var(--accent-2)]" />}
-                      accent="var(--accent-2)"
+                <Card index="B" title={`Yeni Kullanıcı — Son ${SERIES_LABELS[seriesRange]}`}>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart
+                      data={stats.dailySeries}
+                      margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
                     >
-                      <ResponsiveContainer width="100%" height={200}>
-                        <BarChart data={stats.postsPerCategory} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
-                          <XAxis type="number" tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                          <YAxis type="category" dataKey="category" tick={{ fill: "var(--text-secondary)", fontSize: 11 }} width={68} axisLine={false} tickLine={false} />
-                          <Tooltip content={<DarkTooltip />} />
-                          <Bar dataKey="count" name="Not" fill="var(--gold)" radius={[0, 6, 6, 0]} barSize={14} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </Card>
-                  </div>
-                </div>
+                      <defs>
+                        <linearGradient id="adminG2" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--accent-2)" stopOpacity={0.28} />
+                          <stop offset="100%" stopColor="var(--accent-2)" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        strokeDasharray="2 4"
+                        stroke="var(--border)"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={fmtShortDate}
+                        tick={AXIS_TICK}
+                        interval={Math.max(Math.floor(stats.dailySeries.length / 5) - 1, 0)}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={AXIS_TICK}
+                        axisLine={false}
+                        tickLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip content={<DarkTooltip />} cursor={{ stroke: "var(--border)" }} />
+                      <Area
+                        type="monotone"
+                        dataKey="users"
+                        name="Kullanıcı"
+                        stroke="var(--accent-2)"
+                        strokeWidth={1.75}
+                        fill="url(#adminG2)"
+                        dot={false}
+                        activeDot={{ r: 4, fill: "var(--accent-2)", strokeWidth: 0 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </Card>
+              </div>
 
-                {/* Top users + Rating */}
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                  <Card
-                    title="En Aktif Kullanıcılar"
-                    icon={<Users size={14} weight="bold" className="text-accent" />}
-                    accent="var(--gold)"
-                  >
-                    <div className="space-y-2.5">
-                      {stats.topUsers.map((u, i) => {
-                        const maxPosts = stats.topUsers[0]?.postCount ?? 1;
-                        const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
-                        const rankColors = ["var(--gold)", "#94a8c8", "#c8b090"];
-                        const rc = rankColors[i] ?? "var(--text-muted)";
-                        return (
-                          <div
-                            key={u.id}
-                            className="flex cursor-pointer items-center gap-3 rounded-lg px-1 py-1 transition-colors duration-200 hover:bg-[var(--bg-raised)]"
-                            onClick={() => router.push(`/admin/users/${u.id}`)}
+              {/* Charts row 2 */}
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
+                <div className="lg:col-span-2">
+                  <Card index="C" title="Durum Dağılımı">
+                    <div className="flex items-center gap-4">
+                      <ResponsiveContainer width={140} height={140}>
+                        <PieChart>
+                          <Pie
+                            data={stats.postStatusDistribution}
+                            dataKey="count"
+                            nameKey="status"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={44}
+                            outerRadius={64}
+                            strokeWidth={0}
+                            paddingAngle={2}
                           >
-                            <span className="w-5 shrink-0 text-center text-xs font-black tabular-nums" style={{ color: rc }}>
-                              {i + 1}
-                            </span>
-                            <div
-                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
-                              style={{ background: `${rc}15`, border: `1px solid ${rc}25`, color: rc }}
-                            >
-                              {u.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="w-24 shrink-0 truncate text-[12px] text-[var(--text-secondary)]">
-                              {u.name}
-                            </span>
-                            <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
-                              <div
-                                className="h-full rounded-full transition-all duration-700"
-                                style={{ width: `${pct}%`, background: rc, boxShadow: `0 0 8px ${rc}50` }}
+                            {stats.postStatusDistribution.map((e, i) => (
+                              <Cell
+                                key={e.status}
+                                fill={STATUS_COLORS[e.status] ?? PIE_COLORS[i % PIE_COLORS.length]}
                               />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              background: "var(--bg-card)",
+                              border: "1px solid var(--border)",
+                              borderRadius: 16,
+                              fontSize: 12,
+                              boxShadow: "var(--shadow-soft)",
+                            }}
+                            itemStyle={{ color: "var(--text-primary)" }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="flex flex-1 flex-col divide-y divide-[var(--border)]">
+                        {stats.postStatusDistribution.map((s, i) => {
+                          const color =
+                            STATUS_COLORS[s.status] ?? PIE_COLORS[i % PIE_COLORS.length];
+                          const total = stats.postStatusDistribution.reduce(
+                            (a, b) => a + b.count,
+                            0
+                          );
+                          return (
+                            <div key={s.status} className="flex items-center gap-2 py-1.5">
+                              <span
+                                className="h-2 w-2 flex-shrink-0 rounded-full"
+                                style={{ background: color }}
+                              />
+                              <span className="flex-1 truncate text-[12px] text-[var(--text-secondary)]">
+                                {s.status}
+                              </span>
+                              <span className="text-[12px] font-semibold tabular-nums text-[var(--text-primary)]">
+                                {s.count}
+                              </span>
+                              <span className="dn-mono w-9 text-right text-[10px] tabular-nums text-[var(--text-muted)]">
+                                {total ? Math.round((s.count / total) * 100) : 0}%
+                              </span>
                             </div>
-                            <span className="w-6 shrink-0 text-right text-[12px] font-black tabular-nums text-[var(--text-primary)]">
-                              {u.postCount}
-                            </span>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </Card>
+                </div>
 
-                  <Card
-                    title="Puan Dağılımı"
-                    icon={<Star size={14} weight="fill" className="text-[#c8b090]" />}
-                    accent="#c8b090"
-                  >
+                <div className="lg:col-span-3">
+                  <Card index="D" title="Kategorilere Göre Not (İlk 10)">
                     <ResponsiveContainer width="100%" height={200}>
-                      <BarChart data={stats.ratingDistribution} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                        <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                        <Tooltip content={<DarkTooltip />} />
-                        <Bar dataKey="count" name="Not" fill="var(--gold-light)" radius={[6, 6, 0, 0]}>
-                          {stats.ratingDistribution.map((_, i) => (
-                            <Cell key={i} fill={i === stats.ratingDistribution.length - 1 ? "var(--gold)" : "var(--gold-light)"} />
-                          ))}
-                        </Bar>
+                      <BarChart
+                        data={stats.postsPerCategory}
+                        layout="vertical"
+                        margin={{ top: 0, right: 8, left: 0, bottom: 0 }}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="2 4"
+                          stroke="var(--border)"
+                          horizontal={false}
+                        />
+                        <XAxis
+                          type="number"
+                          tick={AXIS_TICK}
+                          axisLine={false}
+                          tickLine={false}
+                          allowDecimals={false}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="category"
+                          tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
+                          width={68}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--bg-raised)" }} />
+                        <Bar
+                          dataKey="count"
+                          name="Not"
+                          fill="var(--gold)"
+                          radius={[0, 999, 999, 0]}
+                          barSize={10}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </Card>
                 </div>
+              </div>
 
-                {/* Tag cloud */}
-                <Card
-                  title="Popüler Etiketler"
-                  icon={<Tag size={14} weight="bold" className="text-accent-light" />}
-                  accent="var(--gold-light)"
-                >
-                  <div className="flex flex-wrap gap-2">
-                    {stats.topTags.map((tag) => {
-                      const max = stats.topTags[0]?.count ?? 1;
-                      const t = 0.35 + (tag.count / max) * 0.65;
+              {/* Top users + Rating */}
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <Card index="E" title="En Aktif Kullanıcılar">
+                  <div className="divide-y divide-[var(--border)]">
+                    {stats.topUsers.map((u, i) => {
+                      const maxPosts = stats.topUsers[0]?.postCount ?? 1;
+                      const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
                       return (
-                        <span
-                          key={tag.name}
-                          className="rounded-lg border px-2.5 py-1 text-xs font-medium transition-all duration-200 hover:scale-105"
-                          style={{
-                            borderColor: `rgb(var(--gold-rgb) / ${t * 0.35})`,
-                            background: `rgb(var(--gold-rgb) / ${t * 0.08})`,
-                            color: `rgb(var(--gold-rgb) / ${t + 0.1})`,
-                          }}
+                        <button
+                          key={u.id}
+                          type="button"
+                          className="group flex w-full cursor-pointer items-center gap-3 py-2.5 text-left transition-colors duration-200"
+                          onClick={() => router.push(`/admin/users/${u.id}`)}
                         >
-                          #{tag.name}
-                          <span className="ml-1.5 text-[10px] tabular-nums opacity-50">{tag.count}</span>
-                        </span>
+                          <span
+                            className={`dn-display w-6 shrink-0 text-center text-xl italic leading-none ${
+                              i === 0 ? "text-[var(--gold)]" : "text-[var(--text-muted)]"
+                            }`}
+                          >
+                            {i + 1}
+                          </span>
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-[11px] font-semibold text-[var(--text-secondary)]">
+                            {u.name.charAt(0).toUpperCase()}
+                          </span>
+                          <span className="w-24 shrink-0 truncate text-[13px] text-[var(--text-secondary)] transition-colors duration-200 group-hover:text-[var(--text-primary)]">
+                            {u.name}
+                          </span>
+                          <span className="relative h-1 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
+                            <span
+                              className={`absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out-expo ${
+                                i === 0 ? "bg-accent" : "bg-accent/45"
+                              }`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </span>
+                          <span className="w-7 shrink-0 text-right text-[13px] font-semibold tabular-nums text-[var(--text-primary)]">
+                            {u.postCount}
+                          </span>
+                        </button>
                       );
                     })}
                   </div>
                 </Card>
-              </>
-            ) : null}
-          </div>
-        )}
 
-        {/* ══════════════ USERS ══════════════ */}
-        {tab === "users" && (
-          <div className="space-y-4">
-            {/* Search + total */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative min-w-0 flex-1 sm:max-w-xs">
-                <MagnifyingGlass size={14} weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  value={userSearch}
-                  onChange={(e) => { setUserSearch(e.target.value); setUsersPage(1); }}
-                  placeholder="İsim, e-posta veya kullanıcı adı..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
-                />
+                <Card index="F" title="Puan Dağılımı">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart
+                      data={stats.ratingDistribution}
+                      margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
+                    >
+                      <CartesianGrid
+                        strokeDasharray="2 4"
+                        stroke="var(--border)"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="label"
+                        tick={{ ...AXIS_TICK, fontSize: 11 }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <YAxis
+                        tick={AXIS_TICK}
+                        axisLine={false}
+                        tickLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--bg-raised)" }} />
+                      <Bar
+                        dataKey="count"
+                        name="Not"
+                        fill="var(--gold)"
+                        radius={[999, 999, 0, 0]}
+                        barSize={18}
+                      >
+                        {stats.ratingDistribution.map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={
+                              i === stats.ratingDistribution.length - 1
+                                ? "var(--accent-2)"
+                                : "var(--gold)"
+                            }
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Card>
               </div>
-              <div className="text-sm text-[var(--text-muted)]">
-                <span className="font-bold tabular-nums text-[var(--text-primary)]">{usersTotal}</span> kullanıcı
+
+              {/* Tag cloud */}
+              <Card index="G" title="Popüler Etiketler">
+                <div className="flex flex-wrap gap-2">
+                  {stats.topTags.map((tag) => {
+                    const max = stats.topTags[0]?.count ?? 1;
+                    const t = tag.count / max;
+                    const tone =
+                      t > 0.75
+                        ? "border-accent/40 bg-accent/10 text-accent"
+                        : t > 0.4
+                          ? "border-accent/20 text-[var(--text-primary)]"
+                          : "border-[var(--border)] text-[var(--text-secondary)]";
+                    return (
+                      <span
+                        key={tag.name}
+                        className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-200 ${tone}`}
+                      >
+                        #{tag.name}
+                        <span className="dn-mono ml-1.5 text-[10px] tabular-nums opacity-60">
+                          {tag.count}
+                        </span>
+                      </span>
+                    );
+                  })}
+                </div>
+              </Card>
+            </>
+          ) : null}
+        </div>
+      )}
+
+      {/* ══════════════ USERS ══════════════ */}
+      {tab === "users" && (
+        <div className="space-y-4">
+          {/* Search + total */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="relative min-w-0 flex-1 sm:max-w-sm">
+              <MagnifyingGlassIcon
+                size={14}
+                weight="bold"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+              />
+              <input
+                type="text"
+                value={userSearch}
+                onChange={(e) => {
+                  setUserSearch(e.target.value);
+                  setUsersPage(1);
+                }}
+                placeholder="İsim, e-posta veya kullanıcı adı..."
+                className={SEARCH_INPUT}
+              />
+            </div>
+            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
+                {usersTotal}
+              </span>
+              Kullanıcı
+            </p>
+          </div>
+
+          {/* Bulk action bar */}
+          {selectedUsers.size > 0 && (
+            <div className="flex flex-wrap items-center gap-3 rounded-[22px] border border-accent/25 bg-accent/5 px-4 py-2.5 sm:rounded-full sm:pl-5">
+              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                {selectedUsers.size} Seçildi
+              </span>
+              <div className="flex flex-wrap gap-2 sm:ml-auto">
+                <button
+                  type="button"
+                  onClick={() => runBulkAction("ban")}
+                  disabled={bulkLoading}
+                  className="cursor-pointer rounded-full border border-accent-2/30 px-3.5 py-1.5 text-[12px] font-semibold text-accent-2 transition-colors duration-200 hover:bg-accent-2/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Banla
+                </button>
+                <button
+                  type="button"
+                  onClick={() => runBulkAction("unban")}
+                  disabled={bulkLoading}
+                  className="cursor-pointer rounded-full border border-accent/30 px-3.5 py-1.5 text-[12px] font-semibold text-accent transition-colors duration-200 hover:bg-accent/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Ban Kaldır
+                </button>
+                <button
+                  type="button"
+                  onClick={() => runBulkAction("delete")}
+                  disabled={bulkLoading}
+                  className="cursor-pointer rounded-full border border-danger/30 px-3.5 py-1.5 text-[12px] font-semibold text-danger transition-colors duration-200 hover:bg-danger/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Sil
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUsers(new Set())}
+                  className="cursor-pointer rounded-full px-3.5 py-1.5 text-[12px] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-primary)]"
+                >
+                  İptal
+                </button>
               </div>
             </div>
+          )}
 
-            {/* Bulk action bar */}
-            {selectedUsers.size > 0 && (
-              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--gold)]/20 bg-[var(--gold)]/5 px-4 py-2.5">
-                <span className="text-sm font-semibold text-[var(--gold)]">
-                  {selectedUsers.size} seçildi
+          <div className="overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]">
+            {/* Mobile card list */}
+            <div className="md:hidden">
+              <label className="flex cursor-pointer items-center gap-3 border-b border-[var(--border)] px-4 py-3">
+                <input
+                  type="checkbox"
+                  className="accent-accent"
+                  checked={users.length > 0 && selectedUsers.size === users.length}
+                  onChange={toggleSelectAll}
+                />
+                <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  Tümünü Seç
                 </span>
-                <div className="flex flex-wrap gap-2 sm:ml-auto">
-                  <button onClick={() => runBulkAction("ban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#fb923c]/30 bg-[#fb923c]/10 px-3 py-1.5 text-[12px] font-semibold text-[#fb923c] transition-all duration-200 hover:bg-[#fb923c]/20 disabled:opacity-50">Banla</button>
-                  <button onClick={() => runBulkAction("unban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-accent-light/30 bg-accent-light/10 px-3 py-1.5 text-[12px] font-semibold text-accent-light transition-all duration-200 hover:bg-accent-light/20 disabled:opacity-50">Ban Kaldır</button>
-                  <button onClick={() => runBulkAction("delete")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#e53e3e]/30 bg-[#e53e3e]/10 px-3 py-1.5 text-[12px] font-semibold text-[#e53e3e] transition-all duration-200 hover:bg-[#e53e3e]/20 disabled:opacity-50">Sil</button>
-                  <button onClick={() => setSelectedUsers(new Set())} className="cursor-pointer rounded-lg px-3 py-1.5 text-[12px] text-[var(--text-muted)] hover:text-[var(--text-secondary)]">İptal</button>
-                </div>
-              </div>
-            )}
-
-            <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* Mobile card list */}
-              <div className="md:hidden">
-                <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
-                  <input type="checkbox" className="accent-accent" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} />
-                  <span className="text-[11px] font-semibold text-[var(--text-muted)]">Tümünü Seç</span>
-                </div>
-                {loadingUsers ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
-                ) : (
-                  <div className="divide-y divide-[var(--border)]">
-                    {users.map((u) => (
-                      <div key={u.id} className={`flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
-                        <input type="checkbox" className="mt-1.5 accent-accent" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} />
-                        <div className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-accent" onClick={() => router.push(`/admin/users/${u.id}`)}>
-                          {u.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0 flex-1 cursor-pointer" onClick={() => router.push(`/admin/users/${u.id}`)}>
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
-                            {u.isAdmin && <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">admin</span>}
-                            {u.isBanned && <span className="rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
-                            <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-accent-light/15 text-accent-light" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık profil" : "gizli profil"}</span>
-                          </div>
-                          {u.username && <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>}
-                          <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">{u.email}</p>
-                          <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-[var(--text-muted)]">
-                            <span><span className="font-semibold tabular-nums text-[var(--text-secondary)]">{u.postCount}</span> not</span>
-                            <span><span className="font-semibold tabular-nums text-[var(--text-secondary)]">{u.followerCount}</span> takipçi</span>
-                            <span>{new Date(u.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "2-digit" })}</span>
-                          </div>
-                        </div>
-                        <div className="flex shrink-0 flex-col items-end gap-2.5">
-                          <div className="flex items-center gap-3">
-                            <ToggleSwitch label="Admin" active={u.isAdmin} color="var(--gold)" onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} />
-                            <ToggleSwitch label="Açık" active={u.isPublic} color="var(--gold-light)" onClick={(e) => { e.stopPropagation(); togglePublic(u); }} />
-                            <ToggleSwitch label="Ban" active={u.isBanned} color="#e53e3e" onClick={(e) => { e.stopPropagation(); toggleBan(u); }} />
-                          </div>
-                          <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Desktop table */}
-              <div className="hidden overflow-x-auto md:block">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]">
-                      <th className="px-4 py-3"><input type="checkbox" className="accent-accent" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} /></th>
-                      {["Kullanıcı", "E-posta", "Not", "Takipçi", "Katılım", "Admin", "Açık", "Ban", "İşlem"].map((h) => (
-                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loadingUsers ? (
-                      <tr><td colSpan={10} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
-                    ) : (
-                      users.map((u) => (
-                        <tr key={u.id} className={`group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}><input type="checkbox" className="accent-accent" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} /></td>
-                          <td className="cursor-pointer px-4 py-3" onClick={() => router.push(`/admin/users/${u.id}`)}>
-                            <div className="flex items-center gap-2.5">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-accent">{u.name.charAt(0).toUpperCase()}</div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
-                                  {u.isAdmin && <span className="shrink-0 rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">admin</span>}
-                                  {u.isBanned && <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
-                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-accent-light/15 text-accent-light" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık" : "gizli"}</span>
-                                </div>
-                                {u.username && <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
-                          <td className="px-4 py-3 text-center text-sm font-bold tabular-nums text-[var(--text-primary)]">{u.postCount}</td>
-                          <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">{u.followerCount}</td>
-                          <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">{new Date(u.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" })}</td>
-                          <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-accent" : "bg-[var(--bg-raised)]"}`}>
-                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
-                            </button>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili Gizle" : "Profili Herkese Aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}>
-                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isPublic ? "left-[18px]" : "left-[3px]"}`} />
-                            </button>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); toggleBan(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isBanned ? "bg-[#e53e3e]" : "bg-[var(--bg-raised)]"}`}>
-                              <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isBanned ? "left-[18px]" : "left-[3px]"}`} />
-                            </button>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <Pagination page={usersPage} totalPages={usersTotalPages} onPrev={() => setUsersPage((p) => Math.max(1, p - 1))} onNext={() => setUsersPage((p) => Math.min(usersTotalPages, p + 1))} />
-            </div>
-          </div>
-        )}
-
-        {/* ══════════════ CONTENT ══════════════ */}
-        {tab === "content" && (
-          <div className="space-y-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative min-w-0 flex-1 sm:max-w-sm">
-                <MagnifyingGlass size={14} weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-                <input
-                  type="text"
-                  value={postSearch}
-                  onChange={(e) => { setPostSearch(e.target.value); setPostsPage(1); }}
-                  placeholder="Not başlığı, yazar veya kategori..."
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-9 pr-4 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
-                />
-              </div>
-              <div className="text-sm text-[var(--text-muted)]">
-                <span className="font-bold tabular-nums text-[var(--text-primary)]">{postsTotal}</span> not
-              </div>
-            </div>
-
-            <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* Mobile */}
-              <div className="md:hidden">
-                {loadingPosts ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
-                ) : posts.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
-                ) : (
-                  <div className="divide-y divide-[var(--border)]">
-                    {posts.map((p) => (
-                      <div key={p.id} className="flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)]">
-                        <div className="min-w-0 flex-1">
-                          <p className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]" onClick={() => router.push(`/posts/${p.id}`)}>{p.title}</p>
-                          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
-                            <span>{p.category}</span>
-                            {p.user && <span className="flex items-center gap-1"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-accent">{p.user.name.charAt(0).toUpperCase()}</span>{p.user.name}</span>}
-                            <span>{fmtShortDate(p.createdAt)}</span>
-                            {p.rating > 0 && <span className="text-[var(--gold)]">★ {p.rating.toFixed(1)}</span>}
-                          </div>
-                          <StatusBadge status={p.status} />
-                        </div>
-                        <div className="flex shrink-0 flex-col items-end gap-1.5">
-                          <button onClick={() => router.push(`/posts/${p.id}/edit`)} className="cursor-pointer rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:border-[var(--gold)]/30 hover:text-[var(--gold)]">Düzenle</button>
-                          <button onClick={() => setConfirmDeletePost(p)} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1.5 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Desktop table */}
-              <div className="hidden overflow-x-auto md:block">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]">
-                      {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
-                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loadingPosts ? (
-                      <tr><td colSpan={7} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
-                    ) : posts.length === 0 ? (
-                      <tr><td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</td></tr>
-                    ) : (
-                      posts.map((p) => (
-                        <tr key={p.id} className="group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)]">
-                          <td className="cursor-pointer px-4 py-3" onClick={() => router.push(`/posts/${p.id}`)}>
-                            <p className="max-w-[180px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]">{p.title}</p>
-                          </td>
-                          <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
-                          <td className="px-4 py-3">
-                            {p.user ? (
-                              <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-accent">{p.user.name.charAt(0).toUpperCase()}</div>
-                                <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
-                              </div>
-                            ) : <span className="text-xs text-[var(--text-muted)]">—</span>}
-                          </td>
-                          <td className="px-4 py-3 text-[10px] text-[var(--text-muted)]">{fmtShortDate(p.createdAt)}</td>
-                          <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
-                          <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-secondary)]">{p.rating > 0 ? p.rating.toFixed(1) : "—"}</td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => router.push(`/posts/${p.id}/edit`)} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--gold)]">
-                                <PencilSimple size={13} weight="bold" />
-                              </button>
-                              <button onClick={() => setConfirmDeletePost(p)} className="cursor-pointer rounded-lg px-2 py-1 text-[11px] text-[var(--text-muted)] transition-all duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">
-                                <Trash size={13} weight="bold" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <Pagination page={postsPage} totalPages={postsTotalPages} onPrev={() => setPostsPage((p) => Math.max(1, p - 1))} onNext={() => setPostsPage((p) => Math.min(postsTotalPages, p + 1))} />
-            </div>
-          </div>
-        )}
-
-        {/* ══════════════ ACTIVITY ══════════════ */}
-        {tab === "activity" && (
-          <div className="space-y-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs text-[var(--text-muted)]">Aktivite periyodu:</span>
-              <RangePills value={activityRange} options={RANGE_LABELS} onChange={(v) => { setActivityRange(v); setLogsPage(1); }} />
-            </div>
-
-            <Card
-              title={`Aktivite — ${RANGE_LABELS[activityRange]}`}
-              icon={<Pulse size={14} weight="bold" className="text-[#60a5fa]" />}
-              accent="#60a5fa"
-            >
-              {loadingLogs ? (
-                <div className="flex h-32 items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
+              </label>
+              {loadingUsers ? (
+                <TableSpinner />
               ) : (
-                <ResponsiveContainer width="100%" height={160}>
-                  <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 10 }} interval={Math.max(Math.floor(chartData.length / 8) - 1, 0)} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                    <Tooltip content={<DarkTooltip />} />
-                    <Bar dataKey="count" name="Aktivite" radius={[4, 4, 0, 0]}>
-                      {chartData.map((d, i) => (
-                        <Cell key={i} fill={d.count > 0 ? "#60a5fa" : "var(--border)"} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="divide-y divide-[var(--border)]">
+                  {users.map((u) => (
+                    <div
+                      key={u.id}
+                      className={`flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="mt-2.5 accent-accent"
+                        checked={selectedUsers.has(u.id)}
+                        onChange={() => toggleSelectUser(u.id)}
+                      />
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => router.push(`/admin/users/${u.id}`)}
+                      >
+                        <Avatar name={u.name} size="md" />
+                      </div>
+                      <div
+                        className="min-w-0 flex-1 cursor-pointer"
+                        onClick={() => router.push(`/admin/users/${u.id}`)}
+                      >
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
+                          <UserBadges user={u} />
+                        </div>
+                        {u.username && (
+                          <p className="dn-mono text-[11px] text-[var(--text-muted)]">
+                            @{u.username}
+                          </p>
+                        )}
+                        <p className="mt-0.5 truncate text-[12px] text-[var(--text-muted)]">
+                          {u.email}
+                        </p>
+                        <div className="dn-mono mt-1.5 flex flex-wrap items-center gap-3 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                          <span>
+                            <span className="tabular-nums text-[var(--text-primary)]">
+                              {u.postCount}
+                            </span>{" "}
+                            Not
+                          </span>
+                          <span>
+                            <span className="tabular-nums text-[var(--text-primary)]">
+                              {u.followerCount}
+                            </span>{" "}
+                            Takipçi
+                          </span>
+                          <span>
+                            {new Date(u.createdAt).toLocaleDateString("tr-TR", {
+                              day: "numeric",
+                              month: "short",
+                              year: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 flex-col items-end gap-3">
+                        <div className="flex items-center gap-3">
+                          <ToggleSwitch
+                            label="Admin"
+                            active={u.isAdmin}
+                            tone="accent"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleAdmin(u);
+                            }}
+                          />
+                          <ToggleSwitch
+                            label="Açık"
+                            active={u.isPublic}
+                            tone="accent-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              togglePublic(u);
+                            }}
+                          />
+                          <ToggleSwitch
+                            label="Ban"
+                            active={u.isBanned}
+                            tone="danger"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleBan(u);
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDelete(u);
+                          }}
+                          className="cursor-pointer rounded-full border border-danger/25 px-3 py-1 text-[11px] font-medium text-danger transition-colors duration-200 hover:bg-danger/10 active:scale-95"
+                        >
+                          Sil
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
-            </Card>
+            </div>
 
-            {/* Filter tabs */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-wrap items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-1">
-                <button onClick={() => { setLogsFilter(""); setLogsPage(1); }} className={`cursor-pointer rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${!logsFilter ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Tümü</button>
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="px-4 py-3.5">
+                      <input
+                        type="checkbox"
+                        className="accent-accent"
+                        aria-label="Tümünü seç"
+                        checked={users.length > 0 && selectedUsers.size === users.length}
+                        onChange={toggleSelectAll}
+                      />
+                    </th>
+                    {[
+                      "Kullanıcı",
+                      "E-posta",
+                      "Not",
+                      "Takipçi",
+                      "Katılım",
+                      "Admin",
+                      "Açık",
+                      "Ban",
+                      "İşlem",
+                    ].map((h) => (
+                      <th key={h} className={TH}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {loadingUsers ? (
+                    <tr>
+                      <td colSpan={10}>
+                        <TableSpinner />
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map((u) => (
+                      <tr
+                        key={u.id}
+                        className={`group transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}
+                      >
+                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            className="accent-accent"
+                            aria-label={`${u.name} seç`}
+                            checked={selectedUsers.has(u.id)}
+                            onChange={() => toggleSelectUser(u.id)}
+                          />
+                        </td>
+                        <td
+                          className="cursor-pointer px-4 py-3"
+                          onClick={() => router.push(`/admin/users/${u.id}`)}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Avatar name={u.name} size="sm" />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <p className="truncate font-medium text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
+                                  {u.name}
+                                </p>
+                                <UserBadges user={u} compact />
+                              </div>
+                              {u.username && (
+                                <p className="dn-mono text-[10.5px] text-[var(--text-muted)]">
+                                  @{u.username}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
+                        <td className="px-4 py-3 text-center text-sm font-semibold tabular-nums text-[var(--text-primary)]">
+                          {u.postCount}
+                        </td>
+                        <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">
+                          {u.followerCount}
+                        </td>
+                        <td className="dn-mono whitespace-nowrap px-4 py-3 text-center text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                          {new Date(u.createdAt).toLocaleDateString("tr-TR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <Switch
+                            active={u.isAdmin}
+                            tone="accent"
+                            title={u.isAdmin ? "Admin Yetkisini Kaldır" : "Admin Yap"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleAdmin(u);
+                            }}
+                          />
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <Switch
+                            active={u.isPublic}
+                            tone="accent-2"
+                            title={u.isPublic ? "Profili Gizle" : "Profili Herkese Aç"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              togglePublic(u);
+                            }}
+                          />
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <Switch
+                            active={u.isBanned}
+                            tone="danger"
+                            title={u.isBanned ? "Banı Kaldır" : "Banla"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleBan(u);
+                            }}
+                          />
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConfirmDelete(u);
+                            }}
+                            className="cursor-pointer rounded-full px-3 py-1 text-[11px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-danger/10 hover:text-danger active:scale-95"
+                          >
+                            Sil
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              page={usersPage}
+              totalPages={usersTotalPages}
+              onPrev={() => setUsersPage((p) => Math.max(1, p - 1))}
+              onNext={() => setUsersPage((p) => Math.min(usersTotalPages, p + 1))}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════ CONTENT ══════════════ */}
+      {tab === "content" && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="relative min-w-0 flex-1 sm:max-w-sm">
+              <MagnifyingGlassIcon
+                size={14}
+                weight="bold"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+              />
+              <input
+                type="text"
+                value={postSearch}
+                onChange={(e) => {
+                  setPostSearch(e.target.value);
+                  setPostsPage(1);
+                }}
+                placeholder="Not başlığı, yazar veya kategori..."
+                className={SEARCH_INPUT}
+              />
+            </div>
+            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
+                {postsTotal}
+              </span>
+              Not
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]">
+            {/* Mobile */}
+            <div className="md:hidden">
+              {loadingPosts ? (
+                <TableSpinner />
+              ) : posts.length === 0 ? (
+                <div className="p-4">
+                  <EmptyState
+                    compact
+                    icon={<FileTextIcon size={20} />}
+                    title="Not Bulunamadı"
+                    description="Aramayı değiştirip tekrar dene."
+                  />
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--border)]">
+                  {posts.map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)]"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]"
+                          onClick={() => router.push(`/posts/${p.id}`)}
+                        >
+                          {p.title}
+                        </p>
+                        <div className="dn-mono mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                          <span>{p.category}</span>
+                          {p.user && (
+                            <span className="normal-case tracking-normal">{p.user.name}</span>
+                          )}
+                          <span>{fmtShortDate(p.createdAt)}</span>
+                          {p.rating > 0 && (
+                            <span className="inline-flex items-center gap-1 text-[var(--gold)]">
+                              <StarIcon size={10} weight="fill" />
+                              {p.rating.toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+                        <StatusBadge status={p.status} />
+                      </div>
+                      <div className="flex shrink-0 flex-col items-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => router.push(`/posts/${p.id}/edit`)}
+                          className="cursor-pointer rounded-full border border-[var(--border)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-[var(--gold)] active:scale-95"
+                        >
+                          Düzenle
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDeletePost(p)}
+                          className="cursor-pointer rounded-full border border-danger/25 px-3 py-1.5 text-[11px] font-medium text-danger transition-colors duration-200 hover:bg-danger/10 active:scale-95"
+                        >
+                          Sil
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    {["Başlık", "Kategori", "Yazar", "Tarih", "Durum", "Puan", "İşlem"].map((h) => (
+                      <th key={h} className={TH}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {loadingPosts ? (
+                    <tr>
+                      <td colSpan={7}>
+                        <TableSpinner />
+                      </td>
+                    </tr>
+                  ) : posts.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-6">
+                        <EmptyState
+                          compact
+                          icon={<FileTextIcon size={20} />}
+                          title="Not Bulunamadı"
+                          description="Aramayı değiştirip tekrar dene."
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    posts.map((p) => (
+                      <tr
+                        key={p.id}
+                        className="group transition-colors duration-200 hover:bg-[var(--bg-raised)]"
+                      >
+                        <td
+                          className="cursor-pointer px-4 py-3"
+                          onClick={() => router.push(`/posts/${p.id}`)}
+                        >
+                          <p className="max-w-[200px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
+                            {p.title}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
+                        <td className="px-4 py-3">
+                          {p.user ? (
+                            <div className="flex items-center gap-2">
+                              <Avatar name={p.user.name} size="xs" />
+                              <span className="text-[12px] text-[var(--text-secondary)]">
+                                {p.user.name}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-[var(--text-muted)]">—</span>
+                          )}
+                        </td>
+                        <td className="dn-mono whitespace-nowrap px-4 py-3 text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                          {fmtShortDate(p.createdAt)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={p.status} />
+                        </td>
+                        <td className="dn-display px-4 py-3 text-center text-lg italic tabular-nums text-[var(--text-primary)]">
+                          {p.rating > 0 ? p.rating.toFixed(1) : "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              aria-label="Notu düzenle"
+                              onClick={() => router.push(`/posts/${p.id}/edit`)}
+                              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors duration-200 hover:bg-accent/10 hover:text-[var(--gold)] active:scale-95"
+                            >
+                              <PencilSimpleIcon size={14} weight="bold" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label="Notu sil"
+                              onClick={() => setConfirmDeletePost(p)}
+                              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors duration-200 hover:bg-danger/10 hover:text-danger active:scale-95"
+                            >
+                              <TrashIcon size={14} weight="bold" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              page={postsPage}
+              totalPages={postsTotalPages}
+              onPrev={() => setPostsPage((p) => Math.max(1, p - 1))}
+              onNext={() => setPostsPage((p) => Math.min(postsTotalPages, p + 1))}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════ ACTIVITY ══════════════ */}
+      {tab === "activity" && (
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              Aktivite Periyodu ·{" "}
+              <span className="text-[var(--text-primary)]">{RANGE_LABELS[activityRange]}</span>
+            </p>
+            <RangePills
+              value={activityRange}
+              options={RANGE_LABELS}
+              onChange={(v) => {
+                setActivityRange(v);
+                setLogsPage(1);
+              }}
+            />
+          </div>
+
+          <Card index="A" title={`Aktivite — ${RANGE_LABELS[activityRange]}`}>
+            {loadingLogs ? (
+              <div className="flex h-32 items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="2 4" stroke="var(--border)" vertical={false} />
+                  <XAxis
+                    dataKey="label"
+                    tick={AXIS_TICK}
+                    interval={Math.max(Math.floor(chartData.length / 8) - 1, 0)}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis tick={AXIS_TICK} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip content={<DarkTooltip />} cursor={{ fill: "var(--bg-raised)" }} />
+                  <Bar dataKey="count" name="Aktivite" radius={[999, 999, 0, 0]}>
+                    {chartData.map((d, i) => (
+                      <Cell key={i} fill={d.count > 0 ? "var(--gold)" : "var(--border)"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
+
+          {/* Filter tabs */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+              <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLogsFilter("");
+                    setLogsPage(1);
+                  }}
+                  className={`${FILTER_PILL} ${!logsFilter ? FILTER_PILL_ON : FILTER_PILL_OFF}`}
+                >
+                  Tümü
+                </button>
                 {Object.entries(ACTION_META).map(([key, val]) => (
-                  <button key={key} onClick={() => { setLogsFilter(key); setLogsPage(1); }} className={`cursor-pointer rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${logsFilter === key ? "bg-[var(--bg-raised)] text-[var(--text-primary)]" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>{val.label}</button>
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setLogsFilter(key);
+                      setLogsPage(1);
+                    }}
+                    className={`${FILTER_PILL} ${logsFilter === key ? FILTER_PILL_ON : FILTER_PILL_OFF}`}
+                  >
+                    {val.label}
+                  </button>
                 ))}
               </div>
-              <span className="text-xs text-[var(--text-muted)]"><span className="font-bold tabular-nums text-[var(--text-secondary)]">{logsTotal}</span> kayıt</span>
+            </div>
+            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
+                {logsTotal}
+              </span>
+              Kayıt
+            </p>
+          </div>
+
+          {/* Log table */}
+          <div className="overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]">
+            {/* Mobile */}
+            <div className="md:hidden">
+              {loadingLogs ? (
+                <TableSpinner />
+              ) : logs.length === 0 ? (
+                <div className="p-4">
+                  <EmptyState
+                    compact
+                    icon={<PulseIcon size={20} />}
+                    title="Henüz Aktivite Kaydı Yok"
+                    description="Seçili periyotta kayıt düşmedi."
+                  />
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--border)]">
+                  {logs.map((log) => {
+                    const meta = ACTION_META[log.action] ?? {
+                      label: log.action,
+                      color: "var(--text-faint)",
+                      icon: "·",
+                    };
+                    const data = log.metadata as Record<string, string> | null;
+                    return (
+                      <div key={log.id} className="flex items-start gap-3 p-4">
+                        <span className="dn-mono mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-xs text-[var(--text-muted)]">
+                          {meta.icon}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
+                            <ActionTag meta={meta} />
+                            <span className="dn-mono text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                              {fmtTime(log.createdAt)}
+                            </span>
+                          </div>
+                          {log.user && (
+                            <div className="flex items-center gap-1.5">
+                              <Avatar name={log.user.name} size="xs" />
+                              <span className="text-[12px] text-[var(--text-secondary)]">
+                                {log.user.name}
+                              </span>
+                              {log.user.username && (
+                                <span className="dn-mono text-[10.5px] text-[var(--text-muted)]">
+                                  @{log.user.username}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {(data?.title ?? data?.name ?? data?.targetUsername) && (
+                            <p className="mt-1 truncate text-[12px] text-[var(--text-muted)]">
+                              {data?.title ??
+                                data?.name ??
+                                (data?.targetUsername ? `→ @${data.targetUsername}` : null)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {/* Log table */}
-            <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-              {/* Mobile */}
-              <div className="md:hidden">
-                {loadingLogs ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
-                ) : logs.length === 0 ? (
-                  <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
-                ) : (
-                  <div className="divide-y divide-[var(--border)]">
-                    {logs.map((log) => {
-                      const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
+            {/* Desktop table */}
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    {["Zaman", "Kullanıcı", "Aksiyon", "Detay"].map((h) => (
+                      <th key={h} className={TH}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {loadingLogs ? (
+                    <tr>
+                      <td colSpan={4}>
+                        <TableSpinner />
+                      </td>
+                    </tr>
+                  ) : logs.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="p-6">
+                        <EmptyState
+                          compact
+                          icon={<PulseIcon size={20} />}
+                          title="Henüz Aktivite Kaydı Yok"
+                          description="Seçili periyotta kayıt düşmedi."
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    logs.map((log) => {
+                      const meta = ACTION_META[log.action] ?? {
+                        label: log.action,
+                        color: "var(--text-faint)",
+                        icon: "·",
+                      };
                       const data = log.metadata as Record<string, string> | null;
                       return (
-                        <div key={log.id} className="flex items-start gap-3 p-4">
-                          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border text-xs" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>{meta.icon}</span>
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
-                              <span className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-semibold" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>{meta.label}</span>
-                              <span className="text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</span>
-                            </div>
-                            {log.user && (
-                              <div className="flex items-center gap-1.5">
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-accent">{log.user.name.charAt(0).toUpperCase()}</div>
-                                <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
-                                {log.user.username && <span className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</span>}
-                              </div>
-                            )}
-                            {(data?.title ?? data?.name ?? data?.targetUsername) && (
-                              <p className="mt-1 truncate text-[11px] text-[var(--text-muted)]">{data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : null)}</p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Desktop table */}
-              <div className="hidden overflow-x-auto md:block">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]">
-                      {["Zaman", "Kullanıcı", "Aksiyon", "Detay"].map((h) => (
-                        <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loadingLogs ? (
-                      <tr><td colSpan={4} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
-                    ) : logs.length === 0 ? (
-                      <tr><td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</td></tr>
-                    ) : (
-                      logs.map((log) => {
-                        const meta = ACTION_META[log.action] ?? { label: log.action, color: "#555", icon: "·" };
-                        const data = log.metadata as Record<string, string> | null;
-                        return (
-                          <tr key={log.id} className="border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)]">
-                            <td className="whitespace-nowrap px-4 py-3 text-[11px] text-[var(--text-muted)]">{fmtTime(log.createdAt)}</td>
-                            <td className="px-4 py-3">
-                              {log.user ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-accent">{log.user.name.charAt(0).toUpperCase()}</div>
-                                  <div>
-                                    <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
-                                    {log.user.username && <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>}
-                                  </div>
+                        <tr
+                          key={log.id}
+                          className="transition-colors duration-200 hover:bg-[var(--bg-raised)]"
+                        >
+                          <td className="dn-mono whitespace-nowrap px-4 py-3 text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                            {fmtTime(log.createdAt)}
+                          </td>
+                          <td className="px-4 py-3">
+                            {log.user ? (
+                              <div className="flex items-center gap-2">
+                                <Avatar name={log.user.name} size="xs" />
+                                <div>
+                                  <p className="text-[12.5px] text-[var(--text-secondary)]">
+                                    {log.user.name}
+                                  </p>
+                                  {log.user.username && (
+                                    <p className="dn-mono text-[10px] text-[var(--text-muted)]">
+                                      @{log.user.username}
+                                    </p>
+                                  )}
                                 </div>
-                              ) : <span className="text-xs text-[var(--text-muted)]">—</span>}
-                            </td>
-                            <td className="px-4 py-3">
-                              <span className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-0.5 text-[11px] font-semibold" style={{ borderColor: `${meta.color}25`, background: `${meta.color}0c`, color: meta.color }}>
-                                <span className="text-xs leading-none">{meta.icon}</span>
-                                {meta.label}
-                              </span>
-                            </td>
-                            <td className="max-w-[200px] truncate px-4 py-3 text-[12px] text-[var(--text-muted)]">{data?.title ?? data?.name ?? (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}</td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <Pagination page={logsPage} totalPages={logsTotalPages} onPrev={() => setLogsPage((p) => Math.max(1, p - 1))} onNext={() => setLogsPage((p) => Math.min(logsTotalPages, p + 1))} />
+                              </div>
+                            ) : (
+                              <span className="text-xs text-[var(--text-muted)]">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <ActionTag meta={meta} />
+                          </td>
+                          <td className="max-w-[220px] truncate px-4 py-3 text-[12.5px] text-[var(--text-muted)]">
+                            {data?.title ??
+                              data?.name ??
+                              (data?.targetUsername ? `→ @${data.targetUsername}` : "—")}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
-        )}
 
-        {/* ══════════════ SETTINGS ══════════════ */}
-        {tab === "settings" && (
-          <div className="max-w-2xl space-y-5">
-            {loadingSettings ? (
-              <Spinner />
-            ) : settings ? (
-              <>
-                {/* Registration */}
-                <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-accent-light/20 bg-accent-light/10">
-                      <UserPlus size={16} weight="duotone" className="text-accent-light" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Yeni Kayıt</h3>
-                      <p className="text-xs text-[var(--text-muted)]">Yeni kullanıcı kaydını aç veya kapat</p>
-                    </div>
-                    <button
-                      onClick={() => saveSettings({ registrationEnabled: settings.registrationEnabled === "true" ? "false" : "true" })}
-                      disabled={savingSettings}
-                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.registrationEnabled === "true" ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}
-                    >
-                      <span className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.registrationEnabled === "true" ? "left-[22px]" : "left-[3px]"}`} />
-                    </button>
+            <Pagination
+              page={logsPage}
+              totalPages={logsTotalPages}
+              onPrev={() => setLogsPage((p) => Math.max(1, p - 1))}
+              onNext={() => setLogsPage((p) => Math.min(logsTotalPages, p + 1))}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════ SETTINGS ══════════════ */}
+      {tab === "settings" && (
+        <div className="max-w-2xl space-y-5">
+          {loadingSettings ? (
+            <Spinner />
+          ) : settings ? (
+            <>
+              {/* Registration */}
+              <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)]">
+                <div className="flex items-start gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)]">
+                    <UserPlusIcon size={17} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                      (01)
+                    </p>
+                    <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
+                      Yeni Kayıt
+                    </h3>
+                    <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                      Yeni kullanıcı kaydını aç veya kapat.
+                    </p>
                   </div>
-                  <div className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${settings.registrationEnabled === "true" ? "border-accent-light/20 bg-accent-light/10 text-accent-light" : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"}`}>
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: settings.registrationEnabled === "true" ? "var(--gold-light)" : "#e53e3e" }} />
-                    {settings.registrationEnabled === "true" ? "Kayıt Açık" : "Kayıt Kapalı"}
+                  <Switch
+                    size="lg"
+                    active={settings.registrationEnabled === "true"}
+                    tone="accent"
+                    disabled={savingSettings}
+                    title={settings.registrationEnabled === "true" ? "Kaydı Kapat" : "Kaydı Aç"}
+                    onClick={() =>
+                      saveSettings({
+                        registrationEnabled:
+                          settings.registrationEnabled === "true" ? "false" : "true",
+                      })
+                    }
+                  />
+                </div>
+                <div className="mt-5 border-t border-[var(--border)] pt-4">
+                  <StatePill
+                    on={settings.registrationEnabled === "true"}
+                    onLabel="Kayıt Açık"
+                    offLabel="Kayıt Kapalı"
+                    offTone="danger"
+                  />
+                </div>
+              </section>
+
+              {/* Maintenance */}
+              <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)]">
+                <div className="flex items-start gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)]">
+                    <WrenchIcon size={17} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                      (02)
+                    </p>
+                    <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
+                      Bakım Modu
+                    </h3>
+                    <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                      Yöneticiler dışında tüm kullanıcılar bakım sayfasına yönlendirilir.
+                    </p>
                   </div>
+                  <Switch
+                    size="lg"
+                    active={settings.maintenanceMode === "true"}
+                    tone="accent-2"
+                    disabled={savingSettings}
+                    title={
+                      settings.maintenanceMode === "true" ? "Bakım Modunu Kapat" : "Bakım Modunu Aç"
+                    }
+                    onClick={() =>
+                      saveSettings({
+                        maintenanceMode: settings.maintenanceMode === "true" ? "false" : "true",
+                      })
+                    }
+                  />
                 </div>
 
-                {/* Maintenance */}
-                <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#fb923c]/20 bg-[#fb923c]/10">
-                      <Wrench size={16} weight="duotone" className="text-[#fb923c]" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-[var(--text-primary)]">Bakım Modu</h3>
-                      <p className="text-xs text-[var(--text-muted)]">Yöneticiler dışında tüm kullanıcılar bakım sayfasına yönlendirilir</p>
-                    </div>
-                    <button
-                      onClick={() => saveSettings({ maintenanceMode: settings.maintenanceMode === "true" ? "false" : "true" })}
-                      disabled={savingSettings}
-                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.maintenanceMode === "true" ? "bg-[#fb923c]" : "bg-[var(--bg-raised)]"}`}
-                    >
-                      <span className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.maintenanceMode === "true" ? "left-[22px]" : "left-[3px]"}`} />
-                    </button>
-                  </div>
-
+                <div className="mt-5 space-y-4 border-t border-[var(--border)] pt-4">
                   {settings.maintenanceMode === "true" && (
-                    <div className="mb-3 flex items-center gap-1.5 rounded-lg border border-[#fb923c]/20 bg-[#fb923c]/10 px-2.5 py-1 text-[11px] font-semibold text-[#fb923c]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#fb923c]" />
+                    <div className="flex items-center gap-2 rounded-full border border-accent-2/30 bg-accent-2/5 px-3.5 py-1.5 text-[12px] font-medium text-accent-2">
+                      <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-accent-2" />
                       Bakım modu aktif — admin olmayan kullanıcılar engellenecek
                     </div>
                   )}
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-[var(--text-muted)]">Bakım Mesajı</label>
+                    <label
+                      htmlFor="admin-maintenance-message"
+                      className="dn-mono block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]"
+                    >
+                      Bakım Mesajı
+                    </label>
                     <input
+                      id="admin-maintenance-message"
                       type="text"
                       defaultValue={settings.maintenanceMessage}
                       onBlur={(e) => {
@@ -1333,23 +1847,30 @@ export default function AdminPage() {
                           saveSettings({ maintenanceMessage: e.target.value });
                         }
                       }}
-                      className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] transition-all duration-200 placeholder:text-[var(--text-muted)] focus:border-[var(--gold)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--gold)]/15 sm:text-sm"
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm"
                       placeholder="Bakım mesajı..."
                     />
-                    <p className="text-[10px] text-[var(--text-muted)]">Odak dışına çıkınca otomatik kaydedilir</p>
+                    <p className="text-[12px] text-[var(--text-faint)]">
+                      Odak dışına çıkınca otomatik kaydedilir.
+                    </p>
                   </div>
                 </div>
-              </>
-            ) : null}
-          </div>
-        )}
-      </div>
+              </section>
+            </>
+          ) : null}
+        </div>
+      )}
 
       {/* ── Delete user confirm ── */}
       {confirmDelete && (
         <ConfirmModal
           title="Kullanıcıyı Sil"
-          message={<><span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span> silinecek.</>}
+          message={
+            <>
+              <span className="font-semibold text-[var(--text-primary)]">{confirmDelete.name}</span>{" "}
+              silinecek.
+            </>
+          }
           detail="Bu işlem geri alınamaz. Tüm notları ve kategorileri de silinir."
           onCancel={() => setConfirmDelete(null)}
           onConfirm={() => deleteUser(confirmDelete.id)}
@@ -1360,7 +1881,14 @@ export default function AdminPage() {
       {confirmDeletePost && (
         <ConfirmModal
           title="Notu Sil"
-          message={<><span className="font-semibold text-[var(--text-primary)]">{confirmDeletePost.title}</span> silinecek.</>}
+          message={
+            <>
+              <span className="font-semibold text-[var(--text-primary)]">
+                {confirmDeletePost.title}
+              </span>{" "}
+              silinecek.
+            </>
+          }
           detail="Bu işlem geri alınamaz."
           onCancel={() => setConfirmDeletePost(null)}
           onConfirm={() => deletePost(confirmDeletePost.id)}
@@ -1374,44 +1902,179 @@ export default function AdminPage() {
    Inline sub-components
    ══════════════════════════════════════════════ */
 
+const TH =
+  "dn-mono px-4 py-3.5 text-left text-[10px] font-normal uppercase tracking-[0.16em] text-[var(--text-muted)]";
+
+const SEARCH_INPUT =
+  "w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-10 pr-4 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm";
+
+const FILTER_PILL =
+  "cursor-pointer whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11.5px] font-semibold transition-colors duration-200 ease-out-expo active:scale-95";
+const FILTER_PILL_ON = "bg-accent text-[var(--text-on-accent)]";
+const FILTER_PILL_OFF = "text-[var(--text-muted)] hover:text-[var(--text-primary)]";
+
+type SwitchTone = "accent" | "accent-2" | "danger";
+
+const SWITCH_TRACK: Record<SwitchTone, string> = {
+  accent: "border-transparent bg-accent",
+  "accent-2": "border-transparent bg-accent-2",
+  danger: "border-transparent bg-danger",
+};
+
+function Switch({
+  active,
+  tone,
+  onClick,
+  title,
+  disabled,
+  size = "sm",
+}: {
+  active: boolean;
+  tone: SwitchTone;
+  onClick: (e: React.MouseEvent) => void;
+  title?: string;
+  disabled?: boolean;
+  size?: "sm" | "lg";
+}) {
+  const lg = size === "lg";
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={active}
+      aria-label={title}
+      title={title}
+      onClick={onClick}
+      disabled={disabled}
+      className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-300 ease-out-expo disabled:cursor-not-allowed disabled:opacity-50 ${
+        lg ? "h-6 w-11" : "h-5 w-9"
+      } ${active ? SWITCH_TRACK[tone] : "border-[var(--border)] bg-[var(--bg-raised)]"}`}
+    >
+      <span
+        className={`absolute rounded-full transition-all duration-300 ease-out-expo ${
+          lg ? "h-4 w-4" : "h-3.5 w-3.5"
+        } ${
+          active
+            ? `bg-[var(--text-on-accent)] ${lg ? "left-[22px]" : "left-[17px]"}`
+            : "left-[3px] bg-[var(--text-muted)]"
+        }`}
+      />
+    </button>
+  );
+}
+
 function ToggleSwitch({
   label,
   active,
-  color,
+  tone,
   onClick,
 }: {
   label: string;
   active: boolean;
-  color: string;
+  tone: SwitchTone;
   onClick: (e: React.MouseEvent) => void;
 }) {
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)]">{label}</span>
-      <button
-        onClick={onClick}
-        className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${active ? "" : "bg-[var(--bg-raised)]"}`}
-        style={active ? { backgroundColor: color } : undefined}
+    <div className="flex flex-col items-center gap-1">
+      <span className="dn-mono text-[9px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+        {label}
+      </span>
+      <Switch active={active} tone={tone} onClick={onClick} title={label} />
+    </div>
+  );
+}
+
+function Avatar({ name, size }: { name: string; size: "xs" | "sm" | "md" }) {
+  const dim =
+    size === "xs" ? "h-6 w-6 text-[10px]" : size === "sm" ? "h-8 w-8 text-xs" : "h-9 w-9 text-sm";
+  return (
+    <span
+      className={`flex shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] font-semibold text-[var(--text-secondary)] ${dim}`}
+    >
+      {name.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
+const BADGE =
+  "dn-mono inline-flex shrink-0 items-center rounded-full border px-1.5 py-px text-[9px] uppercase tracking-[0.12em]";
+
+function UserBadges({ user, compact = false }: { user: UserRow; compact?: boolean }) {
+  return (
+    <>
+      {user.isAdmin && <span className={`${BADGE} border-accent/35 text-accent`}>Admin</span>}
+      {user.isBanned && <span className={`${BADGE} border-danger/35 text-danger`}>Ban</span>}
+      <span
+        className={`${BADGE} ${
+          user.isPublic
+            ? "border-accent-2/35 text-accent-2"
+            : "border-[var(--border)] text-[var(--text-muted)]"
+        }`}
       >
-        <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${active ? "left-[18px]" : "left-[3px]"}`} />
-      </button>
+        {user.isPublic ? (compact ? "Açık" : "Açık Profil") : compact ? "Gizli" : "Gizli Profil"}
+      </span>
+    </>
+  );
+}
+
+function ActionTag({ meta }: { meta: { label: string; color: string } }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-[11.5px] font-medium text-[var(--text-secondary)]">
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: meta.color }} />
+      {meta.label}
+    </span>
+  );
+}
+
+function StatePill({
+  on,
+  onLabel,
+  offLabel,
+  offTone,
+}: {
+  on: boolean;
+  onLabel: string;
+  offLabel: string;
+  offTone: "danger" | "muted";
+}) {
+  const cls = on
+    ? "border-accent/30 text-accent"
+    : offTone === "danger"
+      ? "border-danger/30 text-danger"
+      : "border-[var(--border)] text-[var(--text-muted)]";
+  const dot = on ? "bg-accent" : offTone === "danger" ? "bg-danger" : "bg-[var(--text-muted)]";
+  return (
+    <span
+      className={`dn-mono inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10.5px] uppercase tracking-[0.16em] ${cls}`}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+      {on ? onLabel : offLabel}
+    </span>
+  );
+}
+
+function TableSpinner() {
+  return (
+    <div className="flex justify-center py-14">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
     </div>
   );
 }
 
 function StatusBadge({ status }: { status: string | null }) {
   if (!status) {
-    return <span className="inline-flex rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">Durum yok</span>;
+    return (
+      <span className="inline-flex items-center rounded-full border border-dashed border-[var(--border)] px-2.5 py-0.5 text-[11px] text-[var(--text-muted)]">
+        Durum Yok
+      </span>
+    );
   }
   return (
-    <span
-      className="inline-flex rounded-lg border px-2 py-0.5 text-[10px] font-semibold"
-      style={{
-        borderColor: `${STATUS_COLORS[status] ?? "#555"}25`,
-        background: `${STATUS_COLORS[status] ?? "#555"}0c`,
-        color: STATUS_COLORS[status] ?? "var(--text-muted)",
-      }}
-    >
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text-secondary)]">
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
+        style={{ background: STATUS_COLORS[status] ?? "var(--text-faint)" }}
+      />
       {status}
     </span>
   );

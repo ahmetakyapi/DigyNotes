@@ -67,37 +67,42 @@ export type SeriesKey = "7d" | "30d" | "90d" | "365d";
 
 /* ─────────────────────────── constants ─────────────────────── */
 
+/* Calm two-hue scheme: lavender (`--gold`) = finished, apricot (`--accent-2`) = in progress,
+   stepped by opacity so each status stays distinguishable without extra hues. */
+const A = (o: number) => `rgb(var(--gold-rgb) / ${o})`;
+const B = (o: number) => `rgb(var(--accent-2-rgb) / ${o})`;
+
 export const STATUS_COLORS: Record<string, string> = {
   İzlendi: "var(--gold)",
-  İzleniyor: "var(--gold-light)",
-  Okundu: "var(--gold-light)",
-  Okunuyor: "#60a5fa",
-  Oynandı: "#f472b6",
-  Oynanıyor: "#fb923c",
-  Tamamlandı: "#a78bfa",
-  "Devam Ediyor": "#38bdf8",
-  Belirsiz: "#3a3a5a",
+  Okundu: A(0.72),
+  Oynandı: A(0.5),
+  Tamamlandı: A(0.32),
+  İzleniyor: "var(--accent-2)",
+  Okunuyor: B(0.72),
+  Oynanıyor: B(0.5),
+  "Devam Ediyor": B(0.32),
+  Belirsiz: "var(--text-faint)",
 };
 
 export const PIE_COLORS = [
   "var(--gold)",
-  "var(--gold-light)",
-  "var(--gold-light)",
-  "#60a5fa",
-  "#f472b6",
-  "#fb923c",
-  "#a78bfa",
-  "#38bdf8",
-  "#e53e3e",
+  "var(--accent-2)",
+  A(0.6),
+  B(0.6),
+  A(0.35),
+  B(0.35),
+  "var(--text-muted)",
+  "var(--text-faint)",
+  "var(--danger)",
 ];
 
 export const ACTION_META: Record<string, { label: string; color: string; icon: string }> = {
-  "post.create": { label: "Not oluşturuldu", color: "var(--gold-light)", icon: "+" },
-  "post.update": { label: "Not güncellendi", color: "#60a5fa", icon: "↻" },
-  "post.delete": { label: "Not silindi", color: "#e53e3e", icon: "×" },
-  "user.register": { label: "Yeni kayıt", color: "var(--gold)", icon: "★" },
-  "category.create": { label: "Kategori oluşturuldu", color: "var(--gold-light)", icon: "□" },
-  "user.follow": { label: "Takip", color: "#f472b6", icon: "♥" },
+  "post.create": { label: "Not Oluşturuldu", color: "var(--gold)", icon: "+" },
+  "post.update": { label: "Not Güncellendi", color: A(0.55), icon: "↻" },
+  "post.delete": { label: "Not Silindi", color: "var(--danger)", icon: "×" },
+  "user.register": { label: "Yeni Kayıt", color: "var(--accent-2)", icon: "★" },
+  "category.create": { label: "Kategori Oluşturuldu", color: B(0.6), icon: "□" },
+  "user.follow": { label: "Takip", color: "var(--text-muted)", icon: "♥" },
 };
 
 export const RANGE_LABELS: Record<RangeKey, string> = {

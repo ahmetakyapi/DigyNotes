@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/categories";
 import { getPostReadAccess } from "@/lib/post-access";
 import { buildPostMetadataDescription, truncateText } from "@/lib/metadata";
+import { loadBrandFonts, OG } from "@/lib/og-fonts";
 
 export const runtime = "nodejs";
 
@@ -13,101 +14,86 @@ export const size = {
 
 export const contentType = "image/png";
 
-function renderFallbackCard(message: string) {
+/** Satori can draw JPEG/PNG data URLs but not WebP: fetch the cover and keep it only if supported. */
+async function loadCover(src: string | null | undefined) {
+  if (!src || !/^https?:\/\//.test(src)) return null;
+  try {
+    const res = await fetch(src, { headers: { "User-Agent": "DigyNotesOG/1.0" } });
+    const type = res.headers.get("content-type") ?? "";
+    if (!res.ok || !/image\/(jpeg|jpg|png)/.test(type)) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.byteLength > 4_000_000) return null;
+    return `data:${type.split(";")[0]};base64,${buf.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
+function Mark({ size: s = 64 }: { size?: number }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        justifyContent: "center",
+        width: s,
+        height: s,
+        borderRadius: s * 0.26,
+        background: OG.card,
+        border: `1px solid ${OG.border}`,
+        paddingTop: s * 0.12,
+      }}
+    >
+      <span style={{ color: OG.bone, fontSize: s * 0.6, fontWeight: 800, letterSpacing: -2 }}>
+        D
+      </span>
+      <span
+        style={{
+          color: OG.bone,
+          fontSize: s * 0.62,
+          fontFamily: "Instrument",
+          fontStyle: "italic",
+        }}
+      >
+        n
+      </span>
+      <span
+        style={{
+          width: s * 0.12,
+          height: s * 0.12,
+          borderRadius: 99,
+          background: OG.lavender,
+          marginLeft: 2,
+        }}
+      />
+    </div>
+  );
+}
+
+async function renderFallbackCard(message: string) {
+  const fonts = await loadBrandFonts(message + "DigyNotesDn.(DN)KİŞİSEL KÜLTÜR ARŞİVİ");
   return new ImageResponse(
     <div
       style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
         width: "100%",
         height: "100%",
-        display: "flex",
-        position: "relative",
-        overflow: "hidden",
-        background:
-          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.28), transparent 36%), linear-gradient(135deg, var(--bg-base) 0%, #171d2b 56%, #0f1420 100%)",
-        color: "#f5f1df",
-        fontFamily: "Arial",
+        background: OG.ink,
+        padding: "64px 72px",
+        fontFamily: "Hanken",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          inset: "auto -80px -120px auto",
-          width: 340,
-          height: 340,
-          borderRadius: 999,
-          background: "rgb(var(--gold-rgb)/0.18)",
-        }}
-      />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          width: "100%",
-          padding: "56px 64px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 18,
-            fontSize: 30,
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              width: 72,
-              height: 72,
-              borderRadius: 24,
-              background: "rgb(var(--gold-rgb)/0.18)",
-              border: "1px solid rgb(var(--gold-rgb)/0.32)",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--gold)",
-              fontSize: 36,
-            }}
-          >
-            D
-          </div>
-          DigyNotes
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 18,
-            maxWidth: 880,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 62,
-              fontWeight: 800,
-              lineHeight: 1.08,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            {message}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              fontSize: 28,
-              color: "#c7cfde",
-            }}
-          >
-            Film, dizi, kitap ve gezi notlarini tek yerde tut.
-          </div>
-        </div>
-      </div>
+      <Mark />
+      <span style={{ color: OG.bone, fontSize: 84, fontFamily: "Instrument", fontStyle: "italic" }}>
+        {message}
+      </span>
+      <span style={{ color: OG.muted, fontSize: 20, letterSpacing: 4 }}>
+        <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>KİŞİSEL KÜLTÜR ARŞİVİ
+      </span>
     </div>,
-    size
+    { ...size, fonts }
   );
 }
 
@@ -115,13 +101,14 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
   const access = await getPostReadAccess(params.id);
 
   if (!access.post || !access.canRead) {
-    return renderFallbackCard("Bu not herkese acik degil");
+    return renderFallbackCard("Bu Not Herkese Açık Değil");
   }
 
   const post = await prisma.post.findUnique({
     where: { id: params.id },
     select: {
       title: true,
+      image: true,
       excerpt: true,
       content: true,
       category: true,
@@ -147,7 +134,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
   });
 
   if (!post) {
-    return renderFallbackCard("Not bulunamadı");
+    return renderFallbackCard("Not Bulunamadı");
   }
 
   const categoryLabel = getCategoryLabel(post.category);
@@ -169,231 +156,170 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
   const ratingLabel =
     typeof post.rating === "number" && post.rating > 0 ? `${post.rating.toFixed(1)}/5 puan` : null;
 
+  const cover = await loadCover(post.image);
+  const fullStars = Math.floor(post.rating ?? 0);
+  const titleSize = post.title.length > 34 ? 64 : post.title.length > 20 ? 80 : 96;
+  const fonts = await loadBrandFonts(
+    [
+      post.title,
+      description,
+      metaItems.join(" "),
+      tagNames.join(" "),
+      authorLabel,
+      ratingLabel ?? "",
+      "(DN)·@#/5 ★☆ DigyNotesDn. KİŞİSEL KÜLTÜR ARŞİVİ",
+      post.user?.username ?? "",
+      categoryLabel.toLocaleUpperCase("tr-TR"),
+    ].join(" ")
+  );
+
+  /* LAYOUT: 1200×630 ink card. LEFT: tilted cover (or serif category tile).
+     RIGHT: mono meta row → serif-italic title → creator → stars → excerpt → tags + author. */
   return new ImageResponse(
     <div
       style={{
+        display: "flex",
         width: "100%",
         height: "100%",
-        display: "flex",
+        background: OG.ink,
+        padding: "56px 64px",
+        gap: 56,
         position: "relative",
-        overflow: "hidden",
-        background:
-          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.26), transparent 34%), radial-gradient(circle at bottom right, rgb(var(--accent-2-rgb)/0.22), transparent 28%), linear-gradient(135deg, var(--bg-base) 0%, #131925 58%, #0b1019 100%)",
-        color: "#f7f3e7",
-        fontFamily: "Arial",
+        fontFamily: "Hanken",
       }}
     >
       <div
         style={{
           position: "absolute",
-          top: -120,
-          right: -40,
-          width: 320,
-          height: 320,
-          borderRadius: 999,
-          background: "rgb(var(--accent-2-rgb)/0.12)",
-          border: "1px solid rgb(var(--accent-2-rgb)/0.14)",
+          top: -300,
+          left: -240,
+          width: 900,
+          height: 900,
+          borderRadius: 9999,
+          background: "radial-gradient(closest-side, rgba(185,168,255,0.2), rgba(185,168,255,0))",
         }}
       />
-      <div
-        style={{
-          position: "absolute",
-          bottom: -160,
-          left: -40,
-          width: 360,
-          height: 360,
-          borderRadius: 999,
-          background: "rgb(var(--gold-rgb)/0.12)",
-        }}
-      />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={cover}
+            alt=""
+            width={340}
+            height={510}
+            style={{
+              objectFit: "cover",
+              borderRadius: 24,
+              border: `1px solid ${OG.border}`,
+              transform: "rotate(-3deg)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 340,
+              height: 510,
+              borderRadius: 24,
+              background: OG.card,
+              border: `1px solid ${OG.border}`,
+              color: OG.bone,
+              fontSize: 72,
+              fontFamily: "Instrument",
+              fontStyle: "italic",
+            }}
+          >
+            {categoryLabel}
+          </div>
+        )}
+      </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          width: "100%",
-          padding: "52px 60px",
-        }}
-      >
+      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ color: OG.muted, fontSize: 18, letterSpacing: 4 }}>
+            <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>
+            {metaItems.join("  ·  ").toLocaleUpperCase("tr-TR")}
+          </span>
+          <Mark size={56} />
+        </div>
+
+        <span
+          style={{
+            color: OG.bone,
+            fontSize: titleSize,
+            fontFamily: "Instrument",
+            fontStyle: "italic",
+            lineHeight: 0.95,
+            letterSpacing: -2,
+            marginTop: 36,
+          }}
+        >
+          {post.title}
+        </span>
+
+        {ratingLabel && (
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 22 }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <svg key={i} width="28" height="28" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"
+                    fill={i < fullStars ? OG.lavender : OG.border}
+                  />
+                </svg>
+              ))}
+            </div>
+            <span style={{ color: OG.bone, fontSize: 22, fontWeight: 500 }}>{ratingLabel}</span>
+          </div>
+        )}
+
+        <span
+          style={{
+            color: OG.secondary,
+            fontSize: 24,
+            fontWeight: 500,
+            lineHeight: 1.45,
+            marginTop: 22,
+          }}
+        >
+          {truncateText(description, 150)}
+        </span>
+
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            marginTop: "auto",
+            borderTop: `1px solid ${OG.border}`,
+            paddingTop: 20,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              fontSize: 28,
-              fontWeight: 700,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                width: 64,
-                height: 64,
-                borderRadius: 20,
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--gold)",
-                background: "rgb(var(--gold-rgb)/0.16)",
-                border: "1px solid rgb(var(--gold-rgb)/0.28)",
-              }}
-            >
-              D
-            </div>
-            DigyNotes
-          </div>
-
-          {ratingLabel ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "14px 20px",
-                borderRadius: 999,
-                background: "rgba(247,243,231,0.08)",
-                color: "#f7f3e7",
-                fontSize: 24,
-                fontWeight: 600,
-              }}
-            >
-              {ratingLabel}
-            </div>
-          ) : null}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 24,
-            maxWidth: 920,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              flexWrap: "wrap",
-            }}
-          >
-            {metaItems.slice(0, 3).map((item) => (
-              <div
-                key={item}
+          <div style={{ display: "flex", gap: 10 }}>
+            {tagNames.map((t) => (
+              <span
+                key={t}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "10px 16px",
+                  color: OG.secondary,
+                  fontSize: 18,
+                  border: `1px solid ${OG.border}`,
                   borderRadius: 999,
-                  background: "rgba(247,243,231,0.08)",
-                  color: "#d7dded",
-                  fontSize: 22,
+                  padding: "6px 14px",
                 }}
               >
-                {item}
-              </div>
+                #{t}
+              </span>
             ))}
           </div>
-
-          <div
-            style={{
-              display: "flex",
-              fontSize: 68,
-              fontWeight: 800,
-              lineHeight: 1.04,
-              letterSpacing: "-0.05em",
-            }}
-          >
-            {truncateText(post.title, 90)}
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              fontSize: 28,
-              color: "#cbd3e1",
-              lineHeight: 1.45,
-              maxWidth: 980,
-            }}
-          >
-            {description}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                fontSize: 20,
-                textTransform: "uppercase",
-                letterSpacing: "0.18em",
-                color: "#8d98ab",
-              }}
-            >
-              Not sahibi
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: 32,
-                fontWeight: 700,
-              }}
-            >
-              {authorLabel}
-            </div>
-          </div>
-
-          {tagNames.length ? (
-            <div
-              style={{
-                display: "flex",
-                gap: 10,
-                flexWrap: "wrap",
-                justifyContent: "flex-end",
-                maxWidth: 420,
-              }}
-            >
-              {tagNames.map((tag) => (
-                <div
-                  key={tag}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "10px 14px",
-                    borderRadius: 999,
-                    background: "rgb(var(--gold-rgb)/0.12)",
-                    color: "#f1d88a",
-                    fontSize: 20,
-                    fontWeight: 600,
-                  }}
-                >
-                  #{tag}
-                </div>
-              ))}
-            </div>
-          ) : null}
+          <span style={{ color: OG.bone, fontSize: 20, fontWeight: 500 }}>
+            {authorLabel}
+            {post.user?.username ? `  ·  @${post.user.username}` : ""}
+          </span>
         </div>
       </div>
     </div>,
-    size
+    { ...size, fonts }
   );
 }
