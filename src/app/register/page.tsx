@@ -230,12 +230,12 @@ export default function RegisterPage() {
               placeholder="Şifreyi tekrar girin"
               className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
                 confirmPw && confirmPw !== password
-                  ? "dn-input-auth-error border-[#e53e3e]/50"
+                  ? "dn-input-auth-error border-danger/50"
                   : "border-[var(--border)]"
               }`}
             />
             {confirmPw && confirmPw !== password && (
-              <p className="mt-1 text-xs text-[#e53e3e]">Şifreler eşleşmiyor</p>
+              <p className="mt-1 text-xs text-danger">Şifreler eşleşmiyor</p>
             )}
           </div>
 

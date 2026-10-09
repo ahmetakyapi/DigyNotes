@@ -22,9 +22,8 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[var(--bg-base)] font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
   secondary:
-    "border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--gold)]/60 text-[var(--text-primary)] disabled:opacity-50",
-  ghost:
-    "text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-50",
+    "border border-[var(--border)] bg-[var(--bg-card)] hover:border-accent/60 text-[var(--text-primary)] disabled:opacity-50",
+  ghost: "text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-50",
   danger:
     "bg-[var(--danger)] hover:bg-[var(--danger-light)] text-white font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
 };
@@ -59,10 +58,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const focusRing =
       variant === "primary" || variant === "secondary"
-        ? "focus:ring-[var(--gold)]/40"
+        ? "focus:ring-accent/40"
         : variant === "danger"
-          ? "focus:ring-[var(--danger)]/40"
-          : "focus:ring-[var(--text-primary)]/30";
+          ? "focus:ring-danger/40"
+          : "focus:ring-[color-mix(in_srgb,var(--text-primary)_30%,transparent)]";
 
     const classes = [
       baseClasses,

@@ -165,7 +165,7 @@ export function CategoryPills({
   const pillClass = (active: boolean) =>
     `rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
       active
-        ? "border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[var(--gold)]"
+        ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
         : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
     }`;
 
@@ -213,7 +213,7 @@ export function ActiveTagFilters({
       ))}
       <button
         onClick={onClearAll}
-        className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+        className="text-xs text-[var(--text-muted)] transition-colors hover:text-danger"
       >
         Temizle
       </button>

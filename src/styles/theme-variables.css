@@ -35,6 +35,7 @@
   --text-secondary: #a8a399;
   --text-muted: #77726a;
   --danger: #ff5a4e;
+  --danger-rgb: 255 90 78;
   --danger-light: #ff7b71;
   --surface-strong: #151513;
   --surface-strong-hover: #1c1b18;
@@ -120,6 +121,7 @@ html[data-theme="light"] {
   --text-secondary: #57524a;
   --text-muted: #8a8478;
   --danger: #d4342a;
+  --danger-rgb: 212 52 42;
   --danger-light: #e5483e;
   --surface-strong: #faf8f3;
   --surface-strong-hover: #f3efe7;

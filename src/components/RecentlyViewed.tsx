@@ -197,7 +197,7 @@ export default function RecentlyViewed() {
           <button
             onClick={handleClearAll}
             title="Geçmişi Temizle"
-            className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--danger,#e53e3e)]"
+            className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--danger,var(--danger))]"
           >
             <XIcon size={12} weight="bold" />
           </button>
@@ -227,7 +227,7 @@ export default function RecentlyViewed() {
         >
           {items.map((item) => (
             <Link key={item.id} href={`/posts/${item.id}`} className="group flex-shrink-0">
-              <div className="hover:border-[var(--gold)]/25 min-w-[160px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgb(var(--gold-rgb)/0.06)] sm:min-w-[180px]">
+              <div className="hover:border-accent/25 min-w-[160px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgb(var(--gold-rgb)/0.06)] sm:min-w-[180px]">
                 {/* Poster */}
                 <div className="relative h-14 w-full overflow-hidden sm:h-20">
                   <ResilientImage

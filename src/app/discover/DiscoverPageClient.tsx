@@ -1,7 +1,13 @@
 "use client";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
-import { MagnifyingGlassIcon, UsersThreeIcon } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  CaretLeftIcon,
+  CaretRightIcon,
+  MagnifyingGlassIcon,
+  UsersThreeIcon,
+} from "@phosphor-icons/react";
 import UserCard from "@/components/UserCard";
 import StarRating from "@/components/StarRating";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -10,6 +16,10 @@ import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import type { Post } from "@/types";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 interface PublicUser {
   id: string;
@@ -27,6 +37,7 @@ export default function DiscoverPageClient() {
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const reduce = useReducedMotion();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const USERS_PER_PAGE = 6;
 
@@ -66,42 +77,41 @@ export default function DiscoverPageClient() {
     [users, currentPage]
   );
 
-  return (
-    <main className="min-h-screen py-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <header className="mb-6">
-          <div className="flex items-baseline justify-between gap-4">
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-                Keşfet
-              </h1>
-              <p className="hidden text-sm text-[var(--text-muted)] sm:block">
-                Profiller, arşivler ve ilgi alanları
-              </p>
-            </div>
-            {!loading && users.length > 0 && (
-              <span className="text-xs text-[var(--text-muted)]">
-                {users.length} profil
-              </span>
-            )}
-          </div>
-          <div className="mt-3 h-px w-full bg-[var(--border)]" />
+  const showTrending = trendingPosts.length > 0 && !query.trim();
+  const headerStats =
+    !loading && users.length > 0 ? [{ value: users.length, label: "Profil" }] : undefined;
 
-          <label className="relative mt-4 block w-full sm:max-w-sm">
-            <MagnifyingGlassIcon
-              size={14}
-              weight="bold"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-            />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleSearch(e.target.value)}
-              placeholder="İsim veya @ ile kullanıcı ara..."
-              className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
-            />
-          </label>
-        </header>
+  return (
+    <main className="min-h-screen pb-12 pt-8 sm:pt-10">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        {/* LAYOUT: Editorial masthead (index 09) → pill search → user grid + pagination → popular notes grid. */}
+        <PageHeader
+          index="09"
+          eyebrow="Profiller ve Arşivler"
+          title={
+            <>
+              Zevki <Em>Benzer</Em> İnsanlar
+              <Dot />
+            </>
+          }
+          description="Arşivlerini açan profilleri gez, ilgi alanı tutanları takip et."
+          stats={headerStats}
+        />
+
+        <label className="relative mb-6 block w-full sm:max-w-sm">
+          <MagnifyingGlassIcon
+            size={14}
+            weight="bold"
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+          />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="İsim veya @ ile kullanıcı ara..."
+            className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors duration-200 hover:border-[var(--text-faint)] focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
+          />
+        </label>
 
         {/* ── Kullanıcılar ── */}
         {loading ? (
@@ -109,78 +119,102 @@ export default function DiscoverPageClient() {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-40 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
+                className="h-40 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
               />
             ))}
           </div>
         ) : users.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-              <UsersThreeIcon size={24} weight="duotone" />
-            </div>
-            <p className="text-sm text-[var(--text-secondary)]">
-              {query ? "Kullanıcı bulunamadı." : "Henüz herkese açık profil yok."}
-            </p>
-            {query && (
-              <p className="mt-2 text-sm text-[var(--text-muted)]">
-                Farklı bir isim ya da kullanıcı adı deneyebilirsin.
-              </p>
-            )}
-          </div>
+          query ? (
+            <EmptyState
+              compact
+              icon={<MagnifyingGlassIcon size={22} weight="duotone" />}
+              title={
+                <>
+                  Kullanıcı <Em>Bulunamadı</Em>
+                </>
+              }
+              description="Farklı bir isim ya da kullanıcı adı deneyebilirsin."
+              primary={{ label: "Aramayı Temizle", onClick: () => handleSearch("") }}
+            />
+          ) : (
+            <EmptyState
+              icon={<UsersThreeIcon size={22} weight="duotone" />}
+              title={
+                <>
+                  Henüz <Em>Herkese Açık</Em> Profil Yok
+                </>
+              }
+              description="İlk herkese açık arşivler geldiğinde burada listelenecek."
+              primary={{ label: "Notlarıma Dön", href: "/notes" }}
+            />
+          )
         ) : (
           <>
+            {/* LAYOUT: 1/2/3-column grid of user cards, staggered entrance per page. */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {paginatedUsers.map((user) => (
-                <UserCard key={user.id} user={user} />
+              {paginatedUsers.map((user, i) => (
+                <motion.div
+                  key={user.id}
+                  className="h-full [&>*]:h-full"
+                  initial={reduce ? false : { opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
+                >
+                  <UserCard user={user} />
+                </motion.div>
               ))}
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-6 flex items-center justify-center gap-1">
+              <div className="mt-6 flex items-center justify-center gap-1.5">
                 <button
+                  type="button"
+                  aria-label="Önceki sayfa"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ‹
+                  <CaretLeftIcon size={14} weight="bold" />
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button
                     key={page}
+                    type="button"
                     onClick={() => setCurrentPage(page)}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors duration-200 ${
+                    className={`dn-mono flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full px-3 text-[11px] transition-colors duration-200 active:scale-95 ${
                       page === currentPage
                         ? "bg-accent text-[var(--text-on-accent)]"
-                        : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
+                        : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--text-faint)] hover:text-[var(--text-primary)]"
                     }`}
                   >
-                    {page}
+                    {String(page).padStart(2, "0")}
                   </button>
                 ))}
                 <button
+                  type="button"
+                  aria-label="Sonraki sayfa"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                 >
-                  ›
+                  <CaretRightIcon size={14} weight="bold" />
                 </button>
               </div>
             )}
 
-            <div className="mt-4 text-center text-xs text-[var(--text-muted)]">
-              <span className="font-medium text-[var(--text-secondary)]">{users.length}</span>{" "}
-              profil
+            <div className="dn-mono mt-4 text-center text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <span className="text-[var(--text-secondary)]">{users.length}</span> profil
               {query.trim() && <span className="text-[var(--text-faint)]"> · arama: {query}</span>}
             </div>
           </>
         )}
 
-        {/* ── Separator ── */}
-        {trendingPosts.length > 0 && !query.trim() && (
-          <div className="my-10 flex items-center gap-4">
-            <div className="h-px flex-1 bg-[var(--border)]" />
-            <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)]">
+        {/* LAYOUT: Section break — mono index label between hairlines. */}
+        {showTrending && (
+          <div className="mb-6 mt-14 flex items-center gap-4">
+            <span className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="text-[var(--gold)]">(09.1)</span>
               Popüler Notlar
             </span>
             <div className="h-px flex-1 bg-[var(--border)]" />
@@ -188,50 +222,61 @@ export default function DiscoverPageClient() {
         )}
 
         {/* ── Popüler Notlar ── */}
-        {trendingPosts.length > 0 && !query.trim() && (
+        {showTrending && (
           <section>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {trendingPosts.map((post) => {
+              {trendingPosts.map((post, i) => {
                 const displayTitle = formatDisplayTitle(post.title);
                 return (
-                  <Link
+                  <motion.div
                     key={post.id}
-                    href={`/posts/${post.id}`}
-                    className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/30"
+                    className="h-full"
+                    initial={reduce ? false : { opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
                   >
-                    <div className="relative h-36 overflow-hidden bg-[var(--bg-raised)]">
-                      <ResilientImage
-                        src={getPostImageSrc(post.image, post.category)}
-                        alt={displayTitle}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        style={{ objectPosition: post.imagePosition ?? "center" }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
-                      <div className="absolute left-3 top-3 flex items-center gap-2">
-                        <span className="rounded-full border border-accent/20 bg-[rgba(7,10,18,0.68)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
-                          {getCategoryLabel(post.category)}
-                        </span>
-                        {post.status && <StatusBadge status={post.status} />}
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className="group block h-full overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)]"
+                    >
+                      <div className="relative h-40 overflow-hidden bg-[var(--bg-raised)]">
+                        <ResilientImage
+                          src={getPostImageSrc(post.image, post.category)}
+                          alt={displayTitle}
+                          fill
+                          className="object-cover transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.06]"
+                          style={{ objectPosition: post.imagePosition ?? "center" }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
+                        <div className="absolute left-3 top-3 flex items-center gap-2">
+                          <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)] backdrop-blur-sm">
+                            {getCategoryLabel(post.category)}
+                          </span>
+                          {post.status && <StatusBadge status={post.status} />}
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="mb-1.5 line-clamp-1 text-sm font-medium text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
-                        {displayTitle}
-                      </h3>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <StarRating rating={post.rating} size={11} />
-                          {post.rating > 0 && (
-                            <span className="text-[10px] text-[var(--text-muted)]">{post.rating}/5</span>
+                      <div className="p-4">
+                        <h3 className="mb-2 line-clamp-1 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
+                          {displayTitle}
+                        </h3>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <StarRating rating={post.rating} size={11} />
+                            {post.rating > 0 && (
+                              <span className="dn-mono text-[10px] text-[var(--text-muted)]">
+                                {post.rating}/5
+                              </span>
+                            )}
+                          </div>
+                          {post.user?.username && (
+                            <span className="dn-mono truncate text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                              @{post.user.username}
+                            </span>
                           )}
                         </div>
-                        {post.user?.username && (
-                          <span className="text-[10px] text-[var(--text-muted)]">@{post.user.username}</span>
-                        )}
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>

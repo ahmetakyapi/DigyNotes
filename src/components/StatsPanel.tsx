@@ -8,16 +8,20 @@ import { getPostImageSrc } from "@/lib/post-image";
 import StarRating from "@/components/StarRating";
 import { ResilientImage } from "@/components/ResilientImage";
 
-const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
-  movies: { fill: "var(--gold)", glow: "rgb(var(--gold-rgb)/0.25)", bg: "rgb(var(--gold-rgb)/0.08)" },
-  series: { fill: "var(--accent-2)", glow: "rgb(var(--accent-2-rgb)/0.25)", bg: "rgb(var(--accent-2-rgb)/0.08)" },
-  book: { fill: "var(--gold-light)", glow: "rgb(var(--gold-light-rgb)/0.25)", bg: "rgb(var(--gold-light-rgb)/0.08)" },
+/* Lavender leads, apricot follows, then the neutral ink ramp — theme tokens only. */
+const CATEGORY_COLORS: Record<string, { fill: string }> = {
+  movies: { fill: "var(--gold)" },
+  series: { fill: "var(--accent-2)" },
+  book: { fill: "var(--gold-light)" },
 };
 const FALLBACK_COLORS = [
-  { fill: "#f87171", glow: "rgba(248,113,113,0.25)", bg: "rgba(248,113,113,0.08)" },
-  { fill: "#60a5fa", glow: "rgb(var(--accent-2-rgb)/0.25)", bg: "rgb(var(--accent-2-rgb)/0.08)" },
-  { fill: "#a78bfa", glow: "rgba(167,139,250,0.25)", bg: "rgba(167,139,250,0.08)" },
+  { fill: "var(--text-secondary)" },
+  { fill: "var(--text-muted)" },
+  { fill: "var(--text-faint)" },
 ];
+
+const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const panelClass = "rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 
 function getCategoryColor(cat: string, idx = 0) {
   return CATEGORY_COLORS[cat.toLowerCase()] ?? FALLBACK_COLORS[idx % FALLBACK_COLORS.length];
@@ -77,11 +81,7 @@ function DonutChart({ slices, total }: { slices: DonutSlice[]; total: number }) 
 
 /* ─── Sub-components ──────────────────────────────────────── */
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-      {children}
-    </p>
-  );
+  return <p className={`${monoLabel} mb-4`}>{children}</p>;
 }
 
 function BigStat({
@@ -98,23 +98,16 @@ function BigStat({
   color?: string;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-      <div
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl"
-        style={{ background: `${color}18`, border: `1px solid ${color}28` }}
-      >
+    <div className="flex flex-col gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-5">
+      <div className="flex items-center justify-between gap-2">
+        <p className={monoLabel}>{label}</p>
         <span style={{ color }}>{icon}</span>
       </div>
-      <div>
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-3xl font-black leading-none text-[var(--text-primary)]">
-            {value}
-          </span>
-          {sub && <span className="text-sm text-[var(--text-muted)]">{sub}</span>}
-        </div>
-        <p className="mt-1 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-          {label}
-        </p>
+      <div className="flex items-baseline gap-1.5">
+        <span className="dn-display text-5xl italic leading-[0.9] tracking-[-0.02em] text-[var(--text-primary)]">
+          {value}
+        </span>
+        {sub && <span className="dn-mono text-[11px] text-[var(--text-muted)]">{sub}</span>}
       </div>
     </div>
   );
@@ -137,19 +130,18 @@ function HorizBar({
       <span className="w-24 flex-shrink-0 truncate text-xs text-[var(--text-secondary)] transition-colors group-hover:text-[var(--text-primary)]">
         {label}
       </span>
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${pct}%`,
             background: color,
-            boxShadow: pct > 0 ? `0 0 8px ${color}60` : "none",
           }}
         />
       </div>
       <div className="flex w-16 flex-shrink-0 items-center justify-end gap-2">
         <span className="text-xs font-bold text-[var(--text-primary)]">{count}</span>
-        <span className="text-[10px] text-[var(--text-muted)]">{pct.toFixed(0)}%</span>
+        <span className="dn-mono text-[10px] text-[var(--text-muted)]">{pct.toFixed(0)}%</span>
       </div>
     </div>
   );
@@ -167,16 +159,16 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
           </svg>
         ))}
       </div>
-      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
         <div
-          className="h-full rounded-full transition-all duration-700"
+          className="h-full rounded-full transition-all duration-700 ease-out-expo"
           style={{
             width: `${pct}%`,
-            background: isHigh ? "linear-gradient(90deg, var(--gold), var(--gold-light))" : "var(--bg-raised)",
+            background: isHigh ? "var(--gold)" : "var(--accent-2)",
           }}
         />
       </div>
-      <span className="w-5 flex-shrink-0 text-right text-xs font-bold text-[var(--text-primary)]">
+      <span className="dn-mono w-6 flex-shrink-0 text-right text-[11px] text-[var(--text-primary)]">
         {count}
       </span>
     </div>
@@ -194,28 +186,25 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
         return (
           <div key={d.month} className="group relative flex flex-1 flex-col items-center gap-1.5">
             {d.count > 0 && (
-              <div className="absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-primary)] group-hover:flex">
+              <div className="dn-mono absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-primary)] group-hover:flex">
                 {d.count} not
               </div>
             )}
             <div
-              className="flex w-full flex-col justify-end overflow-hidden rounded-t-sm bg-[var(--border)]"
+              className="flex w-full flex-col justify-end overflow-hidden rounded-full bg-[var(--bg-raised)]"
               style={{ height: 52 }}
             >
               <div
-                className="w-full rounded-t-sm transition-all duration-700"
+                className="w-full rounded-full transition-all duration-700 ease-out-expo"
                 style={{
                   height: `${pct}%`,
-                  background: isLast
-                    ? "linear-gradient(180deg, var(--gold-light), var(--gold))"
-                    : "var(--bg-raised)",
+                  background: isLast ? "var(--gold)" : "var(--text-faint)",
                   minHeight: d.count > 0 ? 4 : 0,
-                  boxShadow: isLast && d.count > 0 ? "0 0 10px rgb(var(--gold-rgb)/0.4)" : "none",
                 }}
               />
             </div>
             <span
-              className={`text-[9px] ${isLast ? "text-accent" : "text-[var(--text-muted)]"}`}
+              className={`dn-mono text-[9px] uppercase ${isLast ? "text-accent" : "text-[var(--text-muted)]"}`}
             >
               {d.short}
             </span>
@@ -319,9 +308,9 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <p className="text-sm text-[var(--text-muted)]">İstatistik görmek için önce not ekle.</p>
         <Link
           href="/new-post"
-          className="mt-3 text-xs text-accent-light transition-colors hover:text-accent"
+          className="mt-4 cursor-pointer rounded-full border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
         >
-          + İlk notu ekle
+          İlk Notu Ekle
         </Link>
       </div>
     );
@@ -399,15 +388,17 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       {/* ── Orta bölüm: Donut + Puan dağılımı ── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Kategori donut */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+        <div className={panelClass}>
           <SectionLabel>Kategori Dağılımı</SectionLabel>
           <div className="flex items-center gap-6">
             {/* Donut */}
             <div className="relative h-28 w-28 flex-shrink-0">
               <DonutChart slices={donutSlices} total={stats.total} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-black text-[var(--text-primary)]">{stats.total}</span>
-                <span className="text-[9px] uppercase tracking-wider text-[var(--text-muted)]">
+                <span className="dn-display text-3xl italic leading-none text-[var(--text-primary)]">
+                  {stats.total}
+                </span>
+                <span className="dn-mono text-[9px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
                   Not
                 </span>
               </div>
@@ -419,8 +410,8 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 return (
                   <div key={cat} className="flex items-center gap-2.5">
                     <span
-                      className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                      style={{ background: colors.fill, boxShadow: `0 0 6px ${colors.glow}` }}
+                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                      style={{ background: colors.fill }}
                     />
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center justify-between">
@@ -431,13 +422,12 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                           {count}
                         </span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
+                      <div className="h-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
                         <div
-                          className="h-full rounded-full transition-all duration-700"
+                          className="h-full rounded-full transition-all duration-700 ease-out-expo"
                           style={{
                             width: `${(count / stats.total) * 100}%`,
                             background: colors.fill,
-                            boxShadow: `0 0 8px ${colors.glow}`,
                           }}
                         />
                       </div>
@@ -450,7 +440,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         </div>
 
         {/* Puan dağılımı */}
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+        <div className={panelClass}>
           <SectionLabel>Puan Dağılımı</SectionLabel>
           <div className="space-y-3">
             {[5, 4, 3, 2, 1].map((star) => (
@@ -466,26 +456,21 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       </div>
 
       {/* ── Durum Dağılımı ── */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+      <div className={panelClass}>
         <SectionLabel>Durum Özeti</SectionLabel>
-        <div className="mb-5 grid grid-cols-3 gap-3">
+        {/* LAYOUT: three hairline-divided status cells, serif-italic counts */}
+        <div className="mb-6 grid grid-cols-3 divide-x divide-[var(--border)] border-y border-[var(--border)]">
           {[
-            { label: "Tamamlandı", count: stats.done, color: "var(--gold-light)", icon: "✓" },
-            { label: "Devam Ediyor", count: stats.ongoing, color: "var(--gold)", icon: "▶" },
-            { label: "Bekliyor", count: stats.planned, color: "#6272a4", icon: "◷" },
+            { label: "Tamamlandı", count: stats.done, dot: "bg-[var(--gold)]" },
+            { label: "Devam Ediyor", count: stats.ongoing, dot: "bg-[var(--accent-2)]" },
+            { label: "Bekliyor", count: stats.planned, dot: "bg-[var(--text-faint)]" },
           ].map((s) => (
-            <div
-              key={s.label}
-              className="flex flex-col gap-2 rounded-xl border p-3.5"
-              style={{ background: `${s.color}08`, borderColor: `${s.color}20` }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold" style={{ color: s.color }}>
-                  {s.icon}
-                </span>
-                <span className="text-2xl font-black text-[var(--text-primary)]">{s.count}</span>
-              </div>
-              <p className="text-[10px] uppercase tracking-wider" style={{ color: `${s.color}99` }}>
+            <div key={s.label} className="flex flex-col gap-2 px-3 py-4 first:pl-0">
+              <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
+                {s.count}
+              </span>
+              <p className="dn-mono flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
                 {s.label}
               </p>
             </div>
@@ -494,57 +479,51 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         {/* Tamamlanma progress bar */}
         <div>
           <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
-              Tamamlanma Oranı
-            </span>
-            <span className="text-xs font-bold text-accent-light">{stats.completionPct}%</span>
+            <span className={monoLabel}>Tamamlanma Oranı</span>
+            <span className="dn-mono text-[11px] text-[var(--gold)]">{stats.completionPct}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
+          <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-raised)]">
             <div
-              className="h-full rounded-full transition-all duration-1000"
-              style={{
-                width: `${stats.completionPct}%`,
-                background: "linear-gradient(90deg, var(--gold-light), var(--gold-light))",
-                boxShadow: "0 0 12px rgb(var(--gold-light-rgb)/0.4)",
-              }}
+              className="h-full rounded-full bg-accent transition-all duration-1000 ease-out-expo"
+              style={{ width: `${stats.completionPct}%` }}
             />
           </div>
         </div>
       </div>
 
       {/* ── Aylık Aktivite ── */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+      <div className={panelClass}>
         <div className="mb-4 flex items-center justify-between">
           <SectionLabel>Aylık Aktivite</SectionLabel>
-          <span className="text-[10px] text-[var(--text-muted)]">Son 8 ay</span>
+          <span className="dn-mono mb-4 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+            Son 8 ay
+          </span>
         </div>
         <MonthlyChart data={stats.months} />
       </div>
 
       {/* ── En Yüksek Puanlı ── */}
       {stats.topRated.length > 0 && (
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+        <div className={panelClass}>
           <SectionLabel>En Yüksek Puanlı ({stats.topRated.length})</SectionLabel>
-          <div className="space-y-2">
+          <div className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
             {stats.topRated.map((post, i) => (
               <Link
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-accent/30 hover:bg-accent/5"
+                className="group flex cursor-pointer items-center gap-4 py-3 transition-colors duration-200 ease-out-expo"
               >
                 {/* Rank */}
                 <span
-                  className="w-5 flex-shrink-0 text-center text-[10px] font-black"
-                  style={{
-                    color:
-                      i === 0 ? "var(--gold)" : i === 1 ? "#a0a0c0" : i === 2 ? "#b08060" : "#3a3a5a",
-                  }}
+                  className={`dn-display w-8 flex-shrink-0 text-3xl italic leading-none ${
+                    i === 0 ? "text-[var(--gold)]" : "text-[var(--text-faint)]"
+                  }`}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
                 {/* Image */}
-                <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-md">
+                <div className="relative h-14 w-9 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
                   <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
                     alt={post.title}
@@ -574,7 +553,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 {/* Rating */}
                 <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
                   <StarRating rating={post.rating} size={11} />
-                  <span className="text-[10px] font-bold text-accent">{post.rating}/5</span>
+                  <span className="dn-mono text-[10px] text-accent">{post.rating}/5</span>
                 </div>
               </Link>
             ))}

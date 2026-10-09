@@ -37,7 +37,7 @@ export default function TagBadge({ tag, onClick, onRemove, active, href }: TagBa
             e.stopPropagation();
             onRemove(tag.name);
           }}
-          className="ml-0.5 leading-none text-[var(--text-muted)] transition-colors hover:text-[#e53e3e]"
+          className="ml-0.5 leading-none text-[var(--text-muted)] transition-colors hover:text-danger"
           aria-label={`${tag.name} etiketini kaldır`}
         >
           ×

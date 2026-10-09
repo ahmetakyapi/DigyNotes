@@ -21,6 +21,7 @@ export default {
           2: "rgb(var(--accent-2-rgb) / <alpha-value>)",
         },
         ink: "rgb(var(--ink-rgb) / <alpha-value>)",
+        danger: "rgb(var(--danger-rgb) / <alpha-value>)",
         dn: {
           bg: {
             base: "var(--bg-base)",

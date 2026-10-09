@@ -15,11 +15,7 @@ const variantClasses: Record<SkeletonVariant, string> = {
   image: "h-48 rounded-lg aspect-video",
 };
 
-export function Skeleton({
-  variant = "text",
-  className = "",
-  delay = 0,
-}: SkeletonProps) {
+export function Skeleton({ variant = "text", className = "", delay = 0 }: SkeletonProps) {
   const baseClasses = "animate-pulse bg-[var(--bg-card)]";
   const variantClass = variantClasses[variant];
 
@@ -57,11 +53,7 @@ export function SkeletonGroup({
   return (
     <div className={`${spacingClasses[spacing]} ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
-        <Skeleton
-          key={i}
-          variant={variant}
-          delay={stagger ? i : 0}
-        />
+        <Skeleton key={i} variant={variant} delay={stagger ? i : 0} />
       ))}
     </div>
   );

@@ -13,6 +13,7 @@ import type { PostsListProps, PostsViewMode, PostsTab } from "./posts-list-types
 import { POSTS_VIEW_STORAGE_KEY } from "./posts-list-types";
 import { matchesQuery, postMatchesTags } from "./posts-list-utils";
 import { getCategoryVariants } from "@/lib/categories";
+import { motion, useReducedMotion } from "framer-motion";
 import { FeaturedCard, PostGridCard, PostListCard } from "./PostCards";
 import {
   PostsTabSwitcher,
@@ -64,6 +65,7 @@ export function PostsList({
   onLoadMorePosts,
   onLoadMoreSavedPosts,
 }: PostsListProps) {
+  const reduceMotion = useReducedMotion();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -86,12 +88,7 @@ export function PostsList({
   /* ── URL sync ── */
 
   const updateNotesUrl = useCallback(
-    (updates: {
-      category?: string;
-      q?: string;
-      tab?: PostsTab;
-      tags?: string[];
-    }) => {
+    (updates: { category?: string; q?: string; tab?: PostsTab; tags?: string[] }) => {
       const qs = buildSearchParams(
         searchParams.toString(),
         { q: localQuery, category: activeCategory, tags: activeTags, tab: activeTab },
@@ -131,14 +128,31 @@ export function PostsList({
   /* ── Derived data ── */
 
   const visiblePosts =
-    activeTab === "kaydedilenler" ? savedPosts :
-    activeTab === "taslaklar" ? draftPosts :
-    activeTab === "arsiv" ? archivedPosts :
-    allPosts;
-  const currentHasMore = activeTab === "kaydedilenler" ? hasMoreSavedPosts : activeTab === "notlar" ? hasMorePosts : false;
+    activeTab === "kaydedilenler"
+      ? savedPosts
+      : activeTab === "taslaklar"
+        ? draftPosts
+        : activeTab === "arsiv"
+          ? archivedPosts
+          : allPosts;
+  const currentHasMore =
+    activeTab === "kaydedilenler"
+      ? hasMoreSavedPosts
+      : activeTab === "notlar"
+        ? hasMorePosts
+        : false;
   const currentIsLoadingMore =
-    activeTab === "kaydedilenler" ? isLoadingMoreSavedPosts : activeTab === "notlar" ? isLoadingMorePosts : false;
-  const currentLoadMore = activeTab === "kaydedilenler" ? onLoadMoreSavedPosts : activeTab === "notlar" ? onLoadMorePosts : undefined;
+    activeTab === "kaydedilenler"
+      ? isLoadingMoreSavedPosts
+      : activeTab === "notlar"
+        ? isLoadingMorePosts
+        : false;
+  const currentLoadMore =
+    activeTab === "kaydedilenler"
+      ? onLoadMoreSavedPosts
+      : activeTab === "notlar"
+        ? onLoadMorePosts
+        : undefined;
 
   const availableStatuses = useMemo(
     () =>
@@ -157,9 +171,10 @@ export function PostsList({
     let result = q ? visiblePosts.filter((p) => matchesQuery(p, q)) : visiblePosts;
     if (activeCategory.trim()) {
       const variants = getCategoryVariants(activeCategory.trim());
-      result = variants.length > 0
-        ? result.filter((p) => variants.includes(p.category))
-        : result.filter((p) => p.category === activeCategory.trim());
+      result =
+        variants.length > 0
+          ? result.filter((p) => variants.includes(p.category))
+          : result.filter((p) => p.category === activeCategory.trim());
     }
     result = result.filter((p) => matchesAdvancedFilters(p, sortFilter));
     result = result.filter((p) => postMatchesTags(p, activeTags));
@@ -199,7 +214,13 @@ export function PostsList({
 
   /* ── Early return ── */
 
-  if (allPosts.length === 0 && savedPosts.length === 0 && draftPosts.length === 0 && archivedPosts.length === 0) return null;
+  if (
+    allPosts.length === 0 &&
+    savedPosts.length === 0 &&
+    draftPosts.length === 0 &&
+    archivedPosts.length === 0
+  )
+    return null;
 
   /* ── Handlers ── */
 
@@ -277,7 +298,13 @@ export function PostsList({
       ) : (
         <>
           {featured && !hasSearch && viewMode === "grid" && (
-            <FeaturedCard post={featured} activeTab={activeTab} />
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <FeaturedCard post={featured} activeTab={activeTab} />
+            </motion.div>
           )}
 
           <div
@@ -287,25 +314,28 @@ export function PostsList({
                 : "flex flex-col gap-2.5"
             }
           >
-            {displayedPosts.map((post, index) =>
-              viewMode === "grid" ? (
-                <PostGridCard
-                  key={post.id}
-                  post={post}
-                  index={index}
-                  showIndex={!hasSearch}
-                  activeTags={activeTags}
-                  onToggleTag={toggleTag}
-                />
-              ) : (
-                <PostListCard
-                  key={post.id}
-                  post={post}
-                  activeTags={activeTags}
-                  onToggleTag={toggleTag}
-                />
-              )
-            )}
+            {displayedPosts.map((post, index) => (
+              <motion.div
+                key={post.id}
+                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: (index % 2) * 0.06 }}
+                className={viewMode === "grid" ? "h-full" : undefined}
+              >
+                {viewMode === "grid" ? (
+                  <PostGridCard
+                    post={post}
+                    index={index}
+                    showIndex={!hasSearch}
+                    activeTags={activeTags}
+                    onToggleTag={toggleTag}
+                  />
+                ) : (
+                  <PostListCard post={post} activeTags={activeTags} onToggleTag={toggleTag} />
+                )}
+              </motion.div>
+            ))}
           </div>
 
           {(currentHasMore || currentIsLoadingMore) && (
@@ -313,7 +343,7 @@ export function PostsList({
               <button
                 onClick={() => currentLoadMore?.()}
                 disabled={!currentHasMore || currentIsLoadingMore}
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {(() => {
                   if (currentIsLoadingMore) return "Daha fazla yükleniyor...";

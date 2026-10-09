@@ -434,9 +434,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#e53e3e]/20 bg-[#e53e3e]/10">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-danger/20 bg-danger/10">
             <svg
-              className="h-7 w-7 text-[#e53e3e]/60"
+              className="h-7 w-7 text-danger/60"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -449,7 +449,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               />
             </svg>
           </div>
-          <p className="mb-1 font-medium text-[#e53e3e]">İçerik bulunamadı</p>
+          <p className="mb-1 font-medium text-danger">İçerik bulunamadı</p>
           <Link
             href="/notes"
             className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
@@ -510,7 +510,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           className={`rounded-xl p-4 transition-colors ${
             isHighlighted
               ? "bg-accent/5 ring-1 ring-accent/30"
-              : "hover:bg-[var(--surface-strong)]/50"
+              : "hover:bg-[color-mix(in_srgb,var(--surface-strong)_50%,transparent)]"
           }`}
         >
           {/* Üst satır: Avatar + isim + tarih + aksiyonlar */}
@@ -570,7 +570,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   type="button"
                   onClick={() => deleteComment(comment.id)}
                   disabled={deletingCommentId === comment.id}
-                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[#e53e3e]/8 hover:text-[#e53e3e] disabled:opacity-40"
+                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-danger/8 hover:text-danger disabled:opacity-40"
                 >
                   {deletingCommentId === comment.id ? "..." : "Sil"}
                 </button>
@@ -718,6 +718,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 {/* Sol grup: Sabitle + Arşivle */}
                 <div className="flex items-center gap-2">
                   <button
+                    aria-label={pinned ? "Sabitlemeyi kaldır" : "Sabitle"}
                     onClick={async () => {
                       const action = pinned ? "unpin" : "pin";
                       const res = await fetch(`/api/posts/${post.id}/actions`, {
@@ -730,7 +731,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!pinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 backdrop-blur-md transition-all duration-200 active:scale-95 ${
                       pinned
                         ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                         : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -750,9 +751,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       weight={pinned ? "fill" : "regular"}
                       className={`transition-transform duration-200 ${pinned ? "rotate-0" : "-rotate-45"}`}
                     />
-                    {pinned ? "Sabitlendi" : "Sabitle"}
+                    <span className="hidden sm:inline">{pinned ? "Sabitlendi" : "Sabitle"}</span>
                   </button>
                   <button
+                    aria-label={archived ? "Arşivden çıkar" : "Arşivle"}
                     onClick={async () => {
                       const action = archived ? "unarchive" : "archive";
                       const res = await fetch(`/api/posts/${post.id}/actions`, {
@@ -765,7 +767,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
                       archived
                         ? "border-[#f59e0b]/50 bg-[#f59e0b]/15 text-[#f59e0b]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -781,7 +783,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     }
                   >
                     <ArchiveIcon size={12} weight={archived ? "fill" : "regular"} />
-                    {archived ? "Arşivde" : "Arşivle"}
+                    <span className="hidden sm:inline">{archived ? "Arşivde" : "Arşivle"}</span>
                   </button>
                 </div>
 
@@ -799,27 +801,29 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     }}
                   />
                   <Link
+                    aria-label="Notu düzenle"
                     href={`/posts/${post.id}/edit`}
-                    className="flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
                       color: "var(--media-control-text)",
                     }}
                   >
-                    <PencilSimpleIcon size={11} weight="fill" /> Düzenle
+                    <PencilSimpleIcon size={11} weight="fill" /> <span className="hidden sm:inline">Düzenle</span>
                   </Link>
                   <button
+                    aria-label="Notu sil"
                     onClick={() => setIsModalOpen(true)}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[#e53e3e]/70 hover:bg-[#3a151a]/80 hover:text-[#ff9a9a] disabled:opacity-40"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--danger)] hover:text-[var(--danger-light)] disabled:opacity-40"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
                       color: "var(--media-control-text)",
                     }}
                   >
-                    <TrashIcon size={10} weight="fill" /> Sil
+                    <TrashIcon size={10} weight="fill" /> <span className="hidden sm:inline">Sil</span>
                   </button>
                 </div>
               </>
@@ -835,7 +839,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
                 {supportsSpoiler && post.hasSpoiler && (
-                  <span className="bg-[#e53e3e]/12 inline-flex items-center rounded-full border border-[#e53e3e]/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#ffb2b2]">
+                  <span className="bg-danger/12 inline-flex items-center rounded-full border border-danger/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#ffb2b2]">
                     Spoiler
                   </span>
                 )}
@@ -930,8 +934,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   title={likeData.liked ? "Beğeniyi kaldır" : "Beğen"}
                   className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 ${
                     likeData.liked
-                      ? "border-[#e53e3e]/40 bg-[#e53e3e]/10 text-[#e53e3e]"
-                      : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-[#e53e3e]/30 hover:text-[#e53e3e]"
+                      ? "border-danger/40 bg-danger/10 text-danger"
+                      : "border-[var(--surface-strong-border)] bg-[var(--surface-strong)] text-[var(--text-dim)] hover:border-danger/30 hover:text-danger"
                   }`}
                 >
                   <motion.span
@@ -953,7 +957,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {/* Kendi notu — sadece like sayısını göster */}
           {isOwnPost && likeData.count > 0 && (
             <div className="flex shrink-0 items-center gap-1.5 rounded-lg border border-[var(--surface-strong-border)] px-3 py-1.5 text-sm text-[var(--text-dim)]">
-              <HeartIcon size={16} weight="fill" className="text-[#e53e3e]" />
+              <HeartIcon size={16} weight="fill" className="text-danger" />
               <span>{likeData.count}</span>
             </div>
           )}
@@ -1010,16 +1014,16 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div
             className={`mb-5 overflow-hidden rounded-2xl border transition-all duration-300 ${
               shouldBlurSpoiler
-                ? "border-[#e53e3e]/20 bg-gradient-to-r from-[#e53e3e]/[0.06] via-[#e53e3e]/[0.03] to-transparent"
-                : "border-[var(--gold)]/20 from-[var(--gold)]/[0.06] via-[var(--gold)]/[0.03] bg-gradient-to-r to-transparent"
+                ? "border-danger/20 bg-gradient-to-r from-danger/[0.06] via-danger/[0.03] to-transparent"
+                : "border-accent/20 from-[var(--gold)]/[0.06] via-[var(--gold)]/[0.03] bg-gradient-to-r to-transparent"
             }`}
           >
             <div className="flex items-center gap-3 px-4 py-3">
               <div
                 className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   shouldBlurSpoiler
-                    ? "border border-[#e53e3e]/25 bg-[#e53e3e]/10 text-[#ffb2b2]"
-                    : "border-[var(--gold)]/25 bg-[var(--gold)]/10 border text-[var(--gold)]"
+                    ? "border border-danger/25 bg-danger/10 text-[#ffb2b2]"
+                    : "border-accent/25 bg-accent/10 border text-[var(--gold)]"
                 }`}
               >
                 {shouldBlurSpoiler ? (
@@ -1081,7 +1085,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   shouldBlurSpoiler
                     ? "bg-[var(--gold)] text-[var(--text-on-accent)] hover:bg-[var(--gold-light)]"
-                    : "hover:border-[var(--gold)]/30 border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                    : "hover:border-accent/30 border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
                 }`}
               >
                 {shouldBlurSpoiler ? "Spoiler'ı Göster" : "Gizle"}

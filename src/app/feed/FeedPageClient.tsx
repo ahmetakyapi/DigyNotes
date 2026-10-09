@@ -1,7 +1,14 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowDownIcon, CompassIcon, SparkleIcon, UsersThreeIcon } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowDownIcon,
+  ArrowRightIcon,
+  CompassIcon,
+  UsersThreeIcon,
+  WarningCircleIcon,
+} from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -12,8 +19,11 @@ import { ResilientImage } from "@/components/ResilientImage";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const FEED_LIMIT = 20;
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 export default function FeedPageClient() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -23,6 +33,7 @@ export default function FeedPageClient() {
   const [empty, setEmpty] = useState(false);
   const [requiresLogin, setRequiresLogin] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
+  const reduce = useReducedMotion();
 
   const fetchFeed = useCallback(async (cursor?: string | null) => {
     const params = new URLSearchParams({ limit: String(FEED_LIMIT) });
@@ -83,102 +94,106 @@ export default function FeedPageClient() {
     return Number.isFinite(createdAt) && Date.now() - createdAt < 1000 * 60 * 60 * 24 * 7;
   }).length;
 
+  const statsReady = !loading && !requiresLogin && !loadFailed && posts.length > 0;
+  const headerStats = statsReady
+    ? [
+        { value: posts.length, label: "Not" },
+        ...(uniqueAuthors > 0 ? [{ value: uniqueAuthors, label: "Kişi" }] : []),
+        ...(thisWeekCount > 0 ? [{ value: thisWeekCount, label: "Bu Hafta" }] : []),
+      ]
+    : undefined;
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
+      {/* LAYOUT: Editorial masthead (index 07) → state block (skeleton / empty / list). */}
+      <PageHeader
+        index="07"
+        eyebrow="Takip Ettiklerin"
+        title={
+          <>
+            Senin <Em>Akışın</Em>
+            <Dot />
+          </>
+        }
+        description="Takip ettiğin insanların en yeni notları, en tazesi en üstte."
+        stats={headerStats}
+      />
+
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-48 animate-pulse rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)]"
+              className="h-48 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
       ) : requiresLogin ? (
-        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-            <UsersThreeIcon size={28} weight="duotone" />
-          </div>
-          <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Akışı Görmek İçin Giriş Yap
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Burası takip ettiğin kişilerin en yeni notları için ayrıldı. Giriş yaptığında akış,
-            kronolojik olarak kimden ne geldiğini gösterecek.
-          </p>
-          <Link
-            href="/login"
-            className="hover:bg-accent/12 bg-accent/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 px-5 py-3 text-sm font-semibold text-accent-light transition-colors"
-          >
-            Giriş Yap
-          </Link>
-        </div>
+        <EmptyState
+          icon={<UsersThreeIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Akışı Görmek İçin <Em>Giriş Yap</Em>
+            </>
+          }
+          description="Burası takip ettiğin kişilerin en yeni notları için ayrıldı. Giriş yaptığında akış, kronolojik olarak kimden ne geldiğini gösterecek."
+          primary={{ label: "Giriş Yap", href: "/login" }}
+          secondary={{ label: "Keşfet", href: "/discover" }}
+        />
       ) : loadFailed ? (
-        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Akış Yüklenemedi</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Takip akışını şu anda getiremedik. Biraz sonra yeniden deneyebilir veya Keşfet
-            yüzeyinden yeni içeriklere dönebilirsin.
-          </p>
-        </div>
+        <EmptyState
+          icon={<WarningCircleIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Akış <Em>Yüklenemedi</Em>
+            </>
+          }
+          description="Takip akışını şu anda getiremedik. Biraz sonra yeniden deneyebilir veya Keşfet yüzeyinden yeni içeriklere dönebilirsin."
+          primary={{ label: "Keşfet", href: "/discover" }}
+        />
       ) : empty ? (
-        <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-            <CompassIcon size={28} weight="duotone" />
-          </div>
-          <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Akışın Henüz Boş Görünüyor
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Henüz kimseyi takip etmiyorsun ya da takip ettiklerinden yeni içerik gelmedi. Keşfet
-            sayfasından yeni profiller bulabilirsin.
-          </p>
-          <Link
-            href="/discover"
-            className="hover:bg-accent/12 bg-accent/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 px-5 py-3 text-sm font-semibold text-accent-light transition-colors"
-          >
-            <SparkleIcon size={16} weight="duotone" />
-            Keşfet
-          </Link>
-        </div>
+        <EmptyState
+          icon={<CompassIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Akışın Henüz <Em>Sessiz</Em>
+            </>
+          }
+          description="Henüz kimseyi takip etmiyorsun ya da takip ettiklerinden yeni içerik gelmedi. Keşfet sayfasından yeni profiller bulabilirsin."
+          primary={{ label: "Keşfet", href: "/discover" }}
+          secondary={{ label: "Önerilere Bak", href: "/recommended" }}
+        />
       ) : (
         <section className="space-y-4">
-          <div className="mb-2">
-            <div className="flex items-baseline justify-between gap-4">
-              <div className="flex items-baseline gap-3">
-                <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-                  Akış
-                </h1>
-                <span className="text-sm text-[var(--text-muted)]">
-                  {posts.length} not · {uniqueAuthors} kişi
-                </span>
-              </div>
-              {thisWeekCount > 0 && (
-                <span className="text-xs text-[var(--text-muted)]">
-                  Bu hafta {thisWeekCount} yeni
-                </span>
-              )}
-            </div>
-            <div className="mt-3 h-px w-full bg-[var(--border)]" />
-          </div>
-
+          {/* LAYOUT: Single-column stack of feed cards, staggered entrance. */}
           <div className="space-y-4">
-            {posts.map((post) => (
-              <FeedCard key={post.id} post={post} />
+            {posts.map((post, i) => (
+              <motion.div
+                key={post.id}
+                initial={reduce ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.7,
+                  ease: EASE,
+                  delay: Math.min(i % FEED_LIMIT, 8) * 0.05,
+                }}
+              >
+                <FeedCard post={post} />
+              </motion.div>
             ))}
           </div>
 
           {nextCursor && (
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-center pt-4">
               <button
                 type="button"
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="bg-accent/8 hover:bg-accent/16 inline-flex items-center gap-2 rounded-2xl border border-accent/30 px-6 py-3 text-sm font-semibold text-accent-light transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-6 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loadingMore ? (
                   <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-light/30 border-t-accent-light" />
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent/30 border-t-accent" />
                     Yükleniyor…
                   </>
                 ) : (
@@ -190,7 +205,6 @@ export default function FeedPageClient() {
               </button>
             </div>
           )}
-
         </section>
       )}
     </main>
@@ -203,15 +217,16 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="hover:border-accent/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
+    /* LAYOUT: Author strip (avatar · name · mono date) over a cover + text grid. */
+    <article className="group overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)]">
       {post.user && (
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-4">
-          <div className="bg-accent/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-accent">
+        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/15 text-sm font-bold text-accent">
             <AvatarImage
               src={post.user.avatarUrl}
               alt={post.user.name}
               name={post.user.name}
-              size={40}
+              size={36}
               className="h-full w-full object-cover"
               textClassName="text-sm font-bold text-accent"
             />
@@ -223,29 +238,31 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             {post.user.username && (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-accent"
+                className="dn-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
               >
                 @{post.user.username}
               </Link>
             )}
           </div>
-          <span className="ml-auto shrink-0 text-xs text-[var(--text-faint)]">{post.date}</span>
+          <span className="dn-mono ml-auto shrink-0 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+            {post.date}
+          </span>
         </div>
       )}
 
       <Link href={`/posts/${post.id}`} className="block p-5">
         <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
-          <div className="relative h-52 overflow-hidden rounded-[24px] bg-[var(--bg-raised)]">
+          <div className="relative h-52 overflow-hidden rounded-[18px] bg-[var(--bg-raised)]">
             <ResilientImage
               src={getPostImageSrc(post.image, post.category)}
               alt={displayTitle}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.06]"
               style={{ objectPosition: post.imagePosition ?? "center" }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.82)] via-transparent to-transparent" />
-            <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-              <span className="border-accent/18 rounded-full border bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
+              <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)] backdrop-blur-sm">
                 {getCategoryLabel(post.category)}
               </span>
               {post.status && <StatusBadge status={post.status} />}
@@ -253,14 +270,16 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
           </div>
 
           <div className="min-w-0">
-            <h3 className="line-clamp-2 text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+            <h3 className="line-clamp-2 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-xl">
               {displayTitle}
             </h3>
             {post.creator && (
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">{displayCreator}</p>
+              <p className="dn-mono mt-2 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                {displayCreator}
+              </p>
             )}
             {post.excerpt && !(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--text-muted)]">
+              <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--text-secondary)]">
                 {displayExcerpt}
               </p>
             )}
@@ -277,8 +296,17 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-              <p className="text-xs text-[var(--text-faint)]">Takip akışından nota geç</p>
-              <span className="text-xs font-medium text-[var(--gold)]">Aç →</span>
+              <p className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+                Takip Akışı
+              </p>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)]">
+                Aç
+                <ArrowRightIcon
+                  size={12}
+                  weight="bold"
+                  className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1"
+                />
+              </span>
             </div>
           </div>
         </div>

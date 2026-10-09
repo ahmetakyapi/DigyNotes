@@ -155,7 +155,7 @@ export function UserDropdownMenu({
             localStorage.removeItem("dn_username");
             signOut({ callbackUrl: "/" });
           }}
-          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] font-medium text-[var(--danger)] transition-colors duration-100 hover:bg-[var(--danger)]/10 hover:text-[var(--danger-light)]"
+          className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] font-medium text-[var(--danger)] transition-colors duration-100 hover:bg-danger/10 hover:text-[var(--danger-light)]"
         >
           <SignOutIcon size={14} />
           Çıkış Yap

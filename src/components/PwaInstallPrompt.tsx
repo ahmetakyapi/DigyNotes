@@ -100,7 +100,7 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
-      <div className="border-accent/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgb(var(--ink-rgb)/0.38)] backdrop-blur-xl">
+      <div className="border-accent/24 bg-[color-mix(in_srgb,var(--bg-card)_94%,transparent)] pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgb(var(--ink-rgb)/0.38)] backdrop-blur-xl">
         <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10 text-[var(--gold)]">
           <DownloadSimpleIcon size={18} />
         </div>

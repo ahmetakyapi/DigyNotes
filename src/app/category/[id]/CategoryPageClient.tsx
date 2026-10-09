@@ -14,17 +14,35 @@ import {
   matchesAdvancedFilters,
 } from "@/components/SortFilterBar";
 import toast from "react-hot-toast";
-import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
-import { getCategoryLabel, isTravelCategory, normalizeCategory } from "@/lib/categories";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowLeftIcon, FolderOpenIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import {
+  FIXED_CATEGORIES,
+  getCategoryLabel,
+  isTravelCategory,
+  normalizeCategory,
+} from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { ResilientImage } from "@/components/ResilientImage";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/** Two-digit nav-order index for fixed categories ("01" movies … "06" other), "00" otherwise. */
+function getCategoryIndex(category: string) {
+  const position = (FIXED_CATEGORIES as readonly string[]).indexOf(category);
+  return position === -1 ? "00" : String(position + 1).padStart(2, "0");
+}
 
 export default function CategoryPageClient({ params }: { params: { id: string } }) {
   const categoryName = normalizeCategory(decodeURIComponent(params.id));
   const categoryLabel = getCategoryLabel(categoryName);
   const travelCategory = isTravelCategory(categoryName);
+  const categoryIndex = getCategoryIndex(categoryName);
+  const reduceMotion = useReducedMotion();
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,6 +120,12 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     [posts]
   );
 
+  const ratedPosts = posts.filter((p) => p.rating);
+  const averageRating =
+    ratedPosts.length > 0
+      ? (posts.reduce((sum, p) => sum + (p.rating || 0), 0) / ratedPosts.length).toFixed(1)
+      : null;
+
   if (loading) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -116,7 +140,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-[140px] animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
+              className="h-[160px] animate-pulse rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
@@ -126,61 +150,54 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      {/* ── Header ── */}
-      <div className="mb-6">
-        <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors duration-200 hover:text-accent">
+      <PageHeader
+        index={categoryIndex}
+        eyebrow={`Kategori · ${categoryLabel}`}
+        title={
+          <>
+            <Em>{categoryLabel}</Em> Arşivi
+            <Dot />
+          </>
+        }
+        description={`${categoryLabel} kategorisindeki tüm notların; ara, sırala ve filtrele.`}
+        stats={[
+          { value: posts.length, label: "Not" },
+          ...(travelCategory ? [{ value: mappedPosts.length, label: "Pin" }] : []),
+          ...(averageRating ? [{ value: averageRating, label: "Ort. Puan" }] : []),
+        ]}
+        actions={
+          <Link
+            href="/notes"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)]"
+          >
+            <ArrowLeftIcon size={12} weight="bold" />
             Notlar
           </Link>
-          <span className="opacity-30">›</span>
-          <span className="text-[var(--text-secondary)]">{categoryLabel}</span>
-        </nav>
-
-        <div className="flex items-baseline justify-between gap-4">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-              {categoryLabel}
-            </h1>
-            <span className="text-sm text-[var(--text-muted)]">
-              {posts.length} not
-            </span>
-            {travelCategory && (
-              <span className="text-sm text-[var(--text-muted)]">
-                · {mappedPosts.length} pin
-              </span>
-            )}
-          </div>
-
-          {posts.filter(p => p.rating).length > 0 && (
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-sm font-semibold text-[var(--text-primary)]">
-                {(posts.reduce((sum, p) => sum + (p.rating || 0), 0) / posts.filter(p => p.rating).length).toFixed(1)}
-              </span>
-              <span className="text-xs text-[var(--text-muted)]">ort.</span>
-            </div>
-          )}
-        </div>
-        <div className="mt-3 h-px w-full bg-[var(--border)]" />
-      </div>
+        }
+      />
 
       {/* ── Arama + Sıralama satırı ── */}
+      {/* LAYOUT: Toolbar row — search pill, sort/filter bar, and (travel only) cards/map segmented pill. */}
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <div className="relative max-w-xs flex-1">
           <MagnifyingGlassIcon
-            size={11}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+            size={13}
+            weight="bold"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
           />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryLabel} içinde ara...`}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
+            className="h-9 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-8 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
           />
           {searchQuery && (
             <button
+              type="button"
+              aria-label="Aramayı temizle"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
             >
               <XIcon size={10} />
             </button>
@@ -195,13 +212,13 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           defaultValue={defaultSortFilter}
         />
         {travelCategory && (
-          <div className="ml-auto inline-flex rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-1">
+          <div className="ml-auto inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1">
             <button
               type="button"
               onClick={() => setViewMode("cards")}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors duration-200 ${
                 viewMode === "cards"
-                  ? "bg-accent text-[var(--text-on-accent)]"
+                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -211,9 +228,9 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               type="button"
               onClick={() => setViewMode("map")}
               disabled={mappedPosts.length === 0}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${
                 viewMode === "map"
-                  ? "bg-accent text-[var(--text-on-accent)]"
+                  ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -225,92 +242,102 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
       {/* ── İçerik ── */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="text-[var(--text-muted)]"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" strokeLinecap="round" />
-            </svg>
-          </div>
-          <p className="mb-1 text-sm font-medium text-[var(--text-secondary)]">
-            {searchQuery || hasActiveSortFilters(sortFilter, defaultSortFilter)
-              ? "Sonuç bulunamadı"
-              : "Bu kategoride henüz not yok"}
-          </p>
-          {!searchQuery && !hasActiveSortFilters(sortFilter, defaultSortFilter) && (
-            <Link
-              href="/new-post"
-              className="mt-3 text-xs text-accent-light transition-colors hover:text-accent"
-            >
-              + İlk notu ekle
-            </Link>
-          )}
-        </div>
+        searchQuery || hasActiveSortFilters(sortFilter, defaultSortFilter) ? (
+          <EmptyState
+            compact
+            icon={<MagnifyingGlassIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Sonuç <Em>Bulunamadı</Em>
+              </>
+            }
+            description="Farklı bir anahtar kelime dene ya da filtreleri sıfırlayarak tüm notları yeniden gör."
+            primary={{
+              label: "Filtreleri Temizle",
+              onClick: () => {
+                setSearchQuery("");
+                setSortFilter(defaultSortFilter);
+              },
+            }}
+          />
+        ) : (
+          <EmptyState
+            icon={<FolderOpenIcon size={22} weight="duotone" />}
+            title={
+              <>
+                {categoryLabel} Rafı Henüz <Em>Boş</Em>
+              </>
+            }
+            description="Bu kategoride henüz not yok. İlk notunu ekleyerek arşivi başlat."
+            primary={{ label: "İlk Notu Ekle", href: "/new-post" }}
+          />
+        )
       ) : travelCategory && viewMode === "map" ? (
         <TravelMapView posts={mappedPosts} />
       ) : (
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        /* LAYOUT: 1 / 2 column list of horizontal cards (poster left), staggered entrance. */
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {filtered.map((post, index) => {
             const displayTitle = formatDisplayTitle(post.title);
             const displayCreator = formatDisplayTitle(post.creator);
             const displayExcerpt = formatDisplaySentence(post.excerpt);
 
             return (
-              <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:flex-row">
-                  <div
-                    className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[32%]"
-                    style={{ minHeight: "140px" }}
-                  >
-                    <ResilientImage
-                      src={getPostImageSrc(post.image, post.category)}
-                      alt={displayTitle}
-                      fill
-                      variant="wide"
-                      sizes="(max-width: 768px) 32vw, 200px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                      priority={index === 0}
-                    />
-                    <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
-                  </div>
+              <motion.div
+                key={post.id}
+                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE, delay: Math.min(index, 8) * 0.05 }}
+              >
+                <Link href={`/posts/${post.id}`} className="group block h-full">
+                  <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)] sm:flex-row">
+                    <div className="relative h-48 min-h-[140px] flex-shrink-0 overflow-hidden sm:h-auto sm:w-[32%]">
+                      <ResilientImage
+                        src={getPostImageSrc(post.image, post.category)}
+                        alt={displayTitle}
+                        fill
+                        variant="wide"
+                        sizes="(max-width: 768px) 32vw, 200px"
+                        className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
+                        priority={index === 0}
+                      />
+                      <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
+                    </div>
 
-                  <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
-                    <div>
-                      <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        {post.years && (
-                          <span className="text-[11px] text-[var(--text-muted)]">{post.years}</span>
+                    <div className="flex min-w-0 flex-1 flex-col justify-between p-5">
+                      <div>
+                        <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                          {post.years && (
+                            <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                              {post.years}
+                            </span>
+                          )}
+                          {post.status && <StatusBadge status={post.status} />}
+                        </div>
+                        <h2 className="mb-1.5 line-clamp-2 text-base font-extrabold leading-snug tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-lg">
+                          {displayTitle}
+                        </h2>
+                        {post.creator && (
+                          <p className="mb-2 text-xs text-[var(--text-secondary)]">
+                            {displayCreator}
+                          </p>
                         )}
-                        {post.status && <StatusBadge status={post.status} />}
+                        {!(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
+                          <p className="line-clamp-3 text-xs leading-relaxed text-[var(--text-muted)]">
+                            {displayExcerpt}
+                          </p>
+                        )}
                       </div>
-                      <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-accent sm:text-[15px]">
-                        {displayTitle}
-                      </h2>
-                      {post.creator && (
-                        <p className="mb-2 text-xs text-[var(--text-secondary)]">
-                          {displayCreator}
-                        </p>
-                      )}
-                      {!(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
-                        <p className="line-clamp-3 text-xs leading-relaxed text-[var(--text-muted)]">
-                          {displayExcerpt}
-                        </p>
-                      )}
+                      <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
+                        <StarRating rating={post.rating} size={12} />
+                        <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                          {post.date}
+                        </span>
+                      </div>
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
-                      <StarRating rating={post.rating} size={12} />
-                      <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
+                  </article>
+                </Link>
+              </motion.div>
             );
           })}
         </div>

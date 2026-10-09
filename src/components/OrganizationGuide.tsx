@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import {
   ORGANIZATION_SURFACES,
   OrganizationSurfaceDefinition,
@@ -9,6 +10,13 @@ import {
 
 const SURFACE_ORDER: OrganizationSurfaceKey[] = ["bookmarks", "watchlist", "collections"];
 
+/*
+  LAYOUT: Calm editorial explainer — no boxed panel.
+  TOP: hairline, then mono eyebrow "Organizasyon" + optional "Şu an" marker on the right,
+       Title Case heading and a one-paragraph description.
+  ROWS: one row per surface separated by hairlines —
+        [mono index + short label] [label + description] [CTA link | "Buradasın" marker].
+*/
 export function OrganizationGuide({
   current,
   title = "Organizasyon Katmanları",
@@ -24,61 +32,75 @@ export function OrganizationGuide({
   const currentSurface = current ? ORGANIZATION_SURFACES[current] : null;
 
   return (
-    <section className="rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div className="max-w-3xl">
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{description}</p>
+    <section className="border-t border-[var(--border)] pt-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="max-w-2xl">
+          <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            Organizasyon
+          </p>
+          <h2 className="mt-3 text-xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] sm:text-2xl">
+            {title}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
         </div>
         {currentSurface && (
-          <span className="inline-flex w-fit items-center rounded-full border border-[var(--gold)]/24 bg-[var(--gold)]/10 px-3 py-1 text-[11px] font-medium text-[var(--gold)]">
+          <span className="dn-mono inline-flex w-fit items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             Şu an: {currentSurface.label}
           </span>
         )}
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] divide-y divide-[var(--border)]">
-        {surfaces.map((surface) => {
+      <ul className="mt-6 divide-y divide-[var(--border)] border-y border-[var(--border)]">
+        {surfaces.map((surface, index) => {
           const isCurrent = current === surface.key;
 
           return (
-            <div
+            <li
               key={surface.key}
-              className={`grid gap-3 px-4 py-4 transition-colors sm:grid-cols-[140px_minmax(0,1fr)_auto] sm:items-center ${
-                isCurrent
-                  ? "bg-[var(--gold)]/8"
-                  : "bg-transparent"
-              }`}
+              className="grid gap-2 py-5 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6"
             >
+              <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+                <span className={isCurrent ? "text-[var(--gold)]" : ""}>
+                  ({String(index + 1).padStart(2, "0")})
+                </span>{" "}
+                {surface.shortLabel}
+              </p>
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                  {surface.shortLabel}
-                </p>
-                <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
+                <h3
+                  className={`text-base font-bold tracking-[-0.02em] ${
+                    isCurrent ? "text-[var(--gold)]" : "text-[var(--text-primary)]"
+                  }`}
+                >
                   {surface.label}
                 </h3>
+                <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                  {surface.description}
+                </p>
               </div>
-              <p className="text-sm leading-6 text-[var(--text-secondary)]">
-                {surface.description}
-              </p>
               <div className="flex items-center sm:justify-end">
                 {isCurrent ? (
-                  <span className="rounded-full border border-[var(--gold)]/30 px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
+                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
                     Buradasın
                   </span>
                 ) : (
                   <Link
                     href={surface.href}
-                    className="inline-flex text-sm font-medium text-[var(--gold)] transition-colors hover:text-[var(--gold-light)]"
+                    className="group inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
                   >
-                    {surface.cta} →
+                    {surface.cta}
+                    <ArrowRightIcon
+                      size={13}
+                      weight="bold"
+                      className="transition-transform duration-500 ease-out-expo group-hover:translate-x-0.5"
+                    />
                   </Link>
                 )}
               </div>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }

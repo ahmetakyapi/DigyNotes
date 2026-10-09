@@ -8,8 +8,8 @@ import { customLoader } from "@/lib/image";
 import toast from "react-hot-toast";
 
 const labelClass =
-  "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
-const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
+  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 /* ─────────────────────── Status Sidebar ─────────────────────── */
@@ -42,12 +42,12 @@ export function StatusSidebar({
   return (
     <div className={cardClass}>
       <p className={labelClass}>Not Durumu</p>
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
-        <p className="text-sm font-semibold text-[var(--text-primary)]">
+      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--bg-raised)] p-4">
+        <p className="text-base font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
           {title || "Başlık Bekliyor"}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
+          <span className="rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
             {categoryLabel}
           </span>
           <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
@@ -65,14 +65,14 @@ export function StatusSidebar({
 
         <div className="mt-4 border-t border-[var(--border)] pt-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+            <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
               Puan
             </span>
             {rating > 0 && (
               <button
                 type="button"
                 onClick={() => onRatingChange(0)}
-                className="text-[11px] text-[var(--text-muted)] transition-colors duration-150 hover:text-[var(--danger)]"
+                className="cursor-pointer text-[11px] text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:text-[var(--danger)]"
               >
                 Sıfırla
               </button>
@@ -80,7 +80,13 @@ export function StatusSidebar({
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <StarRating rating={rating} interactive onRate={onRatingChange} size={26} />
-            <span className="text-sm font-medium text-[var(--text-secondary)]">
+            <span
+              className={
+                rating > 0
+                  ? "dn-display text-2xl italic leading-none text-[var(--text-primary)]"
+                  : "text-sm text-[var(--text-muted)]"
+              }
+            >
               {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
             </span>
           </div>
@@ -165,7 +171,7 @@ function CoverPreview({
   readonly isLandscape: boolean;
 }) {
   return (
-    <div className="mt-3 overflow-hidden rounded-xl border border-[var(--border-subtle)]">
+    <div className="mt-3 overflow-hidden rounded-[18px] border border-[var(--border-subtle)]">
       <div className="relative h-52 w-full bg-[var(--media-panel-bg)]">
         <Image
           loader={customLoader}
@@ -259,8 +265,8 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
   return (
     <div className={cardClass}>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className={labelClass}>Etiketler</p>
-        <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
+        <p className={`${labelClass} mb-0`}>Etiketler</p>
+        <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-1 text-[10px] text-[var(--text-secondary)]">
           {tags.length}/10
         </span>
       </div>
@@ -279,7 +285,7 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
               type="button"
               onClick={() => handleAddPopularTag(tagName)}
               disabled={isAdded || tags.length >= 10}
-              className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
+              className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                 isAdded
                   ? "border-accent/40 bg-accent/10 text-accent-light"
                   : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/35 hover:text-accent-light"

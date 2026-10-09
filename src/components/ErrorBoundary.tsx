@@ -34,8 +34,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       return (
         <div className="flex min-h-[40vh] flex-col items-center justify-center px-4 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e53e3e]/10">
-            <WarningCircleIcon size={28} weight="duotone" color="#e53e3e" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-danger/10">
+            <WarningCircleIcon size={28} weight="duotone" color="var(--danger)" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
             Bir Şeyler Ters Gitti

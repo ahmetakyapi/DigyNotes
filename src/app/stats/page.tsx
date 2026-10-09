@@ -1,18 +1,18 @@
 "use client";
 
+/*
+  LAYOUT: Personal stats — editorial, single column (max-w-6xl).
+  ROW 1: shared PageHeader (14) with headline stats + "Yılın Özeti" pill.
+  ROW 2: "Arşiv Okuması" pull-quote — accent left rule, large statement, three hairline insights.
+  ROW 3: KPI strip — four cells divided by hairlines, enormous serif-italic numbers.
+  ROW 4: three highlight cells (category / month / rated share).
+  ROW 5: 2×2 chart grid in hairline cards; lavender primary, apricot secondary.
+  MOTION: sections fade/rise in sequence (framer-motion), disabled with reduced motion.
+*/
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import {
-  ChartBar,
-  Star,
-  Hash,
-  TrendUp,
-  Crown,
-  CalendarBlank,
-  Crosshair,
-  Timer,
-  Lightning,
-} from "@phosphor-icons/react";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRightIcon, ChartBarIcon, HashIcon, CalendarBlankIcon } from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
 import {
   getActiveMonthCount,
@@ -21,6 +21,7 @@ import {
   getSparseDataLabel,
   getTopItem,
 } from "@/lib/stats-insights";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -52,7 +53,17 @@ interface StatsData {
 }
 
 /* ── Constants ── */
-const CHART_COLORS = ["var(--gold)", "var(--gold-light)", "var(--accent-2)", "#c8b090", "#f472b6", "#fb923c"];
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/* Lavender leads, apricot follows, then the neutral ink ramp. */
+const CHART_COLORS = [
+  "var(--gold)",
+  "var(--accent-2)",
+  "var(--gold-light)",
+  "var(--text-secondary)",
+  "var(--text-muted)",
+  "var(--text-faint)",
+];
 
 const TOOLTIP_STYLE = {
   background: "var(--bg-card)",
@@ -60,52 +71,104 @@ const TOOLTIP_STYLE = {
   borderRadius: 14,
   color: "var(--text-primary)",
   fontSize: 12,
-  boxShadow: "0 12px 32px rgba(0,0,0,0.4)",
+  boxShadow: "var(--shadow-soft)",
 };
 
+const TICK_STYLE = {
+  fontSize: 10.5,
+  fill: "var(--text-muted)",
+  fontFamily: "var(--font-mono), ui-monospace, monospace",
+};
+
+const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+
 /* ── Shared Components ── */
-function SectionHeader({
-  icon,
-  title,
-  accent = "var(--gold)",
+function Reveal({
+  order,
+  className = "",
+  children,
 }: {
-  icon: React.ReactNode;
-  title: string;
-  accent?: string;
+  order: number;
+  className?: string;
+  children: ReactNode;
 }) {
+  const reduce = useReducedMotion();
   return (
-    <div className="mb-5 flex items-center gap-2.5">
-      <div
-        className="flex h-7 w-7 items-center justify-center rounded-lg"
-        style={{ background: `${accent}18` }}
-      >
-        {icon}
-      </div>
-      <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">{title}</h2>
-    </div>
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: EASE, delay: 0.15 + order * 0.08 }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
 function ChartCard({
-  icon,
+  index,
   title,
-  accent,
+  aside,
   children,
-  className = "",
 }: {
-  icon: React.ReactNode;
+  index: string;
   title: string;
-  accent?: string;
-  children: React.ReactNode;
-  className?: string;
+  aside?: ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <section
-      className={`group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgb(var(--gold-rgb)/0.04)] ${className}`}
-    >
-      <SectionHeader icon={icon} title={title} accent={accent} />
+    <section className="h-full rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30 sm:p-7">
+      <div className="mb-6 flex items-baseline justify-between gap-3">
+        <div>
+          <p className={monoLabel}>
+            <span className="text-[var(--gold)]">({index})</span>
+          </p>
+          <h2 className="mt-1.5 text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+            {title}
+          </h2>
+        </div>
+        {aside}
+      </div>
       {children}
     </section>
+  );
+}
+
+function StatsHeader({ data }: { data?: StatsData }) {
+  return (
+    <PageHeader
+      index="14"
+      eyebrow="Kişisel İstatistikler"
+      title={
+        <>
+          Arşivin <Em>Rakamlarla</Em>
+          <Dot />
+        </>
+      }
+      description="Üretim ritmini, kategorilerini ve puan dağılımını tek sayfada takip et."
+      stats={
+        data
+          ? [
+              { value: data.kpis.totalPosts, label: "Not" },
+              { value: data.kpis.postsThisYear, label: "Bu Yıl" },
+            ]
+          : undefined
+      }
+      actions={
+        <Link
+          href="/stats/year-in-review"
+          className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
+        >
+          <CalendarBlankIcon size={14} weight="duotone" />
+          Yılın Özeti
+          <ArrowRightIcon
+            size={12}
+            weight="bold"
+            className="transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
+          />
+        </Link>
+      }
+    />
   );
 }
 
@@ -142,13 +205,14 @@ export default function PersonalStatsPage() {
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <div className="mb-8 h-10 w-64 animate-pulse rounded-xl bg-[var(--bg-card)]" />
-        <div className="mb-8 h-64 animate-pulse rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)]" />
-        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mb-4 h-3 w-48 animate-pulse rounded-full bg-[var(--bg-card)]" />
+        <div className="mb-10 h-16 w-80 animate-pulse rounded-2xl bg-[var(--bg-card)]" />
+        <div className="mb-10 h-56 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]" />
+        <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-[120px] animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]"
+              className="h-[120px] animate-pulse rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
@@ -156,7 +220,7 @@ export default function PersonalStatsPage() {
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-80 animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]"
+              className="h-80 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
@@ -168,7 +232,7 @@ export default function PersonalStatsPage() {
   if (!data) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
+        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
           <p className="text-sm text-[var(--text-muted)]">İstatistikler yüklenemedi.</p>
         </div>
       </main>
@@ -179,12 +243,12 @@ export default function PersonalStatsPage() {
   if (data.kpis.totalPosts === 0) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <PageHeader />
-        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgb(var(--gold-rgb)/0.1)]">
-            <ChartBar size={24} weight="duotone" className="text-[var(--gold)]" />
+        <StatsHeader />
+        <div className="rounded-[24px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-accent/25 bg-accent/10">
+            <ChartBarIcon size={24} weight="duotone" className="text-[var(--gold)]" />
           </div>
-          <p className="text-base font-semibold text-[var(--text-primary)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">
             Henüz analiz edilecek not yok.
           </p>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">
@@ -193,7 +257,7 @@ export default function PersonalStatsPage() {
           </p>
           <Link
             href="/new-post"
-            className="mt-6 inline-flex rounded-xl bg-[var(--gold)] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 active:scale-95"
+            className="mt-6 inline-flex cursor-pointer rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 ease-out-expo hover:bg-accent-dark active:scale-95"
           >
             İlk Notu Oluştur
           </Link>
@@ -205,23 +269,29 @@ export default function PersonalStatsPage() {
   /* ── Main Content ── */
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <PageHeader />
+      <StatsHeader data={data} />
 
-      {/* ═══ Hero Insight ═══ */}
-      <section className="relative mb-8 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)]">
-        {/* Decorative gradient mesh */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_10%_20%,rgb(var(--gold-rgb)/0.12),transparent_60%),radial-gradient(ellipse_60%_50%_at_90%_80%,rgb(var(--accent-2-rgb)/0.08),transparent_50%)]" />
-
-        <div className="relative p-6 sm:p-8">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-            Arşiv Okuması
+      {/* LAYOUT: editorial pull-quote — accent left rule, statement + supporting line, 3 hairline insights */}
+      <Reveal order={0} className="mb-12">
+        <blockquote className="border-l-2 border-accent pl-5 sm:pl-8">
+          <p className={monoLabel}>
+            <span className="text-[var(--gold)]">(i)</span> Arşiv Okuması
           </p>
-          <h2 className="mt-3 max-w-2xl text-xl font-bold leading-snug text-[var(--text-primary)] sm:text-2xl">
-            {topCategory
-              ? `En çok ${getCategoryLabel(topCategory.name).toLowerCase()} kategorisinde not tutuyorsun.`
-              : "Notların henüz tek bir kategoride yoğunlaşmamış."}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)]">
+          <p className="mt-4 max-w-4xl text-[clamp(1.6rem,3.6vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--text-primary)]">
+            {topCategory ? (
+              <>
+                En çok <Em>{getCategoryLabel(topCategory.name).toLowerCase()}</Em> kategorisinde not
+                tutuyorsun
+                <Dot />
+              </>
+            ) : (
+              <>
+                Notların henüz tek bir kategoride <Em>yoğunlaşmamış</Em>
+                <Dot />
+              </>
+            )}
+          </p>
+          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
             {strongestMonth
               ? `${strongestMonth.month} döneminde ${strongestMonth.count} notla en yoğun ayını geçirmişsin.`
               : "Aylık ritim için daha fazla veriye ihtiyaç var."}{" "}
@@ -229,276 +299,285 @@ export default function PersonalStatsPage() {
               ? `En sık kullandığın etiket #${topTag.name}.`
               : "Etiket kullanımın arttıkça tematik örüntüler burada belirginleşecek."}
           </p>
+        </blockquote>
 
-          {/* Insight mini-cards */}
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <InsightMiniCard
-              icon={<Timer size={14} weight="bold" className="text-accent-light" />}
-              label="Ritim"
-              value={`${activeMonths}/12 ay aktif`}
-              detail={
-                recentMomentum?.label ??
-                "Birkaç ay daha not eklediğinde tempo değişimin burada görünecek."
-              }
-            />
-            <InsightMiniCard
-              icon={<Crosshair size={14} weight="bold" className="text-[var(--accent-2)]" />}
-              label="Fokus"
-              value={
-                topCategory
-                  ? `${getCategoryLabel(topCategory.name)} ${getShareLabel(topCategory.count, data.kpis.totalPosts)}`
-                  : "-"
-              }
-              detail={
-                topCategory
-                  ? `${topCategory.count} not ile en yoğun kategorin.`
-                  : "Kategori trendi için yeterli veri yok."
-              }
-            />
-            <InsightMiniCard
-              icon={<Lightning size={14} weight="bold" className="text-[#c8b090]" />}
-              label="Alışkanlık"
-              value={`%${ratedShare} puanlı`}
-              detail={
-                topStatus
-                  ? `En sık durum ${topStatus.name.toLowerCase()}.`
-                  : "Puan verdikçe değerlendirme alışkanlığın burada görünür."
-              }
-            />
-          </div>
-
-          {sparseDataLabel && (
-            <div className="mt-5 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-inset-soft)] px-4 py-3 text-xs leading-5 text-[var(--text-secondary)]">
-              {sparseDataLabel}
-            </div>
-          )}
+        <div className="mt-8 grid border-y border-[var(--border)] sm:grid-cols-3 sm:divide-x sm:divide-[var(--border)]">
+          <InsightCell
+            label="Ritim"
+            value={`${activeMonths}/12 ay aktif`}
+            detail={
+              recentMomentum?.label ??
+              "Birkaç ay daha not eklediğinde tempo değişimin burada görünecek."
+            }
+          />
+          <InsightCell
+            label="Fokus"
+            value={
+              topCategory
+                ? `${getCategoryLabel(topCategory.name)} ${getShareLabel(topCategory.count, data.kpis.totalPosts)}`
+                : "-"
+            }
+            detail={
+              topCategory
+                ? `${topCategory.count} not ile en yoğun kategorin.`
+                : "Kategori trendi için yeterli veri yok."
+            }
+          />
+          <InsightCell
+            label="Alışkanlık"
+            value={`%${ratedShare} puanlı`}
+            detail={
+              topStatus
+                ? `En sık durum ${topStatus.name.toLowerCase()}.`
+                : "Puan verdikçe değerlendirme alışkanlığın burada görünür."
+            }
+          />
         </div>
-      </section>
 
-      {/* ═══ Highlight Summary ═══ */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <HighlightCard
-          icon={<Crown size={18} weight="duotone" className="text-[#c8b090]" />}
-          accent="#c8b090"
-          label="En Güçlü Kategori"
-          value={topCategory ? getCategoryLabel(topCategory.name) : "-"}
-          detail={topCategory ? `${topCategory.count} not ile önde` : "Yeterli veri yok"}
-        />
-        <HighlightCard
-          icon={<TrendUp size={18} weight="duotone" className="text-accent-light" />}
-          accent="var(--gold-light)"
-          label="En Üretken Dönem"
-          value={strongestMonth?.month ?? "-"}
-          detail={strongestMonth ? `${strongestMonth.count} not` : "Yeterli veri yok"}
-        />
-        <HighlightCard
-          icon={<Star size={18} weight="duotone" className="text-[var(--gold)]" />}
-          accent="var(--gold)"
-          label="Puanlanan İçerik"
-          value={`%${ratedShare}`}
-          detail={topStatus ? `En sık durum: ${topStatus.name}` : "Durum verisi hazır"}
-        />
-      </div>
+        {sparseDataLabel && (
+          <p className="mt-5 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-inset-soft)] px-4 py-3 text-xs leading-5 text-[var(--text-secondary)]">
+            {sparseDataLabel}
+          </p>
+        )}
+      </Reveal>
 
-      {/* ═══ KPI Row ═══ */}
-      <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <KpiCard
-          icon={<ChartBar size={16} weight="duotone" />}
-          accent="var(--gold)"
-          label="Toplam Not"
-          value={data.kpis.totalPosts}
-        />
-        <KpiCard
-          icon={<Star size={16} weight="fill" />}
-          accent="#c8b090"
-          label="Ortalama Puan"
-          value={data.kpis.avgRating > 0 ? data.kpis.avgRating : "—"}
-        />
-        <KpiCard
-          icon={<CalendarBlank size={16} weight="duotone" />}
-          accent="var(--accent-2)"
-          label="Bu Yıl"
-          value={data.kpis.postsThisYear}
-        />
-        <KpiCard
-          icon={<Hash size={16} weight="duotone" />}
-          accent="var(--gold-light)"
-          label="Benzersiz Etiket"
-          value={data.kpis.uniqueTags}
-        />
-      </div>
+      {/* LAYOUT: KPI strip — 4 hairline-divided cells, oversized serif-italic numbers */}
+      <Reveal order={1} className="mb-10">
+        <div className="grid grid-cols-2 overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] md:grid-cols-4">
+          <KpiCell label="Toplam Not" value={data.kpis.totalPosts} accent />
+          <KpiCell
+            label="Ortalama Puan"
+            value={data.kpis.avgRating > 0 ? data.kpis.avgRating : "—"}
+          />
+          <KpiCell label="Bu Yıl" value={data.kpis.postsThisYear} />
+          <KpiCell label="Benzersiz Etiket" value={data.kpis.uniqueTags} />
+        </div>
+      </Reveal>
+
+      {/* LAYOUT: highlight trio — label / bold value / muted detail, top accent tick */}
+      <Reveal order={2} className="mb-10">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <HighlightCell
+            index="A"
+            label="En Güçlü Kategori"
+            value={topCategory ? getCategoryLabel(topCategory.name) : "-"}
+            detail={topCategory ? `${topCategory.count} not ile önde` : "Yeterli veri yok"}
+          />
+          <HighlightCell
+            index="B"
+            label="En Üretken Dönem"
+            value={strongestMonth?.month ?? "-"}
+            detail={strongestMonth ? `${strongestMonth.count} not` : "Yeterli veri yok"}
+          />
+          <HighlightCell
+            index="C"
+            label="Puanlanan İçerik"
+            value={`%${ratedShare}`}
+            detail={topStatus ? `En sık durum: ${topStatus.name}` : "Durum verisi hazır"}
+          />
+        </div>
+      </Reveal>
 
       {/* ═══ Charts Grid ═══ */}
       <div className="grid gap-5 lg:grid-cols-2">
         {/* Monthly Production */}
-        <ChartCard
-          icon={<TrendUp size={14} weight="bold" className="text-accent" />}
-          title="Aylık Üretim"
-          accent="var(--gold)"
-        >
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.monthlySeries} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                <defs>
-                  <linearGradient id="statsAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="var(--gold)" stopOpacity={0.02} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ stroke: "var(--border)", strokeDasharray: "4 4" }} />
-                <Area
-                  type="monotone"
-                  dataKey="count"
-                  name="Not"
-                  stroke="var(--gold)"
-                  fill="url(#statsAreaGrad)"
-                  strokeWidth={2.5}
-                  dot={false}
-                  activeDot={{ r: 5, fill: "var(--gold)", stroke: "var(--bg-card)", strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-
-        {/* Category Distribution */}
-        <ChartCard
-          icon={<Crosshair size={14} weight="bold" className="text-[var(--accent-2)]" />}
-          title="Kategori Dağılımı"
-          accent="var(--accent-2)"
-        >
-          <div className="flex h-72 items-center">
-            <div className="w-1/2">
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={data.categories}
+        <Reveal order={3}>
+          <ChartCard index="01" title="Aylık Üretim">
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={data.monthlySeries}
+                  margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
+                >
+                  <defs>
+                    <linearGradient id="statsAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.28} />
+                      <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="month" tick={TICK_STYLE} axisLine={false} tickLine={false} />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={TICK_STYLE}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={TOOLTIP_STYLE}
+                    cursor={{ stroke: "var(--border)", strokeDasharray: "4 4" }}
+                  />
+                  <Area
+                    type="monotone"
                     dataKey="count"
-                    nameKey="name"
-                    innerRadius={56}
-                    outerRadius={84}
-                    paddingAngle={3}
-                    strokeWidth={0}
-                  >
-                    {data.categories.map((entry, index) => (
-                      <Cell key={entry.name} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={TOOLTIP_STYLE} />
-                </PieChart>
+                    name="Not"
+                    stroke="var(--gold)"
+                    fill="url(#statsAreaGrad)"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{
+                      r: 5,
+                      fill: "var(--accent-2)",
+                      stroke: "var(--bg-card)",
+                      strokeWidth: 2,
+                    }}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex-1 space-y-3 pl-4">
-              {data.categories.slice(0, 5).map((item, index) => {
-                const pct = data.kpis.totalPosts > 0 ? Math.round((item.count / data.kpis.totalPosts) * 100) : 0;
-                return (
-                  <div key={item.name} className="flex items-center gap-3">
-                    <span
-                      className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
-                    />
-                    <span className="flex-1 truncate text-xs text-[var(--text-secondary)]">
-                      {getCategoryLabel(item.name)}
-                    </span>
-                    <span className="text-xs font-semibold tabular-nums text-[var(--text-primary)]">
-                      {item.count}
-                    </span>
-                    <span className="w-8 text-right text-[10px] tabular-nums text-[var(--text-muted)]">
-                      %{pct}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </ChartCard>
+          </ChartCard>
+        </Reveal>
 
-        {/* Rating Distribution */}
-        <ChartCard
-          icon={<Star size={14} weight="fill" className="text-[#c8b090]" />}
-          title="Puan Dağılımı"
-          accent="#c8b090"
-        >
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.ratingDistribution} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }} />
-                <Bar dataKey="count" name="Not" radius={[8, 8, 0, 0]} fill="var(--gold)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-
-        {/* Status & Tags */}
-        <ChartCard
-          icon={<Hash size={14} weight="bold" className="text-accent-light" />}
-          title="Durumlar ve Etiketler"
-          accent="var(--gold-light)"
-        >
-          <div className="grid gap-6 sm:grid-cols-2">
-            {/* Statuses */}
-            <div>
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                Durum Dağılımı
-              </p>
-              <div className="space-y-3">
-                {data.statuses.map((item) => {
-                  const pct = data.kpis.totalPosts > 0 ? Math.round((item.count / data.kpis.totalPosts) * 100) : 0;
+        {/* Category Distribution */}
+        <Reveal order={4}>
+          <ChartCard index="02" title="Kategori Dağılımı">
+            <div className="flex h-72 items-center">
+              <div className="relative w-1/2">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={data.categories}
+                      dataKey="count"
+                      nameKey="name"
+                      innerRadius={60}
+                      outerRadius={84}
+                      paddingAngle={3}
+                      strokeWidth={0}
+                    >
+                      {data.categories.map((entry, index) => (
+                        <Cell key={entry.name} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
+                    {data.kpis.totalPosts}
+                  </span>
+                  <span className="dn-mono mt-1 text-[9.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                    Not
+                  </span>
+                </div>
+              </div>
+              <div className="flex-1 space-y-3 pl-4">
+                {data.categories.slice(0, 5).map((item, index) => {
+                  const pct =
+                    data.kpis.totalPosts > 0
+                      ? Math.round((item.count / data.kpis.totalPosts) * 100)
+                      : 0;
                   return (
-                    <div key={item.name}>
-                      <div className="mb-1 flex items-center justify-between text-xs">
-                        <span className="text-[var(--text-secondary)]">{item.name}</span>
-                        <span className="font-semibold tabular-nums text-[var(--text-primary)]">
-                          {item.count}
-                        </span>
-                      </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-raised)]">
-                        <div
-                          className="h-full rounded-full bg-accent transition-all duration-500"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
+                    <div key={item.name} className="flex items-center gap-3">
+                      <span
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                        style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                      />
+                      <span className="flex-1 truncate text-sm text-[var(--text-secondary)]">
+                        {getCategoryLabel(item.name)}
+                      </span>
+                      <span className="text-sm font-semibold tabular-nums text-[var(--text-primary)]">
+                        {item.count}
+                      </span>
+                      <span className="dn-mono w-9 text-right text-[10.5px] tabular-nums text-[var(--text-muted)]">
+                        %{pct}
+                      </span>
                     </div>
                   );
                 })}
               </div>
             </div>
+          </ChartCard>
+        </Reveal>
 
-            {/* Tags */}
-            <div>
-              <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                En Aktif Etiketler
-              </p>
-              {data.topTags.length === 0 ? (
-                <p className="text-xs leading-5 text-[var(--text-muted)]">
-                  Henüz etiket yok. Etiket ekledikçe tekrar eden temalar burada görünür.
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {data.topTags.map((tag) => (
-                    <Link
-                      key={tag.name}
-                      href={`/tag/${tag.name}`}
-                      className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all duration-200 hover:border-[color-mix(in_srgb,var(--gold)_30%,transparent)] hover:text-[var(--gold)]"
-                    >
-                      <Hash size={10} weight="bold" />
-                      {tag.name}
-                      <span className="ml-0.5 tabular-nums text-[var(--text-muted)]">
-                        {tag.count}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
+        {/* Rating Distribution */}
+        <Reveal order={5}>
+          <ChartCard index="03" title="Puan Dağılımı">
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={data.ratingDistribution}
+                  margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
+                >
+                  <CartesianGrid stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="label" tick={TICK_STYLE} axisLine={false} tickLine={false} />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={TICK_STYLE}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={TOOLTIP_STYLE}
+                    cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }}
+                  />
+                  <Bar dataKey="count" name="Not" radius={[10, 10, 0, 0]} fill="var(--gold)" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-        </ChartCard>
+          </ChartCard>
+        </Reveal>
+
+        {/* Status & Tags */}
+        <Reveal order={6}>
+          <ChartCard index="04" title="Durumlar ve Etiketler">
+            <div className="grid gap-8 sm:grid-cols-2">
+              {/* Statuses */}
+              <div>
+                <p className={`${monoLabel} mb-4`}>Durum Dağılımı</p>
+                <div className="space-y-4">
+                  {data.statuses.map((item) => {
+                    const pct =
+                      data.kpis.totalPosts > 0
+                        ? Math.round((item.count / data.kpis.totalPosts) * 100)
+                        : 0;
+                    return (
+                      <div key={item.name}>
+                        <div className="mb-1.5 flex items-baseline justify-between text-sm">
+                          <span className="text-[var(--text-secondary)]">{item.name}</span>
+                          <span className="font-semibold tabular-nums text-[var(--text-primary)]">
+                            {item.count}
+                          </span>
+                        </div>
+                        <div className="h-1 overflow-hidden rounded-full bg-[var(--bg-raised)]">
+                          <div
+                            className="h-full rounded-full bg-accent-2 transition-all duration-700 ease-out-expo"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <p className={`${monoLabel} mb-4`}>En Aktif Etiketler</p>
+                {data.topTags.length === 0 ? (
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">
+                    Henüz etiket yok. Etiket ekledikçe tekrar eden temalar burada görünür.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {data.topTags.map((tag) => (
+                      <Link
+                        key={tag.name}
+                        href={`/tag/${tag.name}`}
+                        className="flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-accent/40 hover:text-[var(--gold)]"
+                      >
+                        <HashIcon size={10} weight="bold" />
+                        {tag.name}
+                        <span className="dn-mono ml-0.5 text-[10px] tabular-nums text-[var(--text-muted)]">
+                          {tag.count}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </ChartCard>
+        </Reveal>
       </div>
     </main>
   );
@@ -508,116 +587,61 @@ export default function PersonalStatsPage() {
    Sub-Components
    ══════════════════════════════════════════════ */
 
-function PageHeader() {
+function InsightCell({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Kişisel İstatistikler</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          Üretim ritmini, kategorilerini ve puan dağılımını takip et.
-        </p>
-      </div>
-      <Link
-        href="/stats/year-in-review"
-        className="group flex items-center gap-2 self-start rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-xs font-semibold text-[var(--text-secondary)] transition-all duration-200 hover:border-[color-mix(in_srgb,var(--gold)_30%,transparent)] hover:text-[var(--gold)]"
-      >
-        <CalendarBlank size={14} weight="duotone" />
-        Yılın Özeti
-        <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
-          →
-        </span>
-      </Link>
+    <div className="border-b border-[var(--border)] py-5 last:border-b-0 sm:border-b-0 sm:px-6 sm:first:pl-0 sm:last:pr-0">
+      <p className={monoLabel}>{label}</p>
+      <p className="dn-display mt-2 text-3xl italic leading-none tracking-[-0.01em] text-[var(--text-primary)]">
+        {value}
+      </p>
+      <p className="mt-2.5 text-xs leading-5 text-[var(--text-muted)]">{detail}</p>
     </div>
   );
 }
 
-function InsightMiniCard({
-  icon,
+function KpiCell({
   label,
   value,
-  detail,
+  accent = false,
 }: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-inset)] px-5 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
-      <div className="mb-2 flex items-center gap-2">
-        {icon}
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-faint)]">
-          {label}
-        </p>
-      </div>
-      <p className="text-lg font-bold text-[var(--text-primary)]">{value}</p>
-      <p className="mt-1.5 text-xs leading-5 text-[var(--text-muted)]">{detail}</p>
-    </div>
-  );
-}
-
-function HighlightCard({
-  icon,
-  accent,
-  label,
-  value,
-  detail,
-}: {
-  icon: React.ReactNode;
-  accent: string;
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgb(var(--gold-rgb)/0.04)]">
-      {/* Accent line at top */}
-      <div
-        className="absolute left-0 right-0 top-0 h-[2px] opacity-60 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}
-      />
-      <div className="mb-3 flex items-center gap-3">
-        <div
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{ background: `${accent}18` }}
-        >
-          {icon}
-        </div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-          {label}
-        </p>
-      </div>
-      <p className="text-xl font-bold text-[var(--text-primary)]">{value}</p>
-      <p className="mt-1 text-xs text-[var(--text-muted)]">{detail}</p>
-    </div>
-  );
-}
-
-function KpiCard({
-  icon,
-  accent,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  accent: string;
   label: string;
   value: string | number;
+  accent?: boolean;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)]">
-      <div className="mb-3 flex items-center gap-2">
-        <div
-          className="flex h-7 w-7 items-center justify-center rounded-lg"
-          style={{ background: `${accent}18`, color: accent }}
-        >
-          {icon}
-        </div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-          {label}
-        </p>
-      </div>
-      <p className="text-3xl font-black tabular-nums text-[var(--text-primary)]">{value}</p>
+    <div className="border-[var(--border)] p-5 sm:p-6 md:[&:not(:last-child)]:border-r [&:nth-child(-n+2)]:border-b md:[&:nth-child(-n+2)]:border-b-0 [&:nth-child(odd)]:border-r">
+      <p className={monoLabel}>{label}</p>
+      <p
+        className={`dn-display mt-3 text-5xl italic tabular-nums leading-[0.9] tracking-[-0.02em] sm:text-6xl ${
+          accent ? "text-[var(--gold)]" : "text-[var(--text-primary)]"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function HighlightCell({
+  index,
+  label,
+  value,
+  detail,
+}: {
+  index: string;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30">
+      <p className={monoLabel}>
+        <span className="text-[var(--gold)]">({index})</span> {label}
+      </p>
+      <p className="mt-3 text-2xl font-bold tracking-[-0.03em] text-[var(--text-primary)]">
+        {value}
+      </p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">{detail}</p>
     </div>
   );
 }

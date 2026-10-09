@@ -76,7 +76,7 @@ export default function ShortcutHelpModal() {
             {/* Başlık */}
             <div className="mb-5 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="bg-[var(--gold)]/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
+                <div className="bg-accent/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
                   <KeyboardIcon size={18} weight="duotone" />
                 </div>
                 <h2

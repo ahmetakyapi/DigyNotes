@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowLeftIcon, HashIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -10,6 +12,10 @@ import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
 import { AvatarImage } from "@/components/AvatarImage";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 type SortOption = "newest" | "oldest" | "rating";
 
@@ -18,6 +24,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState<SortOption>("newest");
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     setLoading(true);
@@ -32,93 +39,87 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgb(var(--gold-rgb)/0.12),var(--bg-card),rgb(var(--accent-2-rgb)/0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <Link
-                href="/discover"
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-accent"
-              >
-                ← Keşfet
-              </Link>
-              <span className="text-[var(--border)]">•</span>
-              <Link
-                href="/notes"
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-accent"
-              >
-                Notlar
-              </Link>
-            </div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--gold)]">
-              Etiket yüzeyi
-            </p>
-            <h1 className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
-              <span className="text-accent">#</span>
-              {tagName}
-            </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
-              Bu etiket, farklı profiller ve kategoriler arasında aynı hafıza izini taşıyan herkese
-              açık notları bir araya getirir.
-            </p>
-            {!loading && (
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1">
-                  {posts.length} herkese açık not
-                </span>
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-1">
-                  Detail, etiket ve public akış
-                </span>
-              </div>
-            )}
-          </div>
+      <PageHeader
+        index="13"
+        eyebrow="Etiket"
+        title={
+          <>
+            <span className="text-[var(--gold)]">#</span>
+            <Em>{tagName}</Em>
+            <Dot />
+          </>
+        }
+        description="Bu etiket, farklı profiller ve kategoriler arasında aynı hafıza izini taşıyan herkese açık notları bir araya getirir."
+        stats={loading ? undefined : [{ value: posts.length, label: "Herkese Açık Not" }]}
+        actions={
+          <>
+            <Link
+              href="/discover"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)]"
+            >
+              <ArrowLeftIcon size={12} weight="bold" />
+              Keşfet
+            </Link>
+            <Link
+              href="/notes"
+              className="hidden h-9 items-center rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] sm:inline-flex"
+            >
+              Notlar
+            </Link>
+          </>
+        }
+      />
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortOption)}
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 sm:text-sm"
-          >
-            <option value="newest">En Yeni</option>
-            <option value="oldest">En Eski</option>
-            <option value="rating">Puana Göre</option>
-          </select>
-        </div>
+      {/* LAYOUT: Sort pill aligned right above the grid. */}
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          Sıralama
+        </p>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value as SortOption)}
+          className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-xs"
+        >
+          <option value="newest">En Yeni</option>
+          <option value="oldest">En Eski</option>
+          <option value="rating">Puana Göre</option>
+        </select>
       </div>
 
       {/* İçerik */}
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-64 animate-pulse rounded-2xl bg-[var(--bg-card)]" />
+            <div
+              key={i}
+              className="h-72 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
+            />
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
-            <svg
-              className="h-7 w-7 text-[var(--text-muted)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-              />
-            </svg>
-          </div>
-          <p className="text-[var(--text-muted)]">Bu etiketle henüz herkese açık not yok.</p>
-          <p className="mt-2 max-w-md text-sm text-[var(--text-muted)]">
-            Not detaylarından gelen etiket tıklamaları burada ortak bağlam oluşturur. Aynı etiketi
-            kullanan ilk herkese açık not bu yüzeyi başlatır.
-          </p>
-        </div>
+        <EmptyState
+          icon={<HashIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Bu Etiket Henüz <Em>Sessiz</Em>
+            </>
+          }
+          description="Bu etiketle henüz herkese açık not yok. Aynı etiketi kullanan ilk herkese açık not bu yüzeyi başlatır."
+          primary={{ label: "Not Yaz", href: "/new-post" }}
+          secondary={{ label: "Keşfet", href: "/discover" }}
+        />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+        /* LAYOUT: 1 / 2 / 3 column grid with staggered entrance. */
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post, i) => (
+            <motion.div
+              key={post.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
+            >
+              <PostCard post={post} />
+            </motion.div>
           ))}
         </div>
       )}
@@ -133,20 +134,20 @@ function PostCard({ post }: { post: Post }) {
   const shouldHideExcerpt = Boolean(post.hasSpoiler && categorySupportsSpoiler(post.category));
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all hover:border-accent/30 hover:shadow-[var(--shadow-soft)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)]">
       {/* Image */}
-      <Link href={`/posts/${post.id}`} className="relative block h-40 w-full overflow-hidden">
+      <Link href={`/posts/${post.id}`} className="relative block h-48 w-full overflow-hidden">
         <ResilientImage
           src={getPostImageSrc(post.image, post.category)}
           alt={displayTitle}
           fill
           variant="wide"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
           style={{ objectPosition: post.imagePosition ?? "center" }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
-        <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
-          <span className="rounded-sm border border-accent/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">
+        <div className="absolute left-3 top-3 flex items-center gap-1.5">
+          <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)] backdrop-blur-sm">
             {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}
@@ -154,9 +155,9 @@ function PostCard({ post }: { post: Post }) {
       </Link>
 
       {/* Body */}
-      <div className="p-4">
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-2">
         <Link href={`/posts/${post.id}`} className="block">
-          <h3 className="mb-1 line-clamp-1 font-semibold text-[var(--text-primary)] transition-colors group-hover:text-accent">
+          <h3 className="mb-1 line-clamp-2 text-lg font-extrabold leading-snug tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
             {displayTitle}
           </h3>
         </Link>
@@ -180,7 +181,7 @@ function PostCard({ post }: { post: Post }) {
 
         {/* User */}
         {post.user && (
-          <div className="mt-3 flex items-center gap-2 border-t border-[var(--border)] pt-3">
+          <div className="mt-auto flex items-center gap-2 border-t border-[var(--border)] pt-3">
             <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent">
               <AvatarImage
                 src={post.user.avatarUrl}

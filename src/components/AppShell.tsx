@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
@@ -22,6 +22,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
+  const reduceMotion = useReducedMotion();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -203,10 +204,10 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
+                    className="bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
-                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40" />
+                    <div className="bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40" />
                   </div>
                 )}
                 <Link
@@ -315,7 +316,11 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             ref={scrollRef}
             className="scrollbar-hide hidden items-center overflow-x-auto sm:flex"
           >
-            <NavTab index={0} active={activeCategory === "all"} onClick={() => router.push("/notes")}>
+            <NavTab
+              index={0}
+              active={activeCategory === "all"}
+              onClick={() => router.push("/notes")}
+            >
               Son Notlar
             </NavTab>
             {FIXED_CATEGORIES.map((cat, i) => (
@@ -344,7 +349,16 @@ export default function AppShell({ children }: { readonly children: React.ReactN
       </header>
 
       {/* ─── MAIN ─── */}
-      <main id="main-content" className={hideMobileBottomTabs ? "pb-0" : "pb-20 sm:pb-0"}>{children}</main>
+      <main id="main-content" className={hideMobileBottomTabs ? "pb-0" : "pb-24 sm:pb-0"}>
+        <motion.div
+          key={pathname}
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {children}
+        </motion.div>
+      </main>
 
       {/* ─── MOBILE BOTTOM TAB BAR ─── */}
       {!hideMobileBottomTabs && (
@@ -401,7 +415,9 @@ function NavTab({
     >
       <span
         className={`dn-mono text-[9.5px] transition-colors duration-200 ${
-          active ? "text-[var(--gold)]" : "text-[var(--text-faint)] group-hover:text-[var(--text-muted)]"
+          active
+            ? "text-[var(--gold)]"
+            : "text-[var(--text-faint)] group-hover:text-[var(--text-muted)]"
         }`}
       >
         {String(index).padStart(2, "0")}

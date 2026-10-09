@@ -19,11 +19,22 @@ import { getTemplateSignature } from "@/lib/post-templates";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";
 const labelClass =
-  "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
-const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
+  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
+
+/* LAYOUT: mono step index "01 — Label" with a short hairline, used atop every composer card */
+function StepLabel({ index, label }: { readonly index: string; readonly label: string }) {
+  return (
+    <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <span className="text-[var(--gold)]">{index}</span>
+      <span className="h-px w-4 bg-[var(--border)]" />
+      {label}
+    </p>
+  );
+}
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-accent/40 border-accent/50" : "";
@@ -90,30 +101,25 @@ export function CategorySearchSection({
   })();
 
   return (
-    <section
-      className={`${cardClass} overflow-hidden`}
-      style={{
-        background:
-          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.12), transparent 34%), var(--bg-card)",
-      }}
-    >
+    <section className={`${cardClass} overflow-hidden`}>
       <div className="flex flex-col gap-4">
+        <StepLabel index="01" label="Kategori ve Arama" />
         {/* ── Compact guidance bar (collapsed by default) ── */}
         <div>
           <button
             type="button"
             onClick={() => setGuidanceOpen((prev) => !prev)}
-            className="hover:bg-[var(--bg-raised)]/60 flex w-full items-center justify-between gap-3 rounded-lg px-1 py-1 text-left transition-colors"
+            className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-full px-1 py-1 text-left transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)]"
           >
             <div className="flex min-w-0 items-center gap-2.5">
               <InfoIcon size={16} weight="bold" className="shrink-0 text-[var(--gold)]" />
-              <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
+              <span className="truncate text-base font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
                 {supportsAutofill ? guidance.searchTitle : "Başlıkla Başla"}
               </span>
-              <span className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-muted)]">
+              <span className="dn-mono shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
                 {completedStepCount}/4
               </span>
-              <span className="border-[var(--gold)]/24 bg-[var(--gold)]/10 shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
+              <span className="hidden shrink-0 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--gold)] sm:inline">
                 {nextActionText}
               </span>
             </div>
@@ -125,7 +131,7 @@ export function CategorySearchSection({
           </button>
 
           {guidanceOpen && (
-            <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--bg-base)] px-3.5 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+            <div className="mt-3 border-l-2 border-accent/60 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
               {supportsAutofill
                 ? "Kategori seç, arama sonucunu al ve sonra alt alandaki başlık ile durum bilgilerini tamamla."
                 : guidance.manualHint}
@@ -135,7 +141,7 @@ export function CategorySearchSection({
 
         {/* ── Category + Search / Title input ── */}
         <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5">
+          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--bg-base)] p-4">
             <label htmlFor="np-category" className={labelClass}>
               Kategori
             </label>
@@ -153,7 +159,7 @@ export function CategorySearchSection({
             </select>
           </div>
 
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3.5 sm:p-4">
+          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--bg-base)] p-4">
             {supportsAutofill ? (
               <>
                 <MediaSearch
@@ -245,11 +251,9 @@ export function FieldsSection({
 
   return (
     <div className={cardClass}>
-      <div className="flex flex-col gap-1">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-          3. adım
-        </p>
-        <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+      <div className="flex flex-col gap-2">
+        <StepLabel index="02" label="Temel Alanlar" />
+        <h3 className="text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)]">
           {supportsAutofill
             ? "Başlığı ve Temel Durumu Netleştir"
             : "Durum ve Temel Alanları Tamamla"}
@@ -277,7 +281,7 @@ export function FieldsSection({
         </div>
       )}
 
-      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,0.8fr)_1fr_1fr]">
+      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,0.8fr)_1fr_1fr]">
         <div>
           <label htmlFor="np-status" className={labelClass}>
             Durum
@@ -367,7 +371,7 @@ function LocationBlock({
   readonly onPlaceSelect: (place: PlaceResult) => void;
 }) {
   return (
-    <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
+    <div className="mt-5 rounded-[18px] border border-[var(--border)] bg-[var(--bg-raised)] p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className={labelClass}>Konum</p>
@@ -380,14 +384,14 @@ function LocationBlock({
             href={buildOpenStreetMapLink(lat, lng)}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
+            className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)]"
           >
             Haritada Aç
           </a>
         )}
       </div>
       <PlaceSearch onSelect={onPlaceSelect} />
-      <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
+      <div className="mt-3 rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
         {hasLocation && lat != null && lng != null ? (
           <div className="space-y-1.5">
             <p className="font-medium text-[var(--text-secondary)]">
@@ -436,15 +440,16 @@ export function ContentSection({
 
   return (
     <div className={cardClass}>
-      <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
-            4. adım
-          </p>
-          <label htmlFor="np-content" className={`${labelClass} mb-0 mt-1`}>
-            İçerik
+      <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <StepLabel index="03" label="İçerik" />
+          <label
+            htmlFor="np-content"
+            className="text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)]"
+          >
+            Kendi Sözlerinle Yaz
           </label>
-          <p className="mt-1 text-[11px] leading-5 text-[var(--text-muted)]">
+          <p className="text-[11px] leading-5 text-[var(--text-muted)]">
             {activeTemplate ? activeTemplate.description : guidance.contentHint}
           </p>
         </div>
@@ -464,17 +469,17 @@ export function ContentSection({
               }
               onApplyTemplate(category, { force: true });
             }}
-            className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
+            className={`inline-flex shrink-0 cursor-pointer items-center self-start rounded-full border px-3.5 py-1.5 text-[11px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 ${
               isTemplateActive
                 ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
                 : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
-            {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}
+            {isTemplateActive ? "Şablon Aktif" : "Şablonu Uygula"}
           </button>
         )}
       </div>
-      <div className="dn-compose-editor mt-1 overflow-hidden rounded-lg border border-[var(--border)]">
+      <div className="dn-compose-editor mt-1 overflow-hidden rounded-[18px] border border-[var(--border)]">
         <ReactQuill id="np-content" theme="snow" value={content} onChange={onContentChange} />
       </div>
       <p className={helperTextClass}>{contentHelperText}</p>

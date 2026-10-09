@@ -2,8 +2,7 @@
 
 import React, { useId } from "react";
 
-interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
@@ -32,10 +31,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputClasses = `
       w-full px-3 py-2 rounded-lg border border-[var(--border)]
       bg-[var(--bg-raised)] text-[var(--text-primary)] placeholder-[var(--text-muted)]
-      focus:outline-none focus:border-[var(--gold)]/60 focus:ring-1 focus:ring-[var(--gold)]/15
+      focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15
       disabled:bg-[var(--bg-card)] disabled:text-[var(--text-muted)] disabled:cursor-not-allowed
       transition-all duration-150
-      ${error ? "border-[var(--danger)]/50 focus:border-[var(--danger)]/70 focus:ring-[var(--danger)]/10" : ""}
+      ${error ? "border-danger/50 focus:border-danger/70 focus:ring-danger/10" : ""}
       ${leftAddon ? "pl-10" : ""}
       ${rightAddon ? "pr-10" : ""}
       ${className}
@@ -46,7 +45,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={id}
-            className="block text-xs font-medium text-[var(--text-primary)] mb-1.5"
+            className="mb-1.5 block text-xs font-medium text-[var(--text-primary)]"
           >
             {label}
           </label>
@@ -54,7 +53,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative">
           {leftAddon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-muted)]">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[var(--text-muted)]">
               {leftAddon}
             </div>
           )}
@@ -69,26 +68,20 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {rightAddon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[var(--text-muted)]">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-[var(--text-muted)]">
               {rightAddon}
             </div>
           )}
         </div>
 
         {error && (
-          <p
-            id={`${id}-error`}
-            className="mt-1 text-xs text-[var(--danger)] font-medium"
-          >
+          <p id={`${id}-error`} className="mt-1 text-xs font-medium text-[var(--danger)]">
             {error}
           </p>
         )}
 
         {hint && !error && (
-          <p
-            id={`${id}-hint`}
-            className="mt-1 text-xs text-[var(--text-muted)]"
-          >
+          <p id={`${id}-hint`} className="mt-1 text-xs text-[var(--text-muted)]">
             {hint}
           </p>
         )}

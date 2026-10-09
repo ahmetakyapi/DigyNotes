@@ -1,11 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Wordmark } from "@/components/Wordmark";
 
 interface Props {
   show: boolean;
   message?: string;
 }
 
+/* LAYOUT: Full-viewport ink curtain.
+   CENTER: typographic wordmark, a hairline track with a sweeping accent segment below it,
+           mono status message. Fades out over 700ms when `show` turns false. */
 export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }: Props) {
   const [mounted, setMounted] = useState(show);
 
@@ -20,135 +24,21 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
 
   if (!mounted) return null;
 
-  const r = 36;
-  const circumference = 2 * Math.PI * r;
-  const arcLength = circumference * 0.28;
-  const gapLength = circumference - arcLength;
-
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[var(--bg-base)]"
-      style={{
-        opacity: show ? 1 : 0,
-        transition: "opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1)",
-        pointerEvents: show ? "all" : "none",
-      }}
+      role="status"
+      aria-live="polite"
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[var(--bg-base)] transition-opacity duration-700 ease-out-expo ${
+        show ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
     >
-      {/* ── Spinning ring + D monogram ── */}
-      <div className="relative mb-7 h-24 w-24">
-        <svg
-          viewBox="0 0 80 80"
-          className="absolute inset-0 h-full w-full"
-          style={{ animation: "dg-spin 1.2s linear infinite" }}
-        >
-          {/* Track ring */}
-          <circle cx="40" cy="40" r={r} fill="none" stroke="var(--border)" strokeWidth="2.5" />
-          {/* Glowing arc */}
-          <circle
-            cx="40"
-            cy="40"
-            r={r}
-            fill="none"
-            stroke="var(--gold)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray={`${arcLength} ${gapLength}`}
-            strokeDashoffset={arcLength * 0.3}
-            style={{ filter: "drop-shadow(0 0 5px rgb(var(--gold-rgb)/0.55))" }}
-          />
-          {/* Bright leading dot */}
-          <circle
-            cx="40"
-            cy="4"
-            r="3"
-            fill="var(--gold-light)"
-            style={{ filter: "drop-shadow(0 0 4px rgb(var(--gold-light-rgb)/0.9))" }}
-          />
-        </svg>
-
-        {/* D monogram */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span
-            style={{
-              fontSize: "26px",
-              fontWeight: 700,
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              color: "var(--gold)",
-              textShadow: "0 0 24px rgb(var(--gold-rgb)/0.35)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            D
-          </span>
-        </div>
+      <Wordmark size="lg" />
+      <div className="relative mt-6 h-px w-40 overflow-hidden bg-[var(--border)]">
+        <span className="dn-loader-sweep absolute inset-y-0 left-0 w-1/3 bg-[var(--gold)]" />
       </div>
-
-      {/* ── Brand name with letter stagger ── */}
-      <div className="flex items-center">
-        {"DigyNotes".split("").map((char, i) => (
-          <span
-            key={i}
-            style={{
-              display: "inline-block",
-              fontSize: "12px",
-              letterSpacing: "0.22em",
-              fontWeight: 600,
-              color: i < 4 ? "var(--gold)" : "var(--text-dim)",
-              opacity: 0,
-              animation: "dg-fade-up 0.45s ease forwards",
-              animationDelay: `${0.08 + i * 0.055}s`,
-              textTransform: "uppercase",
-            }}
-          >
-            {char}
-          </span>
-        ))}
-      </div>
-
-      {/* ── Subtle tagline ── */}
-      <p
-        style={{
-          marginTop: "10px",
-          fontSize: "10px",
-          color: "var(--text-muted)",
-          letterSpacing: "0.15em",
-          opacity: 0,
-          animation: "dg-fade-up 0.5s ease forwards",
-          animationDelay: "0.7s",
-        }}
-      >
+      <p className="dn-mono mt-5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         {message}
       </p>
-
-      {/* ── Bottom shimmer bar ── */}
-      <div
-        className="absolute bottom-0 left-0 right-0"
-        style={{ height: "2px", background: "var(--bg-soft)", overflow: "hidden" }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: "35%",
-            background:
-              "linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-light) 50%, var(--gold) 60%, transparent 100%)",
-            animation: "dg-shimmer 1.6s ease-in-out infinite",
-          }}
-        />
-      </div>
-
-      <style>{`
-        @keyframes dg-spin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes dg-fade-up {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes dg-shimmer {
-          0%   { transform: translateX(-120%); }
-          100% { transform: translateX(400%); }
-        }
-      `}</style>
     </div>
   );
 }

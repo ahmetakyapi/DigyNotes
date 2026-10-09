@@ -572,4 +572,37 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-UI-002: `AnimatedCounter` stays at 0 near the screen edge
+
+**First seen**: 2026-10-09
+**Symptom**: On mobile the first stat in WelcomeHeader shows "0" forever while the others animate.
+**Root cause**: `useInView(ref, { margin: "-40px" })` shrinks the root on all four sides; an element 12px from the left edge is never considered in view.
+**Fix**: Only shrink the bottom edge: `margin: "0px 0px -40px 0px"` (`src/components/ui/AnimatedCounter.tsx`).
+**Prevention**: Never use a uniform negative `margin` with `useInView`/`whileInView` for elements that can sit near a horizontal edge.
+**Files**: `src/components/ui/AnimatedCounter.tsx`
+
+---
+
+## ERR-UI-003: One-time intro overlay stuck in dev (React StrictMode)
+
+**First seen**: 2026-10-09
+**Symptom**: Landing intro curtain freezes on "00" and covers the page in `next dev`.
+**Root cause**: The effect wrote the "seen" flag to sessionStorage before animating; StrictMode runs effect → cleanup → effect, so the second run saw the flag and returned early while `show` was already true.
+**Fix**: Write the flag only when the animation finishes, and add a 3s safety timeout that always hides the overlay (`src/components/landing/Hero.tsx` → `IntroCurtain`).
+**Prevention**: For "show once" UI, persist the flag at completion, never at start; always add a fail-safe hide.
+**Files**: `src/components/landing/Hero.tsx`
+
+---
+
+## ERR-UI-004: Route-transition wrapper breaks `position: fixed` children
+
+**First seen**: 2026-10-09
+**Symptom**: (avoided) Fixed bottom bars/modals inside pages would position relative to the page wrapper.
+**Root cause**: `transform` or `filter` on an ancestor creates a containing block for fixed descendants.
+**Fix**: The AppShell page transition animates `opacity` only.
+**Prevention**: Never animate transform/filter on wrappers that contain fixed UI.
+**Files**: `src/components/AppShell.tsx`
+
+---
+
 *Last updated: 2026-10-09*

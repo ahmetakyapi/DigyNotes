@@ -5,6 +5,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowLeftIcon,
+  LinkSimpleIcon,
+  MagnifyingGlassIcon,
+  MinusIcon,
+  NotePencilIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+  StackIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { Collection, Post } from "@/types";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
@@ -15,6 +27,10 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR", {
@@ -27,6 +43,7 @@ function formatDate(value: string) {
 export default function CollectionDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { status } = useSession();
+  const reduceMotion = useReducedMotion();
   const [collection, setCollection] = useState<Collection | null>(null);
   const [isOwner, setIsOwner] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -229,7 +246,9 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="h-40 animate-pulse rounded-3xl bg-[var(--bg-card)]" />
+        <div className="mb-4 h-3 w-40 animate-pulse rounded-full bg-[var(--bg-card)]" />
+        <div className="mb-10 h-16 w-2/3 animate-pulse rounded-[22px] bg-[var(--bg-card)]" />
+        <div className="h-40 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]" />
       </main>
     );
   }
@@ -237,213 +256,232 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
   if (notFound || !collection) {
     return (
       <main className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-lg font-semibold text-[var(--text-primary)]">Koleksiyon bulunamadı</p>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            Bu koleksiyon silinmiş olabilir veya görüntüleme iznin olmayabilir.
-          </p>
-          <Link href="/collections" className="mt-4 inline-flex text-sm text-accent-light">
-            ← Koleksiyonlara dön
-          </Link>
+        <div className="w-full">
+          <EmptyState
+            icon={<StackIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Koleksiyon <Em>Bulunamadı</Em>
+              </>
+            }
+            description="Bu koleksiyon silinmiş olabilir veya görüntüleme iznin olmayabilir."
+            primary={{ label: "Koleksiyonlara Dön", href: "/collections" }}
+          />
         </div>
       </main>
     );
   }
 
+  const ghostPill =
+    "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50";
+  const inputCls =
+    "w-full border border-[var(--border)] bg-[var(--bg-base)] text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm";
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <section className="rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-accent/8 rounded-full border border-accent/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent-light">
-                Koleksiyon
-              </span>
-              <span className="text-xs text-[var(--text-faint)]">
-                {collection.postCount} not · Güncellendi {formatDate(collection.updatedAt)}
-              </span>
-            </div>
-            {isOwner ? (
-              <div className="mt-4 grid gap-4">
-                <label className="space-y-2">
-                  <span className="text-xs font-medium text-[var(--text-secondary)]">Başlık</span>
-                  <input
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                    maxLength={80}
-                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
-                  />
-                </label>
-                <label className="space-y-2">
-                  <span className="text-xs font-medium text-[var(--text-secondary)]">Açıklama</span>
-                  <textarea
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)}
-                    rows={3}
-                    maxLength={400}
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
-                  />
-                </label>
-              </div>
-            ) : (
-              <>
-                <h1 className="mt-4 text-3xl font-bold text-[var(--text-primary)]">
-                  {formatDisplayTitle(collection.title)}
-                </h1>
-                {collection.description && (
-                  <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
-                    {formatDisplaySentence(collection.description)}
-                  </p>
-                )}
-                {collection.owner && (
-                  <p className="mt-4 text-sm text-[var(--text-secondary)]">
-                    Oluşturan:{" "}
-                    {collection.owner.username ? (
-                      <Link
-                        href={`/profile/${collection.owner.username}`}
-                        className="text-accent-light hover:text-accent-light"
-                      >
-                        {collection.owner.name}
-                      </Link>
-                    ) : (
-                      collection.owner.name
-                    )}
-                  </p>
-                )}
-              </>
+      <PageHeader
+        index="11"
+        eyebrow="Koleksiyon"
+        title={
+          <>
+            {formatDisplayTitle(collection.title)}
+            <Dot />
+          </>
+        }
+        description={
+          <>
+            {collection.description && (
+              <span className="block">{formatDisplaySentence(collection.description)}</span>
             )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
+            <span className="dn-mono mt-3 block text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              Güncellendi {formatDate(collection.updatedAt)}
+              {collection.owner && (
+                <>
+                  {" · "}
+                  {collection.owner.username ? (
+                    <Link
+                      href={`/profile/${collection.owner.username}`}
+                      className="text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--gold)]"
+                    >
+                      {collection.owner.name}
+                    </Link>
+                  ) : (
+                    collection.owner.name
+                  )}
+                </>
+              )}
+            </span>
+          </>
+        }
+        stats={[
+          { value: collection.postCount, label: "Not" },
+          ...(isOwner ? [{ value: availablePosts.length, label: "Eklenebilir" }] : []),
+        ]}
+        actions={
+          <>
             <button
               type="button"
               onClick={() => void copyCollectionLink()}
               disabled={isCopyingLink}
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light disabled:opacity-50"
+              className={ghostPill}
             >
-              {isCopyingLink ? "Kopyalanıyor..." : "Bağlantıyı Kopyala"}
+              <LinkSimpleIcon size={12} weight="bold" />
+              <span className="hidden sm:inline">
+                {isCopyingLink ? "Kopyalanıyor..." : "Bağlantıyı Kopyala"}
+              </span>
             </button>
-            <Link
-              href="/collections"
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light"
-            >
-              Tüm Koleksiyonlar
+            <Link href="/collections" className={ghostPill}>
+              <ArrowLeftIcon size={12} weight="bold" />
+              <span className="hidden sm:inline">Tüm Koleksiyonlar</span>
             </Link>
-            {isOwner && (
-              <>
-                <button
-                  type="button"
-                  onClick={saveCollection}
-                  disabled={isSaving || !hasUnsavedChanges || title.trim() === ""}
-                  className="rounded-xl bg-accent hover:bg-accent-dark px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSaving
-                    ? "Kaydediliyor..."
-                    : hasUnsavedChanges
-                      ? "Değişiklikleri Kaydet"
-                      : "Kaydedildi"}
-                </button>
-                <button
-                  type="button"
-                  onClick={deleteCollection}
-                  disabled={isDeleting}
-                  className="hover:bg-[#e53e3e]/8 rounded-xl border border-[#e53e3e]/25 px-4 py-2 text-sm text-[#e53e3e] transition-colors disabled:opacity-50"
-                >
-                  {isDeleting ? "Siliniyor..." : "Koleksiyonu Sil"}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-6">
-        <OrganizationGuide
-          current="collections"
-          title="Bu Koleksiyonun Rolü"
-          description="Kaydettiklerim kısa yoldan geri dönmek, İstek Listesi henüz nota çevrilmemiş içerikleri tutmak içindir. Koleksiyonlar ise bitmiş notları aynı tema altında bir araya getirir."
-        />
-      </section>
-
-      <section className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-            Koleksiyondaki not
-          </p>
-          <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
-            {collection.postCount}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-            Eklenebilir not
-          </p>
-          <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">
-            {availablePosts.length}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-4 shadow-[var(--shadow-soft)]">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-            Son güncelleme
-          </p>
-          <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
-            {formatDate(collection.updatedAt)}
-          </p>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       {isOwner && (
-        <section className="mt-6 rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
-          <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        /* LAYOUT: Owner edit composer — mono labels, hairline inputs, save pill + quiet danger pill on the right. */
+        <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-colors duration-500 ease-out-expo focus-within:border-[var(--text-faint)] sm:p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <PencilSimpleIcon size={12} weight="bold" className="text-[var(--gold)]" />
+            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              Koleksiyonu Düzenle
+            </p>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr]">
+            <label className="block">
+              <span className="dn-mono mb-2 flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                Başlık
+                <span className="text-[var(--text-faint)]">{title.length}/80</span>
+              </span>
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                maxLength={80}
+                className={`h-11 rounded-full px-4 ${inputCls}`}
+              />
+            </label>
+            <label className="block">
+              <span className="dn-mono mb-2 flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                Açıklama
+                <span className="text-[var(--text-faint)]">{description.length}/400</span>
+              </span>
+              <textarea
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                rows={2}
+                maxLength={400}
+                className={`rounded-[18px] px-4 py-2.5 ${inputCls}`}
+              />
+            </label>
+          </div>
+          <div className="mt-5 flex flex-wrap items-center justify-end gap-3 border-t border-[var(--border)] pt-5">
+            <button
+              type="button"
+              onClick={deleteCollection}
+              disabled={isDeleting}
+              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--danger)] transition-colors duration-200 hover:border-[var(--danger)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <TrashIcon size={12} weight="bold" />
+              {isDeleting ? "Siliniyor..." : "Koleksiyonu Sil"}
+            </button>
+            <button
+              type="button"
+              onClick={saveCollection}
+              disabled={isSaving || !hasUnsavedChanges || title.trim() === ""}
+              className="inline-flex h-10 cursor-pointer items-center rounded-full bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            >
+              {isSaving
+                ? "Kaydediliyor..."
+                : hasUnsavedChanges
+                  ? "Değişiklikleri Kaydet"
+                  : "Kaydedildi"}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {isOwner && (
+        /* LAYOUT: "Add notes" shelf — mono eyebrow + heading left, search pill right; 2-col list of compact rows. */
+        <section className="mt-12">
+          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Koleksiyona Not Ekle
+              <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                <span className="text-[var(--gold)]">(A)</span> Eklenebilir
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
+                Koleksiyona <Em>Not</Em> Ekle
               </h2>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">
+              <p className="mt-1 max-w-xl text-sm text-[var(--text-muted)]">
                 Sadece kendi notlarını bu koleksiyona ekleyebilirsin. Bu alan, uzun vadeli bir tema
                 altında sergilemek istediğin notlar için tasarlandı.
               </p>
             </div>
             <div className="w-full lg:max-w-sm">
-              <input
-                value={postQuery}
-                onChange={(event) => setPostQuery(event.target.value)}
-                placeholder="Eklemek için not ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
-              />
-              <p className="mt-2 text-[11px] text-[var(--text-faint)]">
-                {availablePosts.length} uygun not bulundu
-              </p>
+              <label className="relative block">
+                <MagnifyingGlassIcon
+                  size={14}
+                  weight="bold"
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                />
+                <input
+                  value={postQuery}
+                  onChange={(event) => setPostQuery(event.target.value)}
+                  placeholder="Eklemek için not ara..."
+                  className={`h-10 rounded-full pl-10 pr-4 ${inputCls}`}
+                />
+              </label>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                  {availablePosts.length} uygun not
+                </p>
+                {postQuery.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => setPostQuery("")}
+                    className="cursor-pointer text-xs font-medium text-[var(--gold)] transition-colors duration-200 hover:text-[var(--gold-light)]"
+                  >
+                    Aramayı Temizle
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          {postQuery.trim() && (
-            <div className="mb-4 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setPostQuery("")}
-                className="text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
-              >
-                Aramayı Temizle
-              </button>
-            </div>
-          )}
-
           {availablePosts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[var(--border)] px-4 py-10 text-center text-sm text-[var(--text-muted)]">
-              {postQuery.trim()
-                ? "Aramana uyan eklenebilir not bulunamadı."
-                : "Eklenebilecek yeni not bulunamadı."}
-            </div>
+            <EmptyState
+              compact
+              icon={<NotePencilIcon size={22} weight="duotone" />}
+              title={
+                postQuery.trim() ? (
+                  <>
+                    Aramana Uyan <Em>Not</Em> Yok
+                  </>
+                ) : (
+                  <>
+                    Eklenecek Yeni <Em>Not</Em> Yok
+                  </>
+                )
+              }
+              description={
+                postQuery.trim()
+                  ? "Aramana uyan eklenebilir not bulunamadı."
+                  : "Eklenebilecek yeni not bulunamadı."
+              }
+              primary={
+                postQuery.trim()
+                  ? { label: "Aramayı Temizle", onClick: () => setPostQuery("") }
+                  : { label: "Yeni Not Yaz", href: "/new-post" }
+              }
+            />
           ) : (
             <>
               <div className="grid gap-3 lg:grid-cols-2">
                 {availablePosts.slice(0, visibleAvailableCount).map((post) => (
                   <div
                     key={post.id}
-                    className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] p-3"
+                    className="flex items-center gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-3 transition-colors duration-300 hover:border-[var(--text-faint)]"
                   >
-                    <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-xl">
+                    <div className="relative h-20 w-14 flex-shrink-0 overflow-hidden rounded-[14px]">
                       <ResilientImage
                         src={getPostImageSrc(post.image, post.category)}
                         alt={formatDisplayTitle(post.title)}
@@ -454,16 +492,16 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-accent/20 px-2 py-0.5 text-[10px] text-accent-light">
+                        <span className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm font-semibold text-[var(--text-primary)]">
+                      <p className="mt-1.5 line-clamp-2 text-sm font-bold tracking-[-0.01em] text-[var(--text-primary)]">
                         {formatDisplayTitle(post.title)}
                       </p>
                       {post.creator && (
-                        <p className="mt-1 text-xs text-[var(--text-muted)]">
+                        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
                           {formatDisplayTitle(post.creator)}
                         </p>
                       )}
@@ -472,16 +510,18 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       type="button"
                       onClick={() => mutatePost(post.id, "POST")}
                       disabled={pendingPostId === post.id}
-                      className="rounded-xl bg-accent hover:bg-accent-dark px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all disabled:opacity-50"
+                      aria-label="Koleksiyona ekle"
+                      className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-[var(--gold)] px-3.5 text-xs font-semibold text-[var(--text-on-accent)] transition-all duration-300 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona Ekle"}
+                      <PlusIcon size={12} weight="bold" />
+                      {pendingPostId === post.id ? "Ekleniyor..." : "Ekle"}
                     </button>
                   </div>
                 ))}
               </div>
 
               {availablePosts.length > visibleAvailableCount && (
-                <div className="mt-4 flex justify-center">
+                <div className="mt-5 flex justify-center">
                   <button
                     type="button"
                     onClick={() =>
@@ -489,7 +529,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                         Math.min(count + 12, availablePosts.length)
                       )
                     }
-                    className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light"
+                    className={ghostPill}
                   >
                     Daha Fazla Göster
                   </button>
@@ -500,27 +540,38 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         </section>
       )}
 
-      <section className="mt-6">
-        <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+      {/* LAYOUT: Collection contents — heading + mono count left, search pill right; 1/2/3 col card grid. */}
+      <section className="mt-12">
+        <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Listedeki Notlar</h2>
-            <span className="text-sm text-[var(--text-faint)]">
-              {filteredCollectionPosts.length}/{collection.postCount} içerik
-            </span>
+            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="text-[var(--gold)]">(B)</span> {filteredCollectionPosts.length}/
+              {collection.postCount} içerik
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
+              Listedeki <Em>Notlar</Em>
+            </h2>
           </div>
           {collection.posts.length > 0 && (
-            <div className="flex w-full flex-col gap-3 lg:max-w-sm">
-              <input
-                value={collectionQuery}
-                onChange={(event) => setCollectionQuery(event.target.value)}
-                placeholder="Koleksiyon içinde ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
-              />
+            <div className="flex w-full flex-col gap-2 lg:max-w-sm">
+              <label className="relative block">
+                <MagnifyingGlassIcon
+                  size={14}
+                  weight="bold"
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
+                />
+                <input
+                  value={collectionQuery}
+                  onChange={(event) => setCollectionQuery(event.target.value)}
+                  placeholder="Koleksiyon içinde ara..."
+                  className={`h-10 rounded-full pl-10 pr-4 ${inputCls}`}
+                />
+              </label>
               {collectionQuery.trim() && (
                 <button
                   type="button"
                   onClick={() => setCollectionQuery("")}
-                  className="self-end text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
+                  className="cursor-pointer self-end text-xs font-medium text-[var(--gold)] transition-colors duration-200 hover:text-[var(--gold-light)]"
                 >
                   Aramayı Temizle
                 </button>
@@ -530,51 +581,61 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         </div>
 
         {collection.posts.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-14 text-center">
-            <p className="text-sm text-[var(--text-secondary)]">Bu koleksiyonda henüz not yok.</p>
-          </div>
+          <EmptyState
+            icon={<StackIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Bu Raf Henüz <Em>Boş</Em>
+              </>
+            }
+            description="Bu koleksiyonda henüz not yok."
+          />
         ) : filteredCollectionPosts.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-14 text-center">
-            <p className="text-sm text-[var(--text-secondary)]">
-              Koleksiyon içinde aramana uyan not bulunamadı.
-            </p>
-            <button
-              type="button"
-              onClick={() => setCollectionQuery("")}
-              className="mt-3 text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
-            >
-              Aramayı Temizle
-            </button>
-          </div>
+          <EmptyState
+            compact
+            icon={<MagnifyingGlassIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Aramana Uyan <Em>Not</Em> Yok
+              </>
+            }
+            description="Koleksiyon içinde aramana uyan not bulunamadı."
+            primary={{ label: "Aramayı Temizle", onClick: () => setCollectionQuery("") }}
+          />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filteredCollectionPosts.map((post) => (
-              <article
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {filteredCollectionPosts.map((post, i) => (
+              <motion.article
                 key={post.id}
-                className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)]"
+                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
+                className="group flex flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)]"
               >
-                <Link href={`/posts/${post.id}`} className="group block">
-                  <div className="relative h-48 overflow-hidden">
+                <Link href={`/posts/${post.id}`} className="block">
+                  <div className="relative h-52 overflow-hidden">
                     <ResilientImage
                       src={getPostImageSrc(post.image, post.category)}
                       alt={formatDisplayTitle(post.title)}
                       fill
                       sizes="420px"
-                      className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[rgba(8,8,7,0.78)] to-transparent" />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
+                    <span className="dn-mono absolute left-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)] backdrop-blur-sm">
+                      {String(i + 1).padStart(2, "0")} · {getCategoryLabel(post.category)}
+                    </span>
                   </div>
                 </Link>
-                <div className="space-y-3 p-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-accent/20 px-2 py-0.5 text-[10px] text-accent-light">
-                      {getCategoryLabel(post.category)}
-                    </span>
-                    {post.status && <StatusBadge status={post.status} />}
-                  </div>
+                <div className="flex flex-1 flex-col gap-3 px-5 pb-5 pt-1">
+                  {post.status && (
+                    <div>
+                      <StatusBadge status={post.status} />
+                    </div>
+                  )}
                   <div>
                     <Link href={`/posts/${post.id}`}>
-                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--text-primary)] hover:text-accent-light">
+                      <h3 className="line-clamp-2 text-lg font-extrabold leading-snug tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]">
                         {formatDisplayTitle(post.title)}
                       </h3>
                     </Link>
@@ -589,25 +650,36 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       {formatDisplaySentence(post.excerpt)}
                     </p>
                   )}
-                  <div className="flex items-center justify-between border-t border-[var(--border)] pt-3">
+                  <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-3">
                     <StarRating rating={post.rating} size={12} />
-                    <span className="text-xs text-[var(--text-faint)]">{post.date}</span>
+                    <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                      {post.date}
+                    </span>
                   </div>
                   {isOwner && (
                     <button
                       type="button"
                       onClick={() => mutatePost(post.id, "DELETE")}
                       disabled={pendingPostId === post.id}
-                      className="hover:bg-[#e53e3e]/8 w-full rounded-xl border border-[#e53e3e]/20 px-3 py-2 text-xs font-semibold text-[#e53e3e] transition-colors disabled:opacity-50"
+                      className="inline-flex h-9 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full border border-[var(--border)] text-xs font-medium text-[var(--text-muted)] transition-colors duration-200 hover:border-[var(--danger)] hover:text-[var(--danger)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                     >
+                      <MinusIcon size={12} weight="bold" />
                       {pendingPostId === post.id ? "Çıkarılıyor..." : "Koleksiyondan Çıkar"}
                     </button>
                   )}
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         )}
+      </section>
+
+      <section className="mt-14">
+        <OrganizationGuide
+          current="collections"
+          title="Bu Koleksiyonun Rolü"
+          description="Kaydettiklerim kısa yoldan geri dönmek, İstek Listesi henüz nota çevrilmemiş içerikleri tutmak içindir. Koleksiyonlar ise bitmiş notları aynı tema altında bir araya getirir."
+        />
       </section>
     </main>
   );

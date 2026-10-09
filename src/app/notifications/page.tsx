@@ -3,8 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { BellIcon, BellRingingIcon, CheckCircleIcon } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  BellIcon,
+  BellRingingIcon,
+  CheckCircleIcon,
+  FunnelSimpleIcon,
+} from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import toast from "react-hot-toast";
 
 interface NotificationItem {
@@ -25,6 +33,8 @@ interface NotificationItem {
   };
 }
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR", {
     day: "numeric",
@@ -42,6 +52,7 @@ export default function NotificationsPage() {
   const [markingAll, setMarkingAll] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "read">("all");
   const [loadError, setLoadError] = useState<string | null>(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (status === "loading") {
@@ -177,106 +188,111 @@ export default function NotificationsPage() {
 
   if (status === "unauthenticated") {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-            <BellIcon size={24} weight="duotone" />
-          </div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Bildirimler</h1>
-          <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-muted)]">
-            Takip, yorum ve beğeni bildirimlerini görmek için giriş yapman gerekiyor.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => signIn()}
-              className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95"
-            >
-              Giriş Yap
-            </button>
-            <Link
-              href="/discover"
-              className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
-            >
-              Keşfe Dön
-            </Link>
-          </div>
-        </div>
+      <main className="mx-auto max-w-3xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
+        {/* LAYOUT: Masthead (index 10) → sign-in empty state. */}
+        <PageHeader
+          index="10"
+          eyebrow="Gelen Kutusu"
+          title={
+            <>
+              Senden <Em>Haberler</Em>
+              <Dot />
+            </>
+          }
+          description="Takip, beğeni ve yorum güncellemeleri tek yerde."
+        />
+        <EmptyState
+          icon={<BellIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Bildirimler İçin <Em>Giriş Yap</Em>
+            </>
+          }
+          description="Takip, yorum ve beğeni bildirimlerini görmek için giriş yapman gerekiyor."
+          primary={{ label: "Giriş Yap", onClick: () => void signIn() }}
+          secondary={{ label: "Keşfe Dön", href: "/discover" }}
+        />
       </main>
     );
   }
 
+  const headerStats = !loading
+    ? [
+        ...(unreadCount > 0 ? [{ value: unreadCount, label: "Okunmamış" }] : []),
+        ...(notifications.length > 0 ? [{ value: notifications.length, label: "Toplam" }] : []),
+      ]
+    : undefined;
+
+  const renderCards = (items: NotificationItem[]) =>
+    items.map((notification, i) => (
+      <motion.div
+        key={notification.id}
+        initial={reduce ? false : { opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
+      >
+        <NotificationCard notification={notification} onOpen={markNotificationRead} />
+      </motion.div>
+    ));
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <header className="mb-6">
-        <div className="flex items-baseline justify-between gap-4">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-              Bildirimler
-            </h1>
-            <p className="hidden text-sm text-[var(--text-muted)] sm:block">
-              Takip, beğeni ve yorum güncellemeleri
-            </p>
-          </div>
+    <main className="mx-auto max-w-3xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
+      {/* LAYOUT: Masthead (index 10, mark-all action) → pill filter + last activity → grouped rows. */}
+      <PageHeader
+        index="10"
+        eyebrow="Gelen Kutusu"
+        title={
+          <>
+            Senden <Em>Haberler</Em>
+            <Dot />
+          </>
+        }
+        description="Takip, beğeni ve yorum güncellemeleri tek yerde."
+        stats={headerStats}
+        actions={
           <button
             type="button"
             onClick={markAllRead}
             disabled={markingAll || unreadCount === 0}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
             {markingAll ? "İşleniyor..." : "Tümünü Okundu Yap"}
           </button>
-        </div>
-        <div className="mt-3 h-px w-full bg-[var(--border)]" />
-      </header>
+        }
+      />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-            Okunmamış
-          </p>
-          <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">{unreadCount}</p>
+      {/* LAYOUT: Pill segmented filter left, mono "last activity" meta right. */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1">
+          {[
+            { key: "all", label: "Tümü" },
+            { key: "unread", label: "Okunmamış" },
+            { key: "read", label: "Okunan" },
+          ].map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
+              className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-200 ${
+                activeFilter === filter.key
+                  ? "bg-accent text-[var(--text-on-accent)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
         </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-            Toplam
+        {!loading && notifications.length > 0 && (
+          <p className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            Son Hareket · <span className="text-[var(--text-secondary)]">{lastActivity}</span>
           </p>
-          <p className="mt-2 text-2xl font-black text-[var(--text-primary)]">
-            {notifications.length}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-            Son Hareket
-          </p>
-          <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">{lastActivity}</p>
-        </div>
-      </div>
-
-      <div className="mb-6 inline-flex rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-1">
-        {[
-          { key: "all", label: "Tümü" },
-          { key: "unread", label: "Okunmamış" },
-          { key: "read", label: "Okunan" },
-        ].map((filter) => (
-          <button
-            key={filter.key}
-            type="button"
-            onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors duration-200 ${
-              activeFilter === filter.key
-                ? "bg-accent text-[var(--text-on-accent)]"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            {filter.label}
-          </button>
-        ))}
+        )}
       </div>
 
       {loadError && !loading && (
-        <div className="border-[var(--gold)]/20 bg-[var(--gold)]/8 mb-6 rounded-2xl border px-4 py-3 text-sm text-[var(--text-secondary)]">
+        <div className="mb-6 rounded-[20px] border border-accent/20 bg-accent/5 px-4 py-3 text-sm text-[var(--text-secondary)]">
           {loadError}
         </div>
       )}
@@ -286,70 +302,65 @@ export default function NotificationsPage() {
           {Array.from({ length: 5 }).map((_, index) => (
             <div
               key={index}
-              className="h-20 animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]"
+              className="h-20 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-            <BellRingingIcon size={24} weight="duotone" />
-          </div>
-          <p className="text-sm font-medium text-[var(--text-secondary)]">Henüz bildirimin yok</p>
-          <p className="mx-auto mt-1 max-w-xs text-xs text-[var(--text-muted)]">
-            Birisi seni takip ettiğinde, notlarını beğendiğinde veya yorum yaptığında burada görünecek.
-          </p>
-        </div>
+        <EmptyState
+          icon={<BellRingingIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Henüz Her Şey <Em>Sakin</Em>
+            </>
+          }
+          description="Birisi seni takip ettiğinde, notlarını beğendiğinde veya yorum yaptığında burada görünecek."
+          primary={{ label: "Keşfet", href: "/discover" }}
+        />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {unreadNotifications.length > 0 && (
             <section>
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                  Okunmamış
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  <span className="text-[var(--gold)]">(01)</span> Okunmamış
                 </h2>
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)]">
-                  {unreadNotifications.length}
+                <span className="h-px flex-1 bg-[var(--border)]" />
+                <span className="dn-mono text-[10px] text-[var(--text-secondary)]">
+                  {String(unreadNotifications.length).padStart(2, "0")}
                 </span>
               </div>
-              <div className="space-y-3">
-                {unreadNotifications.map((notification) => (
-                  <NotificationCard
-                    key={notification.id}
-                    notification={notification}
-                    onOpen={markNotificationRead}
-                  />
-                ))}
-              </div>
+              <div className="space-y-3">{renderCards(unreadNotifications)}</div>
             </section>
           )}
 
           {readNotifications.length > 0 && (
             <section>
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                  Daha Önce
+              <div className="mb-3 flex items-center gap-3">
+                <h2 className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  <span className="text-[var(--gold)]">(02)</span> Daha Önce
                 </h2>
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-secondary)]">
-                  {readNotifications.length}
+                <span className="h-px flex-1 bg-[var(--border)]" />
+                <span className="dn-mono text-[10px] text-[var(--text-secondary)]">
+                  {String(readNotifications.length).padStart(2, "0")}
                 </span>
               </div>
-              <div className="space-y-3">
-                {readNotifications.map((notification) => (
-                  <NotificationCard
-                    key={notification.id}
-                    notification={notification}
-                    onOpen={markNotificationRead}
-                  />
-                ))}
-              </div>
+              <div className="space-y-3">{renderCards(readNotifications)}</div>
             </section>
           )}
 
           {filteredNotifications.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-10 text-center">
-              <p className="text-sm text-[var(--text-muted)]">Bu filtrede bildirim bulunamadı.</p>
-            </div>
+            <EmptyState
+              compact
+              icon={<FunnelSimpleIcon size={22} weight="duotone" />}
+              title={
+                <>
+                  Bu Filtrede <Em>Bildirim Yok</Em>
+                </>
+              }
+              description="Bu filtrede bildirim bulunamadı."
+              primary={{ label: "Tümünü Göster", onClick: () => setActiveFilter("all") }}
+            />
           )}
         </div>
       )}
@@ -365,6 +376,7 @@ function NotificationCard({
   onOpen: (notificationId: string) => Promise<void>;
 }) {
   return (
+    /* LAYOUT: Avatar · (unread dot + text) · mono kind/context chips · preview · mono timestamp. */
     <Link
       href={notification.href}
       onClick={() => {
@@ -372,18 +384,18 @@ function NotificationCard({
           void onOpen(notification.id);
         }
       }}
-      className={`group block rounded-2xl border px-4 py-4 transition-all duration-200 hover:-translate-y-0.5 ${
+      className={`group block rounded-[24px] border px-5 py-4 transition-colors duration-300 ease-out-expo ${
         notification.read
-          ? "border-[var(--border)] bg-[var(--bg-card)] hover:border-accent/20"
-          : "border-[var(--gold)]/25 bg-[var(--gold)]/6 hover:border-[var(--gold)]/40"
+          ? "border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--text-faint)]"
+          : "border-accent/25 bg-accent/[0.06] hover:border-accent/40"
       }`}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3.5">
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border ${
             notification.read
               ? "border-[var(--border)] bg-[var(--bg-raised)]"
-              : "border-[var(--gold)]/25 bg-[var(--gold)]/12"
+              : "border-accent/25 bg-accent/10"
           }`}
         >
           <AvatarImage
@@ -396,34 +408,38 @@ function NotificationCard({
           />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+          <div className="flex items-start gap-2">
             {!notification.read && (
-              <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--gold)]" />
+              <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--gold)]" />
             )}
-            <p className="text-sm text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
+            <p
+              className={`text-[15px] leading-snug tracking-[-0.01em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] ${
+                notification.read ? "font-medium" : "font-semibold"
+              }`}
+            >
               {notification.text}
             </p>
           </div>
           {(notification.kindLabel || notification.contextTitle) && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {notification.kindLabel && (
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
                   {notification.kindLabel}
                 </span>
               )}
               {notification.contextTitle && (
-                <span className="rounded-full border border-[var(--gold)]/20 bg-[var(--gold)]/8 px-2 py-0.5 text-[10px] font-medium text-[var(--gold)]">
+                <span className="rounded-full border border-accent/20 bg-accent/10 px-2 py-0.5 text-[11px] font-medium text-[var(--gold)]">
                   {notification.contextTitle}
                 </span>
               )}
             </div>
           )}
           {notification.preview && (
-            <p className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--text-secondary)]">
+            <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-[var(--text-secondary)]">
               {notification.preview}
             </p>
           )}
-          <p className="mt-1.5 text-xs text-[var(--text-muted)]">
+          <p className="dn-mono mt-2 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
             {formatDate(notification.createdAt)}
           </p>
         </div>

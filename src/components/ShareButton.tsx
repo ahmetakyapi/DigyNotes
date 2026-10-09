@@ -65,15 +65,16 @@ export default function ShareButton({
       <button
         onClick={handleShare}
         title="Paylaş"
-        className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs backdrop-blur-md transition-all duration-200 active:scale-95 ${className}`}
+        aria-label={label}
+        className={`flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs backdrop-blur-md transition-all duration-200 active:scale-95 ${className}`}
         style={style}
       >
         {copied ? (
-          <CheckIcon size={iconSize} weight="bold" className="text-[#48bb78]" />
+          <CheckIcon size={iconSize} weight="bold" className="text-[var(--gold)]" />
         ) : (
           <ShareNetworkIcon size={iconSize} weight="regular" />
         )}
-        {copied ? "Kopyalandı" : label}
+        <span className="hidden sm:inline">{copied ? "Kopyalandı" : label}</span>
       </button>
     );
   }
@@ -84,11 +85,11 @@ export default function ShareButton({
     <button
       onClick={handleShare}
       title="Paylaş"
-      className={`hover:border-[var(--gold)]/30 flex items-center justify-center border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-all duration-200 hover:text-[var(--gold)] active:scale-95 ${btnClass} ${className}`}
+      className={`hover:border-accent/30 flex items-center justify-center border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] transition-all duration-200 hover:text-[var(--gold)] active:scale-95 ${btnClass} ${className}`}
       style={style}
     >
       {copied ? (
-        <CheckIcon size={iconSize} weight="bold" className="text-[#48bb78]" />
+        <CheckIcon size={iconSize} weight="bold" className="text-[var(--gold)]" />
       ) : (
         <ShareNetworkIcon size={iconSize} weight="regular" />
       )}

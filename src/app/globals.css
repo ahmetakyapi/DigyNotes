@@ -247,3 +247,48 @@ select option {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ─────────────── Loader sweep ─────────────── */
+
+@keyframes dn-loader-sweep {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(330%); }
+}
+.dn-loader-sweep {
+  animation: dn-loader-sweep 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dn-loader-sweep { animation: none; width: 100%; }
+}
+
+/* ─────────────── Skeleton shimmer ───────────────
+   Skeleton blocks (animate-pulse on a surface colour) get a soft light sweep instead of
+   a flat blink. Small pulsing dots/cursors keep Tailwind's default pulse. */
+.animate-pulse[class*="bg-[var(--bg-"],
+.animate-pulse[class*="bg-[var(--surface"] {
+  position: relative;
+  overflow: hidden;
+  animation: none;
+}
+.animate-pulse[class*="bg-[var(--bg-"]::after,
+.animate-pulse[class*="bg-[var(--surface"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgb(var(--gold-rgb) / 0.06) 45%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 80%
+  );
+  animation: dn-shimmer 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes dn-shimmer {
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse[class*="bg-[var(--bg-"]::after,
+  .animate-pulse[class*="bg-[var(--surface"]::after { animation: none; }
+}

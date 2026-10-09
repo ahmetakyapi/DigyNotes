@@ -1,11 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { BookmarkSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  BookmarkSimpleIcon,
+  MagnifyingGlassIcon,
+  MinusCircleIcon,
+  StarIcon,
+} from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
   getCategoryLabel,
@@ -18,7 +23,11 @@ import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { MediaSearch, MediaSearchResult } from "@/components/MediaSearch";
 import { ResilientImage } from "@/components/ResilientImage";
 import { StatusBadge, getStatusOptions } from "@/components/StatusBadge";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { WishlistItem } from "@/types";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 const WATCHLIST_CATEGORIES = FIXED_CATEGORIES.filter((category) => category !== "other");
 type WatchlistSort = "recent" | "title" | "rating";
 const WATCHLIST_LABEL = ORGANIZATION_SURFACES.watchlist.label;
@@ -39,6 +48,7 @@ function formatDate(value: string) {
 export default function WatchlistPage() {
   const router = useRouter();
   const { status } = useSession();
+  const reduceMotion = useReducedMotion();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [activeCategory, setActiveCategory] =
     useState<(typeof WATCHLIST_CATEGORIES)[number]>("movies");
@@ -210,16 +220,17 @@ export default function WatchlistPage() {
   if (status === "unauthenticated") {
     return (
       <main className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-4">
-        <div className="w-full rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-soft)]">
-          <p className="text-sm text-[var(--text-secondary)]">
-            İstek listesi oluşturmak ve sonra bakacaklarını takip etmek için giriş yap.
-          </p>
-          <Link
-            href="/login"
-            className="mt-4 inline-flex rounded-xl bg-accent hover:bg-accent-dark px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
-          >
-            Giriş Yap
-          </Link>
+        <div className="w-full">
+          <EmptyState
+            icon={<BookmarkSimpleIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Listeni Tutmak İçin <Em>Giriş Yap</Em>
+              </>
+            }
+            description="İstek listesi oluşturmak ve sonra bakacaklarını takip etmek için giriş yap."
+            primary={{ label: "Giriş Yap", href: "/login" }}
+          />
         </div>
       </main>
     );
@@ -227,44 +238,57 @@ export default function WatchlistPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      {/* ── Header ── */}
-      <header className="mb-6">
-        <div className="flex items-baseline justify-between gap-4">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-              İstek Listesi
-            </h1>
-            {!loading && (
-              <span className="text-sm text-[var(--text-muted)]">
-                {items.length} kayıt · {populatedCategoryCount} kategori
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="mt-3 h-px w-full bg-[var(--border)]" />
-      </header>
+      <PageHeader
+        index="12"
+        eyebrow="İstek Listesi"
+        title={
+          <>
+            Sonra <Em>Bakılacaklar</Em>
+            <Dot />
+          </>
+        }
+        description="Henüz nota dönüştürmediğin film, dizi, kitap, oyun ve gezi fikirleri burada sırasını bekler."
+        stats={
+          loading
+            ? undefined
+            : [
+                { value: items.length, label: "Kayıt" },
+                { value: populatedCategoryCount, label: "Kategori" },
+              ]
+        }
+      />
 
       {/* ── Kategori seçimi + Arama ── */}
       <section className="mb-6">
-        <div className="mb-4 flex gap-2 overflow-x-auto">
+        {/* LAYOUT: Pill category tabs (horizontal scroll on mobile) → search composer card → selected result strip. */}
+        <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
           {WATCHLIST_CATEGORIES.map((category) => (
             <button
               key={category}
               type="button"
               onClick={() => setActiveCategory(category)}
-              className={`flex shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors duration-200 ${
+              className={`flex shrink-0 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium transition-colors duration-200 ${
                 activeCategory === category
-                  ? "border-accent/30 bg-accent/10 text-[var(--text-primary)]"
-                  : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/20 hover:text-[var(--text-primary)]"
+                  ? "border-[var(--text-primary)] bg-[var(--text-primary)] text-[var(--bg-base)]"
+                  : "border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:border-[var(--text-faint)] hover:text-[var(--text-primary)]"
               }`}
             >
               {getCategoryLabel(category)}
-              <span className="text-[var(--text-faint)]">{countsByCategory[category] ?? 0}</span>
+              <span
+                className={`dn-mono text-[10px] ${
+                  activeCategory === category ? "opacity-60" : "text-[var(--text-faint)]"
+                }`}
+              >
+                {String(countsByCategory[category] ?? 0).padStart(2, "0")}
+              </span>
             </button>
           ))}
         </div>
 
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors duration-500 ease-out-expo focus-within:border-[var(--text-faint)] sm:p-5">
+          <p className="dn-mono mb-3 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            {getCategoryLabel(activeCategory)} Ara ve Ekle
+          </p>
           <MediaSearch
             category={activeCategory}
             lockedTab={getSearchTabForCategory(activeCategory) ?? "film"}
@@ -275,9 +299,9 @@ export default function WatchlistPage() {
         </div>
 
         {selectedResult && (
-          <div className="mt-3 flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+          <div className="mt-3 flex items-center gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-4">
             {selectedResult.image ? (
-              <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
+              <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-[12px] border border-[var(--border)]">
                 <ResilientImage
                   src={selectedResult.image}
                   alt={selectedResult.title}
@@ -287,7 +311,7 @@ export default function WatchlistPage() {
                 />
               </div>
             ) : (
-              <div className="flex h-20 w-14 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--bg-base)] text-lg font-semibold text-[var(--text-faint)]">
+              <div className="dn-display flex h-20 w-14 shrink-0 items-center justify-center rounded-[12px] border border-[var(--border)] bg-[var(--bg-base)] text-2xl italic text-[var(--text-faint)]">
                 {selectedResult.title.charAt(0).toUpperCase()}
               </div>
             )}
@@ -310,7 +334,7 @@ export default function WatchlistPage() {
               type="button"
               onClick={() => addToWatchlist(selectedResult)}
               disabled={pendingExternalId !== null || isSelectedResultSaved}
-              className="shrink-0 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95 disabled:opacity-50"
+              className="inline-flex h-10 shrink-0 cursor-pointer items-center rounded-full bg-[var(--gold)] px-5 text-xs font-semibold text-[var(--text-on-accent)] transition-all duration-300 hover:bg-[var(--gold-light)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSelectedResultSaved
                 ? "Listede"
@@ -324,14 +348,15 @@ export default function WatchlistPage() {
 
       {/* ── Liste ── */}
       <section>
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div className="flex items-baseline gap-2">
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
-              {getCategoryLabel(activeCategory)} Listesi
+        {/* LAYOUT: Section heading (mono count + grotesk title) left, search + sort pills right; 1/2/3 col poster cards. */}
+        <div className="mb-5 mt-12 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              {filteredItems.length}/{countsByCategory[activeCategory] ?? 0} kayıt
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
+              {getCategoryLabel(activeCategory)} <Em>Listesi</Em>
             </h2>
-            <span className="text-xs text-[var(--text-muted)]">
-              {filteredItems.length}/{countsByCategory[activeCategory] ?? 0}
-            </span>
           </div>
           <div className="flex items-center gap-2">
             <label className="relative block">
@@ -344,13 +369,13 @@ export default function WatchlistPage() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Ara..."
-                className="h-9 w-44 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
+                className="h-9 w-44 rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
               />
             </label>
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-              className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-accent/40 sm:text-xs"
+              className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-accent/40 sm:text-xs"
             >
               <option value="recent">Yeni</option>
               <option value="title">A-Z</option>
@@ -364,75 +389,83 @@ export default function WatchlistPage() {
             {[1, 2, 3].map((item) => (
               <div
                 key={item}
-                className="h-64 animate-pulse rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)]"
+                className="h-80 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
               />
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center shadow-[var(--shadow-soft)]">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
-              <BookmarkSimpleIcon size={24} weight="duotone" />
-            </div>
-            <h3 className="mt-4 text-base font-semibold text-[var(--text-primary)]">
-              {searchQuery.trim()
-                ? "Aramana uyan kayıt bulunamadı."
-                : "Bu kategori için henüz kayıt yok."}
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-              {searchQuery.trim()
+          <EmptyState
+            compact={Boolean(searchQuery.trim())}
+            icon={
+              searchQuery.trim() ? (
+                <MagnifyingGlassIcon size={22} weight="duotone" />
+              ) : (
+                <BookmarkSimpleIcon size={22} weight="duotone" />
+              )
+            }
+            title={
+              searchQuery.trim() ? (
+                <>
+                  Aramana Uyan <Em>Kayıt</Em> Yok
+                </>
+              ) : (
+                <>
+                  {getCategoryLabel(activeCategory)} Rafı Henüz <Em>Boş</Em>
+                </>
+              )
+            }
+            description={
+              searchQuery.trim()
                 ? "Daha farklı bir anahtar kelime deneyebilir veya aramayı temizleyebilirsin."
-                : "Yukarıdan arama yaparak bu kategoriye ilk kaydını ekleyebilirsin."}
-            </p>
-          </div>
+                : "Yukarıdan arama yaparak bu kategoriye ilk kaydını ekleyebilirsin."
+            }
+            primary={
+              searchQuery.trim()
+                ? { label: "Aramayı Temizle", onClick: () => setSearchQuery("") }
+                : undefined
+            }
+          />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filteredItems.map((item) => (
-              <article
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {filteredItems.map((item, i) => (
+              <motion.article
                 key={item.id}
-                className="hover:border-accent/18 group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
+                className="group flex flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)]"
               >
-                <div className="relative h-52 bg-[var(--bg-raised)]">
+                <div className="relative h-56 overflow-hidden bg-[var(--bg-raised)]">
                   {item.image ? (
                     <ResilientImage
                       src={item.image}
                       alt={item.title}
                       fill
                       sizes="420px"
-                      className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgb(var(--gold-rgb)/0.12),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
+                    <div className="dn-display flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgb(var(--gold-rgb)/0.12),_transparent_58%)] text-6xl italic text-[var(--text-faint)]">
                       {item.title.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, transparent 10%, var(--media-overlay-mid) 68%, var(--media-overlay-strong) 100%)",
-                    }}
-                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span
-                      className="border-accent/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
-                      style={{ background: "var(--bg-overlay)" }}
-                    >
+                    <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)] backdrop-blur-sm">
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
                   </div>
                   {typeof item.externalRating === "number" && item.externalRating > 0 && (
-                    <div
-                      className="absolute right-4 top-4 rounded-full px-2.5 py-1 text-[11px] font-semibold text-[var(--media-text-primary)] backdrop-blur-sm"
-                      style={{ background: "var(--bg-overlay)" }}
-                    >
+                    <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] text-[var(--text-primary)] backdrop-blur-sm">
+                      <StarIcon size={10} weight="fill" className="text-[var(--gold)]" />
                       {item.externalRating.toFixed(1)}
                     </div>
                   )}
                 </div>
-                <div className="space-y-4 p-5">
+                <div className="flex flex-1 flex-col gap-3 px-5 pb-5 pt-1">
                   <div>
-                    <h3 className="line-clamp-2 text-xl font-semibold text-[var(--text-primary)]">
+                    <h3 className="line-clamp-2 text-xl font-extrabold leading-tight tracking-[-0.03em] text-[var(--text-primary)]">
                       {item.title}
                     </h3>
                     {(item.creator || item.years) && (
@@ -446,7 +479,7 @@ export default function WatchlistPage() {
                       {item.excerpt}
                     </p>
                   )}
-                  <div className="flex items-center justify-between border-t border-[var(--border)] pt-4 text-xs text-[var(--text-faint)]">
+                  <div className="dn-mono mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
                     <span>Eklendi {formatDate(item.addedAt)}</span>
                     <span>{getPlannedLabel(normalizeCategory(item.category))}</span>
                   </div>
@@ -454,21 +487,22 @@ export default function WatchlistPage() {
                     type="button"
                     onClick={() => removeItem(item.id)}
                     disabled={deletingId === item.id}
-                    className="border-[#e53e3e]/18 hover:bg-[#e53e3e]/8 w-full rounded-xl border px-3 py-2.5 text-xs font-semibold text-[#e67a7a] transition-colors disabled:opacity-50"
+                    className="inline-flex h-9 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full border border-[var(--border)] text-xs font-medium text-[var(--text-muted)] transition-colors duration-200 hover:border-[var(--danger)] hover:text-[var(--danger)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {deletingId === item.id ? "Kaldırılıyor..." : "İstek listesinden kaldır"}
+                    <MinusCircleIcon size={13} weight="bold" />
+                    {deletingId === item.id ? "Kaldırılıyor..." : "Listeden Kaldır"}
                   </button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         )}
       </section>
 
-      <section className="mt-8">
+      <section className="mt-14">
         <OrganizationGuide
           current="watchlist"
-          title="İstek listesi ne zaman doğru yer?"
+          title="İstek Listesi Ne Zaman Doğru Yer?"
           description="Henüz nota dönüştürmediğin içerikler burada bekler. Hızlı geri dönüş için Kaydettiklerim'i, bitmiş notları kalıcı seçkilerde toplamak için Koleksiyonlar'ı kullan."
         />
       </section>

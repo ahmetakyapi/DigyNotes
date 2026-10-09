@@ -161,7 +161,7 @@ export const PostGridCard = React.memo(function PostGridCard({
                 </span>
               )}
               {post.isArchived && (
-                <span className="flex-shrink-0 rounded-sm border border-[var(--text-muted)]/25 bg-[var(--text-muted)]/8 px-1.5 py-0.5 text-[9px] font-bold text-[var(--text-muted)]">
+                <span className="flex-shrink-0 rounded-sm border border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] bg-[color-mix(in_srgb,var(--text-muted)_8%,transparent)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--text-muted)]">
                   Arşiv
                 </span>
               )}

@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import "react-quill/dist/quill.snow.css";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { StatusSidebar, CoverSidebar, TagsSidebar } from "./composer-sidebar";
 import { CategorySearchSection, FieldsSection, ContentSection } from "./composer-sections";
 import toast from "react-hot-toast";
@@ -105,10 +107,40 @@ export default function NewPostPage() {
   // Her değişiklikte taslağı güncelle
   useEffect(() => {
     updateDraft({
-      title, category, rating, status, image, content, creator,
-      years, hasSpoiler, lat, lng, locationLabel, tags, externalRating, imagePosition,
+      title,
+      category,
+      rating,
+      status,
+      image,
+      content,
+      creator,
+      years,
+      hasSpoiler,
+      lat,
+      lng,
+      locationLabel,
+      tags,
+      externalRating,
+      imagePosition,
     });
-  }, [title, category, rating, status, image, content, creator, years, hasSpoiler, lat, lng, locationLabel, tags, externalRating, imagePosition, updateDraft]);
+  }, [
+    title,
+    category,
+    rating,
+    status,
+    image,
+    content,
+    creator,
+    years,
+    hasSpoiler,
+    lat,
+    lng,
+    locationLabel,
+    tags,
+    externalRating,
+    imagePosition,
+    updateDraft,
+  ]);
 
   useEffect(() => {
     if (!image) {
@@ -416,36 +448,50 @@ export default function NewPostPage() {
   );
 
   return (
-    <main className="min-h-[calc(100dvh-3.75rem)] pb-28 sm:pb-24">
+    <main className="min-h-[calc(100dvh-3.75rem)] pb-32 sm:pb-32">
       <div className="mx-auto max-w-[1280px] px-3.5 sm:px-5 lg:px-6">
-        <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] py-5 sm:py-6">
-          <div className="flex min-w-0 flex-wrap items-center gap-2.5">
-            <h1 className="text-xl font-bold text-[var(--text-primary)] sm:text-2xl">Yeni Not</h1>
-            <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[var(--gold)]">
-              Taslak
-            </span>
-            {autofillDone && (
-              <span className="bg-[#2bbf6a]/8 inline-flex items-center gap-1.5 rounded-full border border-[#2bbf6a]/25 px-2.5 py-0.5 text-[10px] font-semibold text-[#2bbf6a]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#2bbf6a]" /> Otomatik dolduruldu
+        {/* LAYOUT: shared editorial masthead — draft/autofill badges + back link in the action slot */}
+        <PageHeader
+          index="+"
+          eyebrow="Yeni Not"
+          className="pt-6 sm:pt-8"
+          title={
+            <>
+              Arşive <Em>Yeni</Em> Bir Not
+              <Dot />
+            </>
+          }
+          description={`${categoryLabel} kategorisinde başla; arama ile alanları doldur, sonra kendi sözlerinle tamamla.`}
+          actions={
+            <>
+              {autofillDone && (
+                <span className="dn-mono hidden items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--accent-2)] sm:inline-flex">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-2)]" /> Otomatik
+                  Dolduruldu
+                </span>
+              )}
+              <span className="dn-mono inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                Taslak
               </span>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex-shrink-0 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
-          >
-            ← Geri
-          </button>
-        </div>
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
+              >
+                <ArrowLeftIcon size={12} weight="bold" />
+                Geri
+              </button>
+            </>
+          }
+        />
 
         {submitError && (
-          <div className="pt-4">
+          <div className="mb-5">
             <FormStatusMessage message={submitError} />
           </div>
         )}
 
-        <form className="grid gap-4 pt-5 sm:pt-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <form className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="order-1 min-w-0 space-y-4">
             <CategorySearchSection
               category={category}
@@ -501,9 +547,18 @@ export default function NewPostPage() {
             {sidebarCards}
           </aside>
 
-          <details className="order-2 min-w-0 lg:hidden group">
-            <summary className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] list-none [&::-webkit-details-marker]:hidden">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-200 group-open:rotate-90" strokeLinecap="round">
+          <details className="group order-2 min-w-0 lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] [&::-webkit-details-marker]:hidden">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="transition-transform duration-200 group-open:rotate-90"
+                strokeLinecap="round"
+              >
                 <path d="M9 18l6-6-6-6" />
               </svg>
               Puan, Kapak & Etiketler
@@ -514,40 +569,45 @@ export default function NewPostPage() {
         </form>
       </div>
 
-      <div className="bg-[var(--bg-base)]/95 fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-3.5 py-3 sm:px-5 lg:px-6">
+      {/* LAYOUT: floating glass pill action bar — context left, draft/cancel/save right */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
+        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-              Yeni Not · {categoryLabel}
+            <p className="dn-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              <span className="text-[var(--gold)]">(+)</span> Yeni Not · {categoryLabel}
             </p>
             {title ? (
-              <p className="max-w-[180px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
+              <p className="max-w-[110px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
                 {title}
               </p>
             ) : (
-              <p className="max-w-[220px] truncate text-sm italic text-[var(--text-muted)] sm:max-w-xs">
+              <p className="max-w-[110px] truncate text-sm italic text-[var(--text-muted)] sm:max-w-xs">
                 {footerHint}
               </p>
             )}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-2">
+          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             {lastSavedAt && (
-              <span className="hidden text-[10px] text-[var(--text-muted)] sm:inline">
+              <span className="dn-mono mr-1 hidden text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)] md:inline">
                 Taslak kaydedildi
               </span>
             )}
             <button
               type="button"
-              onClick={() => { saveDraft(); toast.success("Taslak kaydedildi"); }}
-              className="rounded-lg px-3 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              onClick={() => {
+                saveDraft();
+                toast.success("Taslak kaydedildi");
+              }}
+              className="cursor-pointer rounded-full px-2.5 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
-              Taslak Kaydet
+              <span className="sm:hidden">Taslak</span>
+              <span className="hidden sm:inline">Taslak Kaydet</span>
             </button>
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              className="cursor-pointer rounded-full px-2.5 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
               İptal
             </button>
@@ -555,7 +615,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex cursor-pointer items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 ease-out-expo hover:bg-accent-dark active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 sm:px-5"
             >
               {isSubmitting ? (
                 <>

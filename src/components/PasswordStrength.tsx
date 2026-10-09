@@ -32,7 +32,7 @@ function evaluateStrength(password: string): StrengthResult {
   const normalizedScore = Math.min(Math.floor((score / 6) * 4), 4);
 
   const map: Record<number, { label: string; color: string }> = {
-    0: { label: "Çok zayıf", color: "#e53e3e" },
+    0: { label: "Çok zayıf", color: "var(--danger)" },
     1: { label: "Zayıf", color: "#e57e3e" },
     2: { label: "Orta", color: "var(--gold)" },
     3: { label: "Güçlü", color: "#5dba72" },

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { Collection } from "@/types";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -14,6 +15,13 @@ function formatDate(value: string) {
   });
 }
 
+/*
+  LAYOUT: Cinematic collection cover.
+  TOP: poster mosaic (up to 3 posters, hairline gutters) filling a 4:3-ish frame, fading into
+       the card surface at the bottom; mono count pill pinned top-right.
+  BODY: big tight grotesk title, muted description, optional owner line.
+  FOOTER: hairline, mono "updated" meta + arrow that nudges on hover.
+*/
 export default function CollectionCard({
   collection,
   href,
@@ -30,74 +38,75 @@ export default function CollectionCard({
   return (
     <Link
       href={href}
-      className="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:border-accent/35 hover:shadow-[var(--shadow-soft)]"
+      className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)]"
     >
-      <div className="relative h-32 border-b border-[var(--border)] bg-[var(--bg-raised)]">
+      <div className="relative h-52 overflow-hidden bg-[var(--bg-raised)]">
         {previewPosts.length > 0 ? (
-          <div className="grid h-full grid-cols-3 gap-px bg-[var(--border)]">
-            {previewPosts.map((post) => (
-              <div key={post.id} className="relative h-full overflow-hidden bg-[var(--bg-raised)]">
+          <div
+            className={`grid h-full gap-px bg-[var(--border)] ${
+              previewPosts.length === 1
+                ? "grid-cols-1"
+                : previewPosts.length === 2
+                  ? "grid-cols-2"
+                  : "grid-cols-[1.4fr_1fr] grid-rows-2"
+            }`}
+          >
+            {previewPosts.map((post, index) => (
+              <div
+                key={post.id}
+                className={`relative h-full overflow-hidden bg-[var(--bg-raised)] ${
+                  previewPosts.length === 3 && index === 0 ? "row-span-2" : ""
+                }`}
+              >
                 <ResilientImage
                   src={getPostImageSrc(post.image, post.category)}
                   alt={formatDisplayTitle(post.title)}
                   fill
-                  sizes="240px"
-                  className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  sizes="(max-width: 768px) 60vw, 280px"
+                  className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
                 />
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgb(var(--gold-rgb)/0.14),_transparent_60%)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-faint)]">
+          <div className="dn-mono flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgb(var(--gold-rgb)/0.14),transparent_60%)] text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
             Boş Koleksiyon
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[rgba(8,8,7,0.72)] to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
+        <span className="dn-mono absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-primary)] backdrop-blur-sm">
+          {collection.postCount} not
+        </span>
       </div>
 
-      <div className="space-y-3 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="line-clamp-2 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)]">
-              {displayTitle}
-            </h3>
-            {collection.description && (
-              <p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--text-muted)]">
-                {displayDescription}
-              </p>
-            )}
-          </div>
-          <span className="bg-accent/8 rounded-full border border-accent/25 px-2 py-1 text-[10px] font-semibold text-[var(--gold)]">
-            {collection.postCount} not
-          </span>
-        </div>
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-1">
+        <h3 className="line-clamp-2 text-xl font-extrabold leading-tight tracking-[-0.03em] text-[var(--text-primary)]">
+          {displayTitle}
+        </h3>
+        {collection.description && (
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--text-muted)]">
+            {displayDescription}
+          </p>
+        )}
 
         {showOwner && collection.owner && (
-          <p className="text-[11px] text-[var(--text-faint)]">
+          <p className="dn-mono mt-3 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
             {collection.owner.name}
             {collection.owner.username ? ` · @${collection.owner.username}` : ""}
           </p>
         )}
 
-        {previewPosts.length > 0 && (
-          <div className="space-y-1.5">
-            {previewPosts.map((post) => (
-              <div
-                key={post.id}
-                className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-accent/70" />
-                <span className="line-clamp-1">{formatDisplayTitle(post.title)}</span>
-              </div>
-            ))}
+        <div className="mt-auto pt-4">
+          <div className="flex items-center justify-between border-t border-[var(--border)] pt-4">
+            <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+              Güncellendi {formatDate(collection.updatedAt)}
+            </span>
+            <ArrowUpRightIcon
+              size={16}
+              weight="bold"
+              className="text-[var(--text-muted)] transition-all duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--gold)]"
+            />
           </div>
-        )}
-
-        <div className="flex items-center justify-between border-t border-[var(--border)] pt-3 text-[10px] text-[var(--text-faint)]">
-          <span>Güncellendi {formatDate(collection.updatedAt)}</span>
-          <span className="font-medium text-[var(--gold)] transition-colors group-hover:text-[var(--gold-light)]">
-            Aç →
-          </span>
         </div>
       </div>
     </Link>

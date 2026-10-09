@@ -21,6 +21,7 @@ import {
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useTheme } from "@/components/ThemeProvider";
 import { modalBackdrop, modalPanel } from "@/lib/variants";
+import { getCategoryLabel } from "@/lib/categories";
 
 interface CommandItem {
   id: string;
@@ -29,7 +30,16 @@ interface CommandItem {
   hint?: string;
   icon: React.ReactNode;
   action: () => void;
-  section: "Git" | "Eylem";
+  section: "Notlar" | "Git" | "Eylem";
+}
+
+interface NoteHit {
+  id: string;
+  title: string;
+  category: string;
+  image?: string | null;
+  creator?: string | null;
+  years?: string | null;
 }
 
 export default function CommandPalette() {
@@ -43,6 +53,8 @@ export default function CommandPalette() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const theme = useTheme();
+  const [noteHits, setNoteHits] = useState<NoteHit[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -145,6 +157,50 @@ export default function CommandPalette() {
     return base;
   }, [router, theme]);
 
+  // Debounced note search (own notes) once the query has 2+ characters
+  useEffect(() => {
+    const q = query.trim();
+    if (!open || q.length < 2) {
+      setNoteHits([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    const ctrl = new AbortController();
+    const t = window.setTimeout(() => {
+      fetch(`/api/posts?paginate=1&limit=6&q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
+        .then((r) => (r.ok ? r.json() : { items: [] }))
+        .then((data: { items?: NoteHit[] }) =>
+          setNoteHits(Array.isArray(data.items) ? data.items : [])
+        )
+        .catch(() => {})
+        .finally(() => setSearching(false));
+    }, 180);
+    return () => {
+      ctrl.abort();
+      window.clearTimeout(t);
+    };
+  }, [query, open]);
+
+  const noteItems: CommandItem[] = useMemo(
+    () =>
+      noteHits.map((n) => ({
+        id: `note-${n.id}`,
+        label: n.title,
+        hint: [getCategoryLabel(n.category), n.years].filter(Boolean).join(" · "),
+        icon:
+          n.image && /^(https?:)?\//.test(n.image) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={n.image} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <FileTextIcon size={16} weight="duotone" />
+          ),
+        action: () => router.push(`/posts/${n.id}`),
+        section: "Notlar" as const,
+      })),
+    [noteHits, router]
+  );
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
@@ -155,12 +211,19 @@ export default function CommandPalette() {
   }, [items, query]);
 
   const grouped = useMemo(() => {
-    const groups: Record<CommandItem["section"], CommandItem[]> = { Git: [], Eylem: [] };
+    const groups: Record<CommandItem["section"], CommandItem[]> = {
+      Notlar: noteItems,
+      Git: [],
+      Eylem: [],
+    };
     filtered.forEach((item) => groups[item.section].push(item));
     return groups;
-  }, [filtered]);
+  }, [filtered, noteItems]);
 
-  const flatList = useMemo(() => [...grouped["Eylem"], ...grouped["Git"]], [grouped]);
+  const flatList = useMemo(
+    () => [...grouped["Notlar"], ...grouped["Eylem"], ...grouped["Git"]],
+    [grouped]
+  );
 
   useEffect(() => {
     setActiveIndex(0);
@@ -168,8 +231,7 @@ export default function CommandPalette() {
 
   // Cmd+K / Ctrl+K global trigger
   useEffect(() => {
-    const suppressed =
-      pathname === "/" || pathname === "/login" || pathname === "/register";
+    const suppressed = pathname === "/" || pathname === "/login" || pathname === "/register";
     if (suppressed) return;
     if (!session?.user) return;
 
@@ -239,7 +301,7 @@ export default function CommandPalette() {
           onMouseDown={close}
         >
           <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-[rgb(var(--ink-rgb)/0.6)] backdrop-blur-md"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -249,21 +311,24 @@ export default function CommandPalette() {
 
           <motion.div
             ref={trapRef}
-            className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-card)]"
+            className="relative w-full max-w-2xl overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-deep)]"
             onMouseDown={(e) => e.stopPropagation()}
             initial="hidden"
             animate="visible"
             exit="exit"
             variants={modalPanel}
           >
-            <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-4 py-3">
-              <MagnifyingGlassIcon size={18} className="shrink-0 text-[var(--text-muted)]" />
+            <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-5 py-4">
+              <MagnifyingGlassIcon
+                size={20}
+                className={`shrink-0 ${searching ? "animate-pulse text-[var(--gold)]" : "text-[var(--text-muted)]"}`}
+              />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Sayfa bul, eylem seç…"
-                className="w-full bg-transparent text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none"
+                placeholder="Not, sayfa ya da eylem ara…"
+                className="w-full bg-transparent text-lg tracking-[-0.01em] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none"
                 autoComplete="off"
                 spellCheck={false}
               />
@@ -274,16 +339,21 @@ export default function CommandPalette() {
 
             <ul ref={listRef} className="max-h-[52vh] overflow-y-auto py-2">
               {flatList.length === 0 ? (
-                <li className="px-4 py-10 text-center text-sm text-[var(--text-muted)]">
-                  Eşleşen sonuç yok
+                <li className="px-4 py-12 text-center">
+                  <p className="dn-display text-2xl italic text-[var(--text-secondary)]">
+                    {searching ? "Arşivde aranıyor…" : "Eşleşen bir şey yok."}
+                  </p>
+                  <p className="dn-mono mt-2 text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+                    Başlık, yönetmen, yazar ya da etiket dene
+                  </p>
                 </li>
               ) : (
-                (["Eylem", "Git"] as const).map((section) => {
+                (["Notlar", "Eylem", "Git"] as const).map((section) => {
                   const sectionItems = grouped[section];
                   if (sectionItems.length === 0) return null;
                   return (
                     <li key={section}>
-                      <div className="px-4 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      <div className="dn-mono px-5 pb-1.5 pt-3 text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
                         {section}
                       </div>
                       <ul>
@@ -297,32 +367,38 @@ export default function CommandPalette() {
                                 data-idx={flatIdx}
                                 onMouseEnter={() => setActiveIndex(flatIdx)}
                                 onClick={() => run(item.action)}
-                                className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                                className={`relative flex w-full cursor-pointer items-center gap-3 px-5 py-2.5 text-left text-sm transition-colors duration-150 ${
                                   active
-                                    ? "bg-[var(--bg-raised)] text-[var(--text-primary)]"
-                                    : "text-[var(--text-secondary)] hover:bg-[var(--bg-raised)]/60"
+                                    ? "bg-[var(--bg-raised)] text-[var(--text-primary)] before:absolute before:inset-y-2 before:left-0 before:w-[2px] before:rounded-full before:bg-[var(--gold)]"
+                                    : "text-[var(--text-secondary)]"
                                 }`}
                               >
                                 <span
-                                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                                  className={`flex shrink-0 items-center justify-center overflow-hidden ${
+                                    item.section === "Notlar"
+                                      ? "h-10 w-7 rounded-md"
+                                      : "h-7 w-7 rounded-lg"
+                                  } ${
                                     active
-                                      ? "bg-[var(--gold)]/12 text-[var(--gold)]"
+                                      ? "bg-accent/12 text-[var(--gold)]"
                                       : "bg-[var(--bg-raised)] text-[var(--text-muted)]"
                                   }`}
                                 >
                                   {item.icon}
                                 </span>
                                 <span className="flex-1">{item.label}</span>
-                                {item.hint && (
-                                  <kbd className="rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
-                                    {item.hint}
-                                  </kbd>
-                                )}
+                                {item.hint &&
+                                  (item.section === "Notlar" ? (
+                                    <span className="dn-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                                      {item.hint}
+                                    </span>
+                                  ) : (
+                                    <kbd className="rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+                                      {item.hint}
+                                    </kbd>
+                                  ))}
                                 {active && (
-                                  <ArrowRightIcon
-                                    size={14}
-                                    className="text-[var(--text-muted)]"
-                                  />
+                                  <ArrowRightIcon size={14} className="text-[var(--text-muted)]" />
                                 )}
                               </button>
                             </li>
@@ -335,10 +411,9 @@ export default function CommandPalette() {
               )}
             </ul>
 
-            <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-4 py-2 text-[11px] text-[var(--text-muted)]">
+            <div className="dn-mono flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
               <span>
-                <kbd className="font-mono">↑↓</kbd> gezin ·{" "}
-                <kbd className="font-mono">↵</kbd> seç
+                <kbd className="font-mono">↑↓</kbd> gezin · <kbd className="font-mono">↵</kbd> seç
               </span>
               <span>
                 <kbd className="font-mono">⌘K</kbd> kapat

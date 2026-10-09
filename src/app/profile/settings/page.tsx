@@ -6,12 +6,83 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
+import { ArrowUpRightIcon, CaretRightIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
+import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 transition-all text-[16px] sm:text-sm";
+  "w-full h-12 px-4 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm";
+const textareaBase =
+  "w-full px-4 py-3 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm leading-relaxed resize-none";
 const labelClass =
-  "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
-const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
+  "dn-mono block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2";
+const rowButtonClass =
+  "group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5 text-left transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50";
+const errorTextClass = "mt-1.5 text-xs text-[var(--danger)]";
+
+/* LAYOUT: settings section — left rail (mono index + label + short note), right column fields.
+   Sections are separated by hairlines instead of boxed cards. */
+function SettingsSection({
+  index,
+  label,
+  note,
+  className = "",
+  children,
+}: {
+  index: string;
+  label: string;
+  note?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      className={`grid gap-5 border-t border-[var(--border)] py-8 md:grid-cols-[200px_minmax(0,1fr)] md:gap-10 ${className}`}
+    >
+      <div>
+        <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <span className="text-[var(--gold)]">({index})</span>
+          {label}
+        </p>
+        {note && (
+          <p className="mt-2 max-w-[220px] text-xs leading-5 text-[var(--text-faint)]">{note}</p>
+        )}
+      </div>
+      <div className="min-w-0 space-y-5">{children}</div>
+    </section>
+  );
+}
+
+/* LAYOUT: pill switch — accent track when on, raised track + hairline when off */
+function Toggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={onChange}
+      className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-300 ease-out-expo ${
+        checked ? "border-accent bg-accent" : "border-[var(--border)] bg-[var(--bg-raised)]"
+      }`}
+    >
+      <span
+        className={`inline-block h-5 w-5 rounded-full transition-transform duration-300 ease-out-expo ${
+          checked
+            ? "translate-x-[22px] bg-[var(--text-on-accent)]"
+            : "translate-x-[3px] bg-[var(--text-muted)]"
+        }`}
+      />
+    </button>
+  );
+}
 
 interface UserProfile {
   id: string;
@@ -244,42 +315,75 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen py-10">
-        <div className="mx-auto max-w-2xl space-y-4 px-4">
+      <main className="min-h-screen py-10">
+        <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6">
+          <div className="h-3 w-40 animate-pulse rounded-full bg-[var(--bg-card)]" />
+          <div className="h-14 w-72 animate-pulse rounded-2xl bg-[var(--bg-card)]" />
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
+              className="h-28 animate-pulse rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
         </div>
-      </div>
+      </main>
     );
   }
 
   const usernameHint = {
     idle: null,
     checking: <span className="text-[var(--text-muted)]">Kontrol ediliyor...</span>,
-    ok: <span className="text-green-500">✓ Kullanılabilir</span>,
-    taken: <span className="text-[#e53e3e]">✗ Bu kullanıcı adı alınmış</span>,
-    invalid: <span className="text-[#e53e3e]">3-20 karakter, yalnızca a-z, 0-9, _</span>,
+    ok: (
+      <span className="inline-flex items-center gap-1 text-[var(--gold)]">
+        <CheckIcon size={12} weight="bold" /> Kullanılabilir
+      </span>
+    ),
+    taken: (
+      <span className="inline-flex items-center gap-1 text-[var(--danger)]">
+        <XIcon size={12} weight="bold" /> Bu kullanıcı adı alınmış
+      </span>
+    ),
+    invalid: <span className="text-[var(--danger)]">3-20 karakter, yalnızca a-z, 0-9, _</span>,
   }[usernameStatus];
 
   return (
-    <main className="min-h-screen py-8 pb-36 sm:pb-24">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <div className="mb-8 border-b border-[var(--border)] pb-5">
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Profil Ayarları</h1>
-          <p className="mt-1 text-xs text-[var(--text-muted)]">
-            Profilini düzenle ve herkese açık hale getir
-          </p>
-        </div>
+    <main className="min-h-screen py-8 pb-36 sm:py-10 sm:pb-32">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
+        <PageHeader
+          index="15"
+          eyebrow="Profil Ayarları"
+          title={
+            <>
+              Profilini <Em>Düzenle</Em>
+              <Dot />
+            </>
+          }
+          description="Profilini düzenle, gizliliğini seç ve arşivini dilediğin zaman dışa aktar."
+          actions={
+            profile?.username ? (
+              <Link
+                href={`/profile/${profile.username}`}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
+              >
+                Profili Gör
+                <ArrowUpRightIcon size={12} weight="bold" />
+              </Link>
+            ) : undefined
+          }
+        />
 
-        <div className="space-y-4">
-          {/* Avatar */}
-          <div className={sectionClass}>
-            <label className={labelClass}>Profil Görseli URL</label>
-            <div className="flex items-start gap-4">
+        {/* ── (01) Kimlik ── */}
+        <SettingsSection
+          index="01"
+          label="Kimlik"
+          note="Profilinde görünen ad, görsel ve kısa tanıtım."
+          className="border-t-0 pt-2"
+        >
+          <div>
+            <label htmlFor="settings-avatar" className={labelClass}>
+              Profil Görseli URL
+            </label>
+            <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
                 {avatarUrl ? (
                   <Image
@@ -292,12 +396,13 @@ export default function ProfileSettingsPage() {
                     unoptimized
                   />
                 ) : (
-                  <span className="text-2xl font-semibold text-accent-light">
+                  <span className="dn-display text-3xl italic text-[var(--gold)]">
                     {profile?.name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
               <input
+                id="settings-avatar"
                 type="url"
                 value={avatarUrl}
                 onChange={(e) => setAvatarUrl(e.target.value)}
@@ -307,264 +412,247 @@ export default function ProfileSettingsPage() {
             </div>
           </div>
 
-          {/* Username */}
-          <div className={sectionClass}>
-            <label className={labelClass}>Kullanıcı Adı</label>
+          <div>
+            <label htmlFor="settings-username" className={labelClass}>
+              Kullanıcı Adı
+            </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">
+              <span className="dn-mono absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">
                 @
               </span>
               <input
+                id="settings-username"
                 type="text"
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
-                className={`${inputBase} pl-7`}
+                className={`${inputBase} pl-9`}
                 placeholder="kullanici_adi"
                 maxLength={20}
               />
             </div>
             {usernameHint && <p className="mt-1.5 text-xs">{usernameHint}</p>}
             {username && (
-              <p className="mt-1 text-[10px] text-[var(--text-muted)]">
-                Profil URL: /profile/{username}
+              <p className="dn-mono mt-1.5 text-[10.5px] tracking-[0.04em] text-[var(--text-faint)]">
+                /profile/{username}
               </p>
             )}
           </div>
 
-          {/* Bio */}
-          <div className={sectionClass}>
+          <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className={labelClass + " mb-0"}>Hakkında</label>
-              <span className="text-[10px] text-[var(--text-muted)]">{bio.length}/200</span>
+              <label htmlFor="settings-bio" className={`${labelClass} mb-0`}>
+                Hakkında
+              </label>
+              <span className="dn-mono text-[10.5px] tabular-nums text-[var(--text-faint)]">
+                {bio.length}/200
+              </span>
             </div>
             <textarea
+              id="settings-bio"
               value={bio}
               onChange={(e) => setBio(e.target.value.slice(0, 200))}
               rows={3}
-              className={inputBase}
+              className={textareaBase}
               placeholder="Kendinizden kısaca bahsedin..."
             />
           </div>
+        </SettingsSection>
 
-          {/* Gizlilik */}
-          <div className={sectionClass}>
-            <div className="flex items-center justify-between">
+        {/* ── (02) Gizlilik ── */}
+        <SettingsSection index="02" label="Gizlilik" note="Kimlerin profilini görebileceğini seç.">
+          <div className="flex items-center justify-between gap-6">
+            <div>
+              <p className="text-base font-medium text-[var(--text-primary)]">
+                Profili Herkese Açık Yap
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+                Açık olduğunda notlarınız ve profiliniz herkese görünür
+              </p>
+            </div>
+            <Toggle
+              checked={isPublic}
+              onChange={() => setIsPublic((v) => !v)}
+              label="Profili Herkese Açık Yap"
+            />
+          </div>
+        </SettingsSection>
+
+        {/* ── (03) Güvenlik ── */}
+        <SettingsSection index="03" label="Güvenlik" note="Şifreni düzenli olarak yenile.">
+          <div>
+            <label htmlFor="settings-current-password" className={labelClass}>
+              Mevcut Şifre
+            </label>
+            <input
+              id="settings-current-password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className={inputBase}
+              placeholder="••••••••"
+              autoComplete="current-password"
+            />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label htmlFor="settings-new-password" className={labelClass}>
+                Yeni Şifre
+              </label>
+              <input
+                id="settings-new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={inputBase}
+                placeholder="En az 8 karakter"
+                minLength={8}
+                autoComplete="new-password"
+              />
+              {newPassword.length > 0 && newPassword.length < 8 && (
+                <p className={errorTextClass}>En az 8 karakter gerekli</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="settings-confirm-password" className={labelClass}>
+                Yeni Şifre (Tekrar)
+              </label>
+              <input
+                id="settings-confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={inputBase}
+                placeholder="••••••••"
+                autoComplete="new-password"
+              />
+              {confirmPassword && newPassword !== confirmPassword && (
+                <p className={errorTextClass}>Şifreler eşleşmiyor</p>
+              )}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handlePasswordChange}
+            disabled={
+              changingPassword ||
+              !currentPassword ||
+              !newPassword ||
+              newPassword !== confirmPassword ||
+              newPassword.length < 8
+            }
+            className="cursor-pointer rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {changingPassword ? "Güncelleniyor..." : "Şifreyi Güncelle"}
+          </button>
+        </SettingsSection>
+
+        {/* ── (04) Uygulama — mobilde tema ve bildirimler ── */}
+        <SettingsSection
+          index="04"
+          label="Uygulama Ayarları"
+          note="Tema ve bildirim kısayolları."
+          className="sm:hidden"
+        >
+          <div className="flex items-center justify-between gap-6">
+            <div>
+              <p className="text-base font-medium text-[var(--text-primary)]">
+                {theme === "dark" ? "Koyu Tema" : "Açık Tema"}
+              </p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">Tema geçişi</p>
+            </div>
+            <Toggle checked={theme === "dark"} onChange={toggleTheme} label="Koyu Tema" />
+          </div>
+
+          <Link href="/notifications" className={rowButtonClass}>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
+              <p className="mt-0.5 text-xs text-[var(--text-muted)]">Bildirimlerini görüntüle</p>
+            </div>
+            <CaretRightIcon
+              size={16}
+              className="text-[var(--text-muted)] transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
+            />
+          </Link>
+        </SettingsSection>
+
+        {/* ── (05) Verilerini İndir ── */}
+        <SettingsSection
+          index="05"
+          label="Verilerini İndir"
+          note="Notlar, koleksiyonlar ve watchlist tek pakette hazırlanır."
+        >
+          <p className="border-l-2 border-accent/60 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
+            CSV daha hızlı açılır ve düz metin içerir. JSON ise arşiv yapısını, sıralamayı ve uzun
+            içerikleri temiz metin olarak korur.
+          </p>
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => handleExport("csv")}
+              disabled={exportingFormat !== null}
+              className={rowButtonClass}
+            >
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">
-                  Profili Herkese Açık Yap
-                </p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                  Açık olduğunda notlarınız ve profiliniz herkese görünür
+                  Düz metinli CSV dışa aktarımı indir
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsPublic((v) => !v)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-accent" : "bg-[var(--bg-raised)]"
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    isPublic ? "translate-x-6" : "translate-x-1"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* ── Şifre Değiştir ── */}
-          <div className={sectionClass}>
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-              Güvenlik
-            </p>
-            <div className="space-y-3">
+              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                {exportingFormat === "csv" ? "Hazırlanıyor..." : "CSV"}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleExport("json")}
+              disabled={exportingFormat !== null}
+              className={rowButtonClass}
+            >
               <div>
-                <label className={labelClass}>Mevcut Şifre</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className={inputBase}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                />
+                <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
+                <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                  Tam arşivi okunur JSON formatında indir
+                </p>
               </div>
-              <div>
-                <label className={labelClass}>Yeni Şifre</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className={inputBase}
-                  placeholder="En az 8 karakter"
-                  minLength={8}
-                  autoComplete="new-password"
-                />
-                {newPassword.length > 0 && newPassword.length < 8 && (
-                  <p className="mt-1 text-xs text-[#e53e3e]">En az 8 karakter gerekli</p>
-                )}
-              </div>
-              <div>
-                <label className={labelClass}>Yeni Şifre (Tekrar)</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={inputBase}
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                />
-                {confirmPassword && newPassword !== confirmPassword && (
-                  <p className="mt-1 text-xs text-[#e53e3e]">Şifreler eşleşmiyor</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={handlePasswordChange}
-                disabled={changingPassword || !currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 8}
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors hover:border-accent/30 hover:text-accent-light disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {changingPassword ? "Güncelleniyor..." : "Şifreyi Güncelle"}
-              </button>
-            </div>
+              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                {exportingFormat === "json" ? "Hazırlanıyor..." : "JSON"}
+              </span>
+            </button>
           </div>
-
-          {/* ── Mobilde Görünüm & Bildirimler ── */}
-          <div className={`${sectionClass} sm:hidden`}>
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-              Uygulama Ayarları
-            </p>
-            <div className="space-y-3">
-              {/* Tema değiştirme */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">
-                    {theme === "dark" ? "Koyu Tema" : "Açık Tema"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">Tema geçişi</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    theme === "dark" ? "bg-accent" : "bg-[var(--bg-raised)]"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      theme === "dark" ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* Bildirimler link */}
-              <Link
-                href="/notifications"
-                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-accent/30"
-              >
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
-                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                    Bildirimlerini görüntüle
-                  </p>
-                </div>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-[var(--text-muted)]"
-                >
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
+          {exportMessage && (
+            <div
+              className={`rounded-2xl border px-4 py-3 text-sm ${
+                exportMessage.tone === "success"
+                  ? "border-accent/25 bg-accent/10 text-[var(--gold)]"
+                  : "border-[color-mix(in_srgb,var(--danger)_25%,transparent)] bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] text-[var(--danger)]"
+              }`}
+            >
+              {exportMessage.text}
             </div>
-          </div>
-
-          {/* ── Verilerini İndir ── */}
-          <div className={sectionClass}>
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-              Verilerini İndir
-            </p>
-            <div className="mb-3 rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3">
-              <p className="text-sm font-medium text-[var(--text-primary)]">
-                Notlar, koleksiyonlar ve watchlist tek pakette hazırlanır
-              </p>
-              <p className="mt-1 text-xs leading-6 text-[var(--text-muted)]">
-                CSV daha hızlı açılır ve düz metin içerir. JSON ise arşiv yapısını, sıralamayı ve
-                uzun içerikleri temiz metin olarak korur.
-              </p>
-            </div>
-            <div className="space-y-2.5">
-              <button
-                type="button"
-                onClick={() => handleExport("csv")}
-                disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-accent/30 disabled:opacity-50"
-              >
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
-                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                    Düz metinli CSV dışa aktarımı indir
-                  </p>
-                </div>
-                <span className="text-xs font-semibold text-[var(--text-muted)]">
-                  {exportingFormat === "csv" ? "Hazırlanıyor..." : "CSV"}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleExport("json")}
-                disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-accent/30 disabled:opacity-50"
-              >
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
-                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                    Tam arşivi okunur JSON formatında indir
-                  </p>
-                </div>
-                <span className="text-xs font-semibold text-[var(--text-muted)]">
-                  {exportingFormat === "json" ? "Hazırlanıyor..." : "JSON"}
-                </span>
-              </button>
-            </div>
-            {exportMessage && (
-              <div
-                className={`mt-3 rounded-xl border px-4 py-3 text-sm ${
-                  exportMessage.tone === "success"
-                    ? "border-accent-light/20 bg-accent-light/10 text-accent-light"
-                    : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"
-                }`}
-              >
-                {exportMessage.text}
-              </div>
-            )}
-            <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-              İndirme tamamlanmazsa bağlantıyı yenileyip tekrar deneyebilir veya daha hafif olduğu
-              için önce CSV formatını kullanabilirsin.
-            </p>
-          </div>
-        </div>
+          )}
+          <p className="text-[11px] leading-5 text-[var(--text-faint)]">
+            İndirme tamamlanmazsa bağlantıyı yenileyip tekrar deneyebilir veya daha hafif olduğu
+            için önce CSV formatını kullanabilirsin.
+          </p>
+        </SettingsSection>
       </div>
 
-      {/* Sticky Save Bar */}
-      <div className="bg-[var(--bg-header)]/95 fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <p className="text-xs text-[var(--text-muted)]">
+      {/* LAYOUT: floating glass pill save bar — visibility status left, İptal + Kaydet right */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:pb-6">
+        <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between gap-4 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+          <p className="dn-mono flex min-w-0 items-center gap-2 truncate text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span
+              className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
+                isPublic ? "bg-[var(--gold)]" : "bg-[var(--text-faint)]"
+              }`}
+            />
             {isPublic ? "Profilin herkese açık" : "Profilin gizli"}
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-shrink-0 items-center gap-1.5">
             <button
               type="button"
               onClick={() => router.back()}
-              className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
+              className="cursor-pointer rounded-full px-4 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95"
             >
               İptal
             </button>
@@ -577,7 +665,7 @@ export default function ProfileSettingsPage() {
                 usernameStatus === "invalid" ||
                 usernameStatus === "checking"
               }
-              className="rounded-lg bg-accent hover:bg-accent-dark px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all disabled:cursor-not-allowed disabled:opacity-40"
+              className="cursor-pointer rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 ease-out-expo hover:bg-accent-dark active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>
