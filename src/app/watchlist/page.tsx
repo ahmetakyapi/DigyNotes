@@ -216,7 +216,7 @@ export default function WatchlistPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-[#10b981] hover:bg-[#059669] px-4 py-2 text-sm font-semibold text-white transition-all"
+            className="mt-4 inline-flex rounded-xl bg-accent hover:bg-accent-dark px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
           >
             Giriş Yap
           </Link>
@@ -254,8 +254,8 @@ export default function WatchlistPage() {
               onClick={() => setActiveCategory(category)}
               className={`flex shrink-0 items-center gap-2 rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors duration-200 ${
                 activeCategory === category
-                  ? "border-[#10b981]/30 bg-[#10b981]/10 text-[var(--text-primary)]"
-                  : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#10b981]/20 hover:text-[var(--text-primary)]"
+                  ? "border-accent/30 bg-accent/10 text-[var(--text-primary)]"
+                  : "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/20 hover:text-[var(--text-primary)]"
               }`}
             >
               {getCategoryLabel(category)}
@@ -310,7 +310,7 @@ export default function WatchlistPage() {
               type="button"
               onClick={() => addToWatchlist(selectedResult)}
               disabled={pendingExternalId !== null || isSelectedResultSaved}
-              className="shrink-0 rounded-lg bg-[#10b981] px-4 py-2 text-xs font-medium text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95 disabled:opacity-50"
+              className="shrink-0 rounded-lg bg-accent px-4 py-2 text-xs font-medium text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95 disabled:opacity-50"
             >
               {isSelectedResultSaved
                 ? "Listede"
@@ -344,13 +344,13 @@ export default function WatchlistPage() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Ara..."
-                className="h-9 w-44 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-xs"
+                className="h-9 w-44 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
               />
             </label>
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-              className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-[#10b981]/40 sm:text-xs"
+              className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-accent/40 sm:text-xs"
             >
               <option value="recent">Yeni</option>
               <option value="title">A-Z</option>
@@ -370,7 +370,7 @@ export default function WatchlistPage() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center shadow-[var(--shadow-soft)]">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
               <BookmarkSimpleIcon size={24} weight="duotone" />
             </div>
             <h3 className="mt-4 text-base font-semibold text-[var(--text-primary)]">
@@ -389,7 +389,7 @@ export default function WatchlistPage() {
             {filteredItems.map((item) => (
               <article
                 key={item.id}
-                className="hover:border-[#10b981]/18 group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+                className="hover:border-accent/18 group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
               >
                 <div className="relative h-52 bg-[var(--bg-raised)]">
                   {item.image ? (
@@ -401,7 +401,7 @@ export default function WatchlistPage() {
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.12),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
+                    <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgb(var(--gold-rgb)/0.12),_transparent_58%)] text-5xl font-semibold text-[var(--text-faint)]">
                       {item.title.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -414,7 +414,7 @@ export default function WatchlistPage() {
                   />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
                     <span
-                      className="border-[#10b981]/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
+                      className="border-accent/18 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)] backdrop-blur-sm"
                       style={{ background: "var(--bg-overlay)" }}
                     >
                       {getCategoryLabel(item.category)}

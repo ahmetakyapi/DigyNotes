@@ -129,7 +129,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       {/* ── Header ── */}
       <div className="mb-6">
         <nav className="mb-4 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors duration-200 hover:text-[#10b981]">
+          <Link href="/notes" className="transition-colors duration-200 hover:text-accent">
             Notlar
           </Link>
           <span className="opacity-30">›</span>
@@ -175,7 +175,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryLabel} içinde ara...`}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-xs"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] py-2 pl-8 pr-7 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
           />
           {searchQuery && (
             <button
@@ -201,7 +201,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               onClick={() => setViewMode("cards")}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                 viewMode === "cards"
-                  ? "bg-[#10b981] text-white"
+                  ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -213,7 +213,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               disabled={mappedPosts.length === 0}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 viewMode === "map"
-                  ? "bg-[#10b981] text-white"
+                  ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -248,7 +248,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           {!searchQuery && !hasActiveSortFilters(sortFilter, defaultSortFilter) && (
             <Link
               href="/new-post"
-              className="mt-3 text-xs text-[#34d399] transition-colors hover:text-[#10b981]"
+              className="mt-3 text-xs text-accent-light transition-colors hover:text-accent"
             >
               + İlk notu ekle
             </Link>
@@ -265,7 +265,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
             return (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#10b981]/30 hover:shadow-[0_4px_24px_rgba(16,185,129,0.08)] sm:flex-row">
+                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:flex-row">
                   <div
                     className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[32%]"
                     style={{ minHeight: "140px" }}
@@ -290,7 +290,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                         )}
                         {post.status && <StatusBadge status={post.status} />}
                       </div>
-                      <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-[#10b981] sm:text-[15px]">
+                      <h2 className="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors group-hover:text-accent sm:text-[15px]">
                         {displayTitle}
                       </h2>
                       {post.creator && (

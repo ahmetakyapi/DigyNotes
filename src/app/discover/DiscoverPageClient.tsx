@@ -98,7 +98,7 @@ export default function DiscoverPageClient() {
               value={query}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="İsim veya @ ile kullanıcı ara..."
-              className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-sm"
+              className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
             />
           </label>
         </header>
@@ -115,7 +115,7 @@ export default function DiscoverPageClient() {
           </div>
         ) : users.length === 0 ? (
           <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
               <UsersThreeIcon size={24} weight="duotone" />
             </div>
             <p className="text-sm text-[var(--text-secondary)]">
@@ -141,7 +141,7 @@ export default function DiscoverPageClient() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   ‹
                 </button>
@@ -151,8 +151,8 @@ export default function DiscoverPageClient() {
                     onClick={() => setCurrentPage(page)}
                     className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors duration-200 ${
                       page === currentPage
-                        ? "bg-[#10b981] text-white"
-                        : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                        ? "bg-accent text-[var(--text-on-accent)]"
+                        : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {page}
@@ -161,7 +161,7 @@ export default function DiscoverPageClient() {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   ›
                 </button>
@@ -197,7 +197,7 @@ export default function DiscoverPageClient() {
                   <Link
                     key={post.id}
                     href={`/posts/${post.id}`}
-                    className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#10b981]/30"
+                    className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/30"
                   >
                     <div className="relative h-36 overflow-hidden bg-[var(--bg-raised)]">
                       <ResilientImage
@@ -207,9 +207,9 @@ export default function DiscoverPageClient() {
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         style={{ objectPosition: post.imagePosition ?? "center" }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.85)] via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
                       <div className="absolute left-3 top-3 flex items-center gap-2">
-                        <span className="rounded-full border border-[#10b981]/20 bg-[rgba(7,10,18,0.68)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                        <span className="rounded-full border border-accent/20 bg-[rgba(7,10,18,0.68)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}

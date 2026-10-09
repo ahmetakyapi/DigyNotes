@@ -69,8 +69,8 @@ interface YearData {
 const CATEGORY_COLORS: Record<string, string> = {
   movies: "#6888c0",
   series: "#c8b090",
-  game: "#34d399",
-  book: "#10b981",
+  game: "var(--gold-light)",
+  book: "var(--gold)",
   travel: "#60a88a",
   other: "#9aaacd",
 };
@@ -150,7 +150,7 @@ export default function YearInReviewPage() {
           <YearSelector year={year} onChange={setYear} max={currentYear} />
         </div>
         <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(16,185,129,0.1)]">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgb(var(--gold-rgb)/0.1)]">
             <CalendarBlank size={26} weight="duotone" className="text-[var(--gold)]" />
           </div>
           <h2 className="text-lg font-bold text-[var(--text-primary)]">
@@ -209,7 +209,7 @@ export default function YearInReviewPage() {
 
       {/* ═══ Hero Insight ═══ */}
       <section className="relative mb-8 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_15%_25%,rgba(16,185,129,0.1),transparent_55%),radial-gradient(ellipse_50%_40%_at_85%_75%,rgba(14,165,233,0.07),transparent_45%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_15%_25%,rgb(var(--gold-rgb)/0.1),transparent_55%),radial-gradient(ellipse_50%_40%_at_85%_75%,rgb(var(--accent-2-rgb)/0.07),transparent_45%)]" />
 
         <div className="relative grid gap-3 p-6 sm:grid-cols-3 sm:p-8">
           <InsightMiniCard
@@ -227,7 +227,7 @@ export default function YearInReviewPage() {
             }
           />
           <InsightMiniCard
-            icon={<Timer size={14} weight="bold" className="text-[#34d399]" />}
+            icon={<Timer size={14} weight="bold" className="text-accent-light" />}
             label="Yılın Ritmi"
             value={`${activeMonths}/12 ay aktif`}
             detail={
@@ -259,7 +259,7 @@ export default function YearInReviewPage() {
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <KpiCard
           icon={<ChartBar size={16} weight="duotone" />}
-          accent="#10b981"
+          accent="var(--gold)"
           label="Toplam Not"
           value={data.totalPosts}
         />
@@ -271,7 +271,7 @@ export default function YearInReviewPage() {
         />
         <KpiCard
           icon={<Hash size={16} weight="duotone" />}
-          accent="#34d399"
+          accent="var(--gold-light)"
           label="Etiket"
           value={data.uniqueTagCount}
         />
@@ -310,8 +310,8 @@ export default function YearInReviewPage() {
         {/* Monthly Activity */}
         <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)]">
           <div className="mb-5 flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(16,185,129,0.1)]">
-              <TrendUp size={14} weight="bold" className="text-[#10b981]" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgb(var(--gold-rgb)/0.1)]">
+              <TrendUp size={14} weight="bold" className="text-accent" />
             </div>
             <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">
               Aylık Aktivite
@@ -322,8 +322,8 @@ export default function YearInReviewPage() {
               <AreaChart data={data.monthlySeries} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                 <defs>
                   <linearGradient id="yirAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--gold)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--gold)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -334,11 +334,11 @@ export default function YearInReviewPage() {
                   type="monotone"
                   dataKey="count"
                   name="Not"
-                  stroke="#10b981"
+                  stroke="var(--gold)"
                   strokeWidth={2.5}
                   fill="url(#yirAreaGrad)"
                   dot={false}
-                  activeDot={{ r: 5, fill: "#10b981", stroke: "var(--bg-card)", strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: "var(--gold)", stroke: "var(--bg-card)", strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -364,10 +364,10 @@ export default function YearInReviewPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(16,185,129,0.06)" }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }} />
                 <Bar dataKey="count" name="Not" radius={[8, 8, 0, 0]}>
                   {data.categories.map((c, idx) => (
-                    <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "#10b981"} />
+                    <Cell key={idx} fill={CATEGORY_COLORS[c.name] ?? "var(--gold)"} />
                   ))}
                 </Bar>
               </BarChart>
@@ -441,8 +441,8 @@ export default function YearInReviewPage() {
       {data.topTags.length > 0 && (
         <section className="mb-8 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)]">
           <div className="mb-5 flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(52,211,153,0.1)]">
-              <Hash size={14} weight="bold" className="text-[#34d399]" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgb(var(--gold-light-rgb)/0.1)]">
+              <Hash size={14} weight="bold" className="text-accent-light" />
             </div>
             <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">
               En Çok Kullanılan Etiketler
@@ -467,8 +467,8 @@ export default function YearInReviewPage() {
       {/* ═══ First & Last Post ═══ */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         <TimelineCard
-          icon={<Flag size={16} weight="duotone" className="text-[#34d399]" />}
-          accent="#34d399"
+          icon={<Flag size={16} weight="duotone" className="text-accent-light" />}
+          accent="var(--gold-light)"
           label="İlk Not"
           post={data.firstPost}
         />
@@ -496,8 +496,8 @@ export default function YearInReviewPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(16,185,129,0.06)" }} />
-              <Bar dataKey="count" name="Not" fill="#10b981" radius={[8, 8, 0, 0]} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }} />
+              <Bar dataKey="count" name="Not" fill="var(--gold)" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -543,7 +543,7 @@ function YearSelector({
           onClick={() => onChange(y)}
           className={`cursor-pointer rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
             y === year
-              ? "bg-[var(--gold)] text-white shadow-[0_2px_8px_rgba(16,185,129,0.3)]"
+              ? "bg-[var(--gold)] text-white shadow-[0_2px_8px_rgb(var(--gold-rgb)/0.3)]"
               : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
           }`}
         >
@@ -622,7 +622,7 @@ function HighlightCard({
   detail: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgba(16,185,129,0.04)]">
+    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgb(var(--gold-rgb)/0.04)]">
       <div
         className="absolute left-0 right-0 top-0 h-[2px] opacity-60 transition-opacity duration-300 group-hover:opacity-100"
         style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}

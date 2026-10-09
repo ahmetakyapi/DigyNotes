@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { motion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
@@ -13,6 +13,7 @@ import { UserDropdownMenu } from "@/components/appshell/UserDropdownMenu";
 import { MobileTabBar } from "@/components/appshell/MobileTabBar";
 import { DesktopGlobalNav } from "@/components/appshell/DesktopGlobalNav";
 import { AvatarImage } from "@/components/AvatarImage";
+import { Wordmark } from "@/components/Wordmark";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
@@ -146,21 +147,20 @@ export default function AppShell({ children }: { readonly children: React.ReactN
       </a>
 
       {/* ─── HEADER ─── */}
-      <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--bg-header)] backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--header-glass)] backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto max-w-5xl pl-0 pr-2.5 sm:px-6">
           {/* ══ TOP ROW ══ */}
           <div className="flex h-[58px] items-center justify-between sm:h-[60px]">
             {/* Logo */}
-            <Link href="/notes" className="flex-shrink-0 leading-[0]">
-              <Image
-                src="/app-logo.png"
-                alt="DigyNotes"
-                width={190}
-                height={56}
-                className="block h-auto w-[146px] object-contain sm:w-[215px]"
-                priority
-                unoptimized
-              />
+            <Link
+              href="/notes"
+              aria-label="DigyNotes ana sayfa"
+              className="group flex flex-shrink-0 items-center gap-3 pl-3.5 transition-opacity duration-200 hover:opacity-80 sm:pl-0"
+            >
+              <Wordmark size="md" />
+              <span className="dn-mono hidden border-l border-[var(--border)] pl-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)] lg:inline">
+                Kişisel arşiv
+              </span>
             </Link>
 
             {/* Actions */}
@@ -173,8 +173,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               <Link
                 href="/notifications"
                 title="Bildirimler"
-                className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#34d399] sm:flex ${
-                  isNotifications ? "text-[#34d399]" : ""
+                className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-accent-light sm:flex ${
+                  isNotifications ? "text-accent-light" : ""
                 }`}
               >
                 <BellIcon
@@ -182,7 +182,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                   weight={notificationCount > 0 || isNotifications ? "fill" : "regular"}
                 />
                 {notificationCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-[#10b981] px-1 text-[10px] font-bold leading-[18px] text-white">
+                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-accent px-1 text-[10px] font-bold leading-[18px] text-[var(--text-on-accent)]">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}
@@ -193,7 +193,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 onClick={toggleTheme}
                 title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
                 aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-                className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-[#34d399] sm:flex"
+                className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-accent-light sm:flex"
               >
                 {theme === "dark" ? <SunIcon size={16} /> : <MoonIcon size={16} />}
               </button>
@@ -203,10 +203,10 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-[#10b981]/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgba(3,8,20,0.4)] backdrop-blur-md sm:hidden"
+                    className="bg-[var(--bg-card)]/95 absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
-                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-[#10b981]/40" />
+                    <div className="bg-[var(--bg-card)]/95 absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40" />
                   </div>
                 )}
                 <Link
@@ -215,20 +215,17 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                   aria-label="Yeni not ekle"
                   aria-describedby={showNewNoteHint ? "new-note-mobile-hint" : undefined}
                   title="Yeni not ekle"
-                  className="dn-new-note-soft-glow dn-new-note-animate group flex h-10 items-center justify-center gap-1 rounded-xl border border-[#10b981]/45 px-3 text-white transition-all duration-150 active:scale-[0.97] sm:h-auto sm:min-w-0 sm:gap-1.5 sm:rounded-lg sm:border-0 sm:px-3 sm:py-1.5 sm:text-[13px] sm:font-medium"
-                  style={{
-                    background: "linear-gradient(145deg, #34d399 0%, #10b981 55%, #059669 100%)",
-                  }}
+                  className="dn-new-note-soft-glow group flex h-10 items-center justify-center gap-1.5 rounded-full bg-[var(--gold)] px-3.5 text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-px hover:bg-[var(--gold-light)] active:scale-[0.96] sm:h-9 sm:px-4 sm:text-[13px] sm:font-semibold"
                 >
                   {/* Plus icon */}
                   <span className="flex items-center justify-center">
                     <PlusIcon
                       size={14}
                       weight="bold"
-                      className="flex-shrink-0 transition-transform duration-150 group-active:scale-90"
+                      className="flex-shrink-0 transition-transform duration-500 ease-out-expo group-hover:rotate-90"
                     />
                   </span>
-                  <span className="text-[12px] font-medium sm:text-[13px]">
+                  <span className="text-[12px] font-semibold sm:text-[13px]">
                     <span className="sm:hidden">Not</span>
                     <span className="hidden sm:inline">Yeni Not</span>
                   </span>
@@ -245,8 +242,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     aria-haspopup="true"
                     className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center overflow-hidden rounded-full transition-all duration-150 sm:h-10 sm:w-10 sm:shadow-none ${
                       showUserMenu
-                        ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_#10b981,0_8px_20px_rgba(3,8,20,0.28)]"
-                        : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgba(3,8,20,0.24)] hover:shadow-[0_0_0_1px_#10b981,0_8px_20px_rgba(3,8,20,0.28)]"
+                        ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_var(--gold),0_8px_20px_rgb(var(--ink-rgb)/0.28)]"
+                        : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgb(var(--ink-rgb)/0.24)] hover:shadow-[0_0_0_1px_var(--gold),0_8px_20px_rgb(var(--ink-rgb)/0.28)]"
                     }`}
                   >
                     <AvatarImage
@@ -255,7 +252,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                       name={session.user?.name ?? ""}
                       size={40}
                       className="h-full w-full object-cover"
-                      textClassName="text-[12px] font-bold text-[#34d399] sm:text-[13px]"
+                      textClassName="text-[12px] font-bold text-accent-light sm:text-[13px]"
                     />
                   </button>
 
@@ -285,9 +282,9 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto px-2 py-0.5">
                 <button
                   onClick={() => router.push("/notes")}
-                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-4 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
+                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-4 text-[13px] font-medium transition-all duration-200 active:scale-95 ${
                     activeCategory === "all"
-                      ? "bg-[#10b981] text-white"
+                      ? "bg-accent text-[var(--text-on-accent)]"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                   }`}
                 >
@@ -299,9 +296,9 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     <button
                       key={cat}
                       onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-lg px-3.5 text-[13px] font-medium transition-all duration-150 active:scale-95 ${
+                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 active:scale-95 ${
                         isActive
-                          ? "bg-[#10b981] text-white"
+                          ? "bg-accent text-[var(--text-on-accent)]"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                       }`}
                     >
@@ -318,12 +315,13 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             ref={scrollRef}
             className="scrollbar-hide hidden items-center overflow-x-auto sm:flex"
           >
-            <NavTab active={activeCategory === "all"} onClick={() => router.push("/notes")}>
+            <NavTab index={0} active={activeCategory === "all"} onClick={() => router.push("/notes")}>
               Son Notlar
             </NavTab>
-            {FIXED_CATEGORIES.map((cat) => (
+            {FIXED_CATEGORIES.map((cat, i) => (
               <NavTab
                 key={cat}
+                index={i + 1}
                 active={activeCategory === cat}
                 onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
               >
@@ -381,10 +379,12 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
 /* ── Reusable nav tab ── */
 function NavTab({
+  index,
   active,
   onClick,
   children,
 }: {
+  readonly index: number;
   readonly active: boolean;
   readonly onClick: () => void;
   readonly children: React.ReactNode;
@@ -392,13 +392,28 @@ function NavTab({
   return (
     <button
       onClick={onClick}
-      className={`flex-shrink-0 whitespace-nowrap border-b-2 px-3.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+      aria-current={active ? "page" : undefined}
+      className={`group relative flex flex-shrink-0 cursor-pointer items-baseline gap-1.5 whitespace-nowrap px-3 pb-[12px] pt-[9px] text-[13px] font-medium transition-colors duration-200 first:pl-0 ${
         active
-          ? "border-[#10b981] text-[var(--text-primary)]"
-          : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          ? "text-[var(--text-primary)]"
+          : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       }`}
     >
+      <span
+        className={`dn-mono text-[9.5px] transition-colors duration-200 ${
+          active ? "text-[var(--gold)]" : "text-[var(--text-faint)] group-hover:text-[var(--text-muted)]"
+        }`}
+      >
+        {String(index).padStart(2, "0")}
+      </span>
       {children}
+      {active && (
+        <motion.span
+          layoutId="dn-nav-underline"
+          className="absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-[var(--gold)] group-first:left-0"
+          transition={{ type: "spring", stiffness: 420, damping: 36 }}
+        />
+      )}
     </button>
   );
 }

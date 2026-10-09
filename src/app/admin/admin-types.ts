@@ -68,9 +68,9 @@ export type SeriesKey = "7d" | "30d" | "90d" | "365d";
 /* ─────────────────────────── constants ─────────────────────── */
 
 export const STATUS_COLORS: Record<string, string> = {
-  İzlendi: "#10b981",
-  İzleniyor: "#34d399",
-  Okundu: "#34d399",
+  İzlendi: "var(--gold)",
+  İzleniyor: "var(--gold-light)",
+  Okundu: "var(--gold-light)",
   Okunuyor: "#60a5fa",
   Oynandı: "#f472b6",
   Oynanıyor: "#fb923c",
@@ -80,9 +80,9 @@ export const STATUS_COLORS: Record<string, string> = {
 };
 
 export const PIE_COLORS = [
-  "#10b981",
-  "#34d399",
-  "#34d399",
+  "var(--gold)",
+  "var(--gold-light)",
+  "var(--gold-light)",
   "#60a5fa",
   "#f472b6",
   "#fb923c",
@@ -92,11 +92,11 @@ export const PIE_COLORS = [
 ];
 
 export const ACTION_META: Record<string, { label: string; color: string; icon: string }> = {
-  "post.create": { label: "Not oluşturuldu", color: "#34d399", icon: "+" },
+  "post.create": { label: "Not oluşturuldu", color: "var(--gold-light)", icon: "+" },
   "post.update": { label: "Not güncellendi", color: "#60a5fa", icon: "↻" },
   "post.delete": { label: "Not silindi", color: "#e53e3e", icon: "×" },
-  "user.register": { label: "Yeni kayıt", color: "#10b981", icon: "★" },
-  "category.create": { label: "Kategori oluşturuldu", color: "#34d399", icon: "□" },
+  "user.register": { label: "Yeni kayıt", color: "var(--gold)", icon: "★" },
+  "category.create": { label: "Kategori oluşturuldu", color: "var(--gold-light)", icon: "□" },
   "user.follow": { label: "Takip", color: "#f472b6", icon: "♥" },
 };
 

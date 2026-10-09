@@ -324,7 +324,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 name={user.name}
                 size={80}
                 className="h-full w-full object-cover"
-                textClassName="text-3xl font-semibold text-[#10b981]"
+                textClassName="text-3xl font-semibold text-accent"
               />
             </div>
 
@@ -353,7 +353,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 {!currentUser?.id && (
                   <Link
                     href="/login"
-                    className="hover:bg-[#10b981]/18 rounded-lg border border-[#10b981]/35 bg-[#10b981]/10 px-4 py-2 text-sm font-semibold text-[#10b981] transition-colors"
+                    className="hover:bg-accent/18 rounded-lg border border-accent/35 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors"
                   >
                     Takip etmek için giriş yap
                   </Link>
@@ -377,7 +377,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   </span>
                 )}
                 {currentUser?.id && currentUser.id !== user.id && isFollowingProfile && (
-                  <span className="rounded-full border border-[#10b981]/25 bg-[#10b981]/10 px-3 py-1 text-xs text-[#10b981]">
+                  <span className="rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-xs text-accent">
                     Bu profili takip ediyorsun
                   </span>
                 )}
@@ -409,7 +409,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 </button>
                 {user.avgRating > 0 && (
                   <div className="text-center">
-                    <p className="text-lg font-bold text-[#10b981]">★ {user.avgRating}</p>
+                    <p className="text-lg font-bold text-accent">★ {user.avgRating}</p>
                     <p className="text-xs text-[var(--text-muted)]">Ort. Puan</p>
                   </div>
                 )}
@@ -456,7 +456,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
               onClick={() => setActiveTab(tab.key)}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                 activeTab === tab.key
-                  ? "bg-[#10b981] text-white"
+                  ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -495,7 +495,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
         {activeTab === "posts" ? (
           posts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#10b981]/10">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10">
                 <svg className="h-5 w-5 text-[var(--gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
@@ -511,7 +511,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {filteredPosts.map((post) => (
                 <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                  <article className={`flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-card)] transition-all duration-300 hover:border-[#10b981]/30 sm:flex-row ${post.isPinned ? "border-[#10b981]/20" : "border-[var(--border)]"}`}>
+                  <article className={`flex h-full flex-col overflow-hidden rounded-xl border bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 sm:flex-row ${post.isPinned ? "border-accent/20" : "border-[var(--border)]"}`}>
                     {/* Cover */}
                     <div
                       className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
@@ -532,17 +532,17 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                          <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#10b981]">
+                          <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-accent">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.isPinned && (
-                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-[#10b981]/25 bg-[#10b981]/8 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981]">
+                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold text-accent">
                               <PushPin size={9} weight="fill" /> Sabit
                             </span>
                           )}
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
-                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#10b981]">
+                        <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-accent">
                           {formatDisplayTitle(post.title)}
                         </h2>
                         {post.creator && (
@@ -576,7 +576,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
         ) : activeTab === "collections" ? (
           collections.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#10b981]/10">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10">
                 <svg className="h-5 w-5 text-[var(--gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
@@ -637,7 +637,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {filteredLikedPosts.map((post) => (
               <Link key={post.id} href={`/posts/${post.id}`} className="group block">
-                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#10b981]/30 sm:flex-row">
+                <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 sm:flex-row">
                   {/* Cover */}
                   <div
                     className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
@@ -658,7 +658,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#10b981]">
+                        <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-accent">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -681,7 +681,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                           </Link>
                         )}
                       </div>
-                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[#10b981]">
+                      <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-accent">
                         {formatDisplayTitle(post.title)}
                       </h2>
                       {post.creator && (

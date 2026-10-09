@@ -39,10 +39,10 @@ function NavLink({
   return (
     <Link
       href={href}
-      className={`flex flex-shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-semibold transition-all duration-150 ${
+      className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-medium transition-colors duration-200 ${
         active
-          ? "border-[#10b981] text-[var(--text-primary)]"
-          : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          ? "border-[var(--gold)] text-[var(--text-primary)]"
+          : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       }`}
     >
       {icon}

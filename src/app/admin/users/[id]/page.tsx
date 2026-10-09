@@ -82,11 +82,11 @@ const RANGE_LABELS: Record<RangeKey, string> = {
 };
 
 const ACTION_META: Record<string, { label: string; color: string }> = {
-  "post.create": { label: "Not oluşturuldu", color: "#34d399" },
+  "post.create": { label: "Not oluşturuldu", color: "var(--gold-light)" },
   "post.update": { label: "Not güncellendi", color: "#60a5fa" },
   "post.delete": { label: "Not silindi", color: "#e53e3e" },
-  "user.register": { label: "Kayıt oldu", color: "#10b981" },
-  "category.create": { label: "Kategori oluşturuldu", color: "#34d399" },
+  "user.register": { label: "Kayıt oldu", color: "var(--gold)" },
+  "category.create": { label: "Kategori oluşturuldu", color: "var(--gold-light)" },
   "user.follow": { label: "Takip etti", color: "#f472b6" },
 };
 
@@ -151,7 +151,7 @@ function InfoRow({
         {label}
       </span>
       <span
-        className={`text-right text-xs ${accent ? "font-semibold text-[#10b981]" : "text-[var(--text-secondary)]"}`}
+        className={`text-right text-xs ${accent ? "font-semibold text-accent" : "text-[var(--text-secondary)]"}`}
       >
         {value}
       </span>
@@ -255,7 +255,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
-        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
       </main>
     );
   }
@@ -281,7 +281,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           <div className="flex h-14 items-center gap-3">
             <button
               onClick={() => router.push("/admin")}
-              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] active:scale-95"
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-[11px] font-semibold text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)] active:scale-95"
             >
               <svg
                 width="11"
@@ -299,7 +299,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             <span className="text-[var(--text-muted)]">/</span>
             <span className="text-sm font-semibold text-[var(--text-primary)]">{user.name}</span>
             {user.isAdmin && (
-              <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">
+              <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">
                 admin
               </span>
             )}
@@ -313,14 +313,14 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
         {/* ── hero card ── */}
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#10b981]/20 bg-[#10b981]/10 text-xl font-black text-[#10b981]">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10 text-xl font-black text-accent">
               {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-lg font-bold text-[var(--text-primary)]">{user.name}</h1>
                 {user.isAdmin && (
-                  <span className="rounded bg-[#10b981]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981]">
+                  <span className="rounded bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
                     admin
                   </span>
                 )}
@@ -353,10 +353,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
 
         {/* ── KPI row ── */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <KpiCard value={user.postCount} label="Not" color="#34d399" />
+          <KpiCard value={user.postCount} label="Not" color="var(--gold-light)" />
           <KpiCard value={user.followerCount} label="Takipçi" color="#f472b6" />
           <KpiCard value={user.followingCount} label="Takip" color="#fb923c" />
-          <KpiCard value={user.activityCount} label="Aksiyon" color="#10b981" />
+          <KpiCard value={user.activityCount} label="Aksiyon" color="var(--gold)" />
         </div>
 
         {/* ── two-column grid ── */}
@@ -370,7 +370,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   <h3 className="text-[13px] font-semibold text-[var(--text-primary)]">
                     {RANGE_LABELS[range]} Aktivitesi
                   </h3>
-                  <span className="rounded-lg border border-[#10b981]/20 bg-[#10b981]/10 px-2 py-0.5 text-[11px] font-bold text-[#10b981]">
+                  <span className="rounded-lg border border-accent/20 bg-accent/10 px-2 py-0.5 text-[11px] font-bold text-accent">
                     {chartTotal} aksiyon
                   </span>
                 </div>
@@ -381,8 +381,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       onClick={() => handleRangeChange(opt.key)}
                       className={`rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors duration-150 ${
                         range === opt.key
-                          ? "border border-[#10b981]/30 bg-[#10b981]/15 text-[#10b981]"
-                          : "border border-[var(--border)] text-[var(--text-muted)] hover:border-[#10b981]/20 hover:text-[var(--text-secondary)]"
+                          ? "border border-accent/30 bg-accent/15 text-accent"
+                          : "border border-[var(--border)] text-[var(--text-muted)] hover:border-accent/20 hover:text-[var(--text-secondary)]"
                       }`}
                     >
                       {opt.label}
@@ -412,7 +412,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       allowDecimals={false}
                     />
                     <Tooltip content={<DarkTooltip />} />
-                    <Bar dataKey="count" name="Aksiyon" fill="#10b981" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="count" name="Aksiyon" fill="var(--gold)" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -477,7 +477,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     load(next);
                   }}
                   disabled={loadingMore}
-                  className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {loadingMore ? "Yükleniyor…" : "Daha fazla göster"}
                 </button>
@@ -585,7 +585,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 <button
                   onClick={togglePublic}
                   title={user.isPublic ? "Profili gizle" : "Profili herkese aç"}
-                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-all duration-200 ${user.isPublic ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-all duration-200 ${user.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}
                 >
                   <span
                     className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${user.isPublic ? "left-[18px]" : "left-[3px]"}`}
@@ -597,7 +597,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   href={`/profile/${user.username}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)]"
                 >
                   Profil sayfasına git
                   <svg

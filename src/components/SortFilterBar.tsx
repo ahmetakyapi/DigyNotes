@@ -59,9 +59,9 @@ export function SortFilterBar({
 }: SortFilterBarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const selectClass =
-    "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#10b981]/30 focus:border-[#10b981]/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
+    "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-accent/30 focus:border-accent/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
   const inputClass =
-    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-[#10b981]/30 focus:border-[#10b981]/40";
+    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-accent/30 focus:border-accent/40";
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (value.minRating > 0) count += 1;
@@ -129,8 +129,8 @@ export function SortFilterBar({
             onClick={() => setShowAdvanced(true)}
             className={`h-9 cursor-pointer rounded-xl border px-2.5 text-xs font-semibold transition-colors sm:h-10 sm:px-3 ${
               showAdvanced || activeFilterCount > 0
-                ? "bg-[#10b981]/8 border-[#10b981]/35 text-[var(--gold)]"
-                : "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                ? "bg-accent/8 border-accent/35 text-[var(--gold)]"
+                : "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
             Filtreler{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -167,7 +167,7 @@ export function SortFilterBar({
                 <button
                   type="button"
                   onClick={() => setShowAdvanced(false)}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] text-lg text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] text-lg text-[var(--text-secondary)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)]"
                   aria-label="Filtre panelini kapat"
                 >
                   ×
@@ -232,8 +232,8 @@ export function SortFilterBar({
                         onClick={() => toggleStatus(status)}
                         className={`rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors ${
                           value.statuses.includes(status)
-                            ? "border-[#10b981]/35 bg-[#10b981]/10 text-[var(--gold)]"
-                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[#10b981]/25 hover:text-[var(--text-primary)]"
+                            ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
+                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-accent/25 hover:text-[var(--text-primary)]"
                         }`}
                       >
                         {status}
@@ -258,7 +258,7 @@ export function SortFilterBar({
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                    className="rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)]"
                   >
                     Sıfırla
                   </button>

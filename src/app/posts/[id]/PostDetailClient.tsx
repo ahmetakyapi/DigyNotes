@@ -509,21 +509,21 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div
           className={`rounded-xl p-4 transition-colors ${
             isHighlighted
-              ? "bg-[#10b981]/5 ring-1 ring-[#10b981]/30"
+              ? "bg-accent/5 ring-1 ring-accent/30"
               : "hover:bg-[var(--surface-strong)]/50"
           }`}
         >
           {/* Üst satır: Avatar + isim + tarih + aksiyonlar */}
           <div className="mb-2.5 flex items-start justify-between gap-2">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/12 ring-1 ring-[#10b981]/20">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/12 ring-1 ring-accent/20">
                 <AvatarImage
                   src={comment.user.avatarUrl}
                   alt={comment.user.name}
                   name={comment.user.name}
                   size={32}
                   className="h-full w-full object-cover"
-                  textClassName="text-[11px] font-bold text-[#10b981]"
+                  textClassName="text-[11px] font-bold text-accent"
                 />
               </div>
               <div className="min-w-0">
@@ -532,7 +532,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     {comment.user.name}
                   </span>
                   {isPostAuthorComment && (
-                    <span className="rounded bg-[#10b981]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981] ring-1 ring-[#10b981]/20">
+                    <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[9px] font-semibold text-accent ring-1 ring-accent/20">
                       Yazar
                     </span>
                   )}
@@ -560,7 +560,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <button
                   type="button"
                   onClick={() => toggleReply(comment.id)}
-                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[var(--surface-strong)] hover:text-[#10b981]"
+                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[var(--surface-strong)] hover:text-accent"
                 >
                   {isReplying ? "Vazgeç" : "Yanıtla"}
                 </button>
@@ -587,14 +587,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {isReplying && (
             <div className="mt-3 pl-[42px]">
               <div className="flex gap-2.5">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/10">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/10">
                   <AvatarImage
                     src={null}
                     alt={session?.user?.name ?? ""}
                     name={session?.user?.name ?? "?"}
                     size={28}
                     className="h-full w-full object-cover"
-                    textClassName="text-[9px] font-bold text-[#10b981]"
+                    textClassName="text-[9px] font-bold text-accent"
                   />
                 </div>
                 <div className="flex-1">
@@ -605,7 +605,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     placeholder="Yanıtını yaz..."
                     rows={2}
                     maxLength={1000}
-                    className="w-full resize-none rounded-lg border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/20 sm:text-[13px]"
+                    className="w-full resize-none rounded-lg border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-[13px]"
                   />
                   <div className="mt-2 flex items-center justify-end gap-2">
                     <button
@@ -622,7 +622,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       type="button"
                       onClick={() => submitComment(comment.id)}
                       disabled={isSubmittingComment || !replyText.trim()}
-                      className="rounded-lg bg-[#10b981] px-3 py-1.5 text-[11px] font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-[#34d399] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                      className="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-accent-light active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                       {isSubmittingComment ? "..." : "Yanıtla"}
                     </button>
@@ -728,7 +728,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     }}
                     className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 ${
                       pinned
-                        ? "border-[#059669] bg-[#059669] text-white shadow-[0_2px_10px_rgba(5,150,105,0.3)]"
+                        ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                         : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     }`}
                     style={
@@ -826,7 +826,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-6 sm:pb-8">
             <div className="max-w-3xl">
               <div className="mb-3 flex items-center gap-2">
-                <span className="inline-block rounded-sm border border-[#10b981]/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                <span className="inline-block rounded-sm border border-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                   {categoryLabel}
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
@@ -972,7 +972,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 href={buildOpenStreetMapLink(post.lat, post.lng)}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--text-primary)]"
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
               >
                 Haritada aç
               </a>
@@ -1101,9 +1101,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div className="mt-14 flex items-center gap-4">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--surface-strong-border)] to-transparent" />
           <div className="flex items-center gap-1.5">
-            <span className="h-1 w-1 rounded-full bg-[#10b981]/40" />
-            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]/60" />
-            <span className="h-1 w-1 rounded-full bg-[#10b981]/40" />
+            <span className="h-1 w-1 rounded-full bg-accent/40" />
+            <span className="h-1.5 w-1.5 rounded-full bg-accent/60" />
+            <span className="h-1 w-1 rounded-full bg-accent/40" />
           </div>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--surface-strong-border)] to-transparent" />
         </div>
@@ -1112,9 +1112,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div className="mt-10">
           {/* Başlık */}
           <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#10b981]/10 ring-1 ring-[#10b981]/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
               <svg
-                className="h-4 w-4 text-[#10b981]"
+                className="h-4 w-4 text-accent"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -1143,29 +1143,29 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {session?.user ? (
             <div className="mb-8">
               {replyingToId && (
-                <div className="mb-3 flex items-center justify-between rounded-lg bg-[#10b981]/8 px-3.5 py-2.5 ring-1 ring-[#10b981]/20">
-                  <span className="text-xs text-[#10b981]">Bir yoruma yanıt yazıyorsun</span>
+                <div className="mb-3 flex items-center justify-between rounded-lg bg-accent/8 px-3.5 py-2.5 ring-1 ring-accent/20">
+                  <span className="text-xs text-accent">Bir yoruma yanıt yazıyorsun</span>
                   <button
                     type="button"
                     onClick={() => {
                       setReplyingToId(null);
                       setReplyText("");
                     }}
-                    className="text-xs font-medium text-[#10b981] transition-colors hover:text-[#34d399]"
+                    className="text-xs font-medium text-accent transition-colors hover:text-accent-light"
                   >
                     İptal
                   </button>
                 </div>
               )}
               <div className="flex gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#10b981]/12 ring-1 ring-[#10b981]/20">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/12 ring-1 ring-accent/20">
                   <AvatarImage
                     src={null}
                     alt={session.user.name ?? ""}
                     name={session.user.name ?? "?"}
                     size={36}
                     className="h-full w-full object-cover"
-                    textClassName="text-xs font-bold text-[#10b981]"
+                    textClassName="text-xs font-bold text-accent"
                   />
                 </div>
                 <div className="flex-1">
@@ -1176,7 +1176,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     placeholder="Düşüncelerini paylaş..."
                     rows={3}
                     maxLength={1000}
-                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/20 sm:text-sm sm:leading-relaxed"
+                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-sm sm:leading-relaxed"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && e.metaKey) submitComment();
                     }}
@@ -1189,7 +1189,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       type="button"
                       onClick={() => submitComment()}
                       disabled={isSubmittingComment || !commentText.trim()}
-                      className="rounded-lg bg-[#10b981] px-4 py-2 text-xs font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-[#34d399] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 sm:py-1.5"
+                      className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-accent-light active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 sm:py-1.5"
                     >
                       {isSubmittingComment ? "Gönderiliyor..." : "Gönder"}
                     </button>
@@ -1202,7 +1202,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               <p className="text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yap</p>
               <Link
                 href="/login"
-                className="rounded-lg bg-[#10b981]/10 px-4 py-1.5 text-xs font-medium text-[#10b981] ring-1 ring-[#10b981]/20 transition-colors hover:bg-[#10b981]/20"
+                className="rounded-lg bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent ring-1 ring-accent/20 transition-colors hover:bg-accent/20"
               >
                 Giriş Yap
               </Link>
@@ -1280,10 +1280,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <Link
                   key={cp.id}
                   href={`/posts/${cp.id}`}
-                  className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[#10b981]/30 hover:bg-[var(--bg-raised)]"
+                  className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-accent/30 hover:bg-[var(--bg-raised)]"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#10b981]/10 text-[10px] font-bold text-[var(--gold)]">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-[10px] font-bold text-[var(--gold)]">
                       {cp.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">

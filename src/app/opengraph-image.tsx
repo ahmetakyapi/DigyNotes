@@ -16,7 +16,7 @@ export default function OgImage() {
           justifyContent: "center",
           width: "100%",
           height: "100%",
-          background: "linear-gradient(135deg, #0c0c0c 0%, #0f1117 50%, #0c0c0c 100%)",
+          background: "linear-gradient(135deg, #0c0c0c 0%, var(--bg-base) 50%, #0c0c0c 100%)",
           fontFamily: "sans-serif",
         }}
       >
@@ -30,7 +30,7 @@ export default function OgImage() {
             width: 600,
             height: 400,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(16,185,129,0.14), transparent 70%)",
+            background: "radial-gradient(circle, rgb(var(--gold-rgb)/0.14), transparent 70%)",
           }}
         />
 
@@ -64,7 +64,7 @@ export default function OgImage() {
             width: 400,
             height: 2,
             marginTop: 36,
-            background: "linear-gradient(90deg, transparent, #10b981, transparent)",
+            background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
           }}
         />
 
@@ -77,8 +77,8 @@ export default function OgImage() {
             marginTop: 28,
             padding: "10px 24px",
             borderRadius: 20,
-            background: "rgba(16,185,129,0.1)",
-            border: "1px solid rgba(16,185,129,0.2)",
+            background: "rgb(var(--gold-rgb)/0.1)",
+            border: "1px solid rgb(var(--gold-rgb)/0.2)",
           }}
         >
           <div
@@ -86,10 +86,10 @@ export default function OgImage() {
               width: 8,
               height: 8,
               borderRadius: "50%",
-              background: "#10b981",
+              background: "var(--gold)",
             }}
           />
-          <span style={{ fontSize: 16, fontWeight: 600, color: "#10b981" }}>
+          <span style={{ fontSize: 16, fontWeight: 600, color: "var(--gold)" }}>
             Kişisel Dijital Not Defteri
           </span>
         </div>

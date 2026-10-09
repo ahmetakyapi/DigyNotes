@@ -60,7 +60,7 @@ export function PostsTabSwitcher({
             onClick={() => onTabChange(tab.key)}
             className={`shrink-0 cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:py-1.5 sm:text-sm ${
               activeTab === tab.key
-                ? "bg-[#10b981] text-white"
+                ? "bg-accent text-[var(--text-on-accent)]"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
@@ -73,7 +73,7 @@ export function PostsTabSwitcher({
       </div>
 
       <div className="hidden items-center gap-3 sm:flex">
-        <div className="h-0.5 w-8 rounded-full bg-[#10b981]/60" />
+        <div className="h-0.5 w-8 rounded-full bg-accent/60" />
         <span className="text-xs text-[var(--text-muted)]">
           {activeCount} {activeLabel}
           {activeTab === "notlar" && avgRating > 0 && (
@@ -129,7 +129,7 @@ export function PostsToolbar({
               aria-label="Grid görünüm"
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "grid"
-                  ? "bg-[#10b981] text-white"
+                  ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -140,7 +140,7 @@ export function PostsToolbar({
               aria-label="Liste görünümü"
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "list"
-                  ? "bg-[#10b981] text-white"
+                  ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -273,7 +273,7 @@ export function PostsEmptyState({
         <button
           onClick={onLoadMore}
           disabled={isLoadingMore}
-          className="mt-3 rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)] disabled:opacity-50"
+          className="mt-3 rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--gold)] disabled:opacity-50"
         >
           {isLoadingMore ? "Yükleniyor..." : "Daha fazla yükle"}
         </button>

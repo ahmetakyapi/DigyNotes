@@ -101,10 +101,10 @@
 @keyframes dn-timeline-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    box-shadow: 0 0 0 0 rgb(var(--gold-rgb) / 0.4);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    box-shadow: 0 0 0 8px rgb(var(--gold-rgb) / 0);
   }
 }
 
@@ -145,11 +145,11 @@
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+    box-shadow: 0 0 10px rgb(var(--gold-rgb) / 0.7);
   }
   50% {
     transform: scale(1.28);
-    box-shadow: 0 0 18px rgba(52, 211, 153, 0.9);
+    box-shadow: 0 0 18px rgb(var(--gold-light-rgb) / 0.9);
   }
 }
 
@@ -157,7 +157,7 @@
   0%,
   100%,
   50% {
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+    box-shadow: 0 2px 8px rgb(var(--gold-rgb) / 0.12);
   }
 }
 
@@ -180,12 +180,12 @@
 @keyframes dn-ghost-glow-light {
   0%,
   100% {
-    border-color: rgba(16, 185, 129, 0.22);
-    box-shadow: 0 2px 12px rgba(5, 150, 105, 0.06);
+    border-color: rgb(var(--gold-rgb) / 0.22);
+    box-shadow: 0 2px 12px rgb(var(--gold-rgb) / 0.06);
   }
   50% {
-    border-color: rgba(16, 185, 129, 0.35);
-    box-shadow: 0 4px 18px rgba(5, 150, 105, 0.1);
+    border-color: rgb(var(--gold-rgb) / 0.35);
+    box-shadow: 0 4px 18px rgb(var(--gold-rgb) / 0.1);
   }
 }
 
@@ -193,15 +193,15 @@
   0%,
   100% {
     box-shadow:
-      0 6px 20px rgba(5, 150, 105, 0.28),
-      0 0 0 1px rgba(16, 185, 129, 0.08) inset,
+      0 6px 20px rgb(var(--gold-rgb) / 0.28),
+      0 0 0 1px rgb(var(--gold-rgb) / 0.08) inset,
       0 1px 0 rgba(255, 255, 255, 0.18) inset;
   }
   50% {
     box-shadow:
-      0 12px 36px rgba(5, 150, 105, 0.44),
-      0 0 48px rgba(16, 185, 129, 0.1),
-      0 0 0 1px rgba(16, 185, 129, 0.12) inset,
+      0 12px 36px rgb(var(--gold-rgb) / 0.44),
+      0 0 48px rgb(var(--gold-rgb) / 0.1),
+      0 0 0 1px rgb(var(--gold-rgb) / 0.12) inset,
       0 1px 0 rgba(255, 255, 255, 0.22) inset;
   }
 }
@@ -280,14 +280,14 @@ html.light .dn-badge-sheen,
 html[data-theme="light"] .dn-badge-sheen {
   background: linear-gradient(
     135deg,
-    rgba(16, 185, 129, 0.08),
-    rgba(6, 182, 212, 0.05),
-    rgba(16, 185, 129, 0.06)
+    rgb(var(--gold-rgb) / 0.08),
+    rgb(var(--accent-2-rgb) / 0.05),
+    rgb(var(--gold-rgb) / 0.06)
   ) !important;
-  border-color: rgba(16, 185, 129, 0.25) !important;
+  border-color: rgb(var(--gold-rgb) / 0.25) !important;
   box-shadow:
-    0 0 16px rgba(16, 185, 129, 0.06),
-    inset 0 0 12px rgba(16, 185, 129, 0.03);
+    0 0 16px rgb(var(--gold-rgb) / 0.06),
+    inset 0 0 12px rgb(var(--gold-rgb) / 0.03);
 }
 
 .dn-badge-sheen::after {
@@ -304,7 +304,7 @@ html[data-theme="light"] .dn-badge-sheen {
 
 html.light .dn-badge-sheen::after,
 html[data-theme="light"] .dn-badge-sheen::after {
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.18), transparent);
+  background: linear-gradient(90deg, transparent, rgb(var(--gold-rgb) / 0.18), transparent);
 }
 
 .dn-dot-pulse {
@@ -312,7 +312,7 @@ html[data-theme="light"] .dn-badge-sheen::after {
 }
 
 .dn-cta-primary {
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 2px 8px rgb(var(--gold-rgb) / 0.12);
 }
 
 .dn-cta-ghost {
@@ -322,39 +322,39 @@ html[data-theme="light"] .dn-badge-sheen::after {
 /* ─── Light theme: CTA ─── */
 html.light .dn-cta-ghost,
 html[data-theme="light"] .dn-cta-ghost {
-  border-color: rgba(16, 185, 129, 0.2) !important;
+  border-color: rgb(var(--gold-rgb) / 0.2) !important;
   background: rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 2px 12px rgba(5, 150, 105, 0.06);
+  box-shadow: 0 2px 12px rgb(var(--gold-rgb) / 0.06);
   animation: dn-ghost-glow-light 5.2s ease-in-out infinite;
 }
 
 html.light .dn-cta-primary,
 html[data-theme="light"] .dn-cta-primary {
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
+  box-shadow: 0 2px 8px rgb(var(--gold-rgb) / 0.1);
 }
 
 /* ─── Nav CTA button — theme-aware ─── */
 .dn-nav-cta-btn {
-  background: linear-gradient(160deg, #34d399 0%, #10b981 28%, #059669 64%, #047857 100%);
+  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 28%, var(--gold-dark) 64%, var(--gold-dark) 100%);
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(4, 120, 87, 0.3);
   transition: all 0.2s ease;
 }
 
 .dn-nav-cta-btn:hover {
-  background: linear-gradient(160deg, #6ee7b7 0%, #34d399 28%, #10b981 64%, #059669 100%);
+  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold-light) 28%, var(--gold) 64%, var(--gold-dark) 100%);
 }
 
 html.light .dn-nav-cta-btn,
 html[data-theme="light"] .dn-nav-cta-btn {
-  background: linear-gradient(160deg, #10b981 0%, #059669 35%, #047857 70%, #065f46 100%);
+  background: linear-gradient(160deg, var(--gold) 0%, var(--gold-dark) 35%, var(--gold-dark) 70%, #065f46 100%);
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(6, 95, 70, 0.3);
 }
 
 html.light .dn-nav-cta-btn:hover,
 html[data-theme="light"] .dn-nav-cta-btn:hover {
-  background: linear-gradient(160deg, #34d399 0%, #10b981 35%, #059669 70%, #047857 100%);
+  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 35%, var(--gold-dark) 70%, var(--gold-dark) 100%);
 }
 
 /* ─── Light theme: Landing cards & page overrides ─── */
@@ -380,8 +380,8 @@ html.light .dn-landing-page,
 html[data-theme="light"] .dn-landing-page {
   background:
     radial-gradient(circle at 16% -4%, rgba(255, 255, 255, 0.98) 0%, transparent 28%),
-    radial-gradient(circle at 84% 8%, rgba(16, 185, 129, 0.05) 0%, transparent 26%),
-    radial-gradient(circle at 50% 44%, rgba(6, 182, 212, 0.04) 0%, transparent 44%),
+    radial-gradient(circle at 84% 8%, rgb(var(--gold-rgb) / 0.05) 0%, transparent 26%),
+    radial-gradient(circle at 50% 44%, rgb(var(--accent-2-rgb) / 0.04) 0%, transparent 44%),
     linear-gradient(180deg, #f8fafc 0%, #f5f7fa 48%, #f0f4f8 100%);
 }
 
@@ -395,7 +395,7 @@ html[data-theme="light"] .dn-landing-nav {
   ) !important;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 1px 0 rgba(16, 185, 129, 0.08);
+  box-shadow: 0 1px 0 rgb(var(--gold-rgb) / 0.08);
 }
 
 html.light .dn-landing-footer,
@@ -410,13 +410,13 @@ html[data-theme="light"] .dn-footer-link {
 
 html.light .dn-footer-link:hover,
 html[data-theme="light"] .dn-footer-link:hover {
-  color: #059669;
+  color: var(--gold-dark);
 }
 
 html.light .dn-landing-toggle,
 html[data-theme="light"] .dn-landing-toggle {
   background: rgba(248, 250, 252, 0.9);
-  border-color: rgba(16, 185, 129, 0.18);
+  border-color: rgb(var(--gold-rgb) / 0.18);
   box-shadow:
     0 8px 18px rgba(15, 23, 42, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -429,7 +429,7 @@ html[data-theme="light"] .dn-section-pill {
     rgba(248, 250, 252, 0.95),
     rgba(240, 253, 244, 0.88)
   ) !important;
-  border-color: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgb(var(--gold-rgb) / 0.18) !important;
   box-shadow:
     0 6px 18px rgba(15, 23, 42, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);

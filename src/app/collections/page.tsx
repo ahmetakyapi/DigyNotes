@@ -114,7 +114,7 @@ export default function CollectionsPage() {
           </p>
           <Link
             href="/login"
-            className="mt-4 inline-flex rounded-xl bg-[#10b981] hover:bg-[#059669] px-4 py-2 text-sm font-semibold text-white transition-all"
+            className="mt-4 inline-flex rounded-xl bg-accent hover:bg-accent-dark px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
           >
             Giriş Yap
           </Link>
@@ -163,7 +163,7 @@ export default function CollectionsPage() {
             onChange={(event) => setTitle(event.target.value)}
             maxLength={80}
             placeholder="Örn. 2024'te izlediklerim"
-            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-sm"
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
           />
         </label>
         <label className="space-y-1.5">
@@ -176,13 +176,13 @@ export default function CollectionsPage() {
             onChange={(event) => setDescription(event.target.value)}
             maxLength={400}
             placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
-            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:text-sm"
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
           />
         </label>
         <button
           type="submit"
           disabled={isCreating || loading || title.trim() === ""}
-          className="h-10 rounded-lg bg-[#10b981] px-5 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-10 rounded-lg bg-accent px-5 text-sm font-medium text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isCreating ? "Oluşturuluyor..." : "Oluştur"}
         </button>
@@ -195,7 +195,7 @@ export default function CollectionsPage() {
             value={collectionQuery}
             onChange={(event) => setCollectionQuery(event.target.value)}
             placeholder="Koleksiyonlarda ara..."
-            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-[#10b981]/40 focus:ring-1 focus:ring-[#10b981]/10 sm:max-w-sm sm:text-sm"
+            className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:max-w-sm sm:text-sm"
           />
         </div>
       )}

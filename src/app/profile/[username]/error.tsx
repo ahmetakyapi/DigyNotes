@@ -24,7 +24,7 @@ export default function ProfileError({ reset }: { reset: () => void }) {
         </button>
         <Link
           href="/discover"
-          className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-5 py-2.5 text-sm font-semibold text-white transition-all"
+          className="rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
         >
           Keşfete git
         </Link>

@@ -26,11 +26,11 @@ export function MobileTabBar({
   const router = useRouter();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border-header)] bg-[var(--bg-header)] backdrop-blur-xl sm:hidden">
-      <div
-        className="mx-auto flex max-w-xl items-center gap-1 px-1.5"
-        style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
-      >
+    <nav
+      className="fixed inset-x-3 z-40 sm:hidden"
+      style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)" }}
+    >
+      <div className="mx-auto flex max-w-xl items-center gap-1 rounded-[22px] border border-[var(--border)] bg-[var(--header-glass)] p-1.5 shadow-[0_20px_40px_-16px_rgb(var(--ink-rgb)/0.55)] backdrop-blur-2xl backdrop-saturate-150">
         <MobileTab
           href="/notes"
           active={isNotes}
@@ -59,20 +59,20 @@ export function MobileTabBar({
           onClick={() =>
             router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
           }
-          className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-3 transition-all duration-150 ${
-            isProfile ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
+          className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 transition-all duration-300 ease-out-expo ${
+            isProfile ? "bg-[var(--gold)] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
           }`}
         >
           <div
             className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
               isProfile
-                ? "bg-[#10b981]/20 text-[#34d399] ring-1 ring-[#10b981]/50"
+                ? "bg-[var(--text-on-accent)] text-[var(--gold)]"
                 : "bg-[var(--bg-raised)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
             }`}
           >
             {userInitial}
           </div>
-          <span className="text-[10px] font-medium">Profil</span>
+          <span className="text-[10px] font-semibold tracking-[0.01em]">Profil</span>
         </button>
       </div>
     </nav>
@@ -93,12 +93,12 @@ function MobileTab({
   return (
     <Link
       href={href}
-      className={`flex flex-1 flex-col items-center gap-1 rounded-xl py-3 transition-all duration-150 ${
-        active ? "bg-[#10b981]/12 text-[#34d399]" : "text-[var(--text-secondary)]"
+      className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 transition-all duration-300 ease-out-expo ${
+        active ? "bg-[var(--gold)] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
       }`}
     >
       {icon}
-      <span className="text-[10px] font-medium">{label}</span>
+      <span className="text-[10px] font-semibold tracking-[0.01em]">{label}</span>
     </Link>
   );
 }

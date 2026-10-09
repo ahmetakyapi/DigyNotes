@@ -15,7 +15,7 @@ function getStatusColor(status: string): string {
   const completed = ["İzlendi", "Okundu", "Tamamlandı", "Gidildi"];
   const ongoing = ["İzleniyor", "Okunuyor", "Devam Ediyor", "Oynanıyor"];
   if (completed.includes(status)) return "#22c55e";
-  if (ongoing.includes(status)) return "#10b981";
+  if (ongoing.includes(status)) return "var(--gold)";
   return "#6b7280";
 }
 

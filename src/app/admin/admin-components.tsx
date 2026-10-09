@@ -119,10 +119,10 @@ export function WorkspaceGuide({
   return (
     <section className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[var(--shadow-soft)] sm:p-6">
       {/* Decorative gradient mesh */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgba(16,185,129,0.08),transparent_50%),radial-gradient(ellipse_40%_40%_at_90%_80%,rgba(14,165,233,0.05),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgb(var(--gold-rgb)/0.08),transparent_50%),radial-gradient(ellipse_40%_40%_at_90%_80%,rgb(var(--accent-2-rgb)/0.05),transparent_40%)]" />
 
       <div className="relative">
-        <span className="inline-flex rounded-full border border-[#10b981]/20 bg-[#10b981]/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#10b981]">
+        <span className="inline-flex rounded-full border border-accent/20 bg-accent/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
           {eyebrow}
         </span>
         <h2 className="mt-4 text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)] sm:text-2xl">
@@ -153,10 +153,10 @@ export function ActionFeedbackBanner({ feedback }: { readonly feedback: AdminFee
   const palette =
     feedback.tone === "success"
       ? {
-          border: "border-[#34d399]/20",
-          bg: "bg-[#34d399]/8",
-          title: "text-[#34d399]",
-          dot: "#34d399",
+          border: "border-accent-light/20",
+          bg: "bg-accent-light/8",
+          title: "text-accent-light",
+          dot: "var(--gold-light)",
         }
       : feedback.tone === "warning"
         ? {
@@ -220,7 +220,7 @@ export const DarkTooltip = ({
 export function Spinner() {
   return (
     <div className="flex h-40 items-center justify-center">
-      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" />
+      <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
     </div>
   );
 }
@@ -242,7 +242,7 @@ export function RangePills<T extends string>({
           onClick={() => onChange(k)}
           className={`cursor-pointer rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${
             value === k
-              ? "bg-[var(--gold)] text-white shadow-[0_2px_8px_rgba(16,185,129,0.3)]"
+              ? "bg-[var(--gold)] text-white shadow-[0_2px_8px_rgb(var(--gold-rgb)/0.3)]"
               : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-secondary)]"
           }`}
         >

@@ -44,14 +44,14 @@ export function UserDropdownMenu({
     <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
       {/* User info */}
       <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#10b981]/20 bg-[#10b981]/10">
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent/20 bg-accent/10">
           <AvatarImage
             src={userAvatarUrl}
             alt={session.user?.name ?? "Avatar"}
             name={session.user?.name ?? ""}
             size={32}
             className="h-full w-full object-cover"
-            textClassName="text-xs font-bold text-[#34d399]"
+            textClassName="text-xs font-bold text-accent-light"
           />
         </div>
         <div className="min-w-0 flex-1">
@@ -90,7 +90,7 @@ export function UserDropdownMenu({
           <span className="relative">
             <BellIcon size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
             {notificationCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-[#10b981] px-0.5 text-[8px] font-bold leading-[14px] text-white">
+              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-accent px-0.5 text-[8px] font-bold leading-[14px] text-[var(--text-on-accent)]">
                 {notificationCount > 9 ? "9+" : notificationCount}
               </span>
             )}
@@ -137,11 +137,11 @@ export function UserDropdownMenu({
             <Link
               href="/admin"
               onClick={onClose}
-              className="bg-[#10b981]/8 hover:bg-[#10b981]/14 mx-1 flex items-center gap-2.5 rounded-lg border border-[#10b981]/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-[#10b981]/40 hover:text-[var(--gold-light)]"
+              className="bg-accent/8 hover:bg-accent/14 mx-1 flex items-center gap-2.5 rounded-lg border border-accent/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-accent/40 hover:text-[var(--gold-light)]"
             >
               <ShieldStarIcon size={14} />
               Admin Paneli
-              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--gold)] opacity-85 shadow-[0_0_0_3px_rgba(16,185,129,0.14)]" />
+              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--gold)] opacity-85 shadow-[0_0_0_3px_rgb(var(--gold-rgb)/0.14)]" />
             </Link>
           </div>
         </>

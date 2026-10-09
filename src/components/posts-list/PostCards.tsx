@@ -36,7 +36,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 }) {
   return (
     <Link href={`/posts/${post.id}`} className="group mb-4 block">
-      <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-[#10b981]/40 hover:shadow-[0_16px_56px_rgba(16,185,129,0.12)] sm:h-[340px] lg:h-[420px]">
+      <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-accent/40 hover:shadow-[0_16px_56px_rgb(var(--gold-rgb)/0.12)] sm:h-[340px] lg:h-[420px]">
         <ResilientImage
           src={getPostImageSrc(post.image, post.category)}
           alt={post.title}
@@ -62,7 +62,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 
         <div className="absolute left-5 top-5 flex items-center gap-2">
           <span
-            className="rounded-full border border-[#10b981]/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
+            className="rounded-full border border-accent/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
             style={{ backgroundColor: "var(--bg-overlay)" }}
           >
             {activeTab === "kaydedilenler" ? "Kaydedilen" : "Öne Çıkan"}
@@ -121,10 +121,10 @@ export const PostGridCard = React.memo(function PostGridCard({
 
   return (
     <Link href={`/posts/${post.id}`} className="group block">
-      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-[#10b981]/30 hover:shadow-[0_4px_24px_rgba(16,185,129,0.08)] sm:flex-row">
+      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:flex-row">
         {showIndex && (
           <div className="flex h-9 flex-shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
-            <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-[#10b981]/60">
+            <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-accent/60">
               {String(index + 2).padStart(2, "0")}
             </span>
           </div>
@@ -145,11 +145,11 @@ export const PostGridCard = React.memo(function PostGridCard({
         <div className="flex min-w-0 flex-1 flex-col justify-between p-3.5 sm:p-4">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
-              <span className="flex-shrink-0 rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+              <span className="flex-shrink-0 rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
-                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-[#10b981]/25 bg-[#10b981]/8 px-1.5 py-0.5 text-[9px] font-semibold text-[#10b981]">
+                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold text-accent">
                   <PushPin size={9} weight="fill" /> Sabit
                 </span>
               )}
@@ -230,7 +230,7 @@ export const PostListCard = React.memo(function PostListCard({
 
   return (
     <Link href={`/posts/${post.id}`} className="group block">
-      <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-[#10b981]/30 hover:shadow-[0_4px_24px_rgba(16,185,129,0.08)] sm:px-4">
+      <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:px-4">
         <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
           <ResilientImage
             src={getPostImageSrc(post.image, post.category)}
@@ -244,7 +244,7 @@ export const PostListCard = React.memo(function PostListCard({
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-            <span className="rounded-sm border border-[#10b981]/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
               {getCategoryLabel(post.category)}
             </span>
             {post.years && (

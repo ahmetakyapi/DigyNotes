@@ -84,7 +84,7 @@ export default function RecommendedPageClient() {
         </div>
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <SparkleIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -96,7 +96,7 @@ export default function RecommendedPageClient() {
           </p>
           <Link
             href="/login"
-            className="hover:bg-[#10b981]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 bg-[#10b981]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-accent/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
             Giriş yap
           </Link>
@@ -111,7 +111,7 @@ export default function RecommendedPageClient() {
         </div>
       ) : posts.length === 0 ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -123,7 +123,7 @@ export default function RecommendedPageClient() {
           </p>
           <Link
             href="/notes"
-            className="hover:bg-[#10b981]/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 bg-[#10b981]/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
+            className="hover:bg-accent/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
             <SparkleIcon size={16} weight="duotone" />
             Notlarıma dön
@@ -149,7 +149,7 @@ function RecommendedCard({ post }: { post: Post }) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-[#10b981]/20 hover:shadow-[var(--shadow-card)]">
+    <article className="group overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-accent/20 hover:shadow-[var(--shadow-card)]">
       <Link href={`/posts/${post.id}`} className="block">
         <div className="relative h-48 overflow-hidden bg-[var(--bg-raised)]">
           <ResilientImage
@@ -159,9 +159,9 @@ function RecommendedCard({ post }: { post: Post }) {
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             style={{ objectPosition: post.imagePosition ?? "center" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.88)] via-[rgba(7,12,22,0.1)] to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.88)] via-[rgb(var(--ink-rgb)/0.1)] to-transparent" />
           <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[#10b981]/20 bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="rounded-full border border-accent/20 bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               {getCategoryLabel(post.category)}
             </span>
             {post.status && <StatusBadge status={post.status} />}
@@ -170,7 +170,7 @@ function RecommendedCard({ post }: { post: Post }) {
 
         <div className="space-y-3 p-5">
           {post.user?.username && (
-            <div className="bg-[#10b981]/8 inline-flex rounded-full border border-[#10b981]/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <div className="bg-accent/8 inline-flex rounded-full border border-accent/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
               Benzer ilgi alanı
             </div>
           )}

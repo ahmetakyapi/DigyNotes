@@ -179,7 +179,7 @@ export default function NotificationsPage() {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <BellIcon size={24} weight="duotone" />
           </div>
           <h1 className="text-xl font-bold text-[var(--text-primary)]">Bildirimler</h1>
@@ -190,7 +190,7 @@ export default function NotificationsPage() {
             <button
               type="button"
               onClick={() => signIn()}
-              className="rounded-lg bg-[#10b981] px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95"
+              className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95"
             >
               Giriş yap
             </button>
@@ -222,7 +222,7 @@ export default function NotificationsPage() {
             type="button"
             onClick={markAllRead}
             disabled={markingAll || unreadCount === 0}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[#10b981]/30 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
             {markingAll ? "İşleniyor..." : "Tümünü okundu yap"}
@@ -266,7 +266,7 @@ export default function NotificationsPage() {
             onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
             className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors duration-200 ${
               activeFilter === filter.key
-                ? "bg-[#10b981] text-white"
+                ? "bg-accent text-[var(--text-on-accent)]"
                 : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             }`}
           >
@@ -292,7 +292,7 @@ export default function NotificationsPage() {
         </div>
       ) : notifications.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <BellRingingIcon size={24} weight="duotone" />
           </div>
           <p className="text-sm font-medium text-[var(--text-secondary)]">Henüz bildirimin yok</p>
@@ -374,7 +374,7 @@ function NotificationCard({
       }}
       className={`group block rounded-2xl border px-4 py-4 transition-all duration-200 hover:-translate-y-0.5 ${
         notification.read
-          ? "border-[var(--border)] bg-[var(--bg-card)] hover:border-[#10b981]/20"
+          ? "border-[var(--border)] bg-[var(--bg-card)] hover:border-accent/20"
           : "border-[var(--gold)]/25 bg-[var(--gold)]/6 hover:border-[var(--gold)]/40"
       }`}
     >

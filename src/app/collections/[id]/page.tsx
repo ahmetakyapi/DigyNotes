@@ -242,7 +242,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <p className="mt-2 text-sm text-[var(--text-muted)]">
             Bu koleksiyon silinmiş olabilir veya görüntüleme iznin olmayabilir.
           </p>
-          <Link href="/collections" className="mt-4 inline-flex text-sm text-[#34d399]">
+          <Link href="/collections" className="mt-4 inline-flex text-sm text-accent-light">
             ← Koleksiyonlara dön
           </Link>
         </div>
@@ -256,7 +256,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="bg-[#10b981]/8 rounded-full border border-[#10b981]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#34d399]">
+              <span className="bg-accent/8 rounded-full border border-accent/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent-light">
                 Koleksiyon
               </span>
               <span className="text-xs text-[var(--text-faint)]">
@@ -271,7 +271,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     maxLength={80}
-                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/60 sm:text-sm"
+                    className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
                   />
                 </label>
                 <label className="space-y-2">
@@ -281,7 +281,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     onChange={(event) => setDescription(event.target.value)}
                     rows={3}
                     maxLength={400}
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/60 sm:text-sm"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
                   />
                 </label>
               </div>
@@ -301,7 +301,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     {collection.owner.username ? (
                       <Link
                         href={`/profile/${collection.owner.username}`}
-                        className="text-[#34d399] hover:text-[#6ee7b7]"
+                        className="text-accent-light hover:text-accent-light"
                       >
                         {collection.owner.name}
                       </Link>
@@ -319,13 +319,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               type="button"
               onClick={() => void copyCollectionLink()}
               disabled={isCopyingLink}
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[#34d399] disabled:opacity-50"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light disabled:opacity-50"
             >
               {isCopyingLink ? "Kopyalanıyor..." : "Bağlantıyı Kopyala"}
             </button>
             <Link
               href="/collections"
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[#34d399]"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light"
             >
               Tüm Koleksiyonlar
             </Link>
@@ -335,7 +335,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   type="button"
                   onClick={saveCollection}
                   disabled={isSaving || !hasUnsavedChanges || title.trim() === ""}
-                  className="rounded-xl bg-[#10b981] hover:bg-[#059669] px-4 py-2 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-xl bg-accent hover:bg-accent-dark px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] transition-all disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSaving
                     ? "Kaydediliyor..."
@@ -409,7 +409,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={postQuery}
                 onChange={(event) => setPostQuery(event.target.value)}
                 placeholder="Eklemek için not ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/60 sm:text-sm"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-base)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
               />
               <p className="mt-2 text-[11px] text-[var(--text-faint)]">
                 {availablePosts.length} uygun not bulundu
@@ -422,7 +422,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               <button
                 type="button"
                 onClick={() => setPostQuery("")}
-                className="text-xs font-medium text-[#34d399] transition-colors hover:text-[#6ee7b7]"
+                className="text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
               >
                 Aramayı temizle
               </button>
@@ -454,7 +454,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-[#10b981]/20 px-2 py-0.5 text-[10px] text-[#34d399]">
+                        <span className="rounded-full border border-accent/20 px-2 py-0.5 text-[10px] text-accent-light">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -472,7 +472,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       type="button"
                       onClick={() => mutatePost(post.id, "POST")}
                       disabled={pendingPostId === post.id}
-                      className="rounded-xl bg-[#10b981] hover:bg-[#059669] px-3 py-2 text-xs font-semibold text-white transition-all disabled:opacity-50"
+                      className="rounded-xl bg-accent hover:bg-accent-dark px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all disabled:opacity-50"
                     >
                       {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona ekle"}
                     </button>
@@ -489,7 +489,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                         Math.min(count + 12, availablePosts.length)
                       )
                     }
-                    className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[#34d399]"
+                    className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light"
                   >
                     Daha fazla göster
                   </button>
@@ -514,13 +514,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 value={collectionQuery}
                 onChange={(event) => setCollectionQuery(event.target.value)}
                 placeholder="Koleksiyon içinde ara..."
-                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-[#10b981]/60 sm:text-sm"
+                className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/60 sm:text-sm"
               />
               {collectionQuery.trim() && (
                 <button
                   type="button"
                   onClick={() => setCollectionQuery("")}
-                  className="self-end text-xs font-medium text-[#34d399] transition-colors hover:text-[#6ee7b7]"
+                  className="self-end text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
                 >
                   Aramayı temizle
                 </button>
@@ -541,7 +541,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
             <button
               type="button"
               onClick={() => setCollectionQuery("")}
-              className="mt-3 text-xs font-medium text-[#34d399] transition-colors hover:text-[#6ee7b7]"
+              className="mt-3 text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
             >
               Aramayı temizle
             </button>
@@ -567,14 +567,14 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 </Link>
                 <div className="space-y-3 p-4">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[#10b981]/20 px-2 py-0.5 text-[10px] text-[#34d399]">
+                    <span className="rounded-full border border-accent/20 px-2 py-0.5 text-[10px] text-accent-light">
                       {getCategoryLabel(post.category)}
                     </span>
                     {post.status && <StatusBadge status={post.status} />}
                   </div>
                   <div>
                     <Link href={`/posts/${post.id}`}>
-                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--text-primary)] hover:text-[#34d399]">
+                      <h3 className="line-clamp-2 text-lg font-semibold text-[var(--text-primary)] hover:text-accent-light">
                         {formatDisplayTitle(post.title)}
                       </h3>
                     </Link>

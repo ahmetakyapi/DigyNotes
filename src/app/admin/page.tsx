@@ -556,11 +556,11 @@ export default function AdminPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[#10b981]/20 bg-[#10b981]/10">
-                <Star size={14} weight="fill" className="text-[#10b981]" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
+                <Star size={14} weight="fill" className="text-accent" />
               </div>
               <span className="text-sm font-bold text-[var(--text-primary)]">Admin Paneli</span>
-              <span className="hidden rounded-lg border border-[#10b981]/20 bg-[#10b981]/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#10b981] sm:inline">
+              <span className="hidden rounded-lg border border-accent/20 bg-accent/8 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent sm:inline">
                 DigyNotes
               </span>
             </div>
@@ -573,7 +573,7 @@ export default function AdminPage() {
                   onClick={() => setTab(t.key)}
                   className={`flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition-all duration-200 ${
                     tab === t.key
-                      ? "bg-[var(--gold)] text-white shadow-[0_2px_10px_rgba(16,185,129,0.3)]"
+                      ? "bg-[var(--gold)] text-white shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                       : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -611,13 +611,13 @@ export default function AdminPage() {
                   <KpiCard
                     value={stats.kpi.totalUsers}
                     label="Kullanıcı"
-                    color="#10b981"
+                    color="var(--gold)"
                     icon={<Users size={16} weight="duotone" />}
                   />
                   <KpiCard
                     value={stats.kpi.totalPosts}
                     label="Not"
-                    color="#34d399"
+                    color="var(--gold-light)"
                     icon={<Notebook size={16} weight="duotone" />}
                   />
                   <KpiCard
@@ -660,8 +660,8 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
                   <Card
                     title={`Not Aktivitesi — Son ${SERIES_LABELS[seriesRange]}`}
-                    icon={<TrendUp size={14} weight="bold" className="text-[#34d399]" />}
-                    accent="#34d399"
+                    icon={<TrendUp size={14} weight="bold" className="text-accent-light" />}
+                    accent="var(--gold-light)"
                   >
                     <ResponsiveContainer width="100%" height={200}>
                       <AreaChart
@@ -670,8 +670,8 @@ export default function AdminPage() {
                       >
                         <defs>
                           <linearGradient id="adminG1" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#34d399" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
+                            <stop offset="0%" stopColor="var(--gold-light)" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="var(--gold-light)" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -685,15 +685,15 @@ export default function AdminPage() {
                         />
                         <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Area type="monotone" dataKey="posts" name="Not" stroke="#34d399" strokeWidth={2} fill="url(#adminG1)" dot={false} activeDot={{ r: 4, fill: "#34d399", strokeWidth: 0 }} />
+                        <Area type="monotone" dataKey="posts" name="Not" stroke="var(--gold-light)" strokeWidth={2} fill="url(#adminG1)" dot={false} activeDot={{ r: 4, fill: "var(--gold-light)", strokeWidth: 0 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Card>
 
                   <Card
                     title={`Yeni Kullanıcı — Son ${SERIES_LABELS[seriesRange]}`}
-                    icon={<UserPlus size={14} weight="bold" className="text-[#10b981]" />}
-                    accent="#10b981"
+                    icon={<UserPlus size={14} weight="bold" className="text-accent" />}
+                    accent="var(--gold)"
                   >
                     <ResponsiveContainer width="100%" height={200}>
                       <AreaChart
@@ -702,8 +702,8 @@ export default function AdminPage() {
                       >
                         <defs>
                           <linearGradient id="adminG2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
-                            <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                            <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.25} />
+                            <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -717,7 +717,7 @@ export default function AdminPage() {
                         />
                         <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Area type="monotone" dataKey="users" name="Kullanıcı" stroke="#10b981" strokeWidth={2} fill="url(#adminG2)" dot={false} activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }} />
+                        <Area type="monotone" dataKey="users" name="Kullanıcı" stroke="var(--gold)" strokeWidth={2} fill="url(#adminG2)" dot={false} activeDot={{ r: 4, fill: "var(--gold)", strokeWidth: 0 }} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Card>
@@ -728,8 +728,8 @@ export default function AdminPage() {
                   <div className="lg:col-span-2">
                     <Card
                       title="Durum Dağılımı"
-                      icon={<ChartPie size={14} weight="bold" className="text-[#10b981]" />}
-                      accent="#10b981"
+                      icon={<ChartPie size={14} weight="bold" className="text-accent" />}
+                      accent="var(--gold)"
                     >
                       <div className="flex items-center gap-3">
                         <ResponsiveContainer width={140} height={140}>
@@ -773,7 +773,7 @@ export default function AdminPage() {
                           <XAxis type="number" tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                           <YAxis type="category" dataKey="category" tick={{ fill: "var(--text-secondary)", fontSize: 11 }} width={68} axisLine={false} tickLine={false} />
                           <Tooltip content={<DarkTooltip />} />
-                          <Bar dataKey="count" name="Not" fill="#10b981" radius={[0, 6, 6, 0]} barSize={14} />
+                          <Bar dataKey="count" name="Not" fill="var(--gold)" radius={[0, 6, 6, 0]} barSize={14} />
                         </BarChart>
                       </ResponsiveContainer>
                     </Card>
@@ -784,14 +784,14 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
                   <Card
                     title="En Aktif Kullanıcılar"
-                    icon={<Users size={14} weight="bold" className="text-[#10b981]" />}
-                    accent="#10b981"
+                    icon={<Users size={14} weight="bold" className="text-accent" />}
+                    accent="var(--gold)"
                   >
                     <div className="space-y-2.5">
                       {stats.topUsers.map((u, i) => {
                         const maxPosts = stats.topUsers[0]?.postCount ?? 1;
                         const pct = maxPosts > 0 ? (u.postCount / maxPosts) * 100 : 0;
-                        const rankColors = ["#10b981", "#94a8c8", "#c8b090"];
+                        const rankColors = ["var(--gold)", "#94a8c8", "#c8b090"];
                         const rc = rankColors[i] ?? "var(--text-muted)";
                         return (
                           <div
@@ -837,9 +837,9 @@ export default function AdminPage() {
                         <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: "var(--text-muted)", fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip content={<DarkTooltip />} />
-                        <Bar dataKey="count" name="Not" fill="#34d399" radius={[6, 6, 0, 0]}>
+                        <Bar dataKey="count" name="Not" fill="var(--gold-light)" radius={[6, 6, 0, 0]}>
                           {stats.ratingDistribution.map((_, i) => (
-                            <Cell key={i} fill={i === stats.ratingDistribution.length - 1 ? "#10b981" : "#34d399"} />
+                            <Cell key={i} fill={i === stats.ratingDistribution.length - 1 ? "var(--gold)" : "var(--gold-light)"} />
                           ))}
                         </Bar>
                       </BarChart>
@@ -850,8 +850,8 @@ export default function AdminPage() {
                 {/* Tag cloud */}
                 <Card
                   title="Popüler Etiketler"
-                  icon={<Tag size={14} weight="bold" className="text-[#34d399]" />}
-                  accent="#34d399"
+                  icon={<Tag size={14} weight="bold" className="text-accent-light" />}
+                  accent="var(--gold-light)"
                 >
                   <div className="flex flex-wrap gap-2">
                     {stats.topTags.map((tag) => {
@@ -862,9 +862,9 @@ export default function AdminPage() {
                           key={tag.name}
                           className="rounded-lg border px-2.5 py-1 text-xs font-medium transition-all duration-200 hover:scale-105"
                           style={{
-                            borderColor: `rgba(16,185,129,${t * 0.35})`,
-                            background: `rgba(16,185,129,${t * 0.08})`,
-                            color: `rgba(16,185,129,${t + 0.1})`,
+                            borderColor: `rgb(var(--gold-rgb) / ${t * 0.35})`,
+                            background: `rgb(var(--gold-rgb) / ${t * 0.08})`,
+                            color: `rgb(var(--gold-rgb) / ${t + 0.1})`,
                           }}
                         >
                           #{tag.name}
@@ -907,7 +907,7 @@ export default function AdminPage() {
                 </span>
                 <div className="flex flex-wrap gap-2 sm:ml-auto">
                   <button onClick={() => runBulkAction("ban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#fb923c]/30 bg-[#fb923c]/10 px-3 py-1.5 text-[12px] font-semibold text-[#fb923c] transition-all duration-200 hover:bg-[#fb923c]/20 disabled:opacity-50">Banla</button>
-                  <button onClick={() => runBulkAction("unban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#34d399]/30 bg-[#34d399]/10 px-3 py-1.5 text-[12px] font-semibold text-[#34d399] transition-all duration-200 hover:bg-[#34d399]/20 disabled:opacity-50">Ban Kaldır</button>
+                  <button onClick={() => runBulkAction("unban")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-accent-light/30 bg-accent-light/10 px-3 py-1.5 text-[12px] font-semibold text-accent-light transition-all duration-200 hover:bg-accent-light/20 disabled:opacity-50">Ban Kaldır</button>
                   <button onClick={() => runBulkAction("delete")} disabled={bulkLoading} className="cursor-pointer rounded-lg border border-[#e53e3e]/30 bg-[#e53e3e]/10 px-3 py-1.5 text-[12px] font-semibold text-[#e53e3e] transition-all duration-200 hover:bg-[#e53e3e]/20 disabled:opacity-50">Sil</button>
                   <button onClick={() => setSelectedUsers(new Set())} className="cursor-pointer rounded-lg px-3 py-1.5 text-[12px] text-[var(--text-muted)] hover:text-[var(--text-secondary)]">İptal</button>
                 </div>
@@ -918,25 +918,25 @@ export default function AdminPage() {
               {/* Mobile card list */}
               <div className="md:hidden">
                 <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-2.5">
-                  <input type="checkbox" className="accent-[#10b981]" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} />
+                  <input type="checkbox" className="accent-accent" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} />
                   <span className="text-[11px] font-semibold text-[var(--text-muted)]">Tümünü Seç</span>
                 </div>
                 {loadingUsers ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
                 ) : (
                   <div className="divide-y divide-[var(--border)]">
                     {users.map((u) => (
                       <div key={u.id} className={`flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
-                        <input type="checkbox" className="mt-1.5 accent-[#10b981]" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} />
-                        <div className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-[#10b981]" onClick={() => router.push(`/admin/users/${u.id}`)}>
+                        <input type="checkbox" className="mt-1.5 accent-accent" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} />
+                        <div className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[var(--bg-raised)] text-sm font-bold text-accent" onClick={() => router.push(`/admin/users/${u.id}`)}>
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0 flex-1 cursor-pointer" onClick={() => router.push(`/admin/users/${u.id}`)}>
                           <div className="flex flex-wrap items-center gap-1.5">
                             <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
-                            {u.isAdmin && <span className="rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">admin</span>}
+                            {u.isAdmin && <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">admin</span>}
                             {u.isBanned && <span className="rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
-                            <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-[#34d399]/15 text-[#34d399]" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık profil" : "gizli profil"}</span>
+                            <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-accent-light/15 text-accent-light" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık profil" : "gizli profil"}</span>
                           </div>
                           {u.username && <p className="text-[11px] text-[var(--text-muted)]">@{u.username}</p>}
                           <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">{u.email}</p>
@@ -948,8 +948,8 @@ export default function AdminPage() {
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-2.5">
                           <div className="flex items-center gap-3">
-                            <ToggleSwitch label="Admin" active={u.isAdmin} color="#10b981" onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} />
-                            <ToggleSwitch label="Açık" active={u.isPublic} color="#34d399" onClick={(e) => { e.stopPropagation(); togglePublic(u); }} />
+                            <ToggleSwitch label="Admin" active={u.isAdmin} color="var(--gold)" onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} />
+                            <ToggleSwitch label="Açık" active={u.isPublic} color="var(--gold-light)" onClick={(e) => { e.stopPropagation(); togglePublic(u); }} />
                             <ToggleSwitch label="Ban" active={u.isBanned} color="#e53e3e" onClick={(e) => { e.stopPropagation(); toggleBan(u); }} />
                           </div>
                           <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(u); }} className="cursor-pointer rounded-lg border border-[#e53e3e]/20 px-2.5 py-1 text-[11px] font-medium text-[#e53e3e]/70 transition-colors duration-200 hover:bg-[#e53e3e]/10 hover:text-[#e53e3e]">Sil</button>
@@ -965,7 +965,7 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-[var(--border)]">
-                      <th className="px-4 py-3"><input type="checkbox" className="accent-[#10b981]" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} /></th>
+                      <th className="px-4 py-3"><input type="checkbox" className="accent-accent" checked={users.length > 0 && selectedUsers.size === users.length} onChange={toggleSelectAll} /></th>
                       {["Kullanıcı", "E-posta", "Not", "Takipçi", "Katılım", "Admin", "Açık", "Ban", "İşlem"].map((h) => (
                         <th key={h} className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">{h}</th>
                       ))}
@@ -973,20 +973,20 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {loadingUsers ? (
-                      <tr><td colSpan={10} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
+                      <tr><td colSpan={10} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
                     ) : (
                       users.map((u) => (
                         <tr key={u.id} className={`group border-b border-[var(--border)] transition-colors duration-200 hover:bg-[var(--bg-raised)] ${u.isBanned ? "opacity-60" : ""}`}>
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}><input type="checkbox" className="accent-[#10b981]" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} /></td>
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}><input type="checkbox" className="accent-accent" checked={selectedUsers.has(u.id)} onChange={() => toggleSelectUser(u.id)} /></td>
                           <td className="cursor-pointer px-4 py-3" onClick={() => router.push(`/admin/users/${u.id}`)}>
                             <div className="flex items-center gap-2.5">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-[#10b981]">{u.name.charAt(0).toUpperCase()}</div>
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-xs font-bold text-accent">{u.name.charAt(0).toUpperCase()}</div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
                                   <p className="truncate font-medium text-[var(--text-primary)]">{u.name}</p>
-                                  {u.isAdmin && <span className="shrink-0 rounded bg-[#10b981]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#10b981]">admin</span>}
+                                  {u.isAdmin && <span className="shrink-0 rounded bg-accent/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent">admin</span>}
                                   {u.isBanned && <span className="shrink-0 rounded bg-[#e53e3e]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#e53e3e]">ban</span>}
-                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-[#34d399]/15 text-[#34d399]" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık" : "gizli"}</span>
+                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${u.isPublic ? "bg-accent-light/15 text-accent-light" : "bg-[var(--bg-raised)] text-[var(--text-muted)]"}`}>{u.isPublic ? "açık" : "gizli"}</span>
                                 </div>
                                 {u.username && <p className="text-[10px] text-[var(--text-muted)]">@{u.username}</p>}
                               </div>
@@ -997,12 +997,12 @@ export default function AdminPage() {
                           <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">{u.followerCount}</td>
                           <td className="px-4 py-3 text-center text-[10px] text-[var(--text-muted)]">{new Date(u.createdAt).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" })}</td>
                           <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"}`}>
+                            <button onClick={(e) => { e.stopPropagation(); toggleAdmin(u); }} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isAdmin ? "bg-accent" : "bg-[var(--bg-raised)]"}`}>
                               <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isAdmin ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili gizle" : "Profili herkese aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}>
+                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili gizle" : "Profili herkese aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}>
                               <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isPublic ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>
@@ -1049,7 +1049,7 @@ export default function AdminPage() {
               {/* Mobile */}
               <div className="md:hidden">
                 {loadingPosts ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
                 ) : posts.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</div>
                 ) : (
@@ -1060,7 +1060,7 @@ export default function AdminPage() {
                           <p className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]" onClick={() => router.push(`/posts/${p.id}`)}>{p.title}</p>
                           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
                             <span>{p.category}</span>
-                            {p.user && <span className="flex items-center gap-1"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-[#10b981]">{p.user.name.charAt(0).toUpperCase()}</span>{p.user.name}</span>}
+                            {p.user && <span className="flex items-center gap-1"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[8px] font-bold text-accent">{p.user.name.charAt(0).toUpperCase()}</span>{p.user.name}</span>}
                             <span>{fmtShortDate(p.createdAt)}</span>
                             {p.rating > 0 && <span className="text-[var(--gold)]">★ {p.rating.toFixed(1)}</span>}
                           </div>
@@ -1088,7 +1088,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {loadingPosts ? (
-                      <tr><td colSpan={7} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
+                      <tr><td colSpan={7} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
                     ) : posts.length === 0 ? (
                       <tr><td colSpan={7} className="py-16 text-center text-sm text-[var(--text-muted)]">Not bulunamadı</td></tr>
                     ) : (
@@ -1101,7 +1101,7 @@ export default function AdminPage() {
                           <td className="px-4 py-3">
                             {p.user ? (
                               <div className="flex items-center gap-2">
-                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">{p.user.name.charAt(0).toUpperCase()}</div>
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-accent">{p.user.name.charAt(0).toUpperCase()}</div>
                                 <span className="text-[11px] text-[var(--text-muted)]">{p.user.name}</span>
                               </div>
                             ) : <span className="text-xs text-[var(--text-muted)]">—</span>}
@@ -1145,7 +1145,7 @@ export default function AdminPage() {
               accent="#60a5fa"
             >
               {loadingLogs ? (
-                <div className="flex h-32 items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
+                <div className="flex h-32 items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
               ) : (
                 <ResponsiveContainer width="100%" height={160}>
                   <BarChart data={chartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
@@ -1179,7 +1179,7 @@ export default function AdminPage() {
               {/* Mobile */}
               <div className="md:hidden">
                 {loadingLogs ? (
-                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></div>
+                  <div className="flex justify-center py-12"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></div>
                 ) : logs.length === 0 ? (
                   <div className="py-12 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</div>
                 ) : (
@@ -1197,7 +1197,7 @@ export default function AdminPage() {
                             </div>
                             {log.user && (
                               <div className="flex items-center gap-1.5">
-                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-[#10b981]">{log.user.name.charAt(0).toUpperCase()}</div>
+                                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[9px] font-bold text-accent">{log.user.name.charAt(0).toUpperCase()}</div>
                                 <span className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</span>
                                 {log.user.username && <span className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</span>}
                               </div>
@@ -1225,7 +1225,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {loadingLogs ? (
-                      <tr><td colSpan={4} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[#10b981]" /></td></tr>
+                      <tr><td colSpan={4} className="py-16 text-center"><div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" /></td></tr>
                     ) : logs.length === 0 ? (
                       <tr><td colSpan={4} className="py-16 text-center text-sm text-[var(--text-muted)]">Henüz aktivite kaydı yok</td></tr>
                     ) : (
@@ -1238,7 +1238,7 @@ export default function AdminPage() {
                             <td className="px-4 py-3">
                               {log.user ? (
                                 <div className="flex items-center gap-2">
-                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-[#10b981]">{log.user.name.charAt(0).toUpperCase()}</div>
+                                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-raised)] text-[10px] font-bold text-accent">{log.user.name.charAt(0).toUpperCase()}</div>
                                   <div>
                                     <p className="text-[12px] text-[var(--text-secondary)]">{log.user.name}</p>
                                     {log.user.username && <p className="text-[10px] text-[var(--text-muted)]">@{log.user.username}</p>}
@@ -1276,8 +1276,8 @@ export default function AdminPage() {
                 {/* Registration */}
                 <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_20%,transparent)]">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#34d399]/20 bg-[#34d399]/10">
-                      <UserPlus size={16} weight="duotone" className="text-[#34d399]" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-accent-light/20 bg-accent-light/10">
+                      <UserPlus size={16} weight="duotone" className="text-accent-light" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-sm font-semibold text-[var(--text-primary)]">Yeni Kayıt</h3>
@@ -1286,13 +1286,13 @@ export default function AdminPage() {
                     <button
                       onClick={() => saveSettings({ registrationEnabled: settings.registrationEnabled === "true" ? "false" : "true" })}
                       disabled={savingSettings}
-                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.registrationEnabled === "true" ? "bg-[#34d399]" : "bg-[var(--bg-raised)]"}`}
+                      className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-all duration-200 disabled:opacity-50 ${settings.registrationEnabled === "true" ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}
                     >
                       <span className={`absolute h-4 w-4 rounded-full bg-white shadow transition-all duration-200 ${settings.registrationEnabled === "true" ? "left-[22px]" : "left-[3px]"}`} />
                     </button>
                   </div>
-                  <div className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${settings.registrationEnabled === "true" ? "border-[#34d399]/20 bg-[#34d399]/10 text-[#34d399]" : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"}`}>
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: settings.registrationEnabled === "true" ? "#34d399" : "#e53e3e" }} />
+                  <div className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold ${settings.registrationEnabled === "true" ? "border-accent-light/20 bg-accent-light/10 text-accent-light" : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"}`}>
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: settings.registrationEnabled === "true" ? "var(--gold-light)" : "#e53e3e" }} />
                     {settings.registrationEnabled === "true" ? "Kayıt Açık" : "Kayıt Kapalı"}
                   </div>
                 </div>

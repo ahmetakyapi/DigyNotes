@@ -100,8 +100,8 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[70] flex justify-center px-4">
-      <div className="border-[#10b981]/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgba(3,8,20,0.38)] backdrop-blur-xl">
-        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-[#10b981]/25 bg-[#10b981]/10 text-[var(--gold)]">
+      <div className="border-accent/24 bg-[var(--bg-card)]/94 pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgb(var(--ink-rgb)/0.38)] backdrop-blur-xl">
+        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-accent/25 bg-accent/10 text-[var(--gold)]">
           <DownloadSimpleIcon size={18} />
         </div>
 
@@ -123,7 +123,7 @@ export function PwaInstallPrompt() {
           <button
             type="button"
             onClick={() => void handleInstall()}
-            className="rounded-lg bg-[#10b981] px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#059669] active:scale-95"
+            className="rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95"
           >
             Yükle
           </button>

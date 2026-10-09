@@ -313,7 +313,7 @@ export function PostsList({
               <button
                 onClick={() => currentLoadMore?.()}
                 disabled={!currentHasMore || currentIsLoadingMore}
-                className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {(() => {
                   if (currentIsLoadingMore) return "Daha fazla yükleniyor...";

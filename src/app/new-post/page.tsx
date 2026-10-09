@@ -34,10 +34,10 @@ import { stripHtml } from "@/lib/text";
 import { useAutoSave } from "@/hooks/useAutoSave";
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 
 function flashClass(flashed: boolean) {
-  return flashed ? "ring-2 ring-[#10b981]/40 border-[#10b981]/50" : "";
+  return flashed ? "ring-2 ring-accent/40 border-accent/50" : "";
 }
 
 export default function NewPostPage() {
@@ -555,7 +555,7 @@ export default function NewPostPage() {
               type="button"
               onClick={doSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-[#10b981] hover:bg-[#059669] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isSubmitting ? (
                 <>

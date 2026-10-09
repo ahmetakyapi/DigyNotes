@@ -49,7 +49,7 @@ export function useCardTilt(rotationDeg = 6, shineRadius = 480) {
 
   const shineX = useTransform(mx, [0, 1], ['0%', '100%'])
   const shineY = useTransform(my, [0, 1], ['0%', '100%'])
-  const shine  = useMotionTemplate`radial-gradient(${shineRadius}px circle at ${shineX} ${shineY}, rgba(16,185,129,0.08), rgba(6,182,212,0.04), transparent 70%)`
+  const shine  = useMotionTemplate`radial-gradient(${shineRadius}px circle at ${shineX} ${shineY}, rgb(var(--gold-rgb)/0.08), rgb(var(--accent-2-rgb)/0.04), transparent 70%)`
 
   return { ref, rx, ry, shine, onMove, onLeave }
 }

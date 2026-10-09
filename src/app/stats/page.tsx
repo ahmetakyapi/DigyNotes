@@ -52,7 +52,7 @@ interface StatsData {
 }
 
 /* ── Constants ── */
-const CHART_COLORS = ["#10b981", "#34d399", "#6888c0", "#c8b090", "#f472b6", "#fb923c"];
+const CHART_COLORS = ["var(--gold)", "var(--gold-light)", "#6888c0", "#c8b090", "#f472b6", "#fb923c"];
 
 const TOOLTIP_STYLE = {
   background: "var(--bg-card)",
@@ -101,7 +101,7 @@ function ChartCard({
 }) {
   return (
     <section
-      className={`group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgba(16,185,129,0.04)] ${className}`}
+      className={`group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgb(var(--gold-rgb)/0.04)] ${className}`}
     >
       <SectionHeader icon={icon} title={title} accent={accent} />
       {children}
@@ -181,7 +181,7 @@ export default function PersonalStatsPage() {
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <PageHeader />
         <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(16,185,129,0.1)]">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgb(var(--gold-rgb)/0.1)]">
             <ChartBar size={24} weight="duotone" className="text-[var(--gold)]" />
           </div>
           <p className="text-base font-semibold text-[var(--text-primary)]">
@@ -210,7 +210,7 @@ export default function PersonalStatsPage() {
       {/* ═══ Hero Insight ═══ */}
       <section className="relative mb-8 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-soft)]">
         {/* Decorative gradient mesh */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_10%_20%,rgba(16,185,129,0.12),transparent_60%),radial-gradient(ellipse_60%_50%_at_90%_80%,rgba(14,165,233,0.08),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_10%_20%,rgb(var(--gold-rgb)/0.12),transparent_60%),radial-gradient(ellipse_60%_50%_at_90%_80%,rgb(var(--accent-2-rgb)/0.08),transparent_50%)]" />
 
         <div className="relative p-6 sm:p-8">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">
@@ -233,7 +233,7 @@ export default function PersonalStatsPage() {
           {/* Insight mini-cards */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <InsightMiniCard
-              icon={<Timer size={14} weight="bold" className="text-[#34d399]" />}
+              icon={<Timer size={14} weight="bold" className="text-accent-light" />}
               label="Ritim"
               value={`${activeMonths}/12 ay aktif`}
               detail={
@@ -285,8 +285,8 @@ export default function PersonalStatsPage() {
           detail={topCategory ? `${topCategory.count} not ile önde` : "Yeterli veri yok"}
         />
         <HighlightCard
-          icon={<TrendUp size={18} weight="duotone" className="text-[#34d399]" />}
-          accent="#34d399"
+          icon={<TrendUp size={18} weight="duotone" className="text-accent-light" />}
+          accent="var(--gold-light)"
           label="En Üretken Dönem"
           value={strongestMonth?.month ?? "-"}
           detail={strongestMonth ? `${strongestMonth.count} not` : "Yeterli veri yok"}
@@ -304,7 +304,7 @@ export default function PersonalStatsPage() {
       <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
         <KpiCard
           icon={<ChartBar size={16} weight="duotone" />}
-          accent="#10b981"
+          accent="var(--gold)"
           label="Toplam Not"
           value={data.kpis.totalPosts}
         />
@@ -322,7 +322,7 @@ export default function PersonalStatsPage() {
         />
         <KpiCard
           icon={<Hash size={16} weight="duotone" />}
-          accent="#34d399"
+          accent="var(--gold-light)"
           label="Benzersiz Etiket"
           value={data.kpis.uniqueTags}
         />
@@ -332,17 +332,17 @@ export default function PersonalStatsPage() {
       <div className="grid gap-5 lg:grid-cols-2">
         {/* Monthly Production */}
         <ChartCard
-          icon={<TrendUp size={14} weight="bold" className="text-[#10b981]" />}
+          icon={<TrendUp size={14} weight="bold" className="text-accent" />}
           title="Aylık Üretim"
-          accent="#10b981"
+          accent="var(--gold)"
         >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.monthlySeries} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                 <defs>
                   <linearGradient id="statsAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--gold)" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
@@ -353,11 +353,11 @@ export default function PersonalStatsPage() {
                   type="monotone"
                   dataKey="count"
                   name="Not"
-                  stroke="#10b981"
+                  stroke="var(--gold)"
                   fill="url(#statsAreaGrad)"
                   strokeWidth={2.5}
                   dot={false}
-                  activeDot={{ r: 5, fill: "#10b981", stroke: "var(--bg-card)", strokeWidth: 2 }}
+                  activeDot={{ r: 5, fill: "var(--gold)", stroke: "var(--bg-card)", strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -428,8 +428,8 @@ export default function PersonalStatsPage() {
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgba(16,185,129,0.06)" }} />
-                <Bar dataKey="count" name="Not" radius={[8, 8, 0, 0]} fill="#10b981" />
+                <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }} />
+                <Bar dataKey="count" name="Not" radius={[8, 8, 0, 0]} fill="var(--gold)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -437,9 +437,9 @@ export default function PersonalStatsPage() {
 
         {/* Status & Tags */}
         <ChartCard
-          icon={<Hash size={14} weight="bold" className="text-[#34d399]" />}
+          icon={<Hash size={14} weight="bold" className="text-accent-light" />}
           title="Durumlar ve Etiketler"
-          accent="#34d399"
+          accent="var(--gold-light)"
         >
           <div className="grid gap-6 sm:grid-cols-2">
             {/* Statuses */}
@@ -460,7 +460,7 @@ export default function PersonalStatsPage() {
                       </div>
                       <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-raised)]">
                         <div
-                          className="h-full rounded-full bg-[#10b981] transition-all duration-500"
+                          className="h-full rounded-full bg-accent transition-all duration-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -570,7 +570,7 @@ function HighlightCard({
   detail: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgba(16,185,129,0.04)]">
+    <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)] hover:shadow-[0_0_32px_rgb(var(--gold-rgb)/0.04)]">
       {/* Accent line at top */}
       <div
         className="absolute left-0 right-0 top-0 h-[2px] opacity-60 transition-opacity duration-300 group-hover:opacity-100"

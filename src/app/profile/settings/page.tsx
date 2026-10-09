@@ -8,7 +8,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
 
 const inputBase =
-  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 transition-all text-[16px] sm:text-sm";
+  "w-full px-4 py-3 rounded-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 transition-all text-[16px] sm:text-sm";
 const labelClass =
   "block text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2";
 const sectionClass = "rounded-xl bg-[var(--bg-card)] border border-[var(--border)] p-5";
@@ -292,7 +292,7 @@ export default function ProfileSettingsPage() {
                     unoptimized
                   />
                 ) : (
-                  <span className="text-2xl font-semibold text-[#34d399]">
+                  <span className="text-2xl font-semibold text-accent-light">
                     {profile?.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -361,7 +361,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => setIsPublic((v) => !v)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isPublic ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"
+                  isPublic ? "bg-accent" : "bg-[var(--bg-raised)]"
                 }`}
               >
                 <span
@@ -423,7 +423,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={handlePasswordChange}
                 disabled={changingPassword || !currentPassword || !newPassword || newPassword !== confirmPassword || newPassword.length < 8}
-                className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors hover:border-[#10b981]/30 hover:text-[#34d399] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors hover:border-accent/30 hover:text-accent-light disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {changingPassword ? "Güncelleniyor..." : "Şifreyi Güncelle"}
               </button>
@@ -448,7 +448,7 @@ export default function ProfileSettingsPage() {
                   type="button"
                   onClick={toggleTheme}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    theme === "dark" ? "bg-[#10b981]" : "bg-[var(--bg-raised)]"
+                    theme === "dark" ? "bg-accent" : "bg-[var(--bg-raised)]"
                   }`}
                 >
                   <span
@@ -462,7 +462,7 @@ export default function ProfileSettingsPage() {
               {/* Bildirimler link */}
               <Link
                 href="/notifications"
-                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-[#10b981]/30"
+                className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 transition-colors hover:border-accent/30"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
@@ -506,7 +506,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => handleExport("csv")}
                 disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#10b981]/30 disabled:opacity-50"
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-accent/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
@@ -522,7 +522,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => handleExport("json")}
                 disabled={exportingFormat !== null}
-                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-[#10b981]/30 disabled:opacity-50"
+                className="flex w-full items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-3 text-left transition-colors hover:border-accent/30 disabled:opacity-50"
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
@@ -539,7 +539,7 @@ export default function ProfileSettingsPage() {
               <div
                 className={`mt-3 rounded-xl border px-4 py-3 text-sm ${
                   exportMessage.tone === "success"
-                    ? "border-[#34d399]/20 bg-[#34d399]/10 text-[#34d399]"
+                    ? "border-accent-light/20 bg-accent-light/10 text-accent-light"
                     : "border-[#e53e3e]/20 bg-[#e53e3e]/10 text-[#e53e3e]"
                 }`}
               >
@@ -577,7 +577,7 @@ export default function ProfileSettingsPage() {
                 usernameStatus === "invalid" ||
                 usernameStatus === "checking"
               }
-              className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-6 py-2.5 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-accent hover:bg-accent-dark px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Kaydediliyor..." : "Kaydet"}
             </button>

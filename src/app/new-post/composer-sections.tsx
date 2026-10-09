@@ -19,14 +19,14 @@ import { getTemplateSignature } from "@/lib/post-templates";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-[#10b981]/60 focus:ring-1 focus:ring-[#10b981]/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 const labelClass =
   "mb-1.5 block text-[10px] font-bold uppercase tracking-[0.13em] text-[var(--text-muted)]";
 const cardClass = "rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 function flashClass(flashed: boolean) {
-  return flashed ? "ring-2 ring-[#10b981]/40 border-[#10b981]/50" : "";
+  return flashed ? "ring-2 ring-accent/40 border-accent/50" : "";
 }
 
 function ic(flashFields: Set<string>, field: string) {
@@ -94,7 +94,7 @@ export function CategorySearchSection({
       className={`${cardClass} overflow-hidden`}
       style={{
         background:
-          "radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 34%), var(--bg-card)",
+          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.12), transparent 34%), var(--bg-card)",
       }}
     >
       <div className="flex flex-col gap-4">
@@ -380,7 +380,7 @@ function LocationBlock({
             href={buildOpenStreetMapLink(lat, lng)}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[#10b981]/35 hover:text-[var(--text-primary)]"
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
           >
             Haritada aç
           </a>
@@ -466,8 +466,8 @@ export function ContentSection({
             }}
             className={`inline-flex items-center rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-colors ${
               isTemplateActive
-                ? "border-[#10b981]/35 bg-[#10b981]/10 text-[var(--gold)]"
-                : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/30 hover:text-[var(--text-primary)]"
+                ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
+                : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
             {isTemplateActive ? "Şablon aktif" : "Şablonu uygula"}

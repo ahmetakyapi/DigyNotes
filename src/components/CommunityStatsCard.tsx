@@ -23,8 +23,8 @@ export default function CommunityStatsCard({ title, creator }: Props) {
 
   return (
     <div className="mb-6 flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#10b981]/10">
-        <UsersThreeIcon size={16} weight="fill" className="text-[#10b981]" />
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+        <UsersThreeIcon size={16} weight="fill" className="text-accent" />
       </div>
       <div className="flex items-center gap-3 text-sm">
         <span className="text-[var(--text-secondary)]">
@@ -36,7 +36,7 @@ export default function CommunityStatsCard({ title, creator }: Props) {
           <>
             <span className="text-[var(--border)]">•</span>
             <span className="flex items-center gap-1 text-[var(--text-secondary)]">
-              <StarIcon size={14} weight="fill" className="text-[#10b981]" />
+              <StarIcon size={14} weight="fill" className="text-accent" />
               <span className="font-semibold text-[var(--text-primary)]">{stats.avgRating}</span>
               <span className="text-[var(--text-muted)]">/ 5 ort.</span>
             </span>

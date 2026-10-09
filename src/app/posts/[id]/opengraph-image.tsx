@@ -23,7 +23,7 @@ function renderFallbackCard(message: string) {
         position: "relative",
         overflow: "hidden",
         background:
-          "radial-gradient(circle at top left, rgba(16,185,129,0.28), transparent 36%), linear-gradient(135deg, #0f1117 0%, #171d2b 56%, #0f1420 100%)",
+          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.28), transparent 36%), linear-gradient(135deg, var(--bg-base) 0%, #171d2b 56%, #0f1420 100%)",
         color: "#f5f1df",
         fontFamily: "Arial",
       }}
@@ -35,7 +35,7 @@ function renderFallbackCard(message: string) {
           width: 340,
           height: 340,
           borderRadius: 999,
-          background: "rgba(16,185,129,0.18)",
+          background: "rgb(var(--gold-rgb)/0.18)",
         }}
       />
       <div
@@ -63,11 +63,11 @@ function renderFallbackCard(message: string) {
               width: 72,
               height: 72,
               borderRadius: 24,
-              background: "rgba(16,185,129,0.18)",
-              border: "1px solid rgba(16,185,129,0.32)",
+              background: "rgb(var(--gold-rgb)/0.18)",
+              border: "1px solid rgb(var(--gold-rgb)/0.32)",
               alignItems: "center",
               justifyContent: "center",
-              color: "#10b981",
+              color: "var(--gold)",
               fontSize: 36,
             }}
           >
@@ -178,7 +178,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
         position: "relative",
         overflow: "hidden",
         background:
-          "radial-gradient(circle at top left, rgba(16,185,129,0.26), transparent 34%), radial-gradient(circle at bottom right, rgba(14,165,233,0.22), transparent 28%), linear-gradient(135deg, #0f1117 0%, #131925 58%, #0b1019 100%)",
+          "radial-gradient(circle at top left, rgb(var(--gold-rgb)/0.26), transparent 34%), radial-gradient(circle at bottom right, rgb(var(--accent-2-rgb)/0.22), transparent 28%), linear-gradient(135deg, var(--bg-base) 0%, #131925 58%, #0b1019 100%)",
         color: "#f7f3e7",
         fontFamily: "Arial",
       }}
@@ -191,8 +191,8 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
           width: 320,
           height: 320,
           borderRadius: 999,
-          background: "rgba(14,165,233,0.12)",
-          border: "1px solid rgba(14,165,233,0.14)",
+          background: "rgb(var(--accent-2-rgb)/0.12)",
+          border: "1px solid rgb(var(--accent-2-rgb)/0.14)",
         }}
       />
       <div
@@ -203,7 +203,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
           width: 360,
           height: 360,
           borderRadius: 999,
-          background: "rgba(16,185,129,0.12)",
+          background: "rgb(var(--gold-rgb)/0.12)",
         }}
       />
 
@@ -240,9 +240,9 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
                 borderRadius: 20,
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#10b981",
-                background: "rgba(16,185,129,0.16)",
-                border: "1px solid rgba(16,185,129,0.28)",
+                color: "var(--gold)",
+                background: "rgb(var(--gold-rgb)/0.16)",
+                border: "1px solid rgb(var(--gold-rgb)/0.28)",
               }}
             >
               D
@@ -380,7 +380,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
                     alignItems: "center",
                     padding: "10px 14px",
                     borderRadius: 999,
-                    background: "rgba(16,185,129,0.12)",
+                    background: "rgb(var(--gold-rgb)/0.12)",
                     color: "#f1d88a",
                     fontSize: 20,
                     fontWeight: 600,

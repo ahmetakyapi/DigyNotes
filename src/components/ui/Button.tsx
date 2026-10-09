@@ -20,7 +20,7 @@ interface ButtonProps extends MotionButtonProps {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[#0a0f1e] font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
+    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[var(--bg-base)] font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
   secondary:
     "border border-[var(--border)] bg-[var(--bg-card)] hover:border-[var(--gold)]/60 text-[var(--text-primary)] disabled:opacity-50",
   ghost:

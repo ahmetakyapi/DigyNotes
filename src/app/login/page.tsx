@@ -56,8 +56,8 @@ export default function LoginPage() {
       <FullScreenLoader show={redirecting} message="Giriş yapılıyor..." />
       {/* Background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-[#10b981]/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
-        <div className="bg-gradient-radial from-[#0ea5e9]/4 absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-accent/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
+        <div className="bg-gradient-radial from-accent-2/4 absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
         <div
           className="absolute inset-0 opacity-[0.025]"
           style={{

@@ -9,9 +9,9 @@ import StarRating from "@/components/StarRating";
 import { ResilientImage } from "@/components/ResilientImage";
 
 const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }> = {
-  movies: { fill: "#10b981", glow: "rgba(16,185,129,0.25)", bg: "rgba(16,185,129,0.08)" },
-  series: { fill: "#0ea5e9", glow: "rgba(14,165,233,0.25)", bg: "rgba(14,165,233,0.08)" },
-  book: { fill: "#34d399", glow: "rgba(52,211,153,0.25)", bg: "rgba(52,211,153,0.08)" },
+  movies: { fill: "var(--gold)", glow: "rgb(var(--gold-rgb)/0.25)", bg: "rgb(var(--gold-rgb)/0.08)" },
+  series: { fill: "var(--accent-2)", glow: "rgb(var(--accent-2-rgb)/0.25)", bg: "rgb(var(--accent-2-rgb)/0.08)" },
+  book: { fill: "var(--gold-light)", glow: "rgb(var(--gold-light-rgb)/0.25)", bg: "rgb(var(--gold-light-rgb)/0.08)" },
 };
 const FALLBACK_COLORS = [
   { fill: "#f87171", glow: "rgba(248,113,113,0.25)", bg: "rgba(248,113,113,0.08)" },
@@ -89,7 +89,7 @@ function BigStat({
   sub,
   label,
   icon,
-  color = "#10b981",
+  color = "var(--gold)",
 }: {
   value: string | number;
   sub?: string;
@@ -162,7 +162,7 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
     <div className="group flex items-center gap-2.5">
       <div className="flex w-16 flex-shrink-0 items-center gap-0.5">
         {Array.from({ length: star }).map((_, i) => (
-          <svg key={i} className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="#10b981">
+          <svg key={i} className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="var(--gold)">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
           </svg>
         ))}
@@ -172,7 +172,7 @@ function RatingBar({ star, count, max }: { star: number; count: number; max: num
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${pct}%`,
-            background: isHigh ? "linear-gradient(90deg, #10b981, #34d399)" : "var(--bg-raised)",
+            background: isHigh ? "linear-gradient(90deg, var(--gold), var(--gold-light))" : "var(--bg-raised)",
           }}
         />
       </div>
@@ -207,15 +207,15 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
                 style={{
                   height: `${pct}%`,
                   background: isLast
-                    ? "linear-gradient(180deg, #34d399, #10b981)"
+                    ? "linear-gradient(180deg, var(--gold-light), var(--gold))"
                     : "var(--bg-raised)",
                   minHeight: d.count > 0 ? 4 : 0,
-                  boxShadow: isLast && d.count > 0 ? "0 0 10px rgba(16,185,129,0.4)" : "none",
+                  boxShadow: isLast && d.count > 0 ? "0 0 10px rgb(var(--gold-rgb)/0.4)" : "none",
                 }}
               />
             </div>
             <span
-              className={`text-[9px] ${isLast ? "text-[#10b981]" : "text-[var(--text-muted)]"}`}
+              className={`text-[9px] ${isLast ? "text-accent" : "text-[var(--text-muted)]"}`}
             >
               {d.short}
             </span>
@@ -319,7 +319,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <p className="text-sm text-[var(--text-muted)]">İstatistik görmek için önce not ekle.</p>
         <Link
           href="/new-post"
-          className="mt-3 text-xs text-[#34d399] transition-colors hover:text-[#10b981]"
+          className="mt-3 text-xs text-accent-light transition-colors hover:text-accent"
         >
           + İlk notu ekle
         </Link>
@@ -341,7 +341,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <BigStat
           value={stats.total}
           label="Toplam Not"
-          color="#10b981"
+          color="var(--gold)"
           icon={
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -357,7 +357,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
           value={stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "—"}
           sub={stats.avgRating > 0 ? "/ 5" : undefined}
           label="Ortalama Puan"
-          color="#34d399"
+          color="var(--gold-light)"
           icon={
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -367,7 +367,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <BigStat
           value={`${stats.completionPct}%`}
           label="Tamamlanma"
-          color="#34d399"
+          color="var(--gold-light)"
           icon={
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -382,7 +382,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <BigStat
           value={stats.rated}
           label="Puanlanan Not"
-          color="#34d399"
+          color="var(--gold-light)"
           icon={
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -470,8 +470,8 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
         <SectionLabel>Durum Özeti</SectionLabel>
         <div className="mb-5 grid grid-cols-3 gap-3">
           {[
-            { label: "Tamamlandı", count: stats.done, color: "#34d399", icon: "✓" },
-            { label: "Devam Ediyor", count: stats.ongoing, color: "#10b981", icon: "▶" },
+            { label: "Tamamlandı", count: stats.done, color: "var(--gold-light)", icon: "✓" },
+            { label: "Devam Ediyor", count: stats.ongoing, color: "var(--gold)", icon: "▶" },
             { label: "Bekliyor", count: stats.planned, color: "#6272a4", icon: "◷" },
           ].map((s) => (
             <div
@@ -497,15 +497,15 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
             <span className="text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
               Tamamlanma Oranı
             </span>
-            <span className="text-xs font-bold text-[#34d399]">{stats.completionPct}%</span>
+            <span className="text-xs font-bold text-accent-light">{stats.completionPct}%</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
             <div
               className="h-full rounded-full transition-all duration-1000"
               style={{
                 width: `${stats.completionPct}%`,
-                background: "linear-gradient(90deg, #34d399, #6ee7b7)",
-                boxShadow: "0 0 12px rgba(52,211,153,0.4)",
+                background: "linear-gradient(90deg, var(--gold-light), var(--gold-light))",
+                boxShadow: "0 0 12px rgb(var(--gold-light-rgb)/0.4)",
               }}
             />
           </div>
@@ -530,14 +530,14 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
               <Link
                 key={post.id}
                 href={`/posts/${post.id}`}
-                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-[#10b981]/30 hover:bg-[#10b981]/5"
+                className="group flex items-center gap-3 rounded-xl border border-[var(--border)] p-3 transition-all duration-200 hover:border-accent/30 hover:bg-accent/5"
               >
                 {/* Rank */}
                 <span
                   className="w-5 flex-shrink-0 text-center text-[10px] font-black"
                   style={{
                     color:
-                      i === 0 ? "#10b981" : i === 1 ? "#a0a0c0" : i === 2 ? "#b08060" : "#3a3a5a",
+                      i === 0 ? "var(--gold)" : i === 1 ? "#a0a0c0" : i === 2 ? "#b08060" : "#3a3a5a",
                   }}
                 >
                   {String(i + 1).padStart(2, "0")}
@@ -556,7 +556,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
 
                 {/* Info */}
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-[#10b981]">
+                  <p className="line-clamp-1 text-sm font-semibold text-[var(--text-primary)] transition-colors group-hover:text-accent">
                     {post.title}
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
@@ -574,7 +574,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 {/* Rating */}
                 <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
                   <StarRating rating={post.rating} size={11} />
-                  <span className="text-[10px] font-bold text-[#10b981]">{post.rating}/5</span>
+                  <span className="text-[10px] font-bold text-accent">{post.rating}/5</span>
                 </div>
               </Link>
             ))}

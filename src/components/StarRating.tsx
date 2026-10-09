@@ -37,9 +37,9 @@ export default function StarRating({
                 onClick={() => onRate?.(starNum)}
               />
               {starNum <= fullStars ? (
-                <StarIcon size={size} weight="fill" className="text-[#10b981]" />
+                <StarIcon size={size} weight="fill" className="text-accent" />
               ) : starNum === fullStars + 1 && hasHalf ? (
-                <StarHalfIcon size={size} weight="fill" className="text-[#10b981]" />
+                <StarHalfIcon size={size} weight="fill" className="text-accent" />
               ) : (
                 <StarIcon size={size} className="text-[#4a5568]" />
               )}
@@ -55,9 +55,9 @@ export default function StarRating({
       {Array.from({ length: 5 }, (_, i) => {
         const starNum = i + 1;
         return starNum <= fullStars ? (
-          <StarIcon key={starNum} size={size} weight="fill" className="text-[#10b981]" />
+          <StarIcon key={starNum} size={size} weight="fill" className="text-accent" />
         ) : starNum === fullStars + 1 && hasHalf ? (
-          <StarHalfIcon key={starNum} size={size} weight="fill" className="text-[#10b981]" />
+          <StarHalfIcon key={starNum} size={size} weight="fill" className="text-accent" />
         ) : (
           <StarIcon key={starNum} size={size} className="text-[#4a5568]" />
         );

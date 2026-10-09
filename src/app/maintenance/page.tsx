@@ -11,7 +11,7 @@ export default async function MaintenancePage() {
         <div
           className="absolute -left-20 top-0 h-72 w-72 rounded-full opacity-[0.08] blur-[120px]"
           style={{
-            background: "radial-gradient(circle, #10b981 0%, #047857 55%, transparent 70%)",
+            background: "radial-gradient(circle, var(--gold) 0%, var(--gold-dark) 55%, transparent 70%)",
           }}
         />
         <div
@@ -22,14 +22,14 @@ export default async function MaintenancePage() {
         />
       </div>
 
-      <div className="bg-[var(--bg-card)]/94 relative w-full max-w-2xl rounded-[32px] border border-[var(--border)] p-8 shadow-[0_28px_80px_rgba(3,8,20,0.34)] backdrop-blur-xl sm:p-10">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#10b981]/20 bg-[#10b981]/10">
+      <div className="bg-[var(--bg-card)]/94 relative w-full max-w-2xl rounded-[32px] border border-[var(--border)] p-8 shadow-[0_28px_80px_rgb(var(--ink-rgb)/0.34)] backdrop-blur-xl sm:p-10">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10">
           <svg
             width="32"
             height="32"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#10b981"
+            stroke="var(--gold)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -79,7 +79,7 @@ export default async function MaintenancePage() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <RetryButton
             label="Durumu tekrar kontrol et"
-            className="inline-flex min-w-[220px] justify-center rounded-2xl bg-[#10b981] hover:bg-[#059669] px-5 py-3 text-sm font-semibold text-white transition-all"
+            className="inline-flex min-w-[220px] justify-center rounded-2xl bg-accent hover:bg-accent-dark px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
           />
           <Link
             href="/"

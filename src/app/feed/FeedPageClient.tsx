@@ -96,7 +96,7 @@ export default function FeedPageClient() {
         </div>
       ) : requiresLogin ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <UsersThreeIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -108,7 +108,7 @@ export default function FeedPageClient() {
           </p>
           <Link
             href="/login"
-            className="hover:bg-[#10b981]/12 bg-[#10b981]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 px-5 py-3 text-sm font-semibold text-[#34d399] transition-colors"
+            className="hover:bg-accent/12 bg-accent/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 px-5 py-3 text-sm font-semibold text-accent-light transition-colors"
           >
             Giriş yap
           </Link>
@@ -123,7 +123,7 @@ export default function FeedPageClient() {
         </div>
       ) : empty ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#10b981]/10 text-[var(--gold)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/10 text-[var(--gold)]">
             <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
@@ -135,7 +135,7 @@ export default function FeedPageClient() {
           </p>
           <Link
             href="/discover"
-            className="hover:bg-[#10b981]/12 bg-[#10b981]/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-[#10b981]/30 px-5 py-3 text-sm font-semibold text-[#34d399] transition-colors"
+            className="hover:bg-accent/12 bg-accent/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 px-5 py-3 text-sm font-semibold text-accent-light transition-colors"
           >
             <SparkleIcon size={16} weight="duotone" />
             Keşfet
@@ -174,11 +174,11 @@ export default function FeedPageClient() {
                 type="button"
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="bg-[#10b981]/8 hover:bg-[#10b981]/16 inline-flex items-center gap-2 rounded-2xl border border-[#10b981]/30 px-6 py-3 text-sm font-semibold text-[#34d399] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-accent/8 hover:bg-accent/16 inline-flex items-center gap-2 rounded-2xl border border-accent/30 px-6 py-3 text-sm font-semibold text-accent-light transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loadingMore ? (
                   <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#34d399]/30 border-t-[#34d399]" />
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent-light/30 border-t-accent-light" />
                     Yükleniyor…
                   </>
                 ) : (
@@ -203,17 +203,17 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
   const displayExcerpt = formatDisplaySentence(post.excerpt);
 
   return (
-    <article className="hover:border-[#10b981]/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
+    <article className="hover:border-accent/18 overflow-hidden rounded-[28px] border border-[var(--border)] bg-[image:var(--card-surface)] shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]">
       {post.user && (
         <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-4">
-          <div className="bg-[#10b981]/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-[#10b981]">
+          <div className="bg-accent/16 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl text-sm font-bold text-accent">
             <AvatarImage
               src={post.user.avatarUrl}
               alt={post.user.name}
               name={post.user.name}
               size={40}
               className="h-full w-full object-cover"
-              textClassName="text-sm font-bold text-[#10b981]"
+              textClassName="text-sm font-bold text-accent"
             />
           </div>
           <div className="min-w-0">
@@ -223,7 +223,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             {post.user.username && (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-xs text-[var(--text-muted)] transition-colors hover:text-[#10b981]"
+                className="text-xs text-[var(--text-muted)] transition-colors hover:text-accent"
               >
                 @{post.user.username}
               </Link>
@@ -243,9 +243,9 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
               className="object-cover"
               style={{ objectPosition: post.imagePosition ?? "center" }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(7,12,22,0.82)] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.82)] via-transparent to-transparent" />
             <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-              <span className="border-[#10b981]/18 rounded-full border bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
+              <span className="border-accent/18 rounded-full border bg-[rgba(7,10,18,0.68)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.status && <StatusBadge status={post.status} />}

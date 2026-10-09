@@ -187,7 +187,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
         className={
           isMobileFull
             ? "flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--gold)]"
-            : "flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgba(3,8,20,0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-auto sm:rounded-lg sm:border-[var(--border)] sm:bg-[var(--bg-card)] sm:px-3 sm:shadow-[var(--shadow-soft)]"
+            : "flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgb(var(--ink-rgb)/0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-auto sm:rounded-lg sm:border-[var(--border)] sm:bg-[var(--bg-card)] sm:px-3 sm:shadow-[var(--shadow-soft)]"
         }
         title="Ara"
       >

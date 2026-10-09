@@ -92,7 +92,7 @@ export function StatusSidebar({
               type="checkbox"
               checked={hasSpoiler}
               onChange={(event) => onSpoilerChange(event.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-[#10b981] focus:ring-[#10b981]"
+              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-accent focus:ring-accent"
               aria-label="Spoiler uyarısı ekle"
             />
             <span className="min-w-0">
@@ -281,8 +281,8 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
               disabled={isAdded || tags.length >= 10}
               className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 active:scale-95 disabled:cursor-default disabled:opacity-40 ${
                 isAdded
-                  ? "border-[#10b981]/40 bg-[#10b981]/10 text-[#34d399]"
-                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-[#10b981]/35 hover:text-[#34d399]"
+                  ? "border-accent/40 bg-accent/10 text-accent-light"
+                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/35 hover:text-accent-light"
               }`}
             >
               #{tagName}

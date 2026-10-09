@@ -230,7 +230,7 @@ export default function NotesPageClient({
             </Link>
             <Link
               href="/new-post"
-              className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-5 py-2.5 text-sm font-semibold text-white transition-all"
+              className="rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
             >
               Yeni not ekle
             </Link>
@@ -251,7 +251,7 @@ export default function NotesPageClient({
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-[#10b981]">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent">
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
           </svg>
         </div>
@@ -266,7 +266,7 @@ export default function NotesPageClient({
             <Link
               key={cat.name}
               href={cat.href}
-              className="flex flex-col items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5 transition-all duration-200 hover:border-[#10b981]/30 hover:bg-[#10b981]/5"
+              className="flex flex-col items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5 transition-all duration-200 hover:border-accent/30 hover:bg-accent/5"
             >
               <span className="text-2xl">{cat.emoji}</span>
               <span className="text-xs font-medium text-[var(--text-secondary)]">{cat.name}</span>
@@ -276,7 +276,7 @@ export default function NotesPageClient({
 
         <Link
           href="/new-post"
-          className="rounded-lg bg-[#10b981] hover:bg-[#059669] px-6 py-3 text-sm font-semibold text-white transition-all"
+          className="rounded-lg bg-accent hover:bg-accent-dark px-6 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
         >
           İlk notu ekle
         </Link>
