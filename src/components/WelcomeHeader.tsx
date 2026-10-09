@@ -27,7 +27,9 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
   const stats = useMemo(() => {
     const total = posts.length;
 
-    const ratings = posts.map((p) => p.rating).filter((r): r is number => typeof r === "number" && r > 0);
+    const ratings = posts
+      .map((p) => p.rating)
+      .filter((r): r is number => typeof r === "number" && r > 0);
     const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
 
     const now = new Date();
@@ -66,8 +68,9 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
         <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[46px]">
           {name ? (
             <>
-              {firstName}, <span className="dn-display font-normal italic tracking-[-0.02em]">Arşivin</span> Seni
-              Bekliyor<span className="text-[var(--gold)]">.</span>
+              Merhaba {firstName}, Bugün Ne{" "}
+              <span className="dn-display font-normal italic tracking-[-0.02em]">İzledin</span>
+              <span className="text-[var(--gold)]">?</span>
             </>
           ) : (
             "Hoş Geldin"
@@ -80,12 +83,17 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
             {stats.avgRating > 0 && (
               <Stat
                 value={
-                  <AnimatedCounter value={stats.avgRating} format={(n) => n.toFixed(1).replace(".", ",")} />
+                  <AnimatedCounter
+                    value={stats.avgRating}
+                    format={(n) => n.toFixed(1).replace(".", ",")}
+                  />
                 }
                 label="Ort. Puan"
               />
             )}
-            {stats.thisMonth > 0 && <Stat value={<AnimatedCounter value={stats.thisMonth} />} label="Bu Ay" />}
+            {stats.thisMonth > 0 && (
+              <Stat value={<AnimatedCounter value={stats.thisMonth} />} label="Bu Ay" />
+            )}
           </div>
         )}
       </div>
@@ -99,7 +107,9 @@ function Stat({ value, label }: { value: React.ReactNode; label: string }) {
       <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
         {value}
       </span>
-      <span className="dn-mono mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">{label}</span>
+      <span className="dn-mono mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+        {label}
+      </span>
     </span>
   );
 }

@@ -101,7 +101,7 @@ export default function NewPostPage() {
     setTags(draft.tags);
     setExternalRating(draft.externalRating);
     setImagePosition(draft.imagePosition);
-    toast.success("Önceki taslağınız geri yüklendi");
+    toast.success("Yarım kalan taslağın geri yüklendi");
   }, [loadDraft, searchParams]);
 
   // Her değişiklikte taslağı güncelle
@@ -327,7 +327,7 @@ export default function NewPostPage() {
       const ratingStr = rating > 0 ? ` · ${rating}/5` : "";
       return `${status}${ratingStr}`;
     }
-    if (supportsAutofill) return "Önce arama yap ya da başlığı elle netleştir.";
+    if (supportsAutofill) return "Önce ara ya da başlığı kendin yaz.";
     return guidance.manualHint;
   })();
   const flowSteps = [
@@ -339,7 +339,7 @@ export default function NewPostPage() {
     },
     {
       step: "2",
-      label: supportsAutofill ? guidance.searchTitle : "Manuel Başlangıç",
+      label: supportsAutofill ? guidance.searchTitle : "Başlıkla Başla",
       detail: supportsAutofill ? guidance.searchHint : guidance.manualHint,
       complete: supportsAutofill ? autofillDone || hasLocation : Boolean(title || creator || image),
     },
@@ -363,7 +363,7 @@ export default function NewPostPage() {
     if (config.yearsRequired) requiredFields.push(years);
 
     if (requiredFields.some((field) => !field)) {
-      const message = "Lütfen zorunlu alanları doldurun.";
+      const message = "Zorunlu alanları doldur.";
       setSubmitError(message);
       toast.error(message);
       return;
@@ -398,7 +398,7 @@ export default function NewPostPage() {
         "Not kaydedilemedi."
       );
       clearDraft();
-      toast.success("Not başarıyla kaydedildi!");
+      toast.success("Not kaydedildi");
       router.push("/notes");
     } catch (error) {
       const message = getClientErrorMessage(error, "Not kaydedilemedi.");
@@ -418,8 +418,8 @@ export default function NewPostPage() {
   const completedStepCount = flowSteps.filter((item) => item.complete).length;
   const nextPendingStep = flowSteps.find((item) => !item.complete);
   const nextActionText = autofillDone
-    ? "Başlık ve Durumu Tamamla"
-    : (nextPendingStep?.label ?? "İçeriğe geç");
+    ? "Başlığı ve Durumu Kontrol Et"
+    : (nextPendingStep?.label ?? "Şimdi Yazmaya Geç");
 
   const sidebarCards = (
     <>
@@ -457,11 +457,11 @@ export default function NewPostPage() {
           className="pt-6 sm:pt-8"
           title={
             <>
-              Arşive <Em>Yeni</Em> Bir Not
+              Yeni <Em>Not</Em> Ekle
               <Dot />
             </>
           }
-          description={`${categoryLabel} kategorisinde başla; arama ile alanları doldur, sonra kendi sözlerinle tamamla.`}
+          description={`${categoryLabel} notu ekliyorsun. Önce ara, bilgiler kendiliğinden dolsun; sonra düşüncelerini yaz.`}
           actions={
             <>
               {autofillDone && (
@@ -561,7 +561,7 @@ export default function NewPostPage() {
               >
                 <path d="M9 18l6-6-6-6" />
               </svg>
-              Puan, Kapak & Etiketler
+              Puan, Kapak ve Etiketler
               {rating > 0 && <span className="ml-auto text-xs text-[var(--gold)]">{rating}/5</span>}
             </summary>
             <div className="mt-3 space-y-4">{sidebarCards}</div>

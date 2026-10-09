@@ -152,7 +152,7 @@ export default function YearInReviewPage() {
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <YearHero year={year} onYearChange={setYear} max={currentYear}>
           <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
-            Bu yılın sayfaları henüz boş.
+            Bu yıl henüz not eklemedin.
           </p>
         </YearHero>
 
@@ -164,20 +164,18 @@ export default function YearInReviewPage() {
             {year} yılında henüz not eklenmemiş
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
-            Not eklemeye başladığında burada yıllık özetin görünecek. Farklı aylara yayılan notlar,
-            puanlar ve etiketler yıl hikayesini daha anlamlı hale getirir.
+            Not eklemeye başladığında yılın özeti burada görünecek. Ne kadar çok not, puan ve etiket
+            eklersen özetin o kadar dolu olur.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            {["Farklı Aylarda Not Ekle", "Puan ve Etiket Kullan", "Yıl İçi Ritmi Biriktir"].map(
-              (tip) => (
-                <span
-                  key={tip}
-                  className="dn-mono rounded-full border border-[var(--border)] px-3 py-1.5 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]"
-                >
-                  {tip}
-                </span>
-              )
-            )}
+            {["Düzenli Not Ekle", "Puan Ver", "Etiket Kullan"].map((tip) => (
+              <span
+                key={tip}
+                className="dn-mono rounded-full border border-[var(--border)] px-3 py-1.5 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]"
+              >
+                {tip}
+              </span>
+            ))}
           </div>
         </div>
       </main>
@@ -205,18 +203,18 @@ export default function YearInReviewPage() {
       <YearHero year={year} onYearChange={setYear} max={currentYear}>
         <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
           {favoriteCategory
-            ? `${year} içinde arşivin en çok ${getCategoryLabel(favoriteCategory.name).toLowerCase()} etrafında yoğunlaşmış.`
-            : `${year} yılına ait notların burada bir araya geliyor.`}{" "}
+            ? `${year} yılında en çok ${getCategoryLabel(favoriteCategory.name).toLowerCase()} notu almışsın.`
+            : `${year} yılında aldığın notların özeti.`}{" "}
           {data.busiestMonth
-            ? `${data.busiestMonth.month} ayı en hareketli dönem olmuş.`
-            : "Yıl içi ritim için daha fazla aya yayılan veri gerekiyor."}
+            ? `En çok not aldığın ay ${data.busiestMonth.month}.`
+            : "Aylara göre görmek için birkaç ay daha not eklemen gerekiyor."}
         </p>
       </YearHero>
 
       {/* ═══ Chapter: Hacim ═══ */}
       <Chapter
         index={nextChapter()}
-        kicker="Hacim"
+        kicker="Not Sayısı"
         statement={
           <>
             Bu yıl <Em>{data.totalPosts}</Em> not yazdın
@@ -235,7 +233,7 @@ export default function YearInReviewPage() {
       {/* ═══ Chapter: Odak ═══ */}
       <Chapter
         index={nextChapter()}
-        kicker="Yılın Odağı"
+        kicker="Kategoriler"
         statement={
           favoriteCategory ? (
             favoriteVerb ? (
@@ -246,13 +244,13 @@ export default function YearInReviewPage() {
             ) : (
               <>
                 Bu yıl en çok <Em>{getCategoryLabel(favoriteCategory.name)}</Em> kategorisinde not
-                tuttun
+                aldın
                 <Dot />
               </>
             )
           ) : (
             <>
-              Bu yılın odağı henüz <Em>belirsiz</Em>
+              Bu yıl notların farklı kategorilere <Em>dağılmış</Em>
               <Dot />
             </>
           )
@@ -266,11 +264,11 @@ export default function YearInReviewPage() {
             </p>
             <p className="mt-4 max-w-sm text-sm leading-6 text-[var(--text-secondary)]">
               {favoriteCategory
-                ? `${getCategoryLabel(favoriteCategory.name)} · ${favoriteCategory.count} not ile yılın baskın teması olmuş.`
-                : "Kategori yorumu için yeterli veri yok."}
+                ? `${getCategoryLabel(favoriteCategory.name)} · ${favoriteCategory.count} not. Bu yıl en çok bu kategoride not aldın.`
+                : "Henüz yeterli not yok."}
             </p>
           </div>
-          <ChartFrame label="Kategori Dağılımı">
+          <ChartFrame label="Kategorilere Göre">
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -308,23 +306,23 @@ export default function YearInReviewPage() {
       {/* ═══ Chapter: Ritim ═══ */}
       <Chapter
         index={nextChapter()}
-        kicker="Yılın Ritmi"
+        kicker="Aylar"
         statement={
           data.busiestMonth ? (
             <>
-              En hareketli ayın <Em>{data.busiestMonth.month}</Em> oldu
+              En çok not aldığın ay <Em>{data.busiestMonth.month}</Em>
               <Dot />
             </>
           ) : (
             <>
-              Yılın ritmi henüz <Em>şekilleniyor</Em>
+              Aylık tablo için biraz daha <Em>not</Em> gerekiyor
               <Dot />
             </>
           )
         }
       >
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-12">
-          <ChartFrame label="Aylık Aktivite">
+          <ChartFrame label="Aylara Göre Notlar">
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -370,17 +368,17 @@ export default function YearInReviewPage() {
           </ChartFrame>
           <div className="flex flex-col divide-y divide-[var(--border)] border-y border-[var(--border)]">
             <StatLine
-              label="En Aktif Ay"
+              label="En Yoğun Ay"
               value={data.busiestMonth ? `${data.busiestMonth.count} not` : "-"}
               detail={data.busiestMonth?.month}
             />
             <StatLine
-              label="Aktif Ay"
+              label="Not Aldığın Aylar"
               value={`${activeMonths}/12`}
               detail={
                 data.maxStreak > 1
-                  ? `En uzun seri ${data.maxStreak} gün sürmüş.`
-                  : "Henüz seri davranışı belirginleşmemiş."
+                  ? `En uzun serin ${data.maxStreak} gün.`
+                  : "Henüz üst üste not aldığın bir seri yok."
               }
             />
           </div>
@@ -396,10 +394,10 @@ export default function YearInReviewPage() {
       {data.topRated.length > 0 && (
         <Chapter
           index={nextChapter()}
-          kicker="En Yüksek Puanlı Notlar"
+          kicker="En Yüksek Puanlılar"
           statement={
             <>
-              Yılın <Em>en iyileri</Em>
+              Yılın <Em>En İyileri</Em>
               <Dot />
             </>
           }
@@ -460,16 +458,16 @@ export default function YearInReviewPage() {
       {/* ═══ Chapter: İz ═══ */}
       <Chapter
         index={nextChapter()}
-        kicker="Yılın İzi"
+        kicker="Etiketler"
         statement={
           topTag ? (
             <>
-              Yılın izi <Em>#{topTag.name}</Em> oldu
+              En çok kullandığın etiket <Em>#{topTag.name}</Em>
               <Dot />
             </>
           ) : (
             <>
-              Notlarının <Em>%{ratedShare}</Em>&apos;i puanlandı
+              Notlarının <Em>%{ratedShare}</Em> kadarına puan verdin
               <Dot />
             </>
           )
@@ -477,8 +475,8 @@ export default function YearInReviewPage() {
       >
         <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
           {topTag
-            ? `${topTag.count} kullanım ile tekrar eden temayı gösteriyor.`
-            : `Notlarının %${ratedShare}'i puanlanmış durumda.`}
+            ? `Bu yıl ${topTag.count} notta kullandın.`
+            : `Puan verdiğin notların oranı %${ratedShare}.`}
         </p>
         {data.topTags.length > 0 && (
           <div className="mt-6">
@@ -509,7 +507,7 @@ export default function YearInReviewPage() {
       {/* ═══ Chapter: Puanlar ═══ */}
       <Chapter
         index={nextChapter()}
-        kicker="Puan Dağılımı"
+        kicker="Puanlar"
         statement={
           data.avgRating > 0 ? (
             <>
@@ -551,7 +549,7 @@ export default function YearInReviewPage() {
         kicker="İlk ve Son"
         statement={
           <>
-            Yıl <Em>{formatDate(data.firstPost.createdAt)}</Em> tarihinde başladı
+            İlk notunu <Em>{formatDate(data.firstPost.createdAt)}</Em> tarihinde yazdın
             <Dot />
           </>
         }
@@ -583,7 +581,7 @@ export default function YearInReviewPage() {
             weight="bold"
             className="transition-transform duration-200 ease-out-expo group-hover:-translate-x-0.5"
           />
-          Genel İstatistiklere Dön
+          İstatistiklere Dön
         </Link>
       </div>
     </main>

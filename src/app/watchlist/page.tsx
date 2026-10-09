@@ -225,10 +225,10 @@ export default function WatchlistPage() {
             icon={<BookmarkSimpleIcon size={22} weight="duotone" />}
             title={
               <>
-                Listeni Tutmak İçin <Em>Giriş Yap</Em>
+                İstek Listen İçin <Em>Giriş Yap</Em>
               </>
             }
-            description="İstek listesi oluşturmak ve sonra bakacaklarını takip etmek için giriş yap."
+            description="Sonra izlemek, okumak ya da gitmek istediklerini kaydetmek için giriş yapman gerekiyor."
             primary={{ label: "Giriş Yap", href: "/login" }}
           />
         </div>
@@ -243,11 +243,11 @@ export default function WatchlistPage() {
         eyebrow="İstek Listesi"
         title={
           <>
-            Sonra <Em>Bakılacaklar</Em>
+            <Em>İstek Listen</Em>
             <Dot />
           </>
         }
-        description="Henüz nota dönüştürmediğin film, dizi, kitap, oyun ve gezi fikirleri burada sırasını bekler."
+        description="Sonra izlemek, okumak ya da gitmek istediklerini buraya ekle."
         stats={
           loading
             ? undefined
@@ -410,14 +410,14 @@ export default function WatchlistPage() {
                 </>
               ) : (
                 <>
-                  {getCategoryLabel(activeCategory)} Rafı Henüz <Em>Boş</Em>
+                  {getCategoryLabel(activeCategory)} Listen Henüz <Em>Boş</Em>
                 </>
               )
             }
             description={
               searchQuery.trim()
-                ? "Daha farklı bir anahtar kelime deneyebilir veya aramayı temizleyebilirsin."
-                : "Yukarıdan arama yaparak bu kategoriye ilk kaydını ekleyebilirsin."
+                ? "Başka bir kelime dene ya da aramayı temizle."
+                : "Yukarıdaki aramayı kullanarak ilk kaydını ekleyebilirsin."
             }
             primary={
               searchQuery.trim()
@@ -502,8 +502,8 @@ export default function WatchlistPage() {
       <section className="mt-14">
         <OrganizationGuide
           current="watchlist"
-          title="İstek Listesi Ne Zaman Doğru Yer?"
-          description="Henüz nota dönüştürmediğin içerikler burada bekler. Hızlı geri dönüş için Kaydettiklerim'i, bitmiş notları kalıcı seçkilerde toplamak için Koleksiyonlar'ı kullan."
+          title="İstek Listesi Ne İşe Yarar?"
+          description="Henüz izlemediğin, okumadığın ya da gitmediğin şeyleri burada tutarsın. Sonra tekrar bakmak istediğin notlar için Kaydettiklerim'i, notlarını bir konu altında toplamak için Koleksiyonlar'ı kullan."
         />
       </section>
     </main>

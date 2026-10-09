@@ -120,10 +120,10 @@ export default function CollectionsPage() {
             icon={<StackIcon size={22} weight="duotone" />}
             title={
               <>
-                Raflarını Kurmak İçin <Em>Giriş Yap</Em>
+                Koleksiyonların İçin <Em>Giriş Yap</Em>
               </>
             }
-            description="Koleksiyon oluşturmak ve notlarını daha düzenli gruplamak için giriş yap."
+            description="Koleksiyon oluşturup notlarını gruplamak için giriş yapman gerekiyor."
             primary={{ label: "Giriş Yap", href: "/login" }}
           />
         </div>
@@ -138,18 +138,18 @@ export default function CollectionsPage() {
         eyebrow="Koleksiyonlar"
         title={
           <>
-            Kendi <Em>Rafların</Em>
+            <Em>Koleksiyonların</Em>
             <Dot />
           </>
         }
-        description="Bitmiş notlarını tema, dönem ya da duygu ekseninde kalıcı seçkilere dönüştür."
+        description="Notlarını konuya, döneme ya da ruh haline göre gruplandır."
         stats={
           loading
             ? undefined
             : [
                 { value: collections.length, label: "Koleksiyon" },
                 { value: totalPostCount, label: "Not" },
-                { value: activeCollectionCount, label: "Dolu" },
+                { value: activeCollectionCount, label: "Notlu" },
               ]
         }
         actions={
@@ -197,7 +197,7 @@ export default function CollectionsPage() {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               maxLength={400}
-              placeholder="Bu koleksiyonun neyi bir araya getirdiğini kısa ve net anlat"
+              placeholder="Bu koleksiyonda neler var? Kısaca yaz"
               className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm"
             />
           </label>
@@ -244,10 +244,10 @@ export default function CollectionsPage() {
           icon={<StackIcon size={22} weight="duotone" />}
           title={
             <>
-              İlk Rafını <Em>Kur</Em>
+              Henüz <Em>Koleksiyonun</Em> Yok
             </>
           }
-          description="Henüz bir koleksiyonun yok. Yukarıdan bir başlık ve kısa açıklama ekleyerek ilk seçkini birkaç saniyede oluşturabilirsin; sonra detay sayfasından not ekleyip profilinde sergileyebilirsin."
+          description="Yukarıya bir başlık yazıp ilk koleksiyonunu oluştur. Sonra koleksiyonun sayfasından içine not ekleyebilir, istersen profilinde gösterebilirsin."
           primary={{ label: "Notlarıma Göz At", href: "/notes" }}
         />
       ) : filteredCollections.length === 0 ? (
@@ -259,8 +259,8 @@ export default function CollectionsPage() {
               Aramana Uyan <Em>Koleksiyon</Em> Yok
             </>
           }
-          description="Farklı bir anahtar kelime deneyebilir veya filtreyi temizleyerek tüm koleksiyonlarını yeniden görebilirsin."
-          primary={{ label: "Filtreyi Temizle", onClick: () => setCollectionQuery("") }}
+          description="Başka bir kelime dene ya da aramayı temizleyip tüm koleksiyonlarını gör."
+          primary={{ label: "Aramayı Temizle", onClick: () => setCollectionQuery("") }}
         />
       ) : (
         /* LAYOUT: 1 / 2 / 3 column grid of cinematic covers with staggered entrance. */
@@ -281,8 +281,8 @@ export default function CollectionsPage() {
       <section className="mt-14">
         <OrganizationGuide
           current="collections"
-          title="Koleksiyon Ne Zaman Doğru Seçim?"
-          description="Hızlı geri dönüş için Kaydettiklerim'i, henüz nota dönüşmeyen içerikler için İstek Listesi'ni kullan. Koleksiyonlar ise bitmiş notları daha kalıcı bir seçkide toplar."
+          title="Koleksiyon Ne Zaman İşe Yarar?"
+          description="Sonra tekrar bakmak istediğin notlar için Kaydettiklerim'i, henüz izlemediğin ya da okumadığın şeyler için İstek Listesi'ni kullan. Koleksiyonlar ise yazdığın notları bir konu altında toplar."
         />
       </section>
     </main>

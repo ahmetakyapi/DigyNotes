@@ -264,7 +264,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 Koleksiyon <Em>Bulunamadı</Em>
               </>
             }
-            description="Bu koleksiyon silinmiş olabilir veya görüntüleme iznin olmayabilir."
+            description="Bu koleksiyon silinmiş olabilir ya da görme iznin olmayabilir."
             primary={{ label: "Koleksiyonlara Dön", href: "/collections" }}
           />
         </div>
@@ -412,8 +412,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 Koleksiyona <Em>Not</Em> Ekle
               </h2>
               <p className="mt-1 max-w-xl text-sm text-[var(--text-muted)]">
-                Sadece kendi notlarını bu koleksiyona ekleyebilirsin. Bu alan, uzun vadeli bir tema
-                altında sergilemek istediğin notlar için tasarlandı.
+                Bu koleksiyona yalnızca kendi notlarını ekleyebilirsin.
               </p>
             </div>
             <div className="w-full lg:max-w-sm">
@@ -464,8 +463,8 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               }
               description={
                 postQuery.trim()
-                  ? "Aramana uyan eklenebilir not bulunamadı."
-                  : "Eklenebilecek yeni not bulunamadı."
+                  ? "Aramana uyan, eklenebilecek bir not bulamadık."
+                  : "Tüm notların zaten bu koleksiyonda. Yeni bir not yazıp ekleyebilirsin."
               }
               primary={
                 postQuery.trim()
@@ -546,10 +545,10 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <div>
             <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
               <span className="text-[var(--gold)]">(B)</span> {filteredCollectionPosts.length}/
-              {collection.postCount} içerik
+              {collection.postCount} not
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
-              Listedeki <Em>Notlar</Em>
+              Koleksiyondaki <Em>Notlar</Em>
             </h2>
           </div>
           {collection.posts.length > 0 && (
@@ -585,7 +584,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
             icon={<StackIcon size={22} weight="duotone" />}
             title={
               <>
-                Bu Raf Henüz <Em>Boş</Em>
+                Bu Koleksiyon Henüz <Em>Boş</Em>
               </>
             }
             description="Bu koleksiyonda henüz not yok."
@@ -599,7 +598,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 Aramana Uyan <Em>Not</Em> Yok
               </>
             }
-            description="Koleksiyon içinde aramana uyan not bulunamadı."
+            description="Bu koleksiyonda aramana uyan not yok."
             primary={{ label: "Aramayı Temizle", onClick: () => setCollectionQuery("") }}
           />
         ) : (
@@ -677,8 +676,8 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
       <section className="mt-14">
         <OrganizationGuide
           current="collections"
-          title="Bu Koleksiyonun Rolü"
-          description="Kaydettiklerim kısa yoldan geri dönmek, İstek Listesi henüz nota çevrilmemiş içerikleri tutmak içindir. Koleksiyonlar ise bitmiş notları aynı tema altında bir araya getirir."
+          title="Koleksiyon Ne İşe Yarar?"
+          description="Kaydettiklerim, sonra tekrar bakmak istediğin notlar için; İstek Listesi, henüz izlemediğin ya da okumadığın şeyler için. Koleksiyonlar ise yazdığın notları bir konu altında toplar."
         />
       </section>
     </main>

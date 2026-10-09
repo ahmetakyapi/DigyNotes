@@ -10,7 +10,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
 const TEXT =
-  "İzlediğin bir *film,* bitirdiğin bir *kitap,* yürüdüğün bir *sokak* — hepsi bir iz bırakır. Ama o iz çoğu zaman bir sonraki hikâyenin altında kaybolur. _DigyNotes,_ sana kalanları kendi sözlerinle saklaman için var.";
+  "İzlediğin bir *film,* bitirdiğin bir *kitap,* gezdiğin bir *şehir…* Hepsi sende bir iz bırakır. Ama zamanla yenileri gelir, eskiler unutulur. _DigyNotes,_ bu izleri kendi cümlelerinle saklayabilmen için var.";
 
 function Word({
   word,
@@ -21,7 +21,7 @@ function Word({
   progress: MotionValue<number>;
   range: [number, number];
 }) {
-  const opacity = useTransform(progress, range, [0.14, 1]);
+  const opacity = useTransform(progress, range, [0.32, 1]);
   const italic = word.startsWith("*");
   const accent = word.startsWith("_");
   const clean = word.replace(/[*_]/g, "");
@@ -40,22 +40,22 @@ function Word({
 export function Manifesto() {
   const ref = useRef<HTMLParagraphElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.45"] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.9", "end 0.7"] });
   const words = TEXT.split(" ");
 
   return (
     <section className="mx-auto grid max-w-[1600px] gap-6 px-5 py-16 sm:px-10 md:grid-cols-[minmax(180px,1fr)_3fr] md:py-24">
       <div className="dn-mono flex flex-col gap-3 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         <span>
-          <span className="text-[var(--gold)]">(02)</span> Manifesto
+          <span className="text-[var(--gold)]">(02)</span> Neden DigyNotes?
         </span>
         <span className="hidden max-w-[200px] normal-case leading-relaxed tracking-normal text-[var(--text-faint)] md:block">
-          Bir Puan, Bir Etiket, Birkaç Cümle. Hafızan İçin Yeterli.
+          Bir puan, birkaç etiket, iki cümle. Unutmamak için bu kadarı yeter.
         </span>
       </div>
       <p
         ref={ref}
-        className="text-[clamp(1.9rem,4.4vw,4.6rem)] font-semibold leading-[1.06] tracking-[-0.035em] text-[var(--text-primary)]"
+        className="text-[clamp(1.65rem,4vw,3.9rem)] font-semibold leading-[1.16] tracking-[-0.03em] text-[var(--text-primary)]"
       >
         {reduce
           ? TEXT.replace(/[*_]/g, "")

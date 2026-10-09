@@ -194,16 +194,16 @@ export default function ProfilePageClient({ username }: { readonly username: str
   const tabMeta = useMemo(() => {
     if (activeTab === "posts") {
       return {
-        label: "Profil Notları",
+        label: "Notlar",
         count: `${filteredPosts.length} / ${posts.length} not`,
-        placeholder: "Not, kategori veya etiket ara...",
+        placeholder: "Not, kategori ya da etiket ara...",
       };
     }
     if (activeTab === "collections") {
       return {
-        label: "Profil Koleksiyonları",
+        label: "Koleksiyonlar",
         count: `${filteredCollections.length} / ${collections.length} koleksiyon`,
-        placeholder: "Koleksiyon veya not ara...",
+        placeholder: "Koleksiyon ya da not ara...",
       };
     }
     return {
@@ -276,11 +276,11 @@ export default function ProfilePageClient({ username }: { readonly username: str
             Bu profil gizli
           </div>
           <p className="mb-5 text-xs leading-5 text-[var(--text-muted)]">
-            Bu kullanıcının notlarını görmek için takip etmen veya kullanıcının profilini herkese
-            açık yapması gerekiyor.
+            Bu kişinin notlarını görmek için onu takip etmen ya da profilini herkese açması
+            gerekiyor.
           </p>
           <Link href="/discover" className="text-xs text-[var(--gold)] hover:underline">
-            ← Kullanıcıları keşfet
+            ← Kişileri keşfet
           </Link>
         </div>
       </div>
@@ -308,10 +308,10 @@ export default function ProfilePageClient({ username }: { readonly username: str
           </div>
           <p className="mb-1 font-medium text-[var(--text-secondary)]">Profil bulunamadı</p>
           <p className="mb-4 text-xs text-[var(--text-muted)]">
-            @{username} adlı kullanıcı mevcut değil.
+            @{username} adında bir kullanıcı yok.
           </p>
           <Link href="/discover" className="text-xs text-[var(--gold)] hover:underline">
-            ← Kullanıcıları keşfet
+            ← Kişileri keşfet
           </Link>
         </div>
       </div>
@@ -379,7 +379,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
           <p className="dn-mono mt-6 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
             <span className="text-[var(--gold)]">(@)</span> {user.username}
             {topCategory && (
-              <span className="text-[var(--text-faint)]"> · Güçlü Alan: {topCategory}</span>
+              <span className="text-[var(--text-faint)]"> · En Çok: {topCategory}</span>
             )}
           </p>
           <h1 className="mt-2 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)]">
@@ -411,7 +411,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
             {user.avgRating > 0 && <ProfileStat value={user.avgRating} label="Ort. Puan" accent />}
             <div className="dn-mono ml-auto flex flex-col gap-1 text-right text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
               <span>Katıldı · {joinedDate}</span>
-              <span>Son Aktivite · {lastLoginDate}</span>
+              <span>Son Giriş · {lastLoginDate}</span>
             </div>
           </div>
 
@@ -518,12 +518,12 @@ export default function ProfilePageClient({ username }: { readonly username: str
               </div>
               <p className="text-sm font-medium text-[var(--text-secondary)]">Henüz not yok</p>
               <p className="mx-auto mt-1 max-w-xs text-xs text-[var(--text-muted)]">
-                Bu kullanıcı henüz herkese açık not paylaşmamış.
+                Bu kişi henüz herkese açık bir not paylaşmamış.
               </p>
             </div>
           ) : filteredPosts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-              <p className="text-sm text-[var(--text-muted)]">Aramana uyan not bulunamadı.</p>
+              <p className="text-sm text-[var(--text-muted)]">Aramana uyan not yok.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -615,14 +615,12 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 Henüz koleksiyon yok
               </p>
               <p className="mx-auto mt-1 max-w-xs text-xs text-[var(--text-muted)]">
-                Bu kullanıcı henüz koleksiyon oluşturmamış.
+                Bu kişi henüz koleksiyon oluşturmamış.
               </p>
             </div>
           ) : filteredCollections.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-              <p className="text-sm text-[var(--text-muted)]">
-                Aramana Uyan Koleksiyon Bulunamadı.
-              </p>
+              <p className="text-sm text-[var(--text-muted)]">Aramana uyan koleksiyon yok.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -661,11 +659,11 @@ export default function ProfilePageClient({ username }: { readonly username: str
                 />
               </svg>
             </div>
-            <p className="text-sm text-[var(--text-muted)]">Henüz beğenilen not yok.</p>
+            <p className="text-sm text-[var(--text-muted)]">Henüz beğendiği bir not yok.</p>
           </div>
         ) : filteredLikedPosts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-            <p className="text-sm text-[var(--text-muted)]">Aramana uyan not bulunamadı.</p>
+            <p className="text-sm text-[var(--text-muted)]">Aramana uyan not yok.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

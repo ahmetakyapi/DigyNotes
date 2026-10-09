@@ -37,7 +37,7 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
           <span>
             <span className="text-[var(--gold)]">{a.index}</span> / 05
           </span>
-          <span>Kaynak · {a.source}</span>
+          <span>Bilgiler: {a.source}</span>
         </div>
         <h3 className="dn-display mt-6 text-[clamp(4.5rem,9vw,8.5rem)] italic leading-[0.85] tracking-[-0.03em] text-[var(--text-primary)]">
           {a.label}
@@ -131,13 +131,13 @@ export function Archives() {
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-5 sm:px-10 lg:flex-row lg:items-end lg:justify-between">
       <div>
         <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-          <span className="text-[var(--gold)]">(03)</span> Beş Arşiv, Tek Defter
+          <span className="text-[var(--gold)]">(03)</span> Neleri Not Alabilirsin?
         </span>
         <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-          <MaskLine>Her Türün</MaskLine>
+          <MaskLine>Her Biri İçin</MaskLine>
           <MaskLine delay={0.08}>
-            Kendi <span className="dn-display font-normal italic tracking-[-0.02em]">Rafı</span>{" "}
-            Var.
+            Ayrı Bir <span className="dn-display font-normal italic tracking-[-0.02em]">Sayfa</span>
+            .
           </MaskLine>
         </h2>
       </div>
@@ -184,8 +184,8 @@ export function Archives() {
           ))}
           <div className="flex w-[30vw] shrink-0 items-center justify-center">
             <p className="dn-display max-w-[320px] text-4xl italic leading-tight text-[var(--text-muted)]">
-              …ve <span className="text-[var(--text-primary)]">Diğer</span>: Kategorisi Olmayan Her
-              Şey İçin.
+              Bir de <span className="text-[var(--text-primary)]">Diğer</span> var: hiçbir yere
+              sığmayanlar için.
             </p>
           </div>
         </motion.div>

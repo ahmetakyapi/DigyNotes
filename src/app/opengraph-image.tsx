@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { loadBrandFonts } from "@/lib/og-fonts";
 
 export const runtime = "edge";
-export const alt = "DigyNotes — Sana Kalan Her Şeyin Arşivi";
+export const alt = "DigyNotes — Sana Kalan Her Şey, Burada";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -17,8 +17,8 @@ const LAVENDER = "#b9a8ff";
    TOP: "Dn." mark tile + mono label.  CENTER: two-line headline (grotesk + serif italic).
    BOTTOM: category line left, domain right, hairline above. */
 export default async function OgImage() {
-  const sansText = "DSana Kalan Her Şeyin(DN)KİŞİSEL KÜLTÜR ARŞİVİFİLM—DİZİOYUNKTPGEZdigynotes.";
-  const fonts = await loadBrandFonts(sansText + "Arşivi.n");
+  const sansText = "DSana Kalan Her Şey,(DN)KİŞİSEL NOT DEFTERİNFİLM—DİZİOYUNKTPGEZdigynotes.";
+  const fonts = await loadBrandFonts(sansText + "Burada.n");
 
   return new ImageResponse(
     <div
@@ -70,7 +70,7 @@ export default async function OgImage() {
           />
         </div>
         <span style={{ color: MUTED, fontSize: 20, letterSpacing: 4 }}>
-          <span style={{ color: LAVENDER, marginRight: 14 }}>(DN)</span>KİŞİSEL KÜLTÜR ARŞİVİ
+          <span style={{ color: LAVENDER, marginRight: 14 }}>(DN)</span>KİŞİSEL NOT DEFTERİN
         </span>
       </div>
 
@@ -91,7 +91,7 @@ export default async function OgImage() {
             lineHeight: 0.95,
           }}
         >
-          Sana Kalan Her Şeyin
+          Sana Kalan Her Şey,
         </span>
         <span style={{ display: "flex", alignItems: "baseline" }}>
           <span
@@ -104,7 +104,7 @@ export default async function OgImage() {
               letterSpacing: -3,
             }}
           >
-            Arşivi
+            Burada
           </span>
           <span style={{ color: LAVENDER, fontSize: 132, fontWeight: 800, lineHeight: 1 }}>.</span>
         </span>

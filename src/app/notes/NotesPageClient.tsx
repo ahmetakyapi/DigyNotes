@@ -304,15 +304,15 @@ export default function NotesPageClient({
     return (
       <div className="mx-auto max-w-5xl px-3 pb-16 pt-10 sm:px-6 sm:pt-14">
         <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-          <span className="text-[var(--gold)]">(00)</span> Arşivin Başlangıcı
+          <span className="text-[var(--gold)]">(00)</span> İlk Adım
         </p>
         <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)]">
-          Arşivin Boş,{" "}
-          <span className="dn-display font-normal italic tracking-[-0.02em]">Henüz</span>
+          Henüz Hiç <span className="dn-display font-normal italic tracking-[-0.02em]">Notun</span>{" "}
+          Yok
           <span className="text-[var(--gold)]">.</span>
         </h2>
         <p className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          Bir türle başla. Adını yazman yeter; kapak, künye ve yıl kendiliğinden gelir.
+          Bir kategori seç ve ilk notunu ekle. Adını yazman yeter, gerisini biz doldururuz.
         </p>
 
         <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4 lg:grid-cols-6">
@@ -362,7 +362,7 @@ export default function NotesPageClient({
             href="/discover"
             className="group relative text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
           >
-            Ya da Topluluğu Keşfet
+            Ya da Başkalarının Notlarına Göz At
             <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-500 ease-out-expo group-hover:scale-x-100" />
           </Link>
         </div>
@@ -374,7 +374,7 @@ export default function NotesPageClient({
     <>
       {(postsError || savedError) && (
         <div className="mx-auto mb-4 max-w-5xl px-3 pt-6 sm:px-6 sm:pt-8">
-          <div className="border-accent/20 bg-accent/8 rounded-2xl border px-4 py-3 text-sm text-[var(--text-secondary)]">
+          <div className="rounded-2xl border border-accent/20 bg-accent/8 px-4 py-3 text-sm text-[var(--text-secondary)]">
             {[postsError, savedError].filter(Boolean).join(" ")}
           </div>
         </div>

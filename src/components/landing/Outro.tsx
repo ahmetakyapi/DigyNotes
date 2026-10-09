@@ -13,16 +13,20 @@ import { motion } from "framer-motion";
 import { EASE_OUT_EXPO, FadeUp, Magnetic, MaskLine } from "./Motion";
 
 const STEPS = [
-  { n: "01", t: "Kaydını Aç", d: "E-posta ve şifre. Otuz saniye sürmez, kredi kartı istemez." },
+  {
+    n: "01",
+    t: "Hesap Oluştur",
+    d: "E-posta ve şifrenle yarım dakikada üye ol. Kart bilgisi istemiyoruz.",
+  },
   {
     n: "02",
-    t: "Adını Yaz, Seç",
-    d: "Kapak, künye ve yıl kendiliğinden dolar. Sen durumunu ve puanını seç.",
+    t: "Ne İzlediğini Ekle",
+    d: "Adını yazıp listeden seç; kapak ve bilgiler kendiliğinden dolar. Sonra puanını ver.",
   },
   {
     n: "03",
-    t: "Kendi Cümlelerinle Sakla",
-    d: "Zengin metin, etiketler, spoiler uyarısı. Sonra akışta paylaş — ya da yalnız sende kalsın.",
+    t: "Düşüncelerini Yaz",
+    d: "İstediğin kadar uzun yaz, etiket ekle, gerekirse spoiler uyarısı koy. İstersen paylaş, istersen sadece sende kalsın.",
   },
 ];
 
@@ -37,9 +41,9 @@ export function Steps() {
           <span className="text-[var(--gold)]">(06)</span> Nasıl Çalışır
         </span>
         <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-          <MaskLine>Üç Adım.</MaskLine>
+          <MaskLine>Üç Adımda</MaskLine>
           <MaskLine delay={0.08}>
-            <span className="dn-display font-normal italic tracking-[-0.02em]">Fazlası Değil.</span>
+            <span className="dn-display font-normal italic tracking-[-0.02em]">Hazırsın.</span>
           </MaskLine>
         </h2>
       </div>
@@ -74,9 +78,9 @@ export function FinalCta() {
     <section className="relative overflow-hidden px-5 pb-16 pt-8 sm:px-10 md:pb-24 md:pt-10">
       <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
         <h2 className="text-[clamp(3.4rem,12vw,13rem)] font-extrabold leading-[0.86] tracking-[-0.06em] text-[var(--text-primary)]">
-          <MaskLine>Hatırlamaya</MaskLine>
+          <MaskLine>Unutmadan</MaskLine>
           <MaskLine delay={0.1}>
-            <span className="dn-display font-normal italic tracking-[-0.03em]">Değer</span>
+            <span className="dn-display font-normal italic tracking-[-0.03em]">Not Al</span>
             <span className="text-[var(--gold)]">.</span>
           </MaskLine>
         </h2>
@@ -115,10 +119,10 @@ export function LandingFooter() {
     {
       t: "Sayfa",
       l: [
-        ["Arşivler", "#arsivler"],
-        ["Vitrin", "#vitrin"],
+        ["Neler Var", "#arsivler"],
+        ["Uygulama", "#vitrin"],
         ["Özellikler", "#ozellikler"],
-        ["Nasıl", "#nasil"],
+        ["Nasıl Çalışır", "#nasil"],
       ],
     },
     {
@@ -185,7 +189,7 @@ export function LandingFooter() {
 
       <div className="dn-mono mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)] sm:px-10">
         <span>© {new Date().getFullYear()} DigyNotes</span>
-        <span>Kişisel Kullanım İçin · Ücretsiz</span>
+        <span>Ücretsiz · Kişisel Kullanım İçin</span>
       </div>
 
       <div aria-hidden className="relative mt-6 select-none overflow-hidden leading-none">

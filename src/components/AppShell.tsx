@@ -163,7 +163,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             >
               <Wordmark size="md" />
               <span className="dn-mono hidden border-l border-[var(--border)] pl-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)] lg:inline">
-                Kişisel Arşiv
+                Not Defterin
               </span>
             </Link>
 

@@ -188,7 +188,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     if (!isDirty || isSubmitting) return true;
 
     return window.confirm(
-      "Kaydedilmemiş değişikliklerin var. Sayfadan çıkarsan düzenlemelerin kaybolacak. Devam etmek istiyor musun?"
+      "Kaydetmediğin değişiklikler var. Çıkarsan bunlar kaybolacak. Yine de çıkmak istiyor musun?"
     );
   }, [isDirty, isSubmitting]);
 
@@ -320,7 +320,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     if (config.creatorRequired) requiredFields.push(creator);
     if (config.yearsRequired) requiredFields.push(years);
     if (requiredFields.some((f) => !f.trim())) {
-      const message = "Lütfen zorunlu alanları doldurun.";
+      const message = "Zorunlu alanları doldur.";
       setSubmitError(message);
       toast.error(message);
       return;
@@ -356,7 +356,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       );
       initialSnapshotRef.current = currentSnapshot;
       setIsDirty(false);
-      toast.success("Değişiklikler kaydedildi!");
+      toast.success("Değişiklikler kaydedildi");
       navigateWithDirtyCheck(() => router.push(`/posts/${params.id}`));
     } catch (error) {
       const message = getClientErrorMessage(error, "Değişiklikler kaydedilemedi.");
@@ -423,7 +423,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               onClick={() => router.push("/notes")}
               className="inline-flex h-11 cursor-pointer items-center rounded-full bg-[var(--gold)] px-5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[var(--gold-light)] active:scale-95"
             >
-              Notlara Git
+              Notlarıma Git
             </button>
           </div>
         </div>
@@ -437,10 +437,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         {/* LAYOUT: shared editorial masthead — status badges + back link live in the action slot */}
         <PageHeader
           index="✎"
-          eyebrow="Notu Düzenle"
+          eyebrow="Not"
           title={
             <>
-              Yazıyı <Em>Düzenle</Em>
+              Notu <Em>Düzenle</Em>
               <Dot />
             </>
           }
@@ -560,7 +560,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                       <div>
                         <p className={labelClass}>Konum</p>
                         <p className="-mt-1 text-[12px] leading-5 text-[var(--text-muted)]">
-                          Harita görünümü için konumu güncelle.
+                          Notunun haritada doğru yerde görünmesi için konumu seç.
                         </p>
                       </div>
                       {typeof lat === "number" && typeof lng === "number" && (
@@ -716,14 +716,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                       Kapak Önizleme
                     </span>
                     <span className="dn-mono absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--media-control-text)] backdrop-blur-sm">
-                      {isLandscape ? "Yatay Kadraj" : "Poster Kadrajı"}
+                      {isLandscape ? "Yatay Görsel" : "Dikey Görsel"}
                     </span>
                   </div>
                   <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-card)] px-4 py-3">
                     <p className="text-[12px] text-[var(--text-secondary)]">
                       {isLandscape
-                        ? "Yatay görseller için üst odaklı kadraj otomatik uygulandı."
-                        : "Poster tipindeki görseller için merkez odak korunuyor."}
+                        ? "Yatay görsel, üst kısmı gösteriliyor."
+                        : "Dikey görsel, ortası gösteriliyor."}
                     </p>
                   </div>
                 </div>
@@ -764,7 +764,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                       Spoiler Uyarısı Ekle
                     </span>
                     <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
-                      Detay sayfasında içerik blur olur ve okur önce onay verir.
+                      Okuyanlar notu açmadan önce bir uyarı görür.
                     </span>
                   </span>
                 </label>

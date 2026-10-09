@@ -9,35 +9,32 @@ export interface OrganizationSurfaceDefinition {
   cta: string;
 }
 
-export const ORGANIZATION_SURFACES: Record<
-  OrganizationSurfaceKey,
-  OrganizationSurfaceDefinition
-> = {
-  bookmarks: {
-    key: "bookmarks",
-    label: "Kaydettiklerim",
-    shortLabel: "Hızlı kayıt",
-    description:
-      "Bir nota hızlıca geri dönmek istediğinde kullan. Geçici değildir, ama gruplama da yapmaz.",
-    href: "/notes?tab=kaydedilenler",
-    cta: "Kaydettiklerime Git",
-  },
-  watchlist: {
-    key: "watchlist",
-    label: "İstek Listesi",
-    shortLabel: "Sonra bak",
-    description:
-      "Henüz nota dönüştürmediğin film, dizi, kitap, oyun ve gezi fikirlerini burada beklet.",
-    href: "/watchlist",
-    cta: "İstek Listesine Git",
-  },
-  collections: {
-    key: "collections",
-    label: "Koleksiyonlar",
-    shortLabel: "Uzun vadeli grup",
-    description:
-      "Tamamlanmış notlarını tema, dönem ya da duygu ekseninde bir araya getirip sergile.",
-    href: "/collections",
-    cta: "Koleksiyonlara Git",
-  },
-};
+export const ORGANIZATION_SURFACES: Record<OrganizationSurfaceKey, OrganizationSurfaceDefinition> =
+  {
+    bookmarks: {
+      key: "bookmarks",
+      label: "Kaydettiklerim",
+      shortLabel: "Sonra tekrar bak",
+      description: "Tekrar bakmak istediğin notları kaydet, hepsini tek yerde bul.",
+      href: "/notes?tab=kaydedilenler",
+      cta: "Kaydettiklerime Git",
+    },
+    watchlist: {
+      key: "watchlist",
+      label: "İstek Listesi",
+      shortLabel: "İzle, oku, git",
+      description:
+        "Henüz izlemediğin, okumadığın ya da gitmediğin şeyleri sonra hatırlamak için buraya ekle.",
+      href: "/watchlist",
+      cta: "İstek Listesine Git",
+    },
+    collections: {
+      key: "collections",
+      label: "Koleksiyonlar",
+      shortLabel: "Notları grupla",
+      description:
+        "Notlarını konuya, döneme ya da ruh haline göre grupla; istersen profilinde göster.",
+      href: "/collections",
+      cta: "Koleksiyonlara Git",
+    },
+  };

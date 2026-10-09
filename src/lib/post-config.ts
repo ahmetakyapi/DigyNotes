@@ -36,135 +36,113 @@ export interface PostComposerGuidance {
 
 const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = {
   movies: {
-    heroEyebrow: "İzlediğini Hızla Yakala",
-    heroTitle: "Film Notunu Tek Akışta Başlat",
-    heroDescription:
-      "Önce filmi bul, sonra başlığı ve durumunu netleştir. Form geri kalan alanları buna göre sakinleştirir.",
+    heroEyebrow: "Film Notu",
+    heroTitle: "İzlediğin Filmi Not Al",
+    heroDescription: "Filmi ara, durumunu seç ve ne düşündüğünü yaz.",
     searchTitle: "Filmi Ara",
-    searchDescription: "Arama sonuçlarıyla başlık, yönetmen, yıl ve kapak hızlıca yerleşsin.",
-    searchHint:
-      "Doğru filmi seçtiğinde temel alanlar dolar; sen doğrudan yorumunu ve puanını eklemeye geçersin.",
+    searchDescription: "Filmi seçince adı, yönetmeni, yılı ve afişi kendiliğinden dolar.",
+    searchHint: "Filmi seçince temel bilgiler dolar; sana sadece yorumunu ve puanını yazmak kalır.",
     titlePlaceholder: "Örn. Perfect Days",
-    titleHint: "Notun arşivde ve detay sayfasında görünecek adı burada netleşir.",
-    statusHint:
-      "Durum, filmi nerede bıraktığını ve listelerde nasıl görünmesi gerektiğini belirler.",
-    contentHint: "İlk satırda neden kaydettiğini yaz, sonra sahne, his ve çağrışımlarını ekle.",
+    titleHint: "Notun bu adla listelenecek.",
+    statusHint: "Filmi izledin mi, yoksa izlemeyi mi düşünüyorsun?",
+    contentHint: "Filmi neden not aldığını yaz; sonra aklında kalan sahneleri ve hislerini ekle.",
     contentTemplateHint:
-      "Şablon başlangıç ritmini kurar; başlıkları silip kendi akışına göre yeniden şekillendirebilirsin.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
     imageHint:
-      "Kapak boşsa aramadan doldurabilir ya da kendi görsel bağlantını doğrudan yapıştırabilirsin.",
-    locationHint: "Film notlarında konum alanı kullanılmaz; odak yapımın kendisinde kalır.",
+      "Afiş boşsa aramadan seçebilir ya da kendi görselinin bağlantısını yapıştırabilirsin.",
+    locationHint: "Film notlarında konum kullanılmıyor.",
     manualHint: "",
   },
   series: {
-    heroEyebrow: "Takibi Kaybetme",
-    heroTitle: "Dizi Notunu Bölüm Bölüm Değil, Niyetle Aç",
-    heroDescription:
-      "Diziyi bul, izleme durumunu seç ve sonra sezonlar arasında kaybolmadan notunu yapılandır.",
+    heroEyebrow: "Dizi Notu",
+    heroTitle: "İzlediğin Diziyi Not Al",
+    heroDescription: "Diziyi ara, nerede kaldığını seç ve ne düşündüğünü yaz.",
     searchTitle: "Diziyi Ara",
-    searchDescription:
-      "Başlık, yayın yılları, yapım bilgisi ve kapak mümkün olduğunca otomatik dolsun.",
-    searchHint:
-      "Önce doğru diziyi seç; sonra hangi aşamada olduğunu ve seni neyin tuttuğunu yazmak daha kolay olur.",
+    searchDescription: "Diziyi seçince adı, yayın yılları ve afişi kendiliğinden dolar.",
+    searchHint: "Önce diziyi seç; sonra nerede kaldığını ve neyi sevdiğini yazman kolaylaşır.",
     titlePlaceholder: "Örn. Severance",
-    titleHint: "Dizi adı, notun ana kimliği olur; kısa ve tanınabilir bırak.",
-    statusHint: "Durum, yarım kalan, takip edilen ya da bitirilen dizileri ayırır.",
+    titleHint: "Notun bu adla listelenecek. Kısa ve tanıdık bırakmak iyi olur.",
+    statusHint: "İzliyor musun, bitirdin mi, yoksa yarıda mı bıraktın?",
     contentHint:
-      "Spoiler vermeden genel hissi, ardından sezon ya da karakter odaklı notlarını ekleyebilirsin.",
+      "Önce genel izlenimini yaz; istersen sonra sezonlar ya da karakterler hakkında not ekle.",
     contentTemplateHint:
-      "Şablon, dizi notlarında tempo ve sezon izini korumak için başlangıç başlıkları sunar.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
     imageHint:
-      "Afiş yoksa arama sonucu çoğu zaman yeterlidir; gerekirse başka bir görsel URL'si ekleyebilirsin.",
-    locationHint: "Dizi notlarında konum alanı kullanılmaz.",
+      "Afiş genelde aramadan gelir; istersen başka bir görselin bağlantısını ekleyebilirsin.",
+    locationHint: "Dizi notlarında konum kullanılmıyor.",
     manualHint: "",
   },
   game: {
-    heroEyebrow: "Oynadığın Şeyi Bağlamıyla Sakla",
-    heroTitle: "Oyun Notunu Hızla Kur",
-    heroDescription: "Önce oyunu seç, sonra durum ve kişisel notlarla deneyimini arşive sabitle.",
+    heroEyebrow: "Oyun Notu",
+    heroTitle: "Oynadığın Oyunu Not Al",
+    heroDescription: "Oyunu ara, durumunu seç ve neler yaşadığını yaz.",
     searchTitle: "Oyunu Ara",
     searchDescription:
-      "Başlık, geliştirici, çıkış yılı ve kapak aramayla gelsin; sen oynanış hissine odaklan.",
-    searchHint:
-      "Sonucu seçtikten sonra özellikle başlık ve geliştirici alanlarını kontrol edip ince ayar yapabilirsin.",
+      "Oyunu seçince adı, geliştiricisi, çıkış yılı ve kapağı kendiliğinden dolar.",
+    searchHint: "Oyunu seçtikten sonra adını ve geliştiricisini bir kontrol et.",
     titlePlaceholder: "Örn. Disco Elysium",
-    titleHint: "Aradığın oyunun adı arşivde arama ve filtrelemeyi kolaylaştırır.",
-    statusHint: "Durum, başladığın, bitirdiğin ya da geri dönmek istediğin oyunları ayırır.",
-    contentHint:
-      "Mekanik, atmosfer ve sende bıraktığı etkiyi birkaç kısa paragrafla tutmak iyi çalışır.",
+    titleHint: "Notun bu adla listelenecek; sonra aramada da bu adla bulursun.",
+    statusHint: "Oynuyor musun, bitirdin mi, yoksa sonra mı döneceksin?",
+    contentHint: "Oynanışı, atmosferi ve sende bıraktığı etkiyi birkaç kısa paragrafta anlat.",
     contentTemplateHint:
-      "Şablon, oyun notlarında oynanış ve his katmanını ayırman için iskelet sağlar.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
     imageHint:
-      "Kapak alanı boşsa arama sonucu kullanabilir ya da özel bir ekran görüntüsü bağlantısı ekleyebilirsin.",
-    locationHint: "Oyun notlarında konum alanı kullanılmaz.",
+      "Kapak boşsa aramadan seçebilir ya da bir ekran görüntüsünün bağlantısını ekleyebilirsin.",
+    locationHint: "Oyun notlarında konum kullanılmıyor.",
     manualHint: "",
   },
   book: {
-    heroEyebrow: "Okuduğunu Düşünceyle Kaydet",
-    heroTitle: "Kitap Notunu Sade Ama Yönlendirilmiş Başlat",
-    heroDescription:
-      "Kitabı bul, başlığı ve yılı oturt, sonra altını çizmek istediğin fikirleri yerleştir.",
+    heroEyebrow: "Kitap Notu",
+    heroTitle: "Okuduğun Kitabı Not Al",
+    heroDescription: "Kitabı ara, durumunu seç ve aklında kalanları yaz.",
     searchTitle: "Kitabı Ara",
-    searchDescription: "Başlık, yazar, yayın yılı ve kapak gibi temel alanları aramayla toparla.",
-    searchHint:
-      "Kitabı seçtikten sonra ilk satıra senden hangi fikri ya da duyguyu aldığına yazmak iyi bir başlangıçtır.",
+    searchDescription: "Kitabı seçince adı, yazarı, yayın yılı ve kapağı kendiliğinden dolar.",
+    searchHint: "Kitabı seçtikten sonra işe ondan ne aldığını yazarak başlayabilirsin.",
     titlePlaceholder: "Örn. Körlük",
-    titleHint: "Başlık alanı kitap sayfasının ana girişidir; seri adı gerekiyorsa burada belirt.",
-    statusHint: "Durum, okumaya başlanmış ve tamamlanmış kitapları ayırt eder.",
-    contentHint:
-      "İçerikte tema, alıntı hissi ve kişisel yorum arasında net ama rahat bir akış kur.",
+    titleHint: "Notun bu adla listelenecek. Bir serinin parçasıysa seri adını da ekleyebilirsin.",
+    statusHint: "Okuyor musun, bitirdin mi, yoksa sonra mı okuyacaksın?",
+    contentHint: "Kitabın konusunu, sevdiğin alıntıları ve kendi yorumunu yaz.",
     contentTemplateHint:
-      "Şablon, kitap notlarında tema ve alıntı düşüncesi için temel başlıklar sunar.",
-    imageHint:
-      "Kapak bağlantısı yoksa arama sonucu yeterlidir; istersen baskıya özel kapağı ayrıca ekleyebilirsin.",
-    locationHint: "Kitap notlarında konum alanı kullanılmaz.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
+    imageHint: "Kapak genelde aramadan gelir; istersen kendi baskının kapağını ekleyebilirsin.",
+    locationHint: "Kitap notlarında konum kullanılmıyor.",
     manualHint: "",
   },
   travel: {
-    heroEyebrow: "Yeri Kaydet, Hissi Kaçırma",
-    heroTitle: "Gezi Notunu Rota Gibi Aç",
-    heroDescription:
-      "Önce yeri seç, sonra başlık ve ziyaret bilgisini netleştir. Koordinatlar yalnızca gezi akışında görünür.",
-    searchTitle: "Yeri Bul",
-    searchDescription:
-      "Konumu seçtiğinde başlık, koordinatlar ve varsa görsel daha anlaşılır bir başlangıç oluşturur.",
-    searchHint:
-      "Doğru yeri seçmek, gezi notunun harita ve detay sayfasında bağlamını korumasını sağlar.",
+    heroEyebrow: "Gezi Notu",
+    heroTitle: "Gezdiğin Yeri Not Al",
+    heroDescription: "Yeri ara, ne zaman gittiğini seç ve neler gördüğünü yaz.",
+    searchTitle: "Yeri Ara",
+    searchDescription: "Yeri seçince adı, konumu ve varsa bir görseli kendiliğinden dolar.",
+    searchHint: "Yeri seçersen notun haritada da görünür.",
     titlePlaceholder: "Örn. Balat sokaklarında akşam yürüyüşü",
-    titleHint: "Başlıkta yer adı tek başına yetmiyorsa anı ya da rota tonunu ekle.",
-    statusHint: "Durum, gezi planı ile gerçekleşmiş ziyaretleri birbirinden ayırır.",
-    contentHint:
-      "İlk paragrafta niçin gittiğini ya da nasıl hissettirdiğini, sonra rota detaylarını ekle.",
+    titleHint: "Yerin adı yetmiyorsa ne yaptığını da ekle; sonra hatırlaması kolay olur.",
+    statusHint: "Gittin mi, yoksa gitmeyi mi planlıyorsun?",
+    contentHint: "Neden gittiğini ve nasıl hissettirdiğini yaz; sonra rotanı ve ipuçlarını ekle.",
     contentTemplateHint:
-      "Şablon, gezi notlarında rota, atmosfer ve pratik ipuçlarını ayrı katmanlarda tutmana yardım eder.",
-    imageHint:
-      "Kapak yoksa sorun değil; önce konumu seç, sonra istersen kendi çektiğin görselin bağlantısını ekle.",
-    locationHint:
-      "Haritada görünmesi için bir yer seç ve koordinatların dolduğunu aşağıdaki kutudan doğrula.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
+    imageHint: "Görsel şart değil. İstersen kendi çektiğin bir fotoğrafın bağlantısını ekle.",
+    locationHint: "Notunun haritada görünmesi için bir yer seç.",
     manualHint: "",
   },
   other: {
-    heroEyebrow: "Serbest Ama Başıboş Değil",
-    heroTitle: "Diğer Notunu Niyetle Kur",
-    heroDescription:
-      "Bu kategori manuel giriş içindir. Başlığı, durumu ve kaynağı sen belirlersin; form geri kalanını sade tutar.",
-    searchTitle: "Manuel Başlangıç",
-    searchDescription:
-      "Bu kategoride otomatik arama yok. Notu doğrudan başlık ve içerik üzerinden kur.",
+    heroEyebrow: "Serbest Not",
+    heroTitle: "Aklındakini Not Al",
+    heroDescription: "Bu kategoride arama yok; başlığı ve içeriği sen yazarsın.",
+    searchTitle: "Başlıkla Başla",
+    searchDescription: "Bu kategoride arama yok. Bir başlık yazarak başla.",
     searchHint:
-      "İstersen kaynak kişiyi ya da bağlamı creator alanında tutup kapak görselini ayrıca ekleyebilirsin.",
-    titlePlaceholder: "Örn. Bir sergi notu, makale ya da ilham kırıntısı",
-    titleHint: "Bu başlık, serbest notun daha sonra aranabilir ve hatırlanabilir kalmasını sağlar.",
-    statusHint: "Durum, serbest notun fikir aşamasında mı yoksa tamamlanmış mı olduğunu gösterir.",
-    contentHint:
-      "Bu alanda bağlam, ana fikir ve senden geriye ne kaldığını birkaç net blokta topla.",
+      "İstersen kaynağı ya da kimden olduğunu ayrıca yazabilir, bir görsel ekleyebilirsin.",
+    titlePlaceholder: "Örn. Bir sergi, bir makale ya da aklına gelen bir fikir",
+    titleHint: "Sonra kolayca bulabilmen için açıklayıcı bir başlık yaz.",
+    statusHint: "Bu not bir fikir mi, yoksa tamamlandı mı?",
+    contentHint: "Ne olduğunu, ana fikrini ve sende ne bıraktığını kısaca yaz.",
     contentTemplateHint:
-      "Şablon, serbest notlarda bile giriş ve ana düşünceyi boş bırakmaman için hafif bir çerçeve sunar.",
-    imageHint:
-      "Bir görsel şart değil; ama kapağın olması arşiv içinde notu çok daha hızlı ayırt etmeyi sağlar.",
-    locationHint: "Bu kategoride konum alanı kullanılmaz.",
+      "Şablon sadece başlamana yardım eder. Başlıkları silebilir ya da değiştirebilirsin.",
+    imageHint: "Görsel şart değil ama notunu listede daha kolay bulmanı sağlar.",
+    locationHint: "Bu kategoride konum kullanılmıyor.",
     manualHint:
-      "Makale, sergi, podcast bölümü ya da kişisel bir fikir kırıntısıysa bu akış senin için doğru yer.",
+      "Bir makale, sergi, podcast ya da aklına gelen bir fikir için bu kategoriyi kullanabilirsin.",
   },
 };
 

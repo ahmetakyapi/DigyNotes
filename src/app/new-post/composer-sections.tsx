@@ -93,11 +93,9 @@ export function CategorySearchSection({
   const [guidanceOpen, setGuidanceOpen] = useState(false);
 
   const searchHint = (() => {
-    if (autofillDone)
-      return "Temel alanlar doldu. Aşağıda sadece başlığı ve durumu gözden geçirmen yeterli.";
-    if (isTravelCat)
-      return "Doğru yeri seçtiğinde koordinatlar görünür ve gezi notu haritayla bağ kurar.";
-    return "Arama başlangıcı hızlandırır; istersen sonucu seçmeden de devam edebilirsin.";
+    if (autofillDone) return "Bilgiler doldu. Aşağıda başlığı ve durumu kontrol etmen yeterli.";
+    if (isTravelCat) return "Yeri seçersen notun haritada da görünür.";
+    return "Arama işini hızlandırır ama şart değil; istersen bir şey seçmeden de devam edebilirsin.";
   })();
 
   return (
@@ -133,7 +131,7 @@ export function CategorySearchSection({
           {guidanceOpen && (
             <div className="mt-3 border-l-2 border-accent/60 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
               {supportsAutofill
-                ? "Kategori seç, arama sonucunu al ve sonra alt alandaki başlık ile durum bilgilerini tamamla."
+                ? "Önce kategoriyi seç ve ara. Bir sonucu seçince bilgiler dolar; sonra aşağıda başlığı ve durumu kontrol et."
                 : guidance.manualHint}
             </div>
           )}
@@ -180,7 +178,7 @@ export function CategorySearchSection({
                 />
                 <p className={helperTextClass}>
                   {title
-                    ? "Başlık hazır. Aşağıda durum ve diğer alanları tamamlayabilirsin."
+                    ? "Başlık tamam. Şimdi aşağıdaki alanları doldurabilirsin."
                     : guidance.titleHint}
                 </p>
               </>
@@ -238,25 +236,25 @@ export function FieldsSection({
   onPlaceSelect,
 }: FieldsSectionProps) {
   const creatorHelperText = (() => {
-    if (creator) return `${config.creatorLabel} bilgisi görünür durumda kalır.`;
-    const req = config.creatorRequired ? "zorunlu" : "opsiyonel";
-    return `${config.creatorLabel} alanı bu kategori için ${req} tutulur.`;
+    if (creator) return `${config.creatorLabel} bilgisi notunda görünecek.`;
+    return config.creatorRequired
+      ? `${config.creatorLabel} bilgisi zorunlu.`
+      : `${config.creatorLabel} bilgisi isteğe bağlı.`;
   })();
 
   const yearsHelperText = (() => {
-    if (years) return `${config.yearsLabel} alanı kayda hazır.`;
-    const req = config.yearsRequired ? "bu kategori için zorunlu." : "istersen boş bırakılabilir.";
-    return `${config.yearsLabel} alanı ${req}`;
+    if (years) return `${config.yearsLabel} bilgisi notunda görünecek.`;
+    return config.yearsRequired
+      ? `${config.yearsLabel} bilgisi zorunlu.`
+      : `${config.yearsLabel} bilgisi isteğe bağlı, boş bırakabilirsin.`;
   })();
 
   return (
     <div className={cardClass}>
       <div className="flex flex-col gap-2">
-        <StepLabel index="02" label="Temel Alanlar" />
+        <StepLabel index="02" label="Bilgiler" />
         <h3 className="text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)]">
-          {supportsAutofill
-            ? "Başlığı ve Temel Durumu Netleştir"
-            : "Durum ve Temel Alanları Tamamla"}
+          {supportsAutofill ? "Başlığı ve Durumu Kontrol Et" : "Durumu ve Diğer Bilgileri Gir"}
         </h3>
       </div>
 
@@ -274,9 +272,7 @@ export function FieldsSection({
             placeholder={guidance.titlePlaceholder}
           />
           <p className={helperTextClass}>
-            {title
-              ? "Başlık görünür durumda. İstersen tonu daha kişisel hale getirebilirsin."
-              : guidance.titleHint}
+            {title ? "İstersen başlığı kendi zevkine göre değiştirebilirsin." : guidance.titleHint}
           </p>
         </div>
       )}
@@ -435,7 +431,7 @@ export function ContentSection({
   const contentHelperText = (() => {
     if (isTemplateActive) return guidance.contentTemplateHint;
     if (plainContent) return guidance.contentHint;
-    return "İlk paragrafı boş bırakma; neden kaydettiğini söyleyen tek bir cümle bile yeterli.";
+    return "Neden not aldığını anlatan tek bir cümle bile yeterli.";
   })();
 
   return (
@@ -462,7 +458,7 @@ export function ContentSection({
                 currentSignature !== "" &&
                 !isTemplateActive &&
                 !globalThis.confirm(
-                  "Mevcut içerik değişecek. Kategori şablonunu yeniden uygulamak istiyor musun?"
+                  "Yazdıkların şablonla değiştirilecek. Devam etmek istiyor musun?"
                 )
               ) {
                 return;
@@ -475,7 +471,7 @@ export function ContentSection({
                 : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
-            {isTemplateActive ? "Şablon Aktif" : "Şablonu Uygula"}
+            {isTemplateActive ? "Şablon Kullanılıyor" : "Şablonu Kullan"}
           </button>
         )}
       </div>

@@ -210,7 +210,7 @@ export default function ProfileSettingsPage() {
         toast.error(err.error ?? "Kaydedilemedi");
         return;
       }
-      toast.success("Profil güncellendi!");
+      toast.success("Profil güncellendi");
       router.push("/notes");
     } catch {
       toast.error("Bir hata oluştu");
@@ -221,7 +221,7 @@ export default function ProfileSettingsPage() {
 
   const handlePasswordChange = async () => {
     if (!currentPassword || !newPassword) {
-      toast.error("Tüm alanları doldurun");
+      toast.error("Tüm alanları doldur");
       return;
     }
     if (newPassword.length < 8) {
@@ -244,7 +244,7 @@ export default function ProfileSettingsPage() {
         toast.error(err.error ?? "Şifre değiştirilemedi");
         return;
       }
-      toast.success("Şifre başarıyla güncellendi");
+      toast.success("Şifren güncellendi");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -265,7 +265,7 @@ export default function ProfileSettingsPage() {
       if (response.status === 401) {
         setExportMessage({
           tone: "error",
-          text: "Oturumun kapanmış olabilir. Lütfen tekrar giriş yapıp dışa aktarmayı yeniden dene.",
+          text: "Oturumun kapanmış olabilir. Tekrar giriş yapıp yeniden dene.",
         });
         router.push("/login");
         return;
@@ -273,9 +273,7 @@ export default function ProfileSettingsPage() {
 
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
-        throw new Error(
-          payload?.error || "Dışa aktarma şu anda hazırlanamadı. Biraz sonra tekrar deneyin."
-        );
+        throw new Error(payload?.error || "Dosya hazırlanamadı. Biraz sonra tekrar dene.");
       }
 
       const blob = await response.blob();
@@ -297,8 +295,8 @@ export default function ProfileSettingsPage() {
         tone: "success",
         text:
           format === "csv"
-            ? "CSV dışa aktarımı indirildi. Tablo görünümü için uygundur."
-            : "JSON dışa aktarımı indirildi. Arşivin tam yapısını korur.",
+            ? "CSV dosyan indirildi. Excel ya da Google E-Tablolar'da açabilirsin."
+            : "JSON dosyan indirildi. Tüm verilerin eksiksiz içinde.",
       });
     } catch (error) {
       setExportMessage({
@@ -306,7 +304,7 @@ export default function ProfileSettingsPage() {
         text:
           error instanceof Error && error.message.trim()
             ? error.message
-            : "Dışa aktarma tamamlanamadı. Bağlantını kontrol edip tekrar dene.",
+            : "İndirme tamamlanamadı. Bağlantını kontrol edip tekrar dene.",
       });
     } finally {
       setExportingFormat(null);
@@ -358,7 +356,7 @@ export default function ProfileSettingsPage() {
               <Dot />
             </>
           }
-          description="Profilini düzenle, gizliliğini seç ve arşivini dilediğin zaman dışa aktar."
+          description="Profil bilgilerini güncelle, kimlerin görebileceğini seç ve istediğin zaman verilerini indir."
           actions={
             profile?.username ? (
               <Link
@@ -375,13 +373,13 @@ export default function ProfileSettingsPage() {
         {/* ── (01) Kimlik ── */}
         <SettingsSection
           index="01"
-          label="Kimlik"
-          note="Profilinde görünen ad, görsel ve kısa tanıtım."
+          label="Profil Bilgileri"
+          note="Profilinde görünen fotoğraf, kullanıcı adı ve kısa tanıtım."
           className="border-t-0 pt-2"
         >
           <div>
             <label htmlFor="settings-avatar" className={labelClass}>
-              Profil Görseli URL
+              Profil Fotoğrafı Bağlantısı
             </label>
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
@@ -453,20 +451,20 @@ export default function ProfileSettingsPage() {
               onChange={(e) => setBio(e.target.value.slice(0, 200))}
               rows={3}
               className={textareaBase}
-              placeholder="Kendinizden kısaca bahsedin..."
+              placeholder="Kendinden kısaca bahset..."
             />
           </div>
         </SettingsSection>
 
         {/* ── (02) Gizlilik ── */}
-        <SettingsSection index="02" label="Gizlilik" note="Kimlerin profilini görebileceğini seç.">
+        <SettingsSection index="02" label="Gizlilik" note="Profilini kimlerin görebileceğini seç.">
           <div className="flex items-center justify-between gap-6">
             <div>
               <p className="text-base font-medium text-[var(--text-primary)]">
                 Profili Herkese Açık Yap
               </p>
               <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
-                Açık olduğunda notlarınız ve profiliniz herkese görünür
+                Açıkken profilini ve notlarını herkes görebilir.
               </p>
             </div>
             <Toggle
@@ -478,7 +476,7 @@ export default function ProfileSettingsPage() {
         </SettingsSection>
 
         {/* ── (03) Güvenlik ── */}
-        <SettingsSection index="03" label="Güvenlik" note="Şifreni düzenli olarak yenile.">
+        <SettingsSection index="03" label="Şifre" note="Şifreni buradan değiştirebilirsin.">
           <div>
             <label htmlFor="settings-current-password" className={labelClass}>
               Mevcut Şifre
@@ -542,7 +540,7 @@ export default function ProfileSettingsPage() {
             }
             className="cursor-pointer rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {changingPassword ? "Güncelleniyor..." : "Şifreyi Güncelle"}
+            {changingPassword ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
           </button>
         </SettingsSection>
 
@@ -550,7 +548,7 @@ export default function ProfileSettingsPage() {
         <SettingsSection
           index="04"
           label="Uygulama Ayarları"
-          note="Tema ve bildirim kısayolları."
+          note="Tema ve bildirimler."
           className="sm:hidden"
         >
           <div className="flex items-center justify-between gap-6">
@@ -558,7 +556,7 @@ export default function ProfileSettingsPage() {
               <p className="text-base font-medium text-[var(--text-primary)]">
                 {theme === "dark" ? "Koyu Tema" : "Açık Tema"}
               </p>
-              <p className="mt-1 text-xs text-[var(--text-muted)]">Tema geçişi</p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">Açık ya da koyu tema</p>
             </div>
             <Toggle checked={theme === "dark"} onChange={toggleTheme} label="Koyu Tema" />
           </div>
@@ -566,7 +564,7 @@ export default function ProfileSettingsPage() {
           <Link href="/notifications" className={rowButtonClass}>
             <div>
               <p className="text-sm font-medium text-[var(--text-primary)]">Bildirimler</p>
-              <p className="mt-0.5 text-xs text-[var(--text-muted)]">Bildirimlerini görüntüle</p>
+              <p className="mt-0.5 text-xs text-[var(--text-muted)]">Bildirimlerini gör</p>
             </div>
             <CaretRightIcon
               size={16}
@@ -579,11 +577,11 @@ export default function ProfileSettingsPage() {
         <SettingsSection
           index="05"
           label="Verilerini İndir"
-          note="Notlar, koleksiyonlar ve watchlist tek pakette hazırlanır."
+          note="Notların, koleksiyonların ve istek listen tek dosyada."
         >
           <p className="border-l-2 border-accent/60 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
-            CSV daha hızlı açılır ve düz metin içerir. JSON ise arşiv yapısını, sıralamayı ve uzun
-            içerikleri temiz metin olarak korur.
+            CSV&apos;yi Excel gibi tablo programlarında açabilirsin. JSON ise tüm verilerini
+            eksiksiz saklar; yedek almak için daha uygun.
           </p>
           <div className="grid gap-2.5 sm:grid-cols-2">
             <button
@@ -595,7 +593,7 @@ export default function ProfileSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">Excel İndir</p>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                  Düz metinli CSV dışa aktarımı indir
+                  Tablo olarak açmak için CSV dosyası
                 </p>
               </div>
               <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
@@ -611,7 +609,7 @@ export default function ProfileSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">JSON İndir</p>
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                  Tam arşivi okunur JSON formatında indir
+                  Tüm verilerin, JSON dosyası olarak
                 </p>
               </div>
               <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
@@ -631,8 +629,7 @@ export default function ProfileSettingsPage() {
             </div>
           )}
           <p className="text-[11px] leading-5 text-[var(--text-faint)]">
-            İndirme tamamlanmazsa bağlantıyı yenileyip tekrar deneyebilir veya daha hafif olduğu
-            için önce CSV formatını kullanabilirsin.
+            İndirme başlamazsa sayfayı yenileyip tekrar dene ya da daha küçük olan CSV&apos;yi seç.
           </p>
         </SettingsSection>
       </div>

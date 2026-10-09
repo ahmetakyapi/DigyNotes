@@ -29,16 +29,16 @@ const COPY = {
         Tekrar <span className="dn-display font-normal italic">Hoş Geldin.</span>
       </>
     ),
-    subtitle: "Arşivin Kaldığın Yerde Seni Bekliyor.",
+    subtitle: "Notların kaldığın yerde seni bekliyor.",
   },
   register: {
-    label: "Yeni Hesap",
+    label: "Üye Ol",
     title: (
       <>
-        Arşivini <span className="dn-display font-normal italic">Başlat.</span>
+        Aramıza <span className="dn-display font-normal italic">Katıl.</span>
       </>
     ),
-    subtitle: "Otuz Saniye. Kredi Kartı Yok, Reklam Yok.",
+    subtitle: "Yarım dakikada üye ol, tamamen ücretsiz.",
   },
 };
 
@@ -76,11 +76,11 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0a] via-[#0b0b0a]/70 to-[#0b0b0a]/30" />
         <div className="absolute inset-x-0 bottom-0 p-12">
           <p className="dn-mono mb-5 text-[10.5px] uppercase tracking-[0.16em] text-[#a8a399]">
-            <span className="text-[#b9a8ff]">(DN)</span> Kişisel Kültür Arşivi
+            <span className="text-[#b9a8ff]">(DN)</span> Kişisel Not Defterin
           </p>
           <p className="max-w-[560px] text-[clamp(2.6rem,4.2vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[#f2efe8]">
-            Sana Kalan Her Şeyin{" "}
-            <span className="dn-display font-normal italic tracking-[-0.02em]">Arşivi</span>
+            Sana Kalan Her Şey,{" "}
+            <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span>
             <span className="text-[#b9a8ff]">.</span>
           </p>
           <div className="dn-mono mt-8 flex gap-6 text-[10.5px] uppercase tracking-[0.14em] text-[#77726a]">

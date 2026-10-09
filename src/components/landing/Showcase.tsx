@@ -189,8 +189,8 @@ function AppMock() {
 }
 
 const NOTES = [
-  { label: "Kapak & Künye Otomatik", cls: "left-[-3%] top-[24%]" },
-  { label: "½ Puan Hassasiyeti", cls: "right-[-2%] top-[38%]" },
+  { label: "Kapak ve Bilgiler Otomatik", cls: "left-[-3%] top-[24%]" },
+  { label: "Yarım Puan Verebilirsin", cls: "right-[-2%] top-[38%]" },
   { label: "Durum: İzlendi / İzlenecek", cls: "left-[2%] bottom-[10%]" },
 ];
 
@@ -208,18 +208,21 @@ export function Showcase() {
         <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
           <div>
             <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-              <span className="text-[var(--gold)]">(04)</span> Vitrin
+              <span className="text-[var(--gold)]">(04)</span> Uygulamadan Bir Kare
             </span>
             <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-              <MaskLine>Arşivin,</MaskLine>
+              <MaskLine>Tüm Notların,</MaskLine>
               <MaskLine delay={0.08}>
-                <span className="dn-display font-normal italic tracking-[-0.02em]">Sahnede.</span>
+                <span className="dn-display font-normal italic tracking-[-0.02em]">
+                  Tek Bakışta.
+                </span>
               </MaskLine>
             </h2>
           </div>
           <FadeUp className="max-w-[360px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
-            Her not bir afiş, bir puan ve birkaç cümle. Son eklediklerin öne çıkar, gerisi düzenli
-            bir raf gibi dizilir — sabitle, arşivle, filtrele.
+            Her not bir afiş, bir puan ve birkaç cümleden oluşur. En son eklediğin en üstte durur,
+            gerisi düzenli bir liste halinde sıralanır. İstediğini sabitle, istediğini arşive
+            kaldır.
           </FadeUp>
         </div>
 

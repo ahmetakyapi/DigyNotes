@@ -12,10 +12,10 @@ import { Wordmark } from "@/components/Wordmark";
 import { LandingThemeToggle } from "@/components/LandingThemeToggle";
 
 const LINKS = [
-  { href: "#arsivler", label: "Arşivler" },
-  { href: "#vitrin", label: "Vitrin" },
+  { href: "#arsivler", label: "Neler Var" },
+  { href: "#vitrin", label: "Uygulama" },
   { href: "#ozellikler", label: "Özellikler" },
-  { href: "#nasil", label: "Nasıl" },
+  { href: "#nasil", label: "Nasıl Çalışır" },
 ];
 
 export function LandingNav() {

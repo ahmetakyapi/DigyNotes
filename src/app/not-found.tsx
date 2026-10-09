@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 /* LAYOUT: Full-height centred editorial 404 (works standalone and inside AppShell).
-   - mono eyebrow "(404) — Kayıp Sahne"
+   - mono eyebrow "(404) — Sayfa Bulunamadı"
    - giant "4 [capsule] 4": the zero is an empty film frame (dashed capsule + accent dot)
    - Title Case headline with serif-italic accent, one-line copy, two pill actions
    - mono footer line
@@ -20,7 +20,7 @@ export default function NotFound() {
       />
 
       <p className="dn-mono relative text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-        <span className="text-[var(--gold)]">(404)</span> — Kayıp Sahne
+        <span className="text-[var(--gold)]">(404)</span> — Sayfa Bulunamadı
       </p>
 
       <div
@@ -30,7 +30,7 @@ export default function NotFound() {
         <span>4</span>
         <span className="relative inline-flex h-[0.74em] w-[1.25em] items-center justify-center rounded-full border-2 border-dashed border-[var(--text-faint)]">
           <span className="dn-mono text-[0.08em] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-            Kesildi
+            Yok
           </span>
           <span className="absolute -right-[0.02em] -top-[0.02em] h-[0.12em] w-[0.12em] animate-pulse rounded-full bg-[var(--gold)]" />
         </span>
@@ -38,12 +38,12 @@ export default function NotFound() {
       </div>
 
       <h1 className="relative mt-8 max-w-[640px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.045em] text-[var(--text-primary)]">
-        Bu Sahne <span className="dn-display font-normal italic tracking-[-0.02em]">Kurgudan</span>{" "}
-        Çıkarılmış
+        Aradığın Sayfa{" "}
+        <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span> Değil
         <span className="text-[var(--gold)]">.</span>
       </h1>
       <p className="relative mt-4 max-w-[440px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
-        Aradığın sayfa silinmiş, taşınmış ya da hiç çekilmemiş olabilir. Arşivin hâlâ yerinde.
+        Bağlantı yanlış olabilir ya da sayfa kaldırılmış. Notların yerinde, merak etme.
       </p>
 
       <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">

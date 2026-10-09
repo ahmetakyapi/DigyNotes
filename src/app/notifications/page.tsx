@@ -97,7 +97,7 @@ export default function NotificationsPage() {
         if (!cancelled) {
           setNotifications([]);
           setUnreadCount(0);
-          setLoadError("Bildirimler şu anda yüklenemedi.");
+          setLoadError("Bildirimler yüklenemedi. Biraz sonra tekrar dene.");
         }
       } finally {
         if (!cancelled) {
@@ -192,14 +192,14 @@ export default function NotificationsPage() {
         {/* LAYOUT: Masthead (index 10) → sign-in empty state. */}
         <PageHeader
           index="10"
-          eyebrow="Gelen Kutusu"
+          eyebrow="Bildirimler"
           title={
             <>
-              Senden <Em>Haberler</Em>
+              <Em>Bildirimler</Em>
               <Dot />
             </>
           }
-          description="Takip, beğeni ve yorum güncellemeleri tek yerde."
+          description="Takip, beğeni ve yorumların hepsi burada."
         />
         <EmptyState
           icon={<BellIcon size={22} weight="duotone" />}
@@ -210,7 +210,7 @@ export default function NotificationsPage() {
           }
           description="Takip, yorum ve beğeni bildirimlerini görmek için giriş yapman gerekiyor."
           primary={{ label: "Giriş Yap", onClick: () => void signIn() }}
-          secondary={{ label: "Keşfe Dön", href: "/discover" }}
+          secondary={{ label: "Keşfet", href: "/discover" }}
         />
       </main>
     );
@@ -240,14 +240,14 @@ export default function NotificationsPage() {
       {/* LAYOUT: Masthead (index 10, mark-all action) → pill filter + last activity → grouped rows. */}
       <PageHeader
         index="10"
-        eyebrow="Gelen Kutusu"
+        eyebrow="Bildirimler"
         title={
           <>
-            Senden <Em>Haberler</Em>
+            <Em>Bildirimler</Em>
             <Dot />
           </>
         }
-        description="Takip, beğeni ve yorum güncellemeleri tek yerde."
+        description="Takip, beğeni ve yorumların hepsi burada."
         stats={headerStats}
         actions={
           <button
@@ -257,7 +257,7 @@ export default function NotificationsPage() {
             className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
-            {markingAll ? "İşleniyor..." : "Tümünü Okundu Yap"}
+            {markingAll ? "İşaretleniyor..." : "Tümünü Okundu İşaretle"}
           </button>
         }
       />
@@ -286,7 +286,7 @@ export default function NotificationsPage() {
         </div>
         {!loading && notifications.length > 0 && (
           <p className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
-            Son Hareket · <span className="text-[var(--text-secondary)]">{lastActivity}</span>
+            Son Bildirim · <span className="text-[var(--text-secondary)]">{lastActivity}</span>
           </p>
         )}
       </div>
@@ -311,10 +311,10 @@ export default function NotificationsPage() {
           icon={<BellRingingIcon size={22} weight="duotone" />}
           title={
             <>
-              Henüz Her Şey <Em>Sakin</Em>
+              Henüz <Em>Bildirimin</Em> Yok
             </>
           }
-          description="Birisi seni takip ettiğinde, notlarını beğendiğinde veya yorum yaptığında burada görünecek."
+          description="Biri seni takip ettiğinde ya da notunu beğendiğinde burada göreceksin."
           primary={{ label: "Keşfet", href: "/discover" }}
         />
       ) : (
@@ -355,10 +355,10 @@ export default function NotificationsPage() {
               icon={<FunnelSimpleIcon size={22} weight="duotone" />}
               title={
                 <>
-                  Bu Filtrede <Em>Bildirim Yok</Em>
+                  Burada <Em>Bildirim</Em> Yok
                 </>
               }
-              description="Bu filtrede bildirim bulunamadı."
+              description="Seçtiğin filtreye uyan bildirim yok."
               primary={{ label: "Tümünü Göster", onClick: () => setActiveFilter("all") }}
             />
           )}

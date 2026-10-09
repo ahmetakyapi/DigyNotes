@@ -111,11 +111,11 @@ export default function FeedPageClient() {
         eyebrow="Takip Ettiklerin"
         title={
           <>
-            Senin <Em>Akışın</Em>
+            Takip Ettiklerinden <Em>Son Notlar</Em>
             <Dot />
           </>
         }
-        description="Takip ettiğin insanların en yeni notları, en tazesi en üstte."
+        description="Takip ettiğin kişilerin yeni notları burada, en yenisi en üstte."
         stats={headerStats}
       />
 
@@ -136,7 +136,7 @@ export default function FeedPageClient() {
               Akışı Görmek İçin <Em>Giriş Yap</Em>
             </>
           }
-          description="Burası takip ettiğin kişilerin en yeni notları için ayrıldı. Giriş yaptığında akış, kronolojik olarak kimden ne geldiğini gösterecek."
+          description="Takip ettiğin kişilerin son notlarını görmek için giriş yapman gerekiyor."
           primary={{ label: "Giriş Yap", href: "/login" }}
           secondary={{ label: "Keşfet", href: "/discover" }}
         />
@@ -148,7 +148,7 @@ export default function FeedPageClient() {
               Akış <Em>Yüklenemedi</Em>
             </>
           }
-          description="Takip akışını şu anda getiremedik. Biraz sonra yeniden deneyebilir veya Keşfet yüzeyinden yeni içeriklere dönebilirsin."
+          description="Bir sorun oldu. Biraz sonra tekrar dene ya da bu arada Keşfet sayfasına göz at."
           primary={{ label: "Keşfet", href: "/discover" }}
         />
       ) : empty ? (
@@ -156,10 +156,10 @@ export default function FeedPageClient() {
           icon={<CompassIcon size={22} weight="duotone" />}
           title={
             <>
-              Akışın Henüz <Em>Sessiz</Em>
+              Henüz <Em>Not</Em> Yok
             </>
           }
-          description="Henüz kimseyi takip etmiyorsun ya da takip ettiklerinden yeni içerik gelmedi. Keşfet sayfasından yeni profiller bulabilirsin."
+          description="Henüz kimseyi takip etmiyorsun ya da takip ettiklerin yeni not eklemedi. Keşfet sayfasından takip edecek kişiler bulabilirsin."
           primary={{ label: "Keşfet", href: "/discover" }}
           secondary={{ label: "Önerilere Bak", href: "/recommended" }}
         />
@@ -297,10 +297,10 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
 
             <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
               <p className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                Takip Akışı
+                Takip Ettiğin Kişi
               </p>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)]">
-                Aç
+                Notu Aç
                 <ArrowRightIcon
                   size={12}
                   weight="bold"

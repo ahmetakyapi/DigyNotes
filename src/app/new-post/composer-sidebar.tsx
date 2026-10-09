@@ -41,10 +41,10 @@ export function StatusSidebar({
 }: StatusSidebarProps) {
   return (
     <div className={cardClass}>
-      <p className={labelClass}>Not Durumu</p>
+      <p className={labelClass}>Önizleme</p>
       <div className="rounded-[18px] border border-[var(--border)] bg-[var(--bg-raised)] p-4">
         <p className="text-base font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
-          {title || "Başlık Bekliyor"}
+          {title || "Henüz Başlık Yok"}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <span className="rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
@@ -55,12 +55,12 @@ export function StatusSidebar({
           </span>
           {externalRating !== null && (
             <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
-              Dış puan: {externalRating}
+              Genel puan: {externalRating}
             </span>
           )}
         </div>
         <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-          {title ? "Not görünür hale geliyor." : footerHint}
+          {title ? "Notun şekilleniyor." : footerHint}
         </p>
 
         <div className="mt-4 border-t border-[var(--border)] pt-4">
@@ -106,7 +106,7 @@ export function StatusSidebar({
                 Spoiler Uyarısı Ekle
               </span>
               <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
-                İçerik detay sayfasında önce onayla açılır.
+                Okuyanlar notu açmadan önce bir uyarı görür.
               </span>
             </span>
           </label>
@@ -154,7 +154,8 @@ export function CoverSidebar({
         <CoverPreview image={image} imagePosition={imagePosition} isLandscape={isLandscape} />
       ) : (
         <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-          Kapak şu an boş. Arama sonucu, yer seçimi ya da manuel URL ile dolabilir.
+          Henüz kapak yok. Aramadan bir sonuç seçince gelir ya da bir görsel bağlantısı
+          yapıştırabilirsin.
         </p>
       )}
     </div>
@@ -236,8 +237,8 @@ function CoverPreview({
       <div className="border-t border-[var(--border-subtle)] bg-[var(--bg-raised)] px-3.5 py-2">
         <p className="text-[11px] text-[var(--text-muted)]">
           {isLandscape
-            ? "Yatay görsel. Üst odaklı kadraj uygulandı."
-            : "Poster görsel. Merkez odak korunuyor."}
+            ? "Yatay görsel, üst kısmı gösteriliyor."
+            : "Dikey görsel, ortası gösteriliyor."}
         </p>
       </div>
     </div>
@@ -255,7 +256,7 @@ interface TagsSidebarProps {
 export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProps) {
   const handleAddPopularTag = (tagName: string) => {
     if (tags.length >= 10) {
-      toast.error("En fazla 10 etiket ekleyebilirsiniz.");
+      toast.error("En fazla 10 etiket ekleyebilirsin.");
       return;
     }
     if (tags.includes(tagName)) return;
@@ -272,9 +273,7 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
       </div>
 
       <TagInput value={tags} onChange={onTagsChange} />
-      <p className={`${helperTextClass} mt-3`}>
-        Etiketler notu daha sonra ararken ve kategori içinde daraltırken işini kolaylaştırır.
-      </p>
+      <p className={`${helperTextClass} mt-3`}>Etiketler, notlarını sonra bulmanı kolaylaştırır.</p>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {exampleTags.map((tagName) => {

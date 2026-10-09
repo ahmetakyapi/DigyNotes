@@ -7,7 +7,7 @@
                      On scroll the lines drift apart, blur and fade; posters fly off.
   ACT 2 (.1 → .5)  — A capsule "aperture" opens from the centre to full-bleed, revealing a
                      tilted wall of covers that slowly de-zooms.
-  ACT 3 (.46 → .85) — Over the wall: "İzle. Oku. Oyna. Gez." word by word, then "Hepsini Sakla.",
+  ACT 3 (.46 → .85) — Over the wall: "İzle. Oku. Oyna. Gez." word by word, then "Hepsini Not Al.",
                      plus a glass note card whose stars fill with scroll (0 → 4.5).
   ACT 4 (.86 → 1)  — Stage shrinks into a rounded card and hands over to the next section.
   Reduced motion: no pin, Act 1 only.
@@ -240,7 +240,7 @@ export function Hero() {
             style={reduce ? undefined : { opacity: chromeOpacity }}
           >
             <span>
-              <span className="text-[var(--gold)]">(01)</span> Kişisel Kültür Arşivi
+              <span className="text-[var(--gold)]">(01)</span> Kişisel Not Defterin
             </span>
             <span className="hidden md:inline">Film — Dizi — Oyun — Kitap — Gezi</span>
             <span className="inline-flex items-center gap-1.5">
@@ -268,7 +268,7 @@ export function Hero() {
             }
           >
             <h1 className="text-[clamp(3.6rem,17vw,6rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)] md:text-[clamp(5rem,10.4vw,11.5rem)]">
-              <span className="sr-only">Sana Kalan Her Şeyin Arşivi.</span>
+              <span className="sr-only">Sana Kalan Her Şey, Burada.</span>
               <span aria-hidden className="hidden md:block">
                 <motion.span className="block" style={line(l1x)}>
                   <MaskLine delay={0.15}>
@@ -278,13 +278,13 @@ export function Hero() {
                 <motion.span className="block" style={line(l2x)}>
                   <MaskLine delay={0.27} className="pl-[14vw]">
                     <span className="dn-display font-normal italic tracking-[-0.03em]">
-                      Her Şeyin
+                      Her Şey,
                     </span>
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l3x)}>
                   <MaskLine delay={0.39}>
-                    Arşivi<span className="text-[var(--gold)]">.</span>{" "}
+                    Burada<span className="text-[var(--gold)]">.</span>{" "}
                     <Reel items={REEL_B} offset={900} width="w-[1.4em]" />
                   </MaskLine>
                 </motion.span>
@@ -301,13 +301,13 @@ export function Hero() {
                 <motion.span className="block" style={line(l3x)}>
                   <MaskLine delay={0.35}>
                     <span className="dn-display font-normal italic tracking-[-0.03em]">
-                      Her Şeyin
+                      Her Şey,
                     </span>
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
                   <MaskLine delay={0.45}>
-                    Arşivi<span className="text-[var(--gold)]">.</span>
+                    Burada<span className="text-[var(--gold)]">.</span>
                   </MaskLine>
                 </motion.span>
               </span>
@@ -337,11 +337,11 @@ export function Hero() {
             style={reduce ? undefined : { opacity: chromeOpacity, y: chromeY }}
           >
             <p className="max-w-[420px] text-[15px] leading-relaxed text-[var(--text-secondary)] sm:text-base">
-              Film, dizi, oyun, kitap ve gezilerden geriye kalanlar.{" "}
+              İzlediğin filmi, okuduğun kitabı, gezdiğin şehri not al.{" "}
               <span className="text-[var(--text-primary)]">
-                Puanla, etiketle, kendi cümlelerinle sakla
+                Puan ver, etiket ekle, aklından geçenleri yaz.
               </span>{" "}
-              — yıllar sonra aynı duyguyla geri dön.
+              Yıllar sonra dönüp baktığında o anı yeniden hatırla.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <Magnetic>
@@ -350,7 +350,7 @@ export function Hero() {
                   data-cursor="Başla"
                   className="group relative inline-flex h-14 items-center gap-3 overflow-hidden rounded-full bg-[var(--gold)] pl-7 pr-2 text-[15px] font-semibold text-[var(--text-on-accent)] transition-transform duration-300 active:scale-95"
                 >
-                  <span className="relative">Arşivini Başlat</span>
+                  <span className="relative">Hemen Başla</span>
                   <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text-on-accent)] text-[var(--gold)] transition-transform duration-500 ease-out-expo group-hover:rotate-45">
                     <ArrowUpRightIcon size={16} weight="bold" />
                   </span>
@@ -366,9 +366,9 @@ export function Hero() {
             </div>
             <dl className="dn-mono hidden gap-1.5 text-right text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)] md:grid md:justify-self-end">
               {[
-                ["Arşiv Türü", "05", ""],
-                ["Puan Adımı", "½", ""],
-                ["Ücret", "₺0", "text-[var(--gold)]"],
+                ["Kategori", "05", ""],
+                ["Yarım Puan", "½", ""],
+                ["Ücretsiz", "₺0", "text-[var(--gold)]"],
               ].map(([k, v, c]) => (
                 <div key={k} className="flex justify-end gap-2">
                   <dt>{k}</dt>
@@ -431,7 +431,7 @@ export function Hero() {
               <p className="text-center text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.055em] text-[#f2efe8]">
                 Hepsini{" "}
                 <span className="dn-display font-normal italic tracking-[-0.03em] text-[#b9a8ff]">
-                  Sakla.
+                  Not Al.
                 </span>
               </p>
             </motion.div>

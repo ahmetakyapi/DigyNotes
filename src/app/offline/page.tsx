@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 };
 
 /* LAYOUT: Full-screen centred editorial offline screen (standalone, no AppShell) — mirrors 404.
-   - mono eyebrow "(—) — Sinyal Kesildi"
-   - giant empty film frame: dashed capsule holding the wifi-slash glyph + mono "Sinyal Yok",
+   - mono eyebrow "(—) — Bağlantı Yok"
+   - giant empty film frame: dashed capsule holding the wifi-slash glyph + mono "Çevrimdışı",
      pulsing apricot dot on its corner
    - Title Case headline with serif-italic accent, one-line copy
    - hairline-divided 3-cell strip (Ne oldu / Ne yapabilirsin / Nasıl toparlanır), mono labels
@@ -29,7 +29,7 @@ export default function OfflinePage() {
       />
 
       <p className="dn-mono relative text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-        <span className="text-[var(--gold)]">(—)</span> — Sinyal Kesildi
+        <span className="text-[var(--gold)]">(—)</span> — Bağlantı Yok
       </p>
 
       <div
@@ -38,19 +38,18 @@ export default function OfflinePage() {
       >
         <WifiSlashIcon className="h-[clamp(2.2rem,7vw,3.4rem)] w-[clamp(2.2rem,7vw,3.4rem)] text-[var(--text-secondary)]" />
         <span className="dn-mono text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-          Sinyal Yok
+          Çevrimdışı
         </span>
         <span className="absolute right-[12%] top-[6%] h-3 w-3 animate-pulse rounded-full bg-[var(--accent-2)]" />
       </div>
 
       <h1 className="relative mt-10 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.045em] text-[var(--text-primary)]">
-        Bağlantı Şu An{" "}
-        <span className="dn-display font-normal italic tracking-[-0.02em]">Sessiz</span>
+        İnternet <span className="dn-display font-normal italic tracking-[-0.02em]">Bağlantın</span>{" "}
+        Yok
         <span className="text-[var(--gold)]">.</span>
       </h1>
       <p className="relative mt-4 max-w-[460px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
-        Daha önce açılmış sayfaları tekrar deneyebilirsin. Bağlantı geri geldiğinde uygulama normal
-        akışa dönecek.
+        Bağlantın geri geldiğinde kaldığın yerden devam edebilirsin.
       </p>
 
       <div className="relative mt-10 grid w-full max-w-[720px] gap-px overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--border)] text-left sm:grid-cols-3">
@@ -58,7 +57,7 @@ export default function OfflinePage() {
           {
             n: "01",
             label: "Ne Oldu?",
-            text: "Ağ bağlantısı ya da servis erişimi şu anda kesildi.",
+            text: "İnternet bağlantın kesilmiş ya da sunucuya ulaşılamıyor.",
           },
           {
             n: "02",
@@ -67,7 +66,7 @@ export default function OfflinePage() {
           },
           {
             n: "03",
-            label: "Nasıl Toparlanır?",
+            label: "Sonra?",
             text: "Bağlantı geri geldiğinde bu sayfayı yenilemen yeterli.",
           },
         ].map((c) => (

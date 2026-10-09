@@ -49,7 +49,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
             <Dot />
           </>
         }
-        description="Bu etiket, farklı profiller ve kategoriler arasında aynı hafıza izini taşıyan herkese açık notları bir araya getirir."
+        description="Bu etiketi kullanan herkese açık notlar."
         stats={loading ? undefined : [{ value: posts.length, label: "Herkese Açık Not" }]}
         actions={
           <>
@@ -101,10 +101,10 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
           icon={<HashIcon size={22} weight="duotone" />}
           title={
             <>
-              Bu Etiket Henüz <Em>Sessiz</Em>
+              Bu Etiketle Henüz <Em>Not</Em> Yok
             </>
           }
-          description="Bu etiketle henüz herkese açık not yok. Aynı etiketi kullanan ilk herkese açık not bu yüzeyi başlatır."
+          description="Bu etiketi kullanan herkese açık bir not yok. İlk notu sen yazabilirsin."
           primary={{ label: "Not Yaz", href: "/new-post" }}
           secondary={{ label: "Keşfet", href: "/discover" }}
         />

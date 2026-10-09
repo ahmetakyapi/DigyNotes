@@ -102,8 +102,8 @@ function RatingPlayground() {
           })}
         </div>
         <p className="mt-4 max-w-[360px] text-sm leading-relaxed text-[var(--text-secondary)]">
-          Üzerinde gezin, tıkla. Beş yıldız bazen yetmez, bazen fazla gelir — DigyNotes yarım
-          puanları da sayar.
+          Dene: yıldızların üzerine gel ve tıkla. Bazen dört az, beş fazla gelir; o yüzden yarım
+          puan da verebilirsin.
         </p>
       </div>
       <div className="text-right">
@@ -192,7 +192,7 @@ function SearchTyping() {
         </AnimatePresence>
       </div>
       <p className="mt-auto text-sm leading-relaxed text-[var(--text-secondary)]">
-        Adını yaz; kapak, künye ve yıl TMDB, RAWG ve Open Library&apos;den gelsin.
+        Adını yazman yeter; kapağı, yılı ve diğer bilgileri biz buluruz.
       </p>
     </div>
   );
@@ -227,7 +227,7 @@ function FeedVisual() {
         </motion.div>
       ))}
       <p className="mt-auto pt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-        Zevkine güvendiğin insanları takip et; akışın sana öneri olsun.
+        Zevkine güvendiğin kişileri takip et, ne izleyip ne okuduklarını gör.
       </p>
     </div>
   );
@@ -260,7 +260,8 @@ function CollectionFan() {
         Japonya Dosyası · 3 Not
       </p>
       <p className="mt-auto pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
-        Türler arası koleksiyonlar kur: bir film, bir dizi ve bir şehir aynı rafta.
+        Bir filmi, bir diziyi ve bir şehri aynı listede topla. Mesela “Japonya” diye bir koleksiyon
+        aç.
       </p>
     </div>
   );
@@ -320,7 +321,7 @@ function TravelMap() {
         ))}
       </svg>
       <p className="mt-auto pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
-        Gezi notların haritada iğneye dönüşür. Nerede ne hissettiğini unutma.
+        Gezi notların haritada görünür. Nereye gittiğini, orada ne hissettiğini unutmazsın.
       </p>
     </div>
   );
@@ -379,7 +380,7 @@ export function Features() {
       <h2 className="mt-4 max-w-[14ch] text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
         <MaskLine>Küçük Ayrıntılar,</MaskLine>
         <MaskLine delay={0.08}>
-          <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Hafıza.</span>
+          <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Fark.</span>
         </MaskLine>
       </h2>
 
@@ -394,21 +395,21 @@ export function Features() {
         </Tile>
         <Tile
           index="B — Otomatik"
-          title={<>Yaz, {em("Gerisi")} Dolsun.</>}
+          title={<>Adını Yaz, {em("Gerisi")} Gelsin.</>}
           className="md:col-span-2"
         >
           <SearchTyping />
         </Tile>
         <Tile
           index="C — Sosyal"
-          title={<>Takip Et, {em("Akışı")} İzle.</>}
+          title={<>Arkadaşlarını {em("Takip")} Et.</>}
           className="md:col-span-2"
         >
           <FeedVisual />
         </Tile>
         <Tile
           index="D — Koleksiyon"
-          title={<>Kendi {em("Rafını")} Kur.</>}
+          title={<>Kendi {em("Listelerini")} Oluştur.</>}
           className="md:col-span-2"
         >
           <CollectionFan />
@@ -417,8 +418,8 @@ export function Features() {
           <TravelMap />
         </Tile>
         <Tile
-          index="F — Yıl özeti"
-          title={<>Bir Yılın {em("Dökümü,")} Tek Ekranda.</>}
+          index="F — Yıl Özeti"
+          title={<>Yılın {em("Özeti,")} Tek Ekranda.</>}
           className="md:col-span-6"
         >
           <YearStrip />

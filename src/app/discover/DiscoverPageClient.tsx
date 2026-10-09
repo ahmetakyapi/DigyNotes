@@ -87,14 +87,14 @@ export default function DiscoverPageClient() {
         {/* LAYOUT: Editorial masthead (index 09) → pill search → user grid + pagination → popular notes grid. */}
         <PageHeader
           index="09"
-          eyebrow="Profiller ve Arşivler"
+          eyebrow="Kişiler"
           title={
             <>
-              Zevki <Em>Benzer</Em> İnsanlar
+              <Em>Keşfet</Em>
               <Dot />
             </>
           }
-          description="Arşivlerini açan profilleri gez, ilgi alanı tutanları takip et."
+          description="Benzer zevklere sahip kişileri bul ve takip et."
           stats={headerStats}
         />
 
@@ -108,7 +108,7 @@ export default function DiscoverPageClient() {
             type="text"
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="İsim veya @ ile kullanıcı ara..."
+            placeholder="İsim ya da kullanıcı adıyla ara..."
             className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors duration-200 hover:border-[var(--text-faint)] focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
           />
         </label>
@@ -144,7 +144,7 @@ export default function DiscoverPageClient() {
                   Henüz <Em>Herkese Açık</Em> Profil Yok
                 </>
               }
-              description="İlk herkese açık arşivler geldiğinde burada listelenecek."
+              description="Notlarını herkese açan kişiler olduğunda burada görünecek."
               primary={{ label: "Notlarıma Dön", href: "/notes" }}
             />
           )

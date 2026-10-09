@@ -228,7 +228,7 @@ function MarkFrame({ animate }: { animate: boolean }) {
             }
           : {})}
       >
-        Sana Kalan Her Şeyin Arşivi
+        Sana Kalan Her Şey, Burada
       </motion.p>
     </div>
   );

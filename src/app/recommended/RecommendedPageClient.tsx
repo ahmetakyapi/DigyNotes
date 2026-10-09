@@ -70,14 +70,14 @@ export default function RecommendedPageClient() {
       {/* LAYOUT: Editorial masthead (index 08) → state block (skeleton / empty / 3-col grid). */}
       <PageHeader
         index="08"
-        eyebrow="Sana Özel"
+        eyebrow="Öneriler"
         title={
           <>
-            Zevkine Göre <Em>Seçtiklerimiz</Em>
+            Sana <Em>Önerilenler</Em>
             <Dot />
           </>
         }
-        description="Etiketlerin ve notların üzerinden okunan, arşivine yakın duran yeni keşifler."
+        description="Notlarına ve etiketlerine bakarak seçtiklerimiz."
         stats={headerStats}
       />
 
@@ -98,7 +98,7 @@ export default function RecommendedPageClient() {
               Önerileri Görmek İçin <Em>Giriş Yap</Em>
             </>
           }
-          description="Bu yüzey senin arşivine bakarak çalışır. Giriş yaptığında etiketlerin ve notların üzerinden daha kişisel öneriler gösterilir."
+          description="Öneriler senin notlarına göre hazırlanıyor. Giriş yaptığında sana uygun notları burada görürsün."
           primary={{ label: "Giriş Yap", href: "/login" }}
           secondary={{ label: "Keşfet", href: "/discover" }}
         />
@@ -110,7 +110,7 @@ export default function RecommendedPageClient() {
               Öneriler <Em>Yüklenemedi</Em>
             </>
           }
-          description="Öneri motorundan şu anda cevap alamadık. Notlarına geri dönüp yeni etiketler ekleyebilir veya biraz sonra tekrar deneyebilirsin."
+          description="Bir sorun oldu. Biraz sonra tekrar dene."
           primary={{ label: "Notlarıma Dön", href: "/notes" }}
         />
       ) : posts.length === 0 ? (
@@ -118,10 +118,10 @@ export default function RecommendedPageClient() {
           icon={<CompassIcon size={22} weight="duotone" />}
           title={
             <>
-              Öneriler Henüz <Em>Demleniyor</Em>
+              Henüz <Em>Öneri</Em> Yok
             </>
           }
-          description="Etiketli notların arttıkça sana daha isabetli öneriler göstermeye başlayacağız. Bu yüzey, notlarındaki temaları okuyarak çalışır."
+          description="Birkaç not ekleyip etiketledikçe önerilerin burada belirmeye başlayacak."
           primary={{ label: "Notlarıma Dön", href: "/notes" }}
           secondary={{ label: "Keşfet", href: "/discover" }}
         />
@@ -177,7 +177,7 @@ function RecommendedCard({ post }: { post: Post }) {
           {post.user?.username && (
             <span className="dn-mono inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)]">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-              Benzer İlgi Alanı
+              Benzer Zevk
             </span>
           )}
           <div>
@@ -210,10 +210,10 @@ function RecommendedCard({ post }: { post: Post }) {
 
           <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4">
             <span className="dn-mono truncate text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
-              {post.user?.username ? `Kaynak · @${post.user.username}` : "Topluluk Önerisi"}
+              {post.user?.username ? `@${post.user.username}` : "Topluluktan"}
             </span>
             <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[var(--gold)]">
-              Aç
+              Notu Aç
               <ArrowRightIcon
                 size={12}
                 weight="bold"

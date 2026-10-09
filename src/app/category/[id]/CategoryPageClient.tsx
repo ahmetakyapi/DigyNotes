@@ -152,17 +152,17 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <PageHeader
         index={categoryIndex}
-        eyebrow={`Kategori · ${categoryLabel}`}
+        eyebrow="Kategori"
         title={
           <>
-            <Em>{categoryLabel}</Em> Arşivi
+            <Em>{categoryLabel}</Em> Notların
             <Dot />
           </>
         }
-        description={`${categoryLabel} kategorisindeki tüm notların; ara, sırala ve filtrele.`}
+        description={`${categoryLabel} kategorisindeki tüm notların burada. Ara, sırala ya da filtrele.`}
         stats={[
           { value: posts.length, label: "Not" },
-          ...(travelCategory ? [{ value: mappedPosts.length, label: "Pin" }] : []),
+          ...(travelCategory ? [{ value: mappedPosts.length, label: "Konum" }] : []),
           ...(averageRating ? [{ value: averageRating, label: "Ort. Puan" }] : []),
         ]}
         actions={
@@ -251,7 +251,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                 Sonuç <Em>Bulunamadı</Em>
               </>
             }
-            description="Farklı bir anahtar kelime dene ya da filtreleri sıfırlayarak tüm notları yeniden gör."
+            description="Başka bir kelime dene ya da filtreleri temizleyip tüm notlarını gör."
             primary={{
               label: "Filtreleri Temizle",
               onClick: () => {
@@ -265,10 +265,10 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             icon={<FolderOpenIcon size={22} weight="duotone" />}
             title={
               <>
-                {categoryLabel} Rafı Henüz <Em>Boş</Em>
+                Henüz <Em>{categoryLabel}</Em> Notun Yok
               </>
             }
-            description="Bu kategoride henüz not yok. İlk notunu ekleyerek arşivi başlat."
+            description="Bu kategoride henüz notun yok. İlk notunu ekleyerek başla."
             primary={{ label: "İlk Notu Ekle", href: "/new-post" }}
           />
         )

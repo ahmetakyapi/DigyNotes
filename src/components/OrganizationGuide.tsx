@@ -19,8 +19,8 @@ const SURFACE_ORDER: OrganizationSurfaceKey[] = ["bookmarks", "watchlist", "coll
 */
 export function OrganizationGuide({
   current,
-  title = "Organizasyon Katmanları",
-  description = "Her yüzey farklı bir ihtiyacı çözer; hızlı kayıt, sonra bakma ve uzun vadeli gruplama aynı şey değil.",
+  title = "Neyi Nereye Kaydetmeli?",
+  description = "Kaydettiklerim, İstek Listesi ve Koleksiyonlar farklı işler görür. Hangisi ne işe yarar, kısaca burada.",
 }: {
   current?: OrganizationSurfaceKey;
   title?: string;
@@ -36,7 +36,7 @@ export function OrganizationGuide({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-            Organizasyon
+            Düzenleme
           </p>
           <h2 className="mt-3 text-xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] sm:text-2xl">
             {title}

@@ -71,7 +71,7 @@ function Mark({ size: s = 64 }: { size?: number }) {
 }
 
 async function renderFallbackCard(message: string) {
-  const fonts = await loadBrandFonts(message + "DigyNotesDn.(DN)KİŞİSEL KÜLTÜR ARŞİVİ");
+  const fonts = await loadBrandFonts(message + "DigyNotesDn.(DN)KİŞİSEL NOT DEFTERİN");
   return new ImageResponse(
     <div
       style={{
@@ -90,7 +90,7 @@ async function renderFallbackCard(message: string) {
         {message}
       </span>
       <span style={{ color: OG.muted, fontSize: 20, letterSpacing: 4 }}>
-        <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>KİŞİSEL KÜLTÜR ARŞİVİ
+        <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>KİŞİSEL NOT DEFTERİN
       </span>
     </div>,
     { ...size, fonts }
@@ -167,7 +167,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
       tagNames.join(" "),
       authorLabel,
       ratingLabel ?? "",
-      "(DN)·@#/5 ★☆ DigyNotesDn. KİŞİSEL KÜLTÜR ARŞİVİ",
+      "(DN)·@#/5 ★☆ DigyNotesDn. KİŞİSEL NOT DEFTERİN",
       post.user?.username ?? "",
       categoryLabel.toLocaleUpperCase("tr-TR"),
     ].join(" ")

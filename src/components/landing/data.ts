@@ -19,7 +19,7 @@ export const ARCHIVES: ArchiveItem[] = [
     verb: "İzlediklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
     description:
-      "Yönetmen, yıl ve afiş TMDB'den kendiliğinden gelir. Sen yalnızca o sahnenin sende bıraktığını yaz.",
+      "Filmin adını yazman yeter; yönetmeni, yılı ve afişi kendiliğinden gelir. Sen sadece ne hissettiğini yaz.",
     images: [
       { src: `${MEDIA}/perfect-days.webp`, title: "Perfect Days", meta: "Wim Wenders · 2023" },
       { src: `${MEDIA}/aftersun.webp`, title: "Aftersun", meta: "Charlotte Wells · 2022" },
@@ -33,8 +33,7 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Dizi",
     verb: "Takip Ettiklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
-    description:
-      "Yarım bıraktığın sezonları, bitirdiğin finalleri ve sırada bekleyenleri tek bakışta ayır.",
+    description: "Yarım kalan sezonları, bitirdiklerini ve sırada bekleyenleri tek bakışta gör.",
     images: [
       { src: `${MEDIA}/severance.webp`, title: "Severance", meta: "Apple TV+ · 2022–" },
       { src: `${MEDIA}/shogun.webp`, title: "Shōgun", meta: "FX · 2024" },
@@ -49,7 +48,7 @@ export const ARCHIVES: ArchiveItem[] = [
     verb: "Oynadıkların",
     statuses: ["Tamamlandı", "Oynanıyor", "Oynanacak"],
     description:
-      "Geliştirici ve çıkış yılı RAWG'den dolar; saatlerce kaybolduğun dünyalar not defterinde yerini alır.",
+      "Geliştiricisi ve çıkış yılı kendiliğinden gelir. Saatlerini verdiğin oyunlar burada unutulmaz.",
     images: [
       { src: `${MEDIA}/outer-wilds.webp`, title: "Outer Wilds", meta: "Mobius Digital · 2019" },
       { src: `${MEDIA}/elden-ring.webp`, title: "Elden Ring", meta: "FromSoftware · 2022" },
@@ -64,7 +63,7 @@ export const ARCHIVES: ArchiveItem[] = [
     verb: "Okudukların",
     statuses: ["Okundu", "Okunuyor", "Okunacak"],
     description:
-      "Yazar ve kapak Open Library'den. Altını çizdiğin cümleler, kenara düştüğün notlar burada kalır.",
+      "Yazarı ve kapağı otomatik gelir. Altını çizdiğin cümleler, kenara aldığın notlar burada durur.",
     images: [
       {
         src: `${MEDIA}/kurk-mantolu-madonna.webp`,
@@ -86,8 +85,7 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Gezi",
     verb: "Gezdiklerin",
     statuses: ["Gidildi", "Planlandı"],
-    description:
-      "Yerler OpenStreetMap'ten bulunur, haritada iğneye dönüşür. Bir sokağın kokusunu bile not edebilirsin.",
+    description: "Gittiğin yerler haritada işaretlenir. Bir sokağın kokusunu bile not alabilirsin.",
     images: [
       { src: `${MEDIA}/kyoto.webp`, title: "Kyoto", meta: "Japonya · 2024" },
       { src: `${MEDIA}/kapadokya.webp`, title: "Kapadokya", meta: "Nevşehir · 2025" },

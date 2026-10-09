@@ -3,7 +3,7 @@
 /*
   LAYOUT: Two halves of one seamless sign-in → app transition.
   WelcomeCover  (login/register): ink curtain wipes up from the bottom; three poster
-                columns drift behind a veil; mono "Arşivin Açılıyor" + sweeping hairline.
+                columns drift behind a veil; mono "Notların Hazırlanıyor" + sweeping hairline.
   WelcomeReveal (AppShell, first paint after sign-in): starts fully covered, shows
                 "Hoş Geldin, {Ad}." in giant type, then the curtain splits (top half up,
                 bottom half down) to reveal the app. Driven by a sessionStorage handoff.
@@ -73,7 +73,7 @@ export function WelcomeCover({ show }: { show: boolean }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.6 }}
             >
-              <span className="text-[#b9a8ff]">(DN)</span> Arşivin Açılıyor
+              <span className="text-[#b9a8ff]">(DN)</span> Notların Hazırlanıyor
             </motion.p>
             <div className="relative mt-5 h-px w-48 overflow-hidden bg-white/15">
               <span className="dn-loader-sweep absolute inset-y-0 left-0 w-1/3 bg-[#b9a8ff]" />
@@ -143,15 +143,16 @@ export function WelcomeReveal() {
       <div className={`absolute inset-x-0 h-[100vh] ${top ? "top-0" : "bottom-0"}`}>
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <p className="dn-mono text-[11px] uppercase tracking-[0.2em] text-[#77726a]">
-            <span className="text-[#b9a8ff]">(DN)</span> Tekrar Burada
+            <span className="text-[#b9a8ff]">(DN)</span> Tekrar Merhaba
           </p>
           <p className="mt-5 text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[#f2efe8]">
-            Hoş Geldin
-            {name ? "," : ""}
-            <br />
-            <span className="dn-display font-normal italic tracking-[-0.02em]">
-              {name || "Arşivine"}
-            </span>
+            Hoş Geldin{name ? "," : ""}
+            {name && (
+              <>
+                <br />
+                <span className="dn-display font-normal italic tracking-[-0.02em]">{name}</span>
+              </>
+            )}
             <span className="text-[#b9a8ff]">.</span>
           </p>
         </div>

@@ -138,14 +138,14 @@ function StatsHeader({ data }: { data?: StatsData }) {
   return (
     <PageHeader
       index="14"
-      eyebrow="Kişisel İstatistikler"
+      eyebrow="İstatistikler"
       title={
         <>
-          Arşivin <Em>Rakamlarla</Em>
+          Rakamlarla <Em>Notların</Em>
           <Dot />
         </>
       }
-      description="Üretim ritmini, kategorilerini ve puan dağılımını tek sayfada takip et."
+      description="Ne kadar not aldığını, en çok neyi izleyip okuduğunu ve puanlarını gör."
       stats={
         data
           ? [
@@ -233,7 +233,9 @@ export default function PersonalStatsPage() {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
-          <p className="text-sm text-[var(--text-muted)]">İstatistikler yüklenemedi.</p>
+          <p className="text-sm text-[var(--text-muted)]">
+            İstatistikler yüklenemedi. Biraz sonra tekrar dene.
+          </p>
         </div>
       </main>
     );
@@ -248,18 +250,16 @@ export default function PersonalStatsPage() {
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-accent/25 bg-accent/10">
             <ChartBarIcon size={24} weight="duotone" className="text-[var(--gold)]" />
           </div>
-          <p className="text-lg font-semibold text-[var(--text-primary)]">
-            Henüz analiz edilecek not yok.
-          </p>
+          <p className="text-lg font-semibold text-[var(--text-primary)]">Henüz notun yok.</p>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">
-            İlk notunu eklediğinde kategori, puan ve ritim trendleri burada görünür. Notlara puan,
-            durum ve etiket ekledikçe özetler daha anlamlı hale gelir.
+            İlk notunu eklediğinde istatistiklerin burada görünmeye başlar. Notlarına puan, durum ve
+            etiket ekledikçe burada daha çok şey göreceksin.
           </p>
           <Link
             href="/new-post"
             className="mt-6 inline-flex cursor-pointer rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all duration-200 ease-out-expo hover:bg-accent-dark active:scale-95"
           >
-            İlk Notu Oluştur
+            İlk Notunu Yaz
           </Link>
         </div>
       </main>
@@ -275,7 +275,7 @@ export default function PersonalStatsPage() {
       <Reveal order={0} className="mb-12">
         <blockquote className="border-l-2 border-accent pl-5 sm:pl-8">
           <p className={monoLabel}>
-            <span className="text-[var(--gold)]">(i)</span> Arşiv Okuması
+            <span className="text-[var(--gold)]">(i)</span> Kısaca
           </p>
           <p className="mt-4 max-w-4xl text-[clamp(1.6rem,3.6vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--text-primary)]">
             {topCategory ? (
@@ -286,32 +286,31 @@ export default function PersonalStatsPage() {
               </>
             ) : (
               <>
-                Notların henüz tek bir kategoride <Em>yoğunlaşmamış</Em>
+                Notların farklı kategorilere <Em>dağılmış</Em>
                 <Dot />
               </>
             )}
           </p>
           <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
             {strongestMonth
-              ? `${strongestMonth.month} döneminde ${strongestMonth.count} notla en yoğun ayını geçirmişsin.`
-              : "Aylık ritim için daha fazla veriye ihtiyaç var."}{" "}
+              ? `En çok not aldığın ay ${strongestMonth.month}: ${strongestMonth.count} not.`
+              : "Aylık durumu görmek için biraz daha not gerekiyor."}{" "}
             {topTag
               ? `En sık kullandığın etiket #${topTag.name}.`
-              : "Etiket kullanımın arttıkça tematik örüntüler burada belirginleşecek."}
+              : "Notlarına etiket ekledikçe en çok kullandıkların burada görünecek."}
           </p>
         </blockquote>
 
         <div className="mt-8 grid border-y border-[var(--border)] sm:grid-cols-3 sm:divide-x sm:divide-[var(--border)]">
           <InsightCell
-            label="Ritim"
-            value={`${activeMonths}/12 ay aktif`}
+            label="Not Aldığın Aylar"
+            value={`${activeMonths}/12 ay`}
             detail={
-              recentMomentum?.label ??
-              "Birkaç ay daha not eklediğinde tempo değişimin burada görünecek."
+              recentMomentum?.label ?? "Birkaç ay daha not ekledikçe değişimi burada göreceksin."
             }
           />
           <InsightCell
-            label="Fokus"
+            label="En Çok"
             value={
               topCategory
                 ? `${getCategoryLabel(topCategory.name)} ${getShareLabel(topCategory.count, data.kpis.totalPosts)}`
@@ -319,17 +318,17 @@ export default function PersonalStatsPage() {
             }
             detail={
               topCategory
-                ? `${topCategory.count} not ile en yoğun kategorin.`
-                : "Kategori trendi için yeterli veri yok."
+                ? `${topCategory.count} notla en çok yazdığın kategori.`
+                : "Henüz yeterli not yok."
             }
           />
           <InsightCell
-            label="Alışkanlık"
+            label="Puanlar"
             value={`%${ratedShare} puanlı`}
             detail={
               topStatus
-                ? `En sık durum ${topStatus.name.toLowerCase()}.`
-                : "Puan verdikçe değerlendirme alışkanlığın burada görünür."
+                ? `En sık durum: ${topStatus.name.toLowerCase()}.`
+                : "Puan verdikçe burada görünecek."
             }
           />
         </div>
@@ -350,7 +349,7 @@ export default function PersonalStatsPage() {
             value={data.kpis.avgRating > 0 ? data.kpis.avgRating : "—"}
           />
           <KpiCell label="Bu Yıl" value={data.kpis.postsThisYear} />
-          <KpiCell label="Benzersiz Etiket" value={data.kpis.uniqueTags} />
+          <KpiCell label="Farklı Etiket" value={data.kpis.uniqueTags} />
         </div>
       </Reveal>
 
@@ -359,21 +358,21 @@ export default function PersonalStatsPage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <HighlightCell
             index="A"
-            label="En Güçlü Kategori"
+            label="Öne Çıkan Kategori"
             value={topCategory ? getCategoryLabel(topCategory.name) : "-"}
-            detail={topCategory ? `${topCategory.count} not ile önde` : "Yeterli veri yok"}
+            detail={topCategory ? `${topCategory.count} not` : "Henüz yeterli not yok"}
           />
           <HighlightCell
             index="B"
-            label="En Üretken Dönem"
+            label="En Yoğun Ay"
             value={strongestMonth?.month ?? "-"}
-            detail={strongestMonth ? `${strongestMonth.count} not` : "Yeterli veri yok"}
+            detail={strongestMonth ? `${strongestMonth.count} not` : "Henüz yeterli not yok"}
           />
           <HighlightCell
             index="C"
-            label="Puanlanan İçerik"
+            label="Puanlı Notlar"
             value={`%${ratedShare}`}
-            detail={topStatus ? `En sık durum: ${topStatus.name}` : "Durum verisi hazır"}
+            detail={topStatus ? `En sık durum: ${topStatus.name}` : "Henüz durum seçilmemiş"}
           />
         </div>
       </Reveal>
@@ -382,7 +381,7 @@ export default function PersonalStatsPage() {
       <div className="grid gap-5 lg:grid-cols-2">
         {/* Monthly Production */}
         <Reveal order={3}>
-          <ChartCard index="01" title="Aylık Üretim">
+          <ChartCard index="01" title="Aylara Göre Notlar">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -430,7 +429,7 @@ export default function PersonalStatsPage() {
 
         {/* Category Distribution */}
         <Reveal order={4}>
-          <ChartCard index="02" title="Kategori Dağılımı">
+          <ChartCard index="02" title="Kategorilere Göre Notlar">
             <div className="flex h-72 items-center">
               <div className="relative w-1/2">
                 <ResponsiveContainer width="100%" height={200}>
@@ -491,7 +490,7 @@ export default function PersonalStatsPage() {
 
         {/* Rating Distribution */}
         <Reveal order={5}>
-          <ChartCard index="03" title="Puan Dağılımı">
+          <ChartCard index="03" title="Verdiğin Puanlar">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -523,7 +522,7 @@ export default function PersonalStatsPage() {
             <div className="grid gap-8 sm:grid-cols-2">
               {/* Statuses */}
               <div>
-                <p className={`${monoLabel} mb-4`}>Durum Dağılımı</p>
+                <p className={`${monoLabel} mb-4`}>Durumlar</p>
                 <div className="space-y-4">
                   {data.statuses.map((item) => {
                     const pct =
@@ -552,10 +551,10 @@ export default function PersonalStatsPage() {
 
               {/* Tags */}
               <div>
-                <p className={`${monoLabel} mb-4`}>En Aktif Etiketler</p>
+                <p className={`${monoLabel} mb-4`}>En Çok Kullandıkların</p>
                 {data.topTags.length === 0 ? (
                   <p className="text-xs leading-5 text-[var(--text-muted)]">
-                    Henüz etiket yok. Etiket ekledikçe tekrar eden temalar burada görünür.
+                    Henüz etiket yok. Notlarına etiket ekledikçe burada görünecek.
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
