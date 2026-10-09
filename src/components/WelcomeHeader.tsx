@@ -44,66 +44,62 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
 
   const firstName = name?.split(" ")[0] ?? "tekrar hoş geldin";
 
+  const today = new Date().toLocaleDateString("tr-TR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
   return (
     <motion.header
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto max-w-5xl px-3 pb-2 pt-5 sm:px-6 sm:pt-7"
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="mx-auto max-w-5xl px-3 pb-4 pt-7 sm:px-6 sm:pt-10"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
-        {greeting}
+      {/* LAYOUT: mono dateline → editorial greeting (left) · big serif stats (right, md+) */}
+      <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
+        {greeting} <span className="text-[var(--text-faint)]">—</span> {today}
       </p>
-      <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-[var(--text-primary)] sm:text-[28px]">
-        {name ? `${firstName}, seni görmek güzel` : "Hoş geldin"}
-      </h1>
+      <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[46px]">
+          {name ? (
+            <>
+              {firstName}, <span className="dn-display font-normal italic tracking-[-0.02em]">arşivin</span> seni
+              bekliyor<span className="text-[var(--gold)]">.</span>
+            </>
+          ) : (
+            "Hoş geldin"
+          )}
+        </h1>
 
-      {stats.total > 0 && (
-        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[var(--text-secondary)]">
-          <Stat
-            value={<AnimatedCounter value={stats.total} />}
-            label={stats.total === 1 ? "not" : "not"}
-          />
-          {stats.avgRating > 0 && (
-            <Stat
-              value={
-                <AnimatedCounter
-                  value={stats.avgRating}
-                  format={(n) => n.toFixed(1).replace(".", ",")}
-                />
-              }
-              label="ortalama"
-              suffix="/5"
-            />
-          )}
-          {stats.thisMonth > 0 && (
-            <Stat
-              value={<AnimatedCounter value={stats.thisMonth} />}
-              label={stats.thisMonth === 1 ? "bu ay" : "bu ay"}
-            />
-          )}
-        </div>
-      )}
+        {stats.total > 0 && (
+          <div className="flex items-end gap-6 sm:gap-8">
+            <Stat value={<AnimatedCounter value={stats.total} />} label="not" />
+            {stats.avgRating > 0 && (
+              <Stat
+                value={
+                  <AnimatedCounter value={stats.avgRating} format={(n) => n.toFixed(1).replace(".", ",")} />
+                }
+                label="ort. puan"
+              />
+            )}
+            {stats.thisMonth > 0 && <Stat value={<AnimatedCounter value={stats.thisMonth} />} label="bu ay" />}
+          </div>
+        )}
+      </div>
     </motion.header>
   );
 }
 
-function Stat({
-  value,
-  label,
-  suffix,
-}: {
-  value: React.ReactNode;
-  label: string;
-  suffix?: string;
-}) {
+function Stat({ value, label }: { value: React.ReactNode; label: string }) {
   return (
-    <span className="flex items-baseline gap-1.5">
-      <span className="text-base font-semibold text-[var(--text-primary)]">
+    <span className="flex flex-col">
+      <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
         {value}
-        {suffix && <span className="text-[var(--text-muted)]">{suffix}</span>}
       </span>
-      <span className="text-xs text-[var(--text-muted)]">{label}</span>
+      <span className="dn-mono mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">{label}</span>
     </span>
   );
 }

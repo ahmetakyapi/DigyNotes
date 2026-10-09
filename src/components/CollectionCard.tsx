@@ -52,7 +52,7 @@ export default function CollectionCard({
             Boş Koleksiyon
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[rgba(4,10,22,0.72)] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[rgba(8,8,7,0.72)] to-transparent" />
       </div>
 
       <div className="space-y-3 p-4">

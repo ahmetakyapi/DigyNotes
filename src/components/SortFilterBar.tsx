@@ -148,7 +148,7 @@ export function SortFilterBar({
         >
           <div className="flex min-h-full items-end justify-center sm:items-center">
             <div
-              className="w-full max-w-3xl rounded-[30px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.98),rgba(10,16,29,0.96))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:p-6"
+              className="w-full max-w-3xl rounded-[30px] border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:p-6"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-4">

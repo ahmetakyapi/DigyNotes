@@ -67,7 +67,7 @@ interface YearData {
 
 /* ── Constants ── */
 const CATEGORY_COLORS: Record<string, string> = {
-  movies: "#6888c0",
+  movies: "var(--accent-2)",
   series: "#c8b090",
   game: "var(--gold-light)",
   book: "var(--gold)",
@@ -237,7 +237,7 @@ export default function YearInReviewPage() {
             }
           />
           <InsightMiniCard
-            icon={<Lightning size={14} weight="bold" className="text-[#6888c0]" />}
+            icon={<Lightning size={14} weight="bold" className="text-[var(--accent-2)]" />}
             label="Yılın İzi"
             value={topTag ? `#${topTag.name}` : `%${ratedShare} puanlı`}
             detail={
@@ -349,7 +349,7 @@ export default function YearInReviewPage() {
         <div className="group rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-all duration-300 hover:border-[color-mix(in_srgb,var(--gold)_25%,transparent)]">
           <div className="mb-5 flex items-center gap-2.5">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[rgba(104,136,192,0.12)]">
-              <Crosshair size={14} weight="bold" className="text-[#6888c0]" />
+              <Crosshair size={14} weight="bold" className="text-[var(--accent-2)]" />
             </div>
             <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">
               Kategori Dağılımı
@@ -473,8 +473,8 @@ export default function YearInReviewPage() {
           post={data.firstPost}
         />
         <TimelineCard
-          icon={<FlagCheckered size={16} weight="duotone" className="text-[#6888c0]" />}
-          accent="#6888c0"
+          icon={<FlagCheckered size={16} weight="duotone" className="text-[var(--accent-2)]" />}
+          accent="var(--accent-2)"
           label="Son Not"
           post={data.lastPost}
         />

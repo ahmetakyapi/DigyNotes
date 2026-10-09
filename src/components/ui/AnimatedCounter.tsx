@@ -22,6 +22,7 @@ export function AnimatedCounter({
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduceMotion = useReducedMotion();
   const [display, setDisplay] = useState(reduceMotion ? value : 0);
+  const fromRef = useRef(0);
 
   useEffect(() => {
     if (!inView) return;
@@ -29,10 +30,13 @@ export function AnimatedCounter({
       setDisplay(value);
       return;
     }
-    const controls = animate(0, value, {
+    const controls = animate(fromRef.current, value, {
       duration,
       ease: [0.22, 1, 0.36, 1],
-      onUpdate: (latest) => setDisplay(latest),
+      onUpdate: (latest) => {
+        fromRef.current = latest;
+        setDisplay(latest);
+      },
     });
     return () => controls.stop();
   }, [inView, value, duration, reduceMotion]);

@@ -26,30 +26,30 @@ function getStatusStyles(status: string) {
 
   if (completed.includes(status)) {
     return {
-      textColor: "#9bf2bc",
-      borderColor: "rgba(34, 197, 94, 0.4)",
-      backgroundColor: "rgba(10, 46, 25, 0.78)",
-      dotColor: color,
-      boxShadow: "0 10px 24px rgba(10, 46, 25, 0.28)",
+      textColor: "#e2ff7a",
+      borderColor: "rgba(212, 245, 60, 0.32)",
+      backgroundColor: "rgba(11, 11, 10, 0.72)",
+      dotColor: "#d4f53c",
+      boxShadow: "none",
     };
   }
 
   if (ongoing.includes(status)) {
     return {
-      textColor: "#f5dd96",
-      borderColor: "rgba(196, 162, 75, 0.42)",
-      backgroundColor: "rgba(57, 42, 9, 0.74)",
-      dotColor: color,
-      boxShadow: "0 10px 24px rgba(57, 42, 9, 0.22)",
+      textColor: "#cfc6ff",
+      borderColor: "rgba(177, 164, 255, 0.34)",
+      backgroundColor: "rgba(11, 11, 10, 0.72)",
+      dotColor: "#b1a4ff",
+      boxShadow: "none",
     };
   }
 
   return {
-    textColor: "#d5d8e1",
-    borderColor: "rgba(148, 163, 184, 0.34)",
-    backgroundColor: "rgba(24, 30, 44, 0.76)",
+    textColor: "#cbc6bb",
+    borderColor: "rgba(242, 239, 232, 0.2)",
+    backgroundColor: "rgba(11, 11, 10, 0.72)",
     dotColor: color,
-    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.16)",
+    boxShadow: "none",
   };
 }
 
@@ -65,7 +65,7 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-[0.1em] backdrop-blur-md ${textSize} ${padding}`}
+      className={`dn-mono inline-flex items-center gap-1.5 rounded-full border font-medium uppercase tracking-[0.1em] backdrop-blur-md ${textSize} ${padding}`}
       style={{
         color: styles.textColor,
         borderColor: styles.borderColor,

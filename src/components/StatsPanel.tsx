@@ -15,7 +15,7 @@ const CATEGORY_COLORS: Record<string, { fill: string; glow: string; bg: string }
 };
 const FALLBACK_COLORS = [
   { fill: "#f87171", glow: "rgba(248,113,113,0.25)", bg: "rgba(248,113,113,0.08)" },
-  { fill: "#60a5fa", glow: "rgba(96,165,250,0.25)", bg: "rgba(96,165,250,0.08)" },
+  { fill: "#60a5fa", glow: "rgb(var(--accent-2-rgb)/0.25)", bg: "rgb(var(--accent-2-rgb)/0.08)" },
   { fill: "#a78bfa", glow: "rgba(167,139,250,0.25)", bg: "rgba(167,139,250,0.08)" },
 ];
 

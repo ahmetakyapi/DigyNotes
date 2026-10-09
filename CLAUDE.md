@@ -113,84 +113,26 @@ GET             /api/users/me/year-in-review?year=YYYY
 
 ---
 
-## Design System (Dark Premium)
+## Design System — "Cinémathèque" (2026-10 redesign)
+
+The old "Dark Premium" gold palette and the Turkish UI rules that referenced it are retired.
+All colours come from CSS variables in `src/styles/theme-variables.css` (dark = warm ink, light = bone paper).
 
 ```
-bg-base:   #0c0c0c
-bg-card:   #161616
-border:    #2a2a2a
-gold:      #c9a84c  (hover: #e0c068)
-text:      #f0ede8  (secondary: #888888, muted: #555555)
-danger:    #e53e3e
+bg-base   var(--bg-base)    #0b0b0a / #f1ede4
+bg-card   var(--bg-card)    #131311 / #faf8f3
+border    var(--border)     #282722 / #d8d1c3
+text      var(--text-primary) #f2efe8 / #14130f  (secondary, muted, faint)
+accent    var(--gold)       #d4f53c (acid lime) / #4f7300 (olive)  → Tailwind `accent`, `gold`
+accent-2  var(--accent-2)   #b1a4ff (lilac) / #5b46d8
+on-accent var(--text-on-accent)  ink on lime (dark) / paper on olive (light)
 ```
 
-Profile/social pages: `#0c0e16` / `#0d0f1a` / `#1a1e2e` (blue-tinted dark).
-
----
-
-## Frontend UI Rules (Vibe Coding)
-
-### Önce Yapı, Sonra Kod
-
-- Yeni bir sayfa/section yazmadan önce layout'u bir comment bloğu olarak tanımla
-- `/* LAYOUT: İki kolon desktop, sol sidebar w-64, sağ flex-1, gap-6 */`
-- Yapı netleştikten sonra JSX yaz — asla rastgele başlama
-
-### Mevcut Componenti Referans Al
-
-Yeni bir şey yazmadan önce en yakın mevcut component'ı oku, onun spacing/border/hover stilini takip et:
-
-- İçerik kartı → `PostsList.tsx`
-- Kullanıcı satırı → `UserCard.tsx`
-- Modal → `ConfirmModal.tsx` veya `FollowListModal.tsx`
-- Form sayfası → `src/app/profile/settings/page.tsx`
-
-### Renk Kuralları
-
-- Tailwind default renk isimleri (`blue-500`, `gray-800`) **yasak** — anında "AI yaptı" teli
-- Sadece DigyNotes hex paleti kullanılır (bkz. Design System bölümü)
-- Palette dışına çıkma — referans görseldeki renkler bile olsa
-
-### Yasaklı Kalıplar
-
-- `from-purple-500 to-blue-600` tipi jenerik AI gradyanları
-- `shadow-lg` / `shadow-xl` — DigyNotes gölge değil border kullanır
-- `bg-white`, `text-gray-*`, `rounded-full` (avatar dışında)
-- Emoji UI ikonu olarak, Lucide React ikonları (AI teli)
-- `p-2` kart padding'i — minimum `p-4`, standart `p-6`
-
-### Tipografi Skalası
-
-- Sayfa başlığı: `text-2xl font-bold text-[#f0ede8]`
-- Bölüm başlığı: `text-xl font-semibold text-[#f0ede8]`
-- Kart başlığı: `text-base font-medium text-[#f0ede8]`
-- Gövde: `text-sm text-[#888888]`
-- Meta/tarih: `text-xs text-[#555555]`
-
-### Tıklanabilir Her Element
-
-- Mutlaka: `transition-colors duration-200 cursor-pointer`
-- Hover state, `active:scale-95`, `disabled:opacity-50 disabled:cursor-not-allowed`
-- Hiçbir interaktif element geçişsiz bırakılmaz
-
-### İkon Kütüphanesi
-
-- Lucide **kullanma** — Phosphor kullan: `npm install @phosphor-icons/react`
-- `import { Star, House, BookOpen } from '@phosphor-icons/react'`
-- Phosphor kurulu değilse inline SVG yaz, Lucide kurma
-
-### Referans Görsel Geldiğinde
-
-- Yapısını al (kolon sayısı, hiyerarşi, boşluk ritmi)
-- Renklerini alma — her zaman DigyNotes paleti geçerli
-- "Bu stili kopyala" = yapı + spacing + hiyerarşiyi al, renkleri çevir
-
-### Font
-
-- Şu an: `Inter` (global AI teli — `src/app/layout.tsx`)
-- Upgrade adayları: `DM Sans`, `Plus Jakarta Sans`, `Sora` (onay alarak değiştir)
-
----
+- Alpha variants: use Tailwind `bg-accent/10`, `border-accent-2/30` or `rgb(var(--gold-rgb)/0.2)` — never hardcode hex.
+- Fonts: Hanken Grotesk (sans, `--font-sans`), Instrument Serif (`.dn-display`, italic accents), JetBrains Mono (`.dn-mono`, index labels/meta).
+- Signature patterns: mono index labels `(01)`, serif-italic accent word inside bold grotesk headlines, lime period/dot, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
+- Logo: `src/components/Wordmark.tsx` (typographic) — the PNG logo is no longer used in the UI.
+- Landing: `src/components/landing/*` (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
 
 ## Architecture Patterns
 

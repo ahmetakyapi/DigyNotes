@@ -32,7 +32,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgb(var(--gold-rgb)/0.12),rgba(12,18,31,0.94),rgb(var(--accent-2-rgb)/0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
+      <div className="mb-8 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(135deg,rgb(var(--gold-rgb)/0.12),var(--bg-card),rgb(var(--accent-2-rgb)/0.08))] p-5 shadow-[var(--shadow-soft)] sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2">

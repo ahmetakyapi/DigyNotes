@@ -23,15 +23,8 @@ import { useState } from 'react';
 ```
 
 ## Design System — Required Color Tokens
-Do NOT use arbitrary colors outside this palette:
-```
-Backgrounds:  bg-[#0c0c0c]  bg-[#161616]  bg-[#0c0e16]
-Borders:      border-[#2a2a2a]
-Text:         text-[#f0ede8]  text-[#888888]  text-[#555555]
-Gold:         text-[#c9a84c]  hover:text-[#e0c068]
-              bg-[#c9a84c]    hover:bg-[#e0c068]
-Danger:       text-[#e53e3e]  bg-[#e53e3e]
-```
+Use only theme variables (`var(--bg-card)`, `var(--border)`, `var(--text-primary)`, `var(--gold)` …)
+or the Tailwind `accent` / `accent-2` colours. No raw hex. See CLAUDE.md → Design System.
 
 ## External Images
 ```tsx

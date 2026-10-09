@@ -623,7 +623,7 @@ export default function AdminPage() {
                   <KpiCard
                     value={stats.kpi.totalCategories}
                     label="Kategori"
-                    color="#6888c0"
+                    color="var(--accent-2)"
                     icon={<SquaresFour size={16} weight="duotone" />}
                   />
                   <KpiCard
@@ -765,8 +765,8 @@ export default function AdminPage() {
                   <div className="lg:col-span-3">
                     <Card
                       title="Kategorilere Göre Not (Top 10)"
-                      icon={<ChartBar size={14} weight="bold" className="text-[#6888c0]" />}
-                      accent="#6888c0"
+                      icon={<ChartBar size={14} weight="bold" className="text-[var(--accent-2)]" />}
+                      accent="var(--accent-2)"
                     >
                       <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={stats.postsPerCategory} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>

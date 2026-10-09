@@ -51,35 +51,10 @@ Read the referenced file first. Match its spacing, border style, hover states, a
 
 ## RULE 3 — The DigyNotes Palette is LAW
 
-**NEVER use Tailwind default color names for UI elements.**
-No `blue-500`, `purple-600`, `gray-800`, `green-400`. These are the instant "AI made this" tell.
-
-The only permitted colors:
-
-```
-BACKGROUNDS
-  Page base:    bg-[#0c0c0c]   or   bg-[#0c0e16]
-  Card:         bg-[#161616]   or   bg-[#0d0f1a]
-  Elevated:     bg-[#1a1e2e]   (for modals, dropdowns, tooltips)
-
-BORDERS
-  Default:      border border-[#2a2a2a]
-  Focus/active: border-[#c9a84c]
-
-TEXT
-  Primary:      text-[#f0ede8]   (headings, important content)
-  Secondary:    text-[#888888]   (labels, meta, timestamps)
-  Muted:        text-[#555555]   (disabled, placeholder-like)
-  Gold:         text-[#c9a84c]   (links, interactive, accents)
-  Gold hover:   hover:text-[#e0c068]
-  Danger:       text-[#e53e3e]
-
-INTERACTIVE ELEMENTS (buttons, badges, stars)
-  Gold fill:    bg-[#c9a84c]     hover:bg-[#e0c068]
-  Danger fill:  bg-[#e53e3e]
-
-WHITE TEXT ON GOLD: text-[#0c0c0c] (dark text on gold backgrounds)
-```
+**NEVER use Tailwind default color names or raw hex for UI elements.**
+Use the theme variables from `src/styles/theme-variables.css` (see CLAUDE.md → Design System):
+`var(--bg-base|bg-card|bg-raised|border|text-primary|text-secondary|text-muted|gold|accent-2|danger)`,
+Tailwind `accent` / `accent-2` colours with opacity modifiers, `text-[var(--text-on-accent)]` on accent fills.
 
 ---
 

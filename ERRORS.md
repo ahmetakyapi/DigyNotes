@@ -550,4 +550,26 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
-*Last updated: 2026-03-28*
+## ERR-UI-001: framer-motion `Target ref is defined but not hydrated`
+
+**First seen**: 2026-10-09
+**Symptom**: Landing page crashes into the ErrorBoundary ("Bir şeyler ters gitti"); console shows `Target ref is defined but not hydrated` (motion.dev/troubleshooting/use-scroll-ref).
+**Root cause**: `useScroll({ target: ref })` was called while the component rendered an alternative branch (mobile layout) that did not attach `ref` to any element.
+**Fix**: Attach the same `ref` to the root element in every render branch (see `src/components/landing/Archives.tsx`).
+**Prevention**: Whenever a component returns early / renders different markup per breakpoint, make sure the `useScroll` target ref is attached in all branches.
+**Files**: `src/components/landing/Archives.tsx`
+
+---
+
+## ERR-ENV-002: Shell `DATABASE_URL` overrides `.env` in cloud sessions
+
+**First seen**: 2026-10-09
+**Symptom**: `prisma db push` tries to reach the Neon production host even though `.env` points to localhost.
+**Root cause**: `dotenv` never overrides variables that already exist in the process environment; the cloud container exports a production `DATABASE_URL`.
+**Fix**: Prefix local commands explicitly: `DATABASE_URL=postgresql://digynotes:digynotes_secret@localhost:5432/digynotes npx prisma db push` (same for `next dev`).
+**Prevention**: Never run schema/seed commands without checking which host `DATABASE_URL` resolves to.
+**Files**: `prisma.config.ts`
+
+---
+
+*Last updated: 2026-10-09*

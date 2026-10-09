@@ -2,15 +2,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion";
+import { AuthShell } from "@/components/AuthShell";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import PasswordStrength from "@/components/PasswordStrength";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
-import { EASE } from "@/lib/variants";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -78,252 +76,213 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--bg-base)] px-4 py-12">
+    <AuthShell mode="register">
       <FullScreenLoader show={redirecting} message="Hesabınız oluşturuluyor..." />
-      {/* Background effects */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-gradient-radial from-accent/6 absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full to-transparent blur-3xl" />
-        <div className="bg-gradient-radial from-accent-2/4 absolute bottom-0 left-0 h-[300px] w-[300px] rounded-full to-transparent blur-3xl" />
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      {/* Card */}
-      <motion.div
-        className="relative w-full max-w-md"
-        initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.6, ease: EASE }}
-      >
-        {/* Logo */}
-        <div className="mb-10 flex flex-col items-center">
-          <Link href="/">
-            <Image
-              src="/app-logo.png"
-              alt="DigyNotes"
-              width={240}
-              height={74}
-              className="object-contain"
-              unoptimized
+      <div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label
+              htmlFor="reg-name"
+              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              Ad Soyad
+            </label>
+            <input
+              id="reg-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              autoComplete="name"
+              placeholder="Adın Soyadın"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
-          </Link>
-        </div>
-
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-8">
-          <div className="mb-8">
-            <h1 className="mb-1 text-2xl font-bold text-[var(--text-primary)]">Hesap Oluştur</h1>
-            <p className="text-sm text-[var(--text-muted)]">Notlarını kaydetmeye hemen başla.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name */}
-            <div>
-              <label htmlFor="reg-name" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                Ad Soyad
-              </label>
+          {/* Username */}
+          <div>
+            <label
+              htmlFor="reg-username"
+              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              Kullanıcı Adı
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--text-muted)]">
+                @
+              </span>
               <input
-                id="reg-name"
+                id="reg-username"
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={username}
+                onChange={(e) =>
+                  setUsername(e.target.value.toLowerCase().replaceAll(/[^a-z0-9_]/g, ""))
+                }
                 required
-                autoComplete="name"
-                placeholder="Adın Soyadın"
-                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+                autoComplete="username"
+                placeholder="kullanici_adin"
+                minLength={3}
+                maxLength={30}
+                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
             </div>
+            <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+              Harf, rakam ve _ kullanabilirsin. Sonradan değiştirilebilir.
+            </p>
+          </div>
 
-            {/* Username */}
-            <div>
-              <label htmlFor="reg-username" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                Kullanıcı Adı
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--text-muted)]">
-                  @
-                </span>
-                <input
-                  id="reg-username"
-                  type="text"
-                  value={username}
-                  onChange={(e) =>
-                    setUsername(e.target.value.toLowerCase().replaceAll(/[^a-z0-9_]/g, ""))
-                  }
-                  required
-                  autoComplete="username"
-                  placeholder="kullanici_adin"
-                  minLength={3}
-                  maxLength={30}
-                  className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
-                />
-              </div>
-              <p className="mt-1 text-[11px] text-[var(--text-muted)]">
-                Harf, rakam ve _ kullanabilirsin. Sonradan değiştirilebilir.
-              </p>
-            </div>
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="reg-email"
+              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              E-posta
+            </label>
+            <input
+              id="reg-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              placeholder="ornek@mail.com"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+            />
+          </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="reg-email" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                E-posta
-              </label>
+          {/* Password */}
+          <div>
+            <label
+              htmlFor="reg-password"
+              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              Şifre
+            </label>
+            <div className="relative">
               <input
-                id="reg-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                placeholder="ornek@mail.com"
-                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="reg-password" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                Şifre
-              </label>
-              <div className="relative">
-                <input
-                  id="reg-password"
-                  type={showPw ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                  placeholder="En az 6 karakter"
-                  className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw(!showPw)}
-                  aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
-                  tabIndex={-1}
-                >
-                  {showPw ? (
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                    >
-                      <path
-                        d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
-                        strokeLinecap="round"
-                      />
-                      <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                    >
-                      <path
-                        d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                        strokeLinecap="round"
-                      />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              {/* Password strength */}
-              <PasswordStrength password={password} />
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="reg-confirm-password" className="mb-2 block text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                Şifre (Tekrar)
-              </label>
-              <input
-                id="reg-confirm-password"
+                id="reg-password"
                 type={showPw ? "text" : "password"}
-                value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
-                placeholder="Şifreyi tekrar girin"
-                className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
-                  confirmPw && confirmPw !== password
-                    ? "dn-input-auth-error border-[#e53e3e]/50"
-                    : "border-[var(--border)]"
-                }`}
+                placeholder="En az 6 karakter"
+                className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
-              {confirmPw && confirmPw !== password && (
-                <p className="mt-1 text-xs text-[#e53e3e]">Şifreler eşleşmiyor</p>
-              )}
-            </div>
-
-            {/* Error */}
-            {error && <FormStatusMessage message={error} />}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowPw(!showPw)}
+                aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+                tabIndex={-1}
+              >
+                {showPw ? (
                   <svg
-                    className="h-4 w-4 animate-spin"
+                    width="18"
+                    height="18"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="1.8"
                   >
-                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeOpacity="0.3" />
-                    <path d="M21 12a9 9 0 00-9-9" strokeLinecap="round" />
+                    <path
+                      d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"
+                      strokeLinecap="round"
+                    />
+                    <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
                   </svg>
-                  Hesap oluşturuluyor...
-                </span>
-              ) : (
-                "Hesap Oluştur"
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-[var(--border)]" />
-            <span className="text-xs text-[var(--text-muted)]">veya</span>
-            <div className="h-px flex-1 bg-[var(--border)]" />
+                ) : (
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
+            </div>
+            {/* Password strength */}
+            <PasswordStrength password={password} />
           </div>
 
-          {/* Login link */}
-          <p className="text-center text-sm text-[var(--text-secondary)]">
-            Zaten hesabın var mı?{" "}
-            <Link href="/login" className="dn-auth-link font-medium transition-colors">
-              Giriş Yap
-            </Link>
-          </p>
+          {/* Confirm Password */}
+          <div>
+            <label
+              htmlFor="reg-confirm-password"
+              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+            >
+              Şifre (Tekrar)
+            </label>
+            <input
+              id="reg-confirm-password"
+              type={showPw ? "text" : "password"}
+              value={confirmPw}
+              onChange={(e) => setConfirmPw(e.target.value)}
+              required
+              autoComplete="new-password"
+              placeholder="Şifreyi tekrar girin"
+              className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
+                confirmPw && confirmPw !== password
+                  ? "dn-input-auth-error border-[#e53e3e]/50"
+                  : "border-[var(--border)]"
+              }`}
+            />
+            {confirmPw && confirmPw !== password && (
+              <p className="mt-1 text-xs text-[#e53e3e]">Şifreler eşleşmiyor</p>
+            )}
+          </div>
+
+          {/* Error */}
+          {error && <FormStatusMessage message={error} />}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="h-4 w-4 animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeOpacity="0.3" />
+                  <path d="M21 12a9 9 0 00-9-9" strokeLinecap="round" />
+                </svg>
+                Hesap oluşturuluyor...
+              </span>
+            ) : (
+              "Hesap Oluştur"
+            )}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-[var(--border)]" />
+          <span className="text-xs text-[var(--text-muted)]">veya</span>
+          <div className="h-px flex-1 bg-[var(--border)]" />
         </div>
 
-        {/* Back link */}
-        <div className="mt-6 text-center">
-          <Link
-            href="/"
-            className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
-          >
-            ← Ana sayfaya dön
+        {/* Login link */}
+        <p className="text-center text-sm text-[var(--text-secondary)]">
+          Zaten hesabın var mı?{" "}
+          <Link href="/login" className="dn-auth-link font-medium transition-colors">
+            Giriş Yap
           </Link>
-        </div>
-      </motion.div>
-    </div>
+        </p>
+      </div>
+    </AuthShell>
   );
 }

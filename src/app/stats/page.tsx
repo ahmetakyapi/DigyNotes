@@ -52,7 +52,7 @@ interface StatsData {
 }
 
 /* ── Constants ── */
-const CHART_COLORS = ["var(--gold)", "var(--gold-light)", "#6888c0", "#c8b090", "#f472b6", "#fb923c"];
+const CHART_COLORS = ["var(--gold)", "var(--gold-light)", "var(--accent-2)", "#c8b090", "#f472b6", "#fb923c"];
 
 const TOOLTIP_STYLE = {
   background: "var(--bg-card)",
@@ -242,7 +242,7 @@ export default function PersonalStatsPage() {
               }
             />
             <InsightMiniCard
-              icon={<Crosshair size={14} weight="bold" className="text-[#6888c0]" />}
+              icon={<Crosshair size={14} weight="bold" className="text-[var(--accent-2)]" />}
               label="Fokus"
               value={
                 topCategory
@@ -316,7 +316,7 @@ export default function PersonalStatsPage() {
         />
         <KpiCard
           icon={<CalendarBlank size={16} weight="duotone" />}
-          accent="#6888c0"
+          accent="var(--accent-2)"
           label="Bu Yıl"
           value={data.kpis.postsThisYear}
         />
@@ -366,9 +366,9 @@ export default function PersonalStatsPage() {
 
         {/* Category Distribution */}
         <ChartCard
-          icon={<Crosshair size={14} weight="bold" className="text-[#6888c0]" />}
+          icon={<Crosshair size={14} weight="bold" className="text-[var(--accent-2)]" />}
           title="Kategori Dağılımı"
-          accent="#6888c0"
+          accent="var(--accent-2)"
         >
           <div className="flex h-72 items-center">
             <div className="w-1/2">

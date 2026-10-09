@@ -647,7 +647,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       {/* ─── Hero Image ─── */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
         {/* Breadcrumb */}
-        <nav className="mb-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+        <nav className="dn-mono mb-4 flex items-center gap-2 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
           <Link href="/notes" className="transition-colors hover:text-[var(--gold)]">
             Notlar
           </Link>
@@ -665,8 +665,8 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         </nav>
 
         <div
-          className="relative w-full overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--media-glow)]"
-          style={{ height: imgOrientation === "landscape" ? "44vh" : "52vh" }}
+          className="relative w-full overflow-hidden rounded-[32px] border border-[var(--border-subtle)] bg-[#0b0b0a] shadow-[var(--media-glow)]"
+          style={{ height: imgOrientation === "landscape" ? "56vh" : "64vh", minHeight: 420 }}
         >
           {/* Blur backdrop */}
           {imgOrientation !== "landscape" && (
@@ -675,7 +675,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               alt=""
               fill
               aria-hidden
-              className="scale-110 object-cover opacity-55 blur-2xl"
+              className="scale-125 object-cover opacity-50 blur-3xl saturate-150"
               priority
             />
           )}
@@ -690,10 +690,14 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             src={getPostImageSrc(post.image, post.category)}
             alt={displayTitle}
             fill
-            className={imgOrientation === "portrait" ? "object-contain" : "object-cover"}
+            className={
+              imgOrientation === "portrait"
+                ? "object-contain p-6 pt-20 sm:p-10 sm:pt-20 md:object-right md:py-12 md:pr-14"
+                : "object-cover"
+            }
             style={
               imgOrientation === "portrait"
-                ? { filter: "drop-shadow(0 24px 36px rgba(0,0,0,0.35))" }
+                ? { filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.55))" }
                 : undefined
             }
             onLoad={handleImageLoad}
@@ -726,7 +730,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!pinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 ${
                       pinned
                         ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                         : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -761,7 +765,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
                       archived
                         ? "border-[#f59e0b]/50 bg-[#f59e0b]/15 text-[#f59e0b]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -796,7 +800,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   />
                   <Link
                     href={`/posts/${post.id}/edit`}
-                    className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    className="flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
@@ -808,7 +812,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   <button
                     onClick={() => setIsModalOpen(true)}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[#e53e3e]/70 hover:bg-[#3a151a]/80 hover:text-[#ff9a9a] disabled:opacity-40"
+                    className="flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[#e53e3e]/70 hover:bg-[#3a151a]/80 hover:text-[#ff9a9a] disabled:opacity-40"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
@@ -823,10 +827,10 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           </div>
 
           {/* Overlaid title + meta */}
-          <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-6 sm:pb-8">
-            <div className="max-w-3xl">
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-10 sm:pb-10">
+            <div className="max-w-3xl md:max-w-[58%]">
               <div className="mb-3 flex items-center gap-2">
-                <span className="inline-block rounded-sm border border-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+                <span className="dn-mono inline-block rounded-full bg-[#d4f53c] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#0b0b0a]">
                   {categoryLabel}
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
@@ -836,7 +840,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   </span>
                 )}
               </div>
-              <h1 className="mb-3 text-2xl font-bold leading-tight text-[var(--media-text-primary)] sm:text-3xl lg:text-4xl">
+              <h1 className="dn-display mb-4 text-[44px] italic leading-[0.9] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl lg:text-[88px]">
                 {displayTitle}
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--media-text-secondary)] sm:gap-3">
@@ -1089,7 +1093,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div className="relative">
           <article
             aria-hidden={shouldBlurSpoiler}
-            className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-bold prose-headings:text-[var(--text-primary)] prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
+            className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:italic prose-blockquote:font-normal prose-blockquote:leading-tight prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
               shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
             }`}
           >

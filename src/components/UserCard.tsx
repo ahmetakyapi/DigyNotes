@@ -78,7 +78,7 @@ export default function UserCard({ user }: UserCardProps) {
     return (
       <Link
         href={href}
-        className="hover:border-accent/24 group block rounded-[26px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.94),rgba(11,18,32,0.92))] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+        className="hover:border-accent/24 group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
       >
         {content}
       </Link>
@@ -86,7 +86,7 @@ export default function UserCard({ user }: UserCardProps) {
   }
 
   return (
-    <article className="rounded-[26px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(18,26,45,0.94),rgba(11,18,32,0.92))] p-5 shadow-[var(--shadow-soft)]">
+    <article className="rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)]">
       {content}
     </article>
   );

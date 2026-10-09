@@ -123,8 +123,8 @@ export default function NotFound() {
           className="dn404-tag-1 absolute left-[6%] top-[20%] flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold opacity-[0.28]"
           style={{
             borderColor: "rgb(var(--accent-2-rgb)/0.35)",
-            background: "rgba(56,88,168,0.12)",
-            color: "#6888c0",
+            background: "rgb(var(--accent-2-rgb)/0.12)",
+            color: "var(--accent-2)",
           }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">

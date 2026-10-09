@@ -19,7 +19,7 @@ import { shouldHideExcerpt } from "./posts-list-utils";
 function PostMeta({ post }: { readonly post: Post }) {
   const rt = formatReadingTime(estimateReadingTime(post.content));
   return (
-    <span className="text-[10px] text-[var(--text-muted)]">
+    <span className="dn-mono text-[10px] text-[var(--text-muted)]">
       {rt ? `${rt} · ${post.date}` : post.date}
     </span>
   );
@@ -36,13 +36,13 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 }) {
   return (
     <Link href={`/posts/${post.id}`} className="group mb-4 block">
-      <article className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-500 hover:border-accent/40 hover:shadow-[0_16px_56px_rgb(var(--gold-rgb)/0.12)] sm:h-[340px] lg:h-[420px]">
+      <article className="relative h-[300px] overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 hover:border-[var(--text-faint)] sm:h-[380px] lg:h-[460px]">
         <ResilientImage
           src={getPostImageSrc(post.image, post.category)}
           alt={post.title}
           fill
           sizes="(max-width: 768px) 100vw, 1024px"
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+          className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.05]"
           priority
         />
         <div
@@ -61,10 +61,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
         />
 
         <div className="absolute left-5 top-5 flex items-center gap-2">
-          <span
-            className="rounded-full border border-accent/20 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--gold)] backdrop-blur-md"
-            style={{ backgroundColor: "var(--bg-overlay)" }}
-          >
+          <span className="dn-mono rounded-full bg-[#d4f53c] px-3 py-1 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[#0b0b0a]">
             {activeTab === "kaydedilenler" ? "Kaydedilen" : "Öne Çıkan"}
           </span>
           {post.status && <StatusBadge status={post.status} />}
@@ -72,14 +69,12 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="rounded-sm bg-[var(--gold)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-on-accent)]">
+            <span className="dn-mono rounded-full border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-white/85 backdrop-blur-md">
               {getCategoryLabel(post.category)}
+              {post.years ? ` · ${post.years}` : ""}
             </span>
-            {post.years && (
-              <span className="text-sm text-[var(--media-text-secondary)]">{post.years}</span>
-            )}
           </div>
-          <h2 className="mb-2 text-2xl font-bold leading-tight text-[var(--media-text-primary)] transition-colors duration-300 group-hover:text-[var(--gold)] sm:text-3xl lg:text-4xl">
+          <h2 className="dn-display mb-2 max-w-[80%] text-[40px] italic leading-[0.92] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl lg:text-7xl">
             {formatDisplayTitle(post.title)}
           </h2>
           {post.creator && (
@@ -92,7 +87,14 @@ export const FeaturedCard = React.memo(function FeaturedCard({
             {post.rating > 0 && (
               <span className="text-xs text-[var(--media-text-secondary)]">{post.rating}/5</span>
             )}
-            <span className="ml-auto text-xs text-[var(--media-text-secondary)]">{post.date}</span>
+            <span className="dn-mono ml-auto hidden text-[10.5px] uppercase tracking-[0.12em] text-[var(--media-text-secondary)] sm:inline">
+              {post.date}
+            </span>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f2efe8] text-[#0b0b0a] transition-transform duration-700 ease-out-expo group-hover:rotate-45 sm:ml-4">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+                <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
           </div>
         </div>
       </article>
@@ -121,10 +123,10 @@ export const PostGridCard = React.memo(function PostGridCard({
 
   return (
     <Link href={`/posts/${post.id}`} className="group block">
-      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:flex-row">
+      <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-[var(--text-faint)] sm:flex-row">
         {showIndex && (
           <div className="flex h-9 flex-shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
-            <span className="text-[10px] font-bold tabular-nums text-[var(--text-muted)] transition-colors group-hover:text-accent/60">
+            <span className="dn-mono text-[10px] tabular-nums text-[var(--text-faint)] transition-colors duration-300 group-hover:text-[var(--gold)]">
               {String(index + 2).padStart(2, "0")}
             </span>
           </div>
@@ -137,15 +139,15 @@ export const PostGridCard = React.memo(function PostGridCard({
             fill
             variant="wide"
             sizes="(max-width: 768px) 36vw, 200px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            className="object-cover transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.06]"
           />
           <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col justify-between p-3.5 sm:p-4">
+        <div className="flex min-w-0 flex-1 flex-col justify-between p-4 sm:p-5">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
-              <span className="flex-shrink-0 rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+              <span className="dn-mono flex-shrink-0 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
@@ -164,12 +166,12 @@ export const PostGridCard = React.memo(function PostGridCard({
                 </span>
               )}
               {post.years && (
-                <span className="text-[11px] text-[var(--text-muted)]">{post.years}</span>
+                <span className="dn-mono text-[10px] text-[var(--text-muted)]">{post.years}</span>
               )}
               {post.status && <StatusBadge status={post.status} />}
             </div>
 
-            <h2 className="mb-1 line-clamp-2 text-[15px] font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-base">
+            <h2 className="mb-1 line-clamp-2 text-[17px] font-bold leading-[1.15] tracking-[-0.025em] text-[var(--text-primary)] sm:text-lg">
               {displayTitle}
             </h2>
 
@@ -203,7 +205,7 @@ export const PostGridCard = React.memo(function PostGridCard({
             )}
           </div>
 
-          <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
+          <div className="mt-4 flex items-center justify-between border-t border-dashed border-[var(--border)] pt-3">
             <StarRating rating={post.rating} size={11} />
             <PostMeta post={post} />
           </div>
@@ -230,7 +232,7 @@ export const PostListCard = React.memo(function PostListCard({
 
   return (
     <Link href={`/posts/${post.id}`} className="group block">
-      <article className="flex items-center gap-3 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_4px_24px_rgb(var(--gold-rgb)/0.08)] sm:px-4">
+      <article className="flex items-center gap-4 overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-500 ease-out-expo hover:border-[var(--text-faint)] sm:px-4">
         <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
           <ResilientImage
             src={getPostImageSrc(post.image, post.category)}
@@ -244,16 +246,16 @@ export const PostListCard = React.memo(function PostListCard({
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-            <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--gold)]">
+            <span className="dn-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-[var(--gold)]">
               {getCategoryLabel(post.category)}
             </span>
             {post.years && (
-              <span className="text-[11px] text-[var(--text-muted)]">{post.years}</span>
+              <span className="dn-mono text-[10px] text-[var(--text-muted)]">{post.years}</span>
             )}
             {post.status && <StatusBadge status={post.status} />}
           </div>
 
-          <h2 className="line-clamp-1 text-sm font-bold text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-[15px]">
+          <h2 className="line-clamp-1 text-[15px] font-bold tracking-[-0.02em] text-[var(--text-primary)] sm:text-base">
             {displayTitle}
           </h2>
 

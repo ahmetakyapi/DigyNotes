@@ -89,7 +89,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
           </a>
         </div>
 
-        <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[radial-gradient(circle_at_top_left,rgb(var(--gold-rgb)/0.18),transparent_36%),linear-gradient(180deg,rgba(10,15,30,0.92),rgba(8,12,20,0.98))]">
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[radial-gradient(circle_at_top_left,rgb(var(--gold-rgb)/0.18),transparent_36%),linear-gradient(180deg,rgba(12,12,11,0.92),rgba(11,11,10,0.98))]">
           <div className="absolute inset-0 opacity-30" aria-hidden>
             <div
               className="h-full w-full"

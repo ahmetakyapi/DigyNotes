@@ -867,7 +867,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               ) : (
                 <>
                   {isDirty && (
-                    <span className="h-2 w-2 flex-shrink-0 rounded-full bg-[#0c0e16]/50" />
+                    <span className="h-2 w-2 flex-shrink-0 rounded-full bg-[var(--bg-base)]/50" />
                   )}
                   Değişiklikleri Kaydet
                 </>

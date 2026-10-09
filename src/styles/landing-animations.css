@@ -349,7 +349,7 @@ html.light .dn-nav-cta-btn,
 html[data-theme="light"] .dn-nav-cta-btn {
   background: linear-gradient(160deg, var(--gold) 0%, var(--gold-dark) 35%, var(--gold-dark) 70%, #065f46 100%);
   color: #ffffff;
-  text-shadow: 0 1px 2px rgba(6, 95, 70, 0.3);
+  text-shadow: 0 1px 2px rgba(60, 88, 0, 0.3);
 }
 
 html.light .dn-nav-cta-btn:hover,
@@ -363,16 +363,16 @@ html[data-theme="light"] .dn-landing-card {
   border-color: rgba(226, 232, 240, 0.8) !important;
   background: rgba(255, 255, 255, 0.85) !important;
   box-shadow:
-    0 8px 24px rgba(15, 23, 42, 0.05),
-    0 2px 8px rgba(15, 23, 42, 0.03),
+    0 8px 24px rgba(40, 34, 24, 0.05),
+    0 2px 8px rgba(40, 34, 24, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 html.light .dn-landing-preview,
 html[data-theme="light"] .dn-landing-preview {
   box-shadow:
-    0 24px 80px rgba(15, 23, 42, 0.08),
-    0 8px 24px rgba(15, 23, 42, 0.05) !important;
+    0 24px 80px rgba(40, 34, 24, 0.08),
+    0 8px 24px rgba(40, 34, 24, 0.05) !important;
   border-color: rgba(226, 232, 240, 0.7) !important;
 }
 
@@ -418,7 +418,7 @@ html[data-theme="light"] .dn-landing-toggle {
   background: rgba(248, 250, 252, 0.9);
   border-color: rgb(var(--gold-rgb) / 0.18);
   box-shadow:
-    0 8px 18px rgba(15, 23, 42, 0.05),
+    0 8px 18px rgba(40, 34, 24, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -431,7 +431,7 @@ html[data-theme="light"] .dn-section-pill {
   ) !important;
   border-color: rgb(var(--gold-rgb) / 0.18) !important;
   box-shadow:
-    0 6px 18px rgba(15, 23, 42, 0.04),
+    0 6px 18px rgba(40, 34, 24, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -454,6 +454,6 @@ html[data-theme="light"] .dn-category-tab[data-active="false"] {
 html.light .dn-category-tab[data-active="true"],
 html[data-theme="light"] .dn-category-tab[data-active="true"] {
   box-shadow:
-    0 8px 20px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(40, 34, 24, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }

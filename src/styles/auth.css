@@ -1,53 +1,56 @@
 /* ═══════════════════════════════════════════
    DigyNotes — Auth Page Styles
-   Login / Register button, input, and link
+   Login / Register button, input, link, poster drift
 ═══════════════════════════════════════════ */
 
 .dn-btn-primary-auth {
-  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 30%, var(--gold-dark) 65%, var(--gold-dark) 100%);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(4, 120, 87, 0.25);
-  transition: background 0.2s ease;
+  background: var(--gold);
+  color: var(--text-on-accent);
+  transition:
+    background 0.25s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .dn-btn-primary-auth:hover:not(:disabled) {
-  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold-light) 28%, var(--gold) 60%, var(--gold-dark) 100%);
-}
-html.light .dn-btn-primary-auth,
-html[data-theme="light"] .dn-btn-primary-auth {
-  background: linear-gradient(160deg, var(--gold) 0%, var(--gold-dark) 40%, var(--gold-dark) 75%, #065f46 100%);
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(6, 95, 70, 0.25);
-}
-html.light .dn-btn-primary-auth:hover:not(:disabled),
-html[data-theme="light"] .dn-btn-primary-auth:hover:not(:disabled) {
-  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 35%, var(--gold-dark) 70%, var(--gold-dark) 100%);
+  background: var(--gold-light);
 }
 
 .dn-input-auth:focus {
-  border-color: rgb(var(--gold-rgb) / 0.45);
-  box-shadow: 0 0 0 1px rgb(var(--gold-rgb) / 0.1);
-}
-html.light .dn-input-auth:focus,
-html[data-theme="light"] .dn-input-auth:focus {
-  border-color: rgb(var(--gold-rgb) / 0.45);
-  box-shadow: 0 0 0 1px rgb(var(--gold-rgb) / 0.08);
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 4px rgb(var(--gold-rgb) / 0.12);
 }
 .dn-input-auth-error:focus {
-  border-color: rgba(229, 62, 62, 0.7);
+  border-color: var(--danger);
   box-shadow: none;
 }
 
 .dn-auth-link {
-  color: var(--gold-light);
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 .dn-auth-link:hover {
-  color: var(--gold-light);
-}
-html.light .dn-auth-link,
-html[data-theme="light"] .dn-auth-link {
-  color: var(--gold-dark);
-}
-html.light .dn-auth-link:hover,
-html[data-theme="light"] .dn-auth-link:hover {
   color: var(--gold);
+}
+
+@keyframes dn-drift-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes dn-drift-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+.dn-drift-up {
+  animation: dn-drift-up 60s linear infinite;
+}
+.dn-drift-down {
+  animation: dn-drift-down 70s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dn-drift-up,
+  .dn-drift-down {
+    animation: none;
+  }
 }

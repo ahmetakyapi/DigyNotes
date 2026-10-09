@@ -562,7 +562,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       sizes="420px"
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[rgba(4,10,22,0.78)] to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[rgba(8,8,7,0.78)] to-transparent" />
                   </div>
                 </Link>
                 <div className="space-y-3 p-4">
