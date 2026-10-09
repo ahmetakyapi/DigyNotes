@@ -540,12 +540,12 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
                     {post.creator && (
-                      <span className="truncate text-[10px] text-[var(--text-muted)]">
+                      <span className="truncate text-[12px] text-[var(--text-muted)]">
                         {post.creator}
                       </span>
                     )}
                     {post.years && (
-                      <span className="text-[10px] text-[var(--text-muted)]">· {post.years}</span>
+                      <span className="text-[12px] text-[var(--text-muted)]">· {post.years}</span>
                     )}
                   </div>
                 </div>

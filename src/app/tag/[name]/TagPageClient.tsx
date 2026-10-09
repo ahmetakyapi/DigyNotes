@@ -182,14 +182,14 @@ function PostCard({ post }: { post: Post }) {
         {/* User */}
         {post.user && (
           <div className="mt-auto flex items-center gap-2 border-t border-[var(--border)] pt-3">
-            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent">
+            <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[11px] font-bold text-accent">
               <AvatarImage
                 src={post.user.avatarUrl}
                 alt={post.user.name}
                 name={post.user.name}
                 size={24}
                 className="h-full w-full object-cover"
-                textClassName="text-[9px] font-bold text-accent"
+                textClassName="text-[11px] font-bold text-accent"
               />
             </div>
             {post.user.username ? (

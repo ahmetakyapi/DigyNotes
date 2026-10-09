@@ -47,14 +47,14 @@ export function StatusSidebar({
           {title || "Henüz Başlık Yok"}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
+          <span className="rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] font-semibold text-[var(--gold)]">
             {categoryLabel}
           </span>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-secondary)]">
             {status}
           </span>
           {externalRating !== null && (
-            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[10px] font-medium text-[var(--text-secondary)]">
+            <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-secondary)]">
               Genel puan: {externalRating}
             </span>
           )}
@@ -214,7 +214,7 @@ function CoverPreview({
           }}
         />
         <span
-          className="absolute left-3 top-3 rounded-full border px-2.5 py-1 text-[10px] font-semibold backdrop-blur-md"
+          className="absolute left-3 top-3 rounded-full border px-2.5 py-1 text-[12px] font-semibold backdrop-blur-md"
           style={{
             borderColor: "var(--media-control-border)",
             background: "var(--media-control-bg)",
@@ -224,7 +224,7 @@ function CoverPreview({
           Kapak Önizleme
         </span>
         <span
-          className="absolute bottom-3 right-3 rounded-md border px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm"
+          className="absolute bottom-3 right-3 rounded-md border px-2 py-0.5 text-[12px] font-medium backdrop-blur-sm"
           style={{
             borderColor: "var(--media-control-border)",
             background: "var(--media-control-bg)",

@@ -58,7 +58,7 @@ export function UserDropdownMenu({
           <p className="truncate text-xs font-semibold leading-tight text-[var(--text-primary)]">
             {session.user?.name}
           </p>
-          <p className="mt-0.5 truncate text-[10px] leading-tight text-[var(--text-muted)]">
+          <p className="mt-0.5 truncate text-[12px] leading-tight text-[var(--text-muted)]">
             {session.user?.email}
           </p>
         </div>
@@ -90,7 +90,7 @@ export function UserDropdownMenu({
           <span className="relative">
             <BellIcon size={15} weight={notificationCount > 0 ? "fill" : "regular"} />
             {notificationCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-accent px-0.5 text-[8px] font-bold leading-[14px] text-[var(--text-on-accent)]">
+              <span className="absolute -right-1.5 -top-1.5 flex min-w-[14px] items-center justify-center rounded-full bg-accent px-0.5 text-[10.5px] font-bold leading-[14px] text-[var(--text-on-accent)]">
                 {notificationCount > 9 ? "9+" : notificationCount}
               </span>
             )}

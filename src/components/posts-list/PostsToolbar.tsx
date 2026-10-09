@@ -66,7 +66,7 @@ export function PostsTabSwitcher({
           >
             {tab.label}
             {(tab.key === "taslaklar" || tab.key === "arsiv") && counts[tab.countKey] > 0 && (
-              <span className="ml-1.5 text-[10px] opacity-70">{counts[tab.countKey]}</span>
+              <span className="ml-1.5 text-[12px] opacity-70">{counts[tab.countKey]}</span>
             )}
           </button>
         ))}

@@ -100,7 +100,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
               }}
             />
           </div>
-          <div className="absolute inset-x-6 top-5 flex items-center justify-between text-[10px] uppercase tracking-[0.14em] text-white/45">
+          <div className="absolute inset-x-6 top-5 flex items-center justify-between text-[12px] uppercase tracking-[0.14em] text-white/45">
             <span>Kuzey</span>
             <span>Konum yoğunluğu</span>
           </div>

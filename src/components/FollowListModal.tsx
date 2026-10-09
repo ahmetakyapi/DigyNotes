@@ -161,7 +161,7 @@ export default function FollowListModal({
                           <p className="truncate text-sm font-medium text-[var(--text-primary)]">
                             {u.name}
                           </p>
-                          <span className="flex-shrink-0 text-[10px] text-[var(--text-muted)]">
+                          <span className="flex-shrink-0 text-[12px] text-[var(--text-muted)]">
                             {u.postCount} not
                           </span>
                         </div>

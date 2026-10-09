@@ -64,7 +64,7 @@ export function MobileTabBar({
           }`}
         >
           <div
-            className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[9px] font-bold transition-colors duration-150 ${
+            className={`flex h-[18px] w-[18px] items-center justify-center rounded-full text-[11px] font-bold transition-colors duration-150 ${
               isProfile
                 ? "bg-[var(--text-on-accent)] text-[var(--gold)]"
                 : "bg-[var(--bg-raised)] text-[var(--text-muted)] ring-1 ring-[var(--border)]"
@@ -72,7 +72,7 @@ export function MobileTabBar({
           >
             {userInitial}
           </div>
-          <span className="text-[10px] font-semibold tracking-[0.01em]">Profil</span>
+          <span className="text-[11px] font-semibold tracking-[0.01em]">Profil</span>
         </button>
       </div>
     </nav>
@@ -98,7 +98,7 @@ function MobileTab({
       }`}
     >
       {icon}
-      <span className="text-[10px] font-semibold tracking-[0.01em]">{label}</span>
+      <span className="text-[11px] font-semibold tracking-[0.01em]">{label}</span>
     </Link>
   );
 }

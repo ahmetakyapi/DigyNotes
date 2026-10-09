@@ -6,6 +6,9 @@ interface StarRatingProps {
   interactive?: boolean;
   onRate?: (value: number) => void;
   size?: number;
+  /** "onMedia": stars sit on a dark photo/scrim — lavender in both themes
+      (the light theme's violet accent vanished on dark covers). */
+  tone?: "default" | "onMedia";
 }
 
 export default function StarRating({
@@ -13,7 +16,10 @@ export default function StarRating({
   interactive = false,
   onRate,
   size = 16,
+  tone = "default",
 }: StarRatingProps) {
+  const on = tone === "onMedia" ? "text-[#b9a8ff]" : "text-accent";
+  const off = tone === "onMedia" ? "text-white/35" : "text-[var(--text-faint)]";
   const fullStars = Math.floor(rating);
   const hasHalf = rating % 1 >= 0.5;
 
@@ -37,11 +43,11 @@ export default function StarRating({
                 onClick={() => onRate?.(starNum)}
               />
               {starNum <= fullStars ? (
-                <StarIcon size={size} weight="fill" className="text-accent" />
+                <StarIcon size={size} weight="fill" className={on} />
               ) : starNum === fullStars + 1 && hasHalf ? (
-                <StarHalfIcon size={size} weight="fill" className="text-accent" />
+                <StarHalfIcon size={size} weight="fill" className={on} />
               ) : (
-                <StarIcon size={size} className="text-[#4a5568]" />
+                <StarIcon size={size} className={off} />
               )}
             </span>
           );
@@ -55,11 +61,11 @@ export default function StarRating({
       {Array.from({ length: 5 }, (_, i) => {
         const starNum = i + 1;
         return starNum <= fullStars ? (
-          <StarIcon key={starNum} size={size} weight="fill" className="text-accent" />
+          <StarIcon key={starNum} size={size} weight="fill" className={on} />
         ) : starNum === fullStars + 1 && hasHalf ? (
-          <StarHalfIcon key={starNum} size={size} weight="fill" className="text-accent" />
+          <StarHalfIcon key={starNum} size={size} weight="fill" className={on} />
         ) : (
-          <StarIcon key={starNum} size={size} className="text-[#4a5568]" />
+          <StarIcon key={starNum} size={size} className={off} />
         );
       })}
     </span>

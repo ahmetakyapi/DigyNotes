@@ -552,11 +552,11 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                          <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-accent">
+                          <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.isPinned && (
-                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold text-accent">
+                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
                               <PushPin size={9} weight="fill" /> Sabit
                             </span>
                           )}
@@ -576,7 +576,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                               <TagBadge key={tag.id} tag={tag} />
                             ))}
                             {post.tags.length > 2 && (
-                              <span className="self-center text-[10px] text-[var(--text-muted)]">
+                              <span className="self-center text-[12px] text-[var(--text-muted)]">
                                 +{post.tags.length - 2}
                               </span>
                             )}
@@ -585,7 +585,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                       </div>
                       <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
                         <StarRating rating={post.rating} size={11} />
-                        <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
+                        <span className="text-[12px] text-[var(--text-muted)]">{post.date}</span>
                       </div>
                     </div>
                   </article>
@@ -690,7 +690,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-accent">
+                        <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -699,7 +699,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                           <Link
                             href={`/profile/${post.user.username}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[9px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                            className="ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                           >
                             <AvatarImage
                               src={post.user.avatarUrl}
@@ -727,7 +727,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                             <TagBadge key={tag.id} tag={tag} />
                           ))}
                           {post.tags.length > 2 && (
-                            <span className="self-center text-[10px] text-[var(--text-muted)]">
+                            <span className="self-center text-[12px] text-[var(--text-muted)]">
                               +{post.tags.length - 2}
                             </span>
                           )}
@@ -736,7 +736,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
                       <StarRating rating={post.rating} size={11} />
-                      <span className="text-[10px] text-[var(--text-muted)]">{post.date}</span>
+                      <span className="text-[12px] text-[var(--text-muted)]">{post.date}</span>
                     </div>
                   </div>
                 </article>

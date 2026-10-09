@@ -107,7 +107,7 @@ export function SortFilterBar({
       <div className="w-full sm:w-auto">
         <div className="flex w-full items-center gap-2 sm:w-auto">
           {filteredCount < totalCount && (
-            <span className="text-[10px] tabular-nums text-[var(--text-muted)] sm:text-[11px]">
+            <span className="text-[12px] tabular-nums text-[var(--text-muted)] sm:text-[11px]">
               {filteredCount}/{totalCount}
             </span>
           )}

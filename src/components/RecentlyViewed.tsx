@@ -169,7 +169,7 @@ export default function RecentlyViewed() {
           weight="bold"
           className="flex-shrink-0 text-[var(--text-muted)]"
         />
-        <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] sm:text-[11px]">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] sm:text-[11px]">
           Son görüntülenenler
         </span>
 
@@ -239,11 +239,11 @@ export default function RecentlyViewed() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-1">
-                    <span className="rounded-sm border border-accent/25 bg-black/50 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.1em] text-[var(--gold)]">
+                    <span className="rounded-sm border border-accent/25 bg-black/50 px-1.5 py-0.5 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--gold)]">
                       {getCategoryLabel(item.category)}
                     </span>
                     {item.rating > 0 && (
-                      <span className="flex items-center gap-0.5 rounded-sm bg-black/50 px-1.5 py-0.5 text-[9px] font-medium text-[var(--gold)]">
+                      <span className="flex items-center gap-0.5 rounded-sm bg-black/50 px-1.5 py-0.5 text-[11px] font-medium text-[var(--gold)]">
                         ★ {item.rating}
                       </span>
                     )}
@@ -255,7 +255,7 @@ export default function RecentlyViewed() {
                   <p className="truncate text-[11px] font-semibold leading-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)] sm:text-xs">
                     {item.title}
                   </p>
-                  <p className="mt-0.5 text-[9px] text-[var(--text-muted)] sm:text-[10px]">
+                  <p className="mt-0.5 text-[11px] text-[var(--text-muted)] sm:text-[12px]">
                     {timeAgo(item.viewedAt)}
                   </p>
                 </div>

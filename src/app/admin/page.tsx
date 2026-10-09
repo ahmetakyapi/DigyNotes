@@ -1986,7 +1986,7 @@ function ToggleSwitch({
 
 function Avatar({ name, size }: { name: string; size: "xs" | "sm" | "md" }) {
   const dim =
-    size === "xs" ? "h-6 w-6 text-[10px]" : size === "sm" ? "h-8 w-8 text-xs" : "h-9 w-9 text-sm";
+    size === "xs" ? "h-6 w-6 text-[12px]" : size === "sm" ? "h-8 w-8 text-xs" : "h-9 w-9 text-sm";
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] font-semibold text-[var(--text-secondary)] ${dim}`}

@@ -186,7 +186,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                   weight={notificationCount > 0 || isNotifications ? "fill" : "regular"}
                 />
                 {notificationCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-accent px-1 text-[10px] font-bold leading-[18px] text-[var(--text-on-accent)]">
+                  <span className="absolute -right-1 -top-1 flex min-w-[18px] items-center justify-center rounded-full border border-[var(--bg-header)] bg-accent px-1 text-[12px] font-bold leading-[18px] text-[var(--text-on-accent)]">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}

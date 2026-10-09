@@ -393,7 +393,7 @@ export default function CommandPalette() {
                                       {item.hint}
                                     </span>
                                   ) : (
-                                    <kbd className="rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+                                    <kbd className="rounded-md border border-[var(--border)] bg-[var(--bg-raised)] px-1.5 py-0.5 font-mono text-[12px] text-[var(--text-muted)]">
                                       {item.hint}
                                     </kbd>
                                   ))}

@@ -117,7 +117,7 @@ export function CategorySearchSection({
               <span className="dn-mono shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-muted)]">
                 {completedStepCount}/4
               </span>
-              <span className="hidden shrink-0 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--gold)] sm:inline">
+              <span className="hidden shrink-0 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 text-[12px] font-medium text-[var(--gold)] sm:inline">
                 {nextActionText}
               </span>
             </div>

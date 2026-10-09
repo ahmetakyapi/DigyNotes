@@ -19,7 +19,7 @@ import { shouldHideExcerpt } from "./posts-list-utils";
 function PostMeta({ post }: { readonly post: Post }) {
   const rt = formatReadingTime(estimateReadingTime(post.content));
   return (
-    <span className="dn-mono text-[12px] text-[var(--text-muted)]">
+    <span className="whitespace-nowrap text-[12px] font-medium tabular-nums text-[var(--text-muted)]">
       {rt ? `${rt} · ${post.date}` : post.date}
     </span>
   );
@@ -83,7 +83,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
             </p>
           )}
           <div className="flex items-center gap-3">
-            <StarRating rating={post.rating} size={14} />
+            <StarRating rating={post.rating} size={14} tone="onMedia" />
             {post.rating > 0 && (
               <span className="text-xs text-[var(--media-text-secondary)]">{post.rating}/5</span>
             )}
@@ -151,17 +151,17 @@ export const PostGridCard = React.memo(function PostGridCard({
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
-                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold text-accent">
+                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
                   <PushPin size={9} weight="fill" /> Sabit
                 </span>
               )}
               {post.isDraft && (
-                <span className="flex-shrink-0 rounded-sm border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-1.5 py-0.5 text-[9px] font-bold text-[#f59e0b]">
+                <span className="flex-shrink-0 rounded-sm border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-1.5 py-0.5 text-[11px] font-bold text-[#f59e0b]">
                   Taslak
                 </span>
               )}
               {post.isArchived && (
-                <span className="flex-shrink-0 rounded-sm border border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] bg-[color-mix(in_srgb,var(--text-muted)_8%,transparent)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--text-muted)]">
+                <span className="flex-shrink-0 rounded-sm border border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] bg-[color-mix(in_srgb,var(--text-muted)_8%,transparent)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--text-muted)]">
                   Arşiv
                 </span>
               )}
@@ -191,7 +191,7 @@ export const PostGridCard = React.memo(function PostGridCard({
                   />
                 ))}
                 {post.tags.length > 3 && (
-                  <span className="self-center text-[10px] text-[var(--text-muted)]">
+                  <span className="self-center text-[12px] text-[var(--text-muted)]">
                     +{post.tags.length - 3}
                   </span>
                 )}
@@ -205,7 +205,7 @@ export const PostGridCard = React.memo(function PostGridCard({
             )}
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-dashed border-[var(--border)] pt-3">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-dashed border-[var(--border)] pt-3">
             <StarRating rating={post.rating} size={11} />
             <PostMeta post={post} />
           </div>
@@ -265,7 +265,7 @@ export const PostListCard = React.memo(function PostListCard({
               .join(" • ")}
           </p>
 
-          <div className="mt-2 flex items-center justify-between gap-3">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
             <StarRating rating={post.rating} size={10} />
             <PostMeta post={post} />
           </div>

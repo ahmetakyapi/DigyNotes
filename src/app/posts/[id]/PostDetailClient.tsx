@@ -532,12 +532,12 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     {comment.user.name}
                   </span>
                   {isPostAuthorComment && (
-                    <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[9px] font-semibold text-accent ring-1 ring-accent/20">
+                    <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[11px] font-semibold text-accent ring-1 ring-accent/20">
                       Yazar
                     </span>
                   )}
                   {isOwn && !isPostAuthorComment && (
-                    <span className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--text-faint)] ring-1 ring-[var(--surface-strong-border)]">
+                    <span className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[11px] font-medium text-[var(--text-faint)] ring-1 ring-[var(--surface-strong-border)]">
                       Sen
                     </span>
                   )}
@@ -546,7 +546,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   </span>
                 </div>
                 {parentComment?.user && (
-                  <span className="text-[10px] text-[var(--text-faint)]">
+                  <span className="text-[12px] text-[var(--text-faint)]">
                     ↳{" "}
                     {parentComment.user.username
                       ? `@${parentComment.user.username}`
@@ -594,7 +594,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     name={session?.user?.name ?? "?"}
                     size={28}
                     className="h-full w-full object-cover"
-                    textClassName="text-[9px] font-bold text-accent"
+                    textClassName="text-[11px] font-bold text-accent"
                   />
                 </div>
                 <div className="flex-1">
@@ -839,7 +839,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
                 {supportsSpoiler && post.hasSpoiler && (
-                  <span className="bg-danger/12 inline-flex items-center rounded-full border border-danger/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#ffb2b2]">
+                  <span className="bg-danger/12 inline-flex items-center rounded-full border border-danger/25 px-2 py-0.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#ffb2b2]">
                     Spoiler
                   </span>
                 )}
@@ -852,7 +852,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   (authorProfileHref ? (
                     <Link
                       href={authorProfileHref}
-                      className="transition-colors hover:text-[var(--gold)]"
+                      className="transition-colors hover:text-[#b9a8ff]"
                     >
                       {displayCreator}
                     </Link>
@@ -868,7 +868,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 {post.rating > 0 && (
                   <>
                     <span className="text-white/35">•</span>
-                    <StarRating rating={post.rating} size={13} />
+                    <StarRating rating={post.rating} size={13} tone="onMedia" />
                     <span className="text-xs text-[var(--media-text-secondary)] opacity-90">
                       ({post.rating}/5)
                     </span>
@@ -877,7 +877,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 {post.externalRating && post.externalRating > 0 && (
                   <>
                     <span className="text-white/35">•</span>
-                    <span className="flex items-center gap-1 text-xs font-medium text-[var(--gold)]">
+                    <span className="flex items-center gap-1 text-xs font-medium text-[#b9a8ff]">
                       <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
                       </svg>
@@ -1190,7 +1190,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     }}
                   />
                   <div className="mt-2.5 flex items-center justify-between">
-                    <span className="text-[10px] text-[var(--text-faint)]">
+                    <span className="text-[12px] text-[var(--text-faint)]">
                       {commentText.length > 0 && `${commentText.length}/1000`}
                     </span>
                     <button
@@ -1275,7 +1275,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               <h2 className="text-sm font-semibold text-[var(--text-secondary)]">
                 Bu İçerik Hakkında Diğer Notlar
               </h2>
-              <span className="rounded-full bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
+              <span className="rounded-full bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-muted)]">
                 {communityPosts.length}
               </span>
             </div>
@@ -1291,7 +1291,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-accent/30 hover:bg-[var(--bg-raised)]"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-[10px] font-bold text-[var(--gold)]">
+                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-[12px] font-bold text-[var(--gold)]">
                       {cp.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">
