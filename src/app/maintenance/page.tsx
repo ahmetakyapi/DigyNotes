@@ -19,10 +19,6 @@ export default async function MaintenancePage() {
         className="pointer-events-none absolute left-1/2 top-1/3 h-[50vmin] w-[80vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--gold-rgb)/0.12),transparent)] blur-2xl"
       />
 
-      <p className="dn-eyebrow relative">
-        <span className="text-[var(--gold)]">(503)</span> — Bakım
-      </p>
-
       <div
         aria-hidden
         className="relative mt-6 flex items-center gap-[0.06em] text-[clamp(7rem,26vw,16rem)] font-extrabold leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)]"
@@ -65,9 +61,7 @@ export default async function MaintenancePage() {
           },
         ].map((c) => (
           <div key={c.n} className="bg-[var(--bg-card)] px-5 py-5">
-            <p className="dn-eyebrow">
-              <span className="text-[var(--gold)]">({c.n})</span> {c.label}
-            </p>
+            <p className="dn-eyebrow">{c.label}</p>
             <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">{c.text}</p>
           </div>
         ))}
@@ -86,7 +80,7 @@ export default async function MaintenancePage() {
         </Link>
       </div>
 
-      <p className="relative mt-12 text-[12px] text-[var(--text-muted)] font-medium">
+      <p className="relative mt-12 text-[12px] font-medium text-[var(--text-muted)]">
         HTTP 503 · Bakım · DigyNotes
       </p>
     </main>

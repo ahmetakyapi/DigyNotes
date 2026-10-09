@@ -120,9 +120,7 @@ function ChartCard({
     <section className="h-full rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30 sm:p-7">
       <div className="mb-6 flex items-baseline justify-between gap-3">
         <div>
-          <p className={monoLabel}>
-            <span className="text-[var(--gold)]">({index})</span>
-          </p>
+          <p className={monoLabel}></p>
           <h2 className="mt-1.5 text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
             {title}
           </h2>
@@ -454,9 +452,7 @@ export default function PersonalStatsPage() {
                   <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
                     {data.kpis.totalPosts}
                   </span>
-                  <span className="mt-1 text-[11px] text-[var(--text-muted)] font-medium">
-                    Not
-                  </span>
+                  <span className="mt-1 text-[11px] font-medium text-[var(--text-muted)]">Not</span>
                 </div>
               </div>
               <div className="flex-1 space-y-3 pl-4">
@@ -634,9 +630,7 @@ function HighlightCell({
 }) {
   return (
     <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30">
-      <p className={monoLabel}>
-        <span className="text-[var(--gold)]">({index})</span> {label}
-      </p>
+      <p className={monoLabel}>{label}</p>
       <p className="mt-3 text-2xl font-bold tracking-[-0.03em] text-[var(--text-primary)]">
         {value}
       </p>

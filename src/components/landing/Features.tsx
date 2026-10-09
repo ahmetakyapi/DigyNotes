@@ -32,7 +32,7 @@ function Tile({
         data-cursor={cursor}
         className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8"
       >
-        <div className="text-[12.5px] text-[var(--text-muted)] font-medium">
+        <div className="text-[12.5px] font-medium text-[var(--text-muted)]">
           <span className="text-[var(--gold)]">{index}</span>
         </div>
         <h3 className="mt-3 text-2xl font-bold leading-[1.05] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[28px]">
@@ -110,7 +110,7 @@ function RatingPlayground() {
         <span className="dn-display block text-[clamp(6rem,14vw,11rem)] italic tabular-nums leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)]">
           {shown.toFixed(1)}
         </span>
-        <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+        <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
           / 5 — Senin Puanın
         </span>
       </div>
@@ -184,7 +184,7 @@ function SearchTyping() {
                 <p className="truncate text-sm font-semibold text-[var(--text-primary)]">{s.q}</p>
                 <p className="dn-mono truncate text-[12px] text-[var(--text-muted)]">{s.meta}</p>
               </div>
-              <span className="ml-auto shrink-0 rounded-full bg-[var(--gold)] px-2.5 py-1 text-[11px] text-[var(--text-on-accent)] font-medium">
+              <span className="ml-auto shrink-0 rounded-full bg-[var(--gold)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-on-accent)]">
                 Seç
               </span>
             </motion.div>
@@ -256,7 +256,7 @@ function CollectionFan() {
           </div>
         ))}
       </div>
-      <p className="mt-2 text-center text-[12.5px] text-[var(--text-muted)] font-medium">
+      <p className="mt-2 text-center text-[12.5px] font-medium text-[var(--text-muted)]">
         Japonya Dosyası · 3 Not
       </p>
       <p className="mt-auto pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -358,9 +358,7 @@ function YearStrip() {
             <span className="dn-display block text-5xl italic leading-none text-[var(--text-primary)] sm:text-6xl">
               {n}
             </span>
-            <span className="text-[12px] text-[var(--text-muted)] font-medium">
-              {l}
-            </span>
+            <span className="text-[12px] font-medium text-[var(--text-muted)]">{l}</span>
           </div>
         ))}
       </div>
@@ -374,9 +372,6 @@ export function Features() {
       id="ozellikler"
       className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-16 sm:px-10 md:py-24"
     >
-      <span className="dn-eyebrow">
-        <span className="text-[var(--gold)]">(05)</span> Özellikler
-      </span>
       <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
         <MaskLine>
           Küçük Ayrıntılar,{" "}

@@ -34,8 +34,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
   "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
-const labelClass =
-  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
+const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const sectionClass =
   "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5 xl:p-6";
 const toggleCardClass =
@@ -447,11 +446,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           description={title ? <span className="line-clamp-1">{title}</span> : undefined}
           actions={
             <>
-              <span className="hidden items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] text-[var(--gold)] sm:inline-flex font-medium">
+              <span className="hidden items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-[var(--gold)] sm:inline-flex">
                 Düzenleniyor
               </span>
               {isDirty && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-danger/25 bg-danger/10 px-2.5 py-1 text-[12px] text-danger font-medium">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-danger/25 bg-danger/10 px-2.5 py-1 text-[12px] font-medium text-danger">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--danger)]" />
                   Kaydedilmedi
                 </span>
@@ -633,30 +632,22 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           {/* ── Sağ kolon: özet, kapak, puan — lg+ sidebar, mobilde collapsible ── */}
           <aside className="hidden min-w-0 space-y-4 lg:block lg:space-y-5">
             <div className={sectionClass}>
-              <p className={labelClass}>
-                <span className="text-[var(--gold)]">(✎)</span> Düzenleme Özeti
-              </p>
+              <p className={labelClass}>Düzenleme Özeti</p>
               <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--border)]">
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
-                    Kategori
-                  </dt>
+                  <dt className="text-[11px] font-medium text-[var(--text-muted)]">Kategori</dt>
                   <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
                     {category ? getCategoryLabel(category) : "-"}
                   </dd>
                 </div>
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
-                    Durum
-                  </dt>
+                  <dt className="text-[11px] font-medium text-[var(--text-muted)]">Durum</dt>
                   <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
                     {status || "-"}
                   </dd>
                 </div>
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
-                    Puan
-                  </dt>
+                  <dt className="text-[11px] font-medium text-[var(--text-muted)]">Puan</dt>
                   <dd className="dn-display mt-0.5 text-xl italic leading-tight text-[var(--text-primary)]">
                     {rating > 0 ? `${rating} / 5` : "Yok"}
                   </dd>
@@ -712,10 +703,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 60%, var(--media-overlay-strong) 100%)",
                       }}
                     />
-                    <span className="absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[11px] text-[var(--gold)] backdrop-blur-md font-medium">
+                    <span className="absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[11px] font-medium text-[var(--gold)] backdrop-blur-md">
                       Kapak Önizleme
                     </span>
-                    <span className="absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[11px] text-[var(--media-control-text)] backdrop-blur-sm font-medium">
+                    <span className="absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--media-control-text)] backdrop-blur-sm">
                       {isLandscape ? "Yatay Görsel" : "Dikey Görsel"}
                     </span>
                   </div>
@@ -734,7 +725,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               <label className={labelClass}>Puan</label>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                <span className="text-[12.5px] text-[var(--text-secondary)] font-medium">
+                <span className="text-[12.5px] font-medium text-[var(--text-secondary)]">
                   {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
@@ -782,7 +773,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               />
               Kapak, Puan ve Ayarlar
               {rating > 0 && (
-                <span className="ml-auto text-[12.5px] text-[var(--gold)] font-medium">
+                <span className="ml-auto text-[12.5px] font-medium text-[var(--gold)]">
                   {rating}/5
                 </span>
               )}
@@ -801,7 +792,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <label className={labelClass}>Puan</label>
                 <div className="mt-1 flex flex-wrap items-center gap-3">
                   <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                  <span className="text-[12.5px] text-[var(--text-secondary)] font-medium">
+                  <span className="text-[12.5px] font-medium text-[var(--text-secondary)]">
                     {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                   </span>
                   {rating > 0 && (
@@ -842,7 +833,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
             <p className="dn-eyebrow flex items-center gap-1.5">
-              <span className="text-[var(--gold)]">(✎)</span> Düzenleniyor
+              Düzenleniyor
               {isDirty && (
                 <span className="inline-flex items-center gap-1 text-danger">
                   · <span className="h-1.5 w-1.5 rounded-full bg-danger" />

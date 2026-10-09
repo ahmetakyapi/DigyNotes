@@ -75,15 +75,12 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0a] via-[#0b0b0a]/70 to-[#0b0b0a]/30" />
         <div className="absolute inset-x-0 bottom-0 p-12">
-          <p className="mb-5 text-[12.5px] text-[#a8a399] font-medium">
-            <span className="text-[#b9a8ff]">(DN)</span> Kişisel Not Defterin
-          </p>
           <p className="max-w-[560px] text-[clamp(2.6rem,4.2vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[#f2efe8]">
             Sana Kalan Her Şey,{" "}
             <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span>
             <span className="text-[#b9a8ff]">.</span>
           </p>
-          <div className="mt-8 flex gap-6 text-[12.5px] text-[#77726a] font-medium">
+          <div className="mt-8 flex gap-6 text-[12.5px] font-medium text-[#77726a]">
             <span>Film</span>
             <span>Dizi</span>
             <span>Oyun</span>
@@ -121,10 +118,6 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="dn-eyebrow">
-            <span className="text-[var(--gold)]">({mode === "login" ? "01" : "00"})</span>{" "}
-            {copy.label}
-          </p>
           <h1 className="mt-4 text-[44px] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[52px]">
             {copy.title}
           </h1>
@@ -132,7 +125,7 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
           {children}
         </motion.div>
 
-        <p className="text-center text-[12px] text-[var(--text-muted)] font-medium">
+        <p className="text-center text-[12px] font-medium text-[var(--text-muted)]">
           © {new Date().getFullYear()} DigyNotes · Kişisel kullanım için
         </p>
       </div>

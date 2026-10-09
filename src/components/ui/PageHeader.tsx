@@ -2,7 +2,8 @@
 
 /*
   LAYOUT: Editorial page masthead shared by every app screen.
-  ROW 1: eyebrow "(03) — Akış" · optional right-aligned action slot.
+  ROW 1: optional right-aligned action slot (the small eyebrow/kicker line was
+         removed 2026-10-09 — unreadable and noisy; the title carries the page).
   ROW 2: oversized grotesk title (serif-italic accent word allowed) · big serif stats on md+.
   ROW 3: short description, then a hairline that draws itself left → right.
 */
@@ -15,7 +16,6 @@ export type HeaderStatItem = { value: ReactNode; label: string };
 
 export function PageHeader({
   index,
-  eyebrow,
   title,
   description,
   stats,
@@ -23,7 +23,8 @@ export function PageHeader({
   className = "",
 }: {
   index?: string;
-  eyebrow: string;
+  /** Kept for call-site compatibility; no longer rendered. */
+  eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
   stats?: HeaderStatItem[];
@@ -36,21 +37,9 @@ export function PageHeader({
   );
   return (
     <header className={`mb-8 sm:mb-10 ${className}`}>
-      <div className="flex items-center justify-between gap-4">
-        <motion.p
-          className="dn-eyebrow flex items-center gap-2"
-          initial={reduce ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-        >
-          {index && <span className="text-[var(--gold)]">({index})</span>}
-          <span className="h-px w-5 bg-[var(--border)]" />
-          {eyebrow}
-        </motion.p>
-        {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
-      </div>
+      {actions && <div className="mb-4 flex items-center justify-end gap-2">{actions}</div>}
 
-      <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <h1 className="max-w-[760px] overflow-hidden pb-[0.06em] pt-[0.12em] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)] [text-wrap:balance]">
           <motion.span
             className="block"
@@ -74,7 +63,7 @@ export function PageHeader({
                 <dd className="dn-display text-[38px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
                   {s.value}
                 </dd>
-                <dt className="order-last mt-1 text-[12px] text-[var(--text-muted)] font-medium">
+                <dt className="order-last mt-1 text-[12px] font-medium text-[var(--text-muted)]">
                   {s.label}
                 </dt>
               </div>

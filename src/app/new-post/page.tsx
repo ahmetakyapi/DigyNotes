@@ -465,12 +465,12 @@ export default function NewPostPage() {
           actions={
             <>
               {autofillDone && (
-                <span className="hidden items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-2.5 py-1 text-[12px] text-[var(--accent-2)] sm:inline-flex font-medium">
+                <span className="hidden items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-2.5 py-1 text-[12px] font-medium text-[var(--accent-2)] sm:inline-flex">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-2)]" /> Otomatik
                   Dolduruldu
                 </span>
               )}
-              <span className="inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
+              <span className="inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-[var(--gold)]">
                 Taslak
               </span>
               <button
@@ -573,9 +573,7 @@ export default function NewPostPage() {
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
         <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
-            <p className="dn-eyebrow">
-              <span className="text-[var(--gold)]">(+)</span> Yeni Not · {categoryLabel}
-            </p>
+            <p className="dn-eyebrow">Yeni Not · {categoryLabel}</p>
             {title ? (
               <p className="max-w-[110px] truncate text-sm text-[var(--text-secondary)] sm:max-w-xs">
                 {title}
@@ -589,7 +587,7 @@ export default function NewPostPage() {
 
           <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             {lastSavedAt && (
-              <span className="mr-1 hidden text-[12px] text-[var(--text-muted)] md:inline font-medium">
+              <span className="mr-1 hidden text-[12px] font-medium text-[var(--text-muted)] md:inline">
                 Taslak kaydedildi
               </span>
             )}

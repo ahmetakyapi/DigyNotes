@@ -1,9 +1,8 @@
 "use client";
 
 /*
-  LAYOUT: Two-column on desktop.
-  LEFT (narrow): mono section label + small caption.
-  RIGHT: oversized paragraph; each word brightens as the section scrolls through the viewport.
+  LAYOUT: Single column.
+  One oversized paragraph (no section label); each word brightens as the section scrolls through the viewport.
   Words wrapped in *…* render in serif italic, _…_ in the accent colour.
 */
 import { useRef } from "react";
@@ -44,18 +43,10 @@ export function Manifesto() {
   const words = TEXT.split(" ");
 
   return (
-    <section className="mx-auto grid max-w-[1600px] gap-6 px-5 py-16 sm:px-10 md:grid-cols-[minmax(180px,1fr)_3fr] md:py-24">
-      <div className="flex flex-col gap-3">
-        <span className="dn-eyebrow">
-          <span className="text-[var(--gold)]">(02)</span> Neden DigyNotes?
-        </span>
-        <span className="hidden max-w-[220px] text-[14px] leading-relaxed text-[var(--text-muted)] md:block">
-          Bir puan, birkaç etiket, iki cümle. Unutmamak için bu kadarı yeter.
-        </span>
-      </div>
+    <section className="mx-auto max-w-[1600px] px-5 py-16 sm:px-10 md:py-24">
       <p
         ref={ref}
-        className="text-[clamp(1.65rem,4vw,3.9rem)] font-semibold leading-[1.16] tracking-[-0.03em] text-[var(--text-primary)]"
+        className="max-w-[1180px] text-[clamp(1.65rem,4vw,3.9rem)] font-semibold leading-[1.16] tracking-[-0.03em] text-[var(--text-primary)]"
       >
         {reduce
           ? TEXT.replace(/[*_]/g, "")

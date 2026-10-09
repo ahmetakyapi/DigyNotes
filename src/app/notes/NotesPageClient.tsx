@@ -303,9 +303,6 @@ export default function NotesPageClient({
        BOTTOM: primary pill + discover link. */
     return (
       <div className="mx-auto max-w-5xl px-3 pb-16 pt-10 sm:px-6 sm:pt-14">
-        <p className="dn-eyebrow">
-          <span className="text-[var(--gold)]">(00)</span> İlk Adım
-        </p>
         <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
           Henüz Hiç <span className="dn-display font-normal italic tracking-[-0.02em]">Notun</span>{" "}
           Yok

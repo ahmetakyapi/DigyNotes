@@ -135,9 +135,6 @@ export function Archives() {
   const heading = (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-5 sm:px-10 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <span className="dn-eyebrow">
-          <span className="text-[var(--gold)]">(03)</span> Neleri Not Alabilirsin?
-        </span>
         <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
           <MaskLine>
             Her Biri İçin Ayrı Bir{" "}

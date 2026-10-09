@@ -56,8 +56,7 @@ export function KpiCard({
 }) {
   return (
     <div className="group relative bg-[var(--bg-card)] px-5 py-5 transition-colors duration-300 ease-out-expo hover:bg-[var(--bg-raised)]">
-      <p className="flex items-center gap-1.5 text-[12.5px] text-[var(--text-muted)] font-medium">
-        {index && <span className="text-[var(--gold)]">({index})</span>}
+      <p className="flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--text-muted)]">
         {label}
       </p>
       <div className="mt-3 flex items-baseline gap-1">
@@ -85,11 +84,7 @@ export function Card({
     <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)] sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          {index && (
-            <p className="text-[12.5px] text-[var(--gold)] font-medium">
-              ({index})
-            </p>
-          )}
+          {index && <p className="text-[12.5px] font-medium text-[var(--gold)]">({index})</p>}
           <h3 className="mt-1 text-[15px] font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
             {title}
           </h3>
@@ -114,9 +109,7 @@ export function WorkspaceGuide({
 }) {
   return (
     <section className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6">
-      <p className="text-[12.5px] text-[var(--gold)] font-medium">
-        {eyebrow}
-      </p>
+      <p className="text-[12.5px] font-medium text-[var(--gold)]">{eyebrow}</p>
       <h2 className="mt-3 text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)] sm:text-2xl">
         {title}
       </h2>
@@ -127,9 +120,7 @@ export function WorkspaceGuide({
             key={card.label}
             className={`px-4 py-4 ${i > 0 ? "border-t border-[var(--border)] sm:border-l sm:border-t-0" : ""}`}
           >
-            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
-              {card.label}
-            </p>
+            <p className="text-[12.5px] font-medium text-[var(--text-muted)]">{card.label}</p>
             <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{card.text}</p>
           </div>
         ))}
@@ -165,16 +156,13 @@ export function ActionFeedbackBanner({ feedback }: { readonly feedback: AdminFee
     <div className={`rounded-[20px] border px-5 py-4 ${palette.frame}`}>
       <div className="flex items-center gap-2.5">
         <span className={`h-1.5 w-1.5 rounded-full ${palette.dot}`} />
-        <span className={`text-[12.5px] ${palette.tag} font-medium`}>
-          {palette.label}
-        </span>
+        <span className={`text-[12.5px] ${palette.tag} font-medium`}>{palette.label}</span>
         <p className="text-sm font-semibold text-[var(--text-primary)]">{feedback.title}</p>
       </div>
       <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{feedback.detail}</p>
       {feedback.followUp && (
         <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
-          <span className="font-semibold">Sonraki Adım ·</span>{" "}
-          {feedback.followUp}
+          <span className="font-semibold">Sonraki Adım ·</span> {feedback.followUp}
         </p>
       )}
     </div>
@@ -193,11 +181,7 @@ export const DarkTooltip = ({
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
-      {label && (
-        <p className="mb-1.5 text-[12px] text-[var(--text-muted)] font-medium">
-          {label}
-        </p>
-      )}
+      {label && <p className="mb-1.5 text-[12px] font-medium text-[var(--text-muted)]">{label}</p>}
       {payload.map((p) => (
         <div key={p.name} className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full" style={{ background: p.color }} />
@@ -264,7 +248,7 @@ export function Pagination({
     "inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30";
   return (
     <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3 sm:px-5">
-      <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+      <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
         Sayfa <span className="text-[var(--text-primary)]">{page}</span> / {totalPages}
       </span>
       <div className="flex gap-2">
@@ -307,9 +291,7 @@ export function ConfirmModal({
           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-danger/30 text-danger">
             <TrashIcon size={16} weight="bold" />
           </span>
-          <p className="text-[12.5px] text-danger font-medium">
-            Kalıcı İşlem
-          </p>
+          <p className="text-[12.5px] font-medium text-danger">Kalıcı İşlem</p>
         </div>
         <h3 className="mb-1.5 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)]">
           {title}

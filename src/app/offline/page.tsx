@@ -28,18 +28,12 @@ export default function OfflinePage() {
         className="pointer-events-none absolute left-1/2 top-1/3 h-[50vmin] w-[80vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--accent-2-rgb)/0.1),transparent)] blur-2xl"
       />
 
-      <p className="dn-eyebrow relative">
-        <span className="text-[var(--gold)]">(—)</span> — Bağlantı Yok
-      </p>
-
       <div
         aria-hidden
         className="relative mt-8 flex h-[clamp(7rem,22vw,11rem)] w-[clamp(13rem,44vw,22rem)] flex-col items-center justify-center gap-3 rounded-full border-2 border-dashed border-[var(--text-faint)]"
       >
         <WifiSlashIcon className="h-[clamp(2.2rem,7vw,3.4rem)] w-[clamp(2.2rem,7vw,3.4rem)] text-[var(--text-secondary)]" />
-        <span className="text-[12px] text-[var(--text-muted)] font-medium">
-          Çevrimdışı
-        </span>
+        <span className="text-[12px] font-medium text-[var(--text-muted)]">Çevrimdışı</span>
         <span className="absolute right-[12%] top-[6%] h-3 w-3 animate-pulse rounded-full bg-[var(--accent-2)]" />
       </div>
 
@@ -71,9 +65,7 @@ export default function OfflinePage() {
           },
         ].map((c) => (
           <div key={c.n} className="bg-[var(--bg-card)] px-5 py-5">
-            <p className="dn-eyebrow">
-              <span className="text-[var(--gold)]">({c.n})</span> {c.label}
-            </p>
+            <p className="dn-eyebrow">{c.label}</p>
             <p className="mt-2.5 text-sm leading-6 text-[var(--text-secondary)]">{c.text}</p>
           </div>
         ))}
@@ -98,7 +90,7 @@ export default function OfflinePage() {
         </Link>
       </div>
 
-      <p className="relative mt-12 text-[12px] text-[var(--text-muted)] font-medium">
+      <p className="relative mt-12 text-[12px] font-medium text-[var(--text-muted)]">
         Ağ · Offline · DigyNotes
       </p>
     </main>

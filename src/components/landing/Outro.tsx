@@ -36,10 +36,7 @@ export function Steps() {
       id="nasil"
       className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-16 sm:px-10 md:py-24"
     >
-      <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-        <span className="dn-eyebrow">
-          <span className="text-[var(--gold)]">(06)</span> Nasıl Çalışır
-        </span>
+      <div>
         <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
           <MaskLine>
             Üç Adımda{" "}
@@ -150,9 +147,7 @@ export function LandingFooter() {
         </p>
         {cols.map((c) => (
           <div key={c.t}>
-            <p className="mb-4 text-[12.5px] text-[var(--text-muted)] font-medium">
-              {c.t}
-            </p>
+            <p className="mb-4 text-[12.5px] font-medium text-[var(--text-muted)]">{c.t}</p>
             <ul className="space-y-2">
               {c.l.map(([label, href]) => {
                 const external = href.startsWith("http");
@@ -187,7 +182,7 @@ export function LandingFooter() {
         </button>
       </div>
 
-      <div className="mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[12.5px] text-[var(--text-muted)] sm:px-10 font-medium">
+      <div className="mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[12.5px] font-medium text-[var(--text-muted)] sm:px-10">
         <span>© {new Date().getFullYear()} DigyNotes</span>
         <span>Ücretsiz · Kişisel Kullanım İçin</span>
       </div>

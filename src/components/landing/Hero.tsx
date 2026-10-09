@@ -27,7 +27,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ArrowDownIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { EASE_OUT_EXPO, Magnetic, MaskLine } from "./Motion";
 import { IntroFilm } from "@/components/intro/IntroFilm";
 import { MEDIA, REEL, REEL_B, type ReelItem } from "./data";
@@ -269,19 +269,6 @@ export function Hero() {
       <div className={`${reduce ? "relative" : "sticky top-0 h-[100svh]"} overflow-hidden`}>
         {/* ── ACT 1 ── */}
         <div className="relative flex h-full min-h-[100svh] flex-col px-5 pb-6 pt-20 sm:px-10 sm:pb-8 sm:pt-24">
-          <motion.div
-            className="dn-eyebrow mx-auto flex w-full max-w-[1600px] items-center justify-between border-b border-[var(--border)] pb-3"
-            style={reduce ? undefined : { opacity: chromeOpacity }}
-          >
-            <span>
-              <span className="text-[var(--gold)]">(01)</span> Kişisel Not Defterin
-            </span>
-            <span className="hidden md:inline">Film — Dizi — Oyun — Kitap — Gezi</span>
-            <span className="inline-flex items-center gap-1.5">
-              Kaydır <ArrowDownIcon size={11} className="animate-bounce" />
-            </span>
-          </motion.div>
-
           <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
             {FLOATERS.map((f, i) => (
               <Floater key={f.src} f={f} i={i} smx={smx} smy={smy} p={p} reduce={!!reduce} />

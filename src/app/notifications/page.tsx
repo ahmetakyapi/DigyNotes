@@ -285,7 +285,7 @@ export default function NotificationsPage() {
           ))}
         </div>
         {!loading && notifications.length > 0 && (
-          <p className="text-[12px] text-[var(--text-muted)] font-medium">
+          <p className="text-[12px] font-medium text-[var(--text-muted)]">
             Son Bildirim · <span className="text-[var(--text-secondary)]">{lastActivity}</span>
           </p>
         )}
@@ -322,9 +322,7 @@ export default function NotificationsPage() {
           {unreadNotifications.length > 0 && (
             <section>
               <div className="mb-3 flex items-center gap-3">
-                <h2 className="dn-eyebrow">
-                  <span className="text-[var(--gold)]">(01)</span> Okunmamış
-                </h2>
+                <h2 className="dn-eyebrow">Okunmamış</h2>
                 <span className="h-px flex-1 bg-[var(--border)]" />
                 <span className="dn-mono text-[12px] text-[var(--text-secondary)]">
                   {String(unreadNotifications.length).padStart(2, "0")}
@@ -337,9 +335,7 @@ export default function NotificationsPage() {
           {readNotifications.length > 0 && (
             <section>
               <div className="mb-3 flex items-center gap-3">
-                <h2 className="dn-eyebrow">
-                  <span className="text-[var(--gold)]">(02)</span> Daha Önce
-                </h2>
+                <h2 className="dn-eyebrow">Daha Önce</h2>
                 <span className="h-px flex-1 bg-[var(--border)]" />
                 <span className="dn-mono text-[12px] text-[var(--text-secondary)]">
                   {String(readNotifications.length).padStart(2, "0")}
@@ -423,7 +419,7 @@ function NotificationCard({
           {(notification.kindLabel || notification.contextTitle) && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {notification.kindLabel && (
-                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-muted)] font-medium">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] font-medium text-[var(--text-muted)]">
                   {notification.kindLabel}
                 </span>
               )}
@@ -439,7 +435,7 @@ function NotificationCard({
               {notification.preview}
             </p>
           )}
-          <p className="mt-2 text-[12px] text-[var(--text-muted)] font-medium">
+          <p className="mt-2 text-[12px] font-medium text-[var(--text-muted)]">
             {formatDate(notification.createdAt)}
           </p>
         </div>

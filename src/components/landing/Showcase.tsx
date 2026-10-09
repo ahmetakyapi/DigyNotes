@@ -207,9 +207,6 @@ export function Showcase() {
       <div className="mx-auto max-w-[1600px]">
         <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <span className="dn-eyebrow">
-              <span className="text-[var(--gold)]">(04)</span> Uygulamadan Bir Kare
-            </span>
             <h2 className="mt-4 text-[clamp(2.6rem,5.2vw,5.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
               <MaskLine>
                 Tüm Notların,{" "}
@@ -238,7 +235,7 @@ export function Showcase() {
                 delay={0.3 + i * 0.12}
                 className={`absolute z-10 hidden lg:block ${n.cls}`}
               >
-                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--header-glass)] px-3.5 py-2 text-[12.5px] text-[var(--text-primary)] backdrop-blur-xl font-medium">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--header-glass)] px-3.5 py-2 text-[12.5px] font-medium text-[var(--text-primary)] backdrop-blur-xl">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
                   {n.label}
                 </span>

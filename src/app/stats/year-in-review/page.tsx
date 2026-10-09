@@ -171,7 +171,7 @@ export default function YearInReviewPage() {
             {["Düzenli Not Ekle", "Puan Ver", "Etiket Kullan"].map((tip) => (
               <span
                 key={tip}
-                className="rounded-full border border-[var(--border)] px-3 py-1.5 text-[12.5px] text-[var(--text-muted)] font-medium"
+                className="rounded-full border border-[var(--border)] px-3 py-1.5 text-[12.5px] font-medium text-[var(--text-muted)]"
               >
                 {tip}
               </span>
@@ -435,7 +435,7 @@ export default function YearInReviewPage() {
                     <p className="truncate text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover/item:text-[var(--gold)] sm:text-xl">
                       {post.title}
                     </p>
-                    <p className="mt-1 truncate text-[12.5px] text-[var(--text-muted)] font-medium">
+                    <p className="mt-1 truncate text-[12.5px] font-medium text-[var(--text-muted)]">
                       {getCategoryLabel(post.category)}
                       {post.creator ? ` · ${post.creator}` : ""}
                     </p>
@@ -608,11 +608,6 @@ function YearHero({
   return (
     <header className="pb-12 sm:pb-16">
       <div className="flex items-center justify-between gap-4">
-        <p className="dn-eyebrow flex items-center gap-2">
-          <span className="text-[var(--gold)]">(14)</span>
-          <span className="h-px w-5 bg-[var(--border)]" />
-          Yıllık Özet
-        </p>
         <Link
           href="/stats"
           className="group inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
@@ -705,12 +700,8 @@ function Chapter({
       transition={{ duration: 0.9, ease: EASE }}
     >
       <div className="md:sticky md:top-24 md:self-start">
-        <p className="text-[12.5px] text-[var(--gold)] font-medium">
-          Bölüm {index}
-        </p>
-        <p className="mt-1.5 text-[12.5px] text-[var(--text-muted)] font-medium">
-          {kicker}
-        </p>
+        <p className="text-[12.5px] font-medium text-[var(--gold)]">Bölüm {index}</p>
+        <p className="mt-1.5 text-[12.5px] font-medium text-[var(--text-muted)]">{kicker}</p>
       </div>
       <div className="min-w-0">
         <h2 className={statementClass}>{statement}</h2>
@@ -792,7 +783,7 @@ function TimelineCard({
       <p className="text-xl font-semibold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover/link:text-[var(--gold)]">
         {post.title}
       </p>
-      <p className="mt-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+      <p className="mt-2 text-[12.5px] font-medium text-[var(--text-muted)]">
         {getCategoryLabel(post.category)} · {formatDate(post.createdAt)}
       </p>
     </Link>

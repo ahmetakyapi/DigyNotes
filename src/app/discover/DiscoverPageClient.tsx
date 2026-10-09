@@ -203,7 +203,7 @@ export default function DiscoverPageClient() {
               </div>
             )}
 
-            <div className="mt-4 text-center text-[12px] text-[var(--text-muted)] font-medium">
+            <div className="mt-4 text-center text-[12px] font-medium text-[var(--text-muted)]">
               <span className="text-[var(--text-secondary)]">{users.length}</span> profil
               {query.trim() && <span className="text-[var(--text-faint)]"> · arama: {query}</span>}
             </div>
@@ -213,10 +213,7 @@ export default function DiscoverPageClient() {
         {/* LAYOUT: Section break — mono index label between hairlines. */}
         {showTrending && (
           <div className="mb-6 mt-14 flex items-center gap-4">
-            <span className="dn-eyebrow flex items-center gap-2">
-              <span className="text-[var(--gold)]">(09.1)</span>
-              Popüler Notlar
-            </span>
+            <span className="dn-eyebrow flex items-center gap-2">Popüler Notlar</span>
             <div className="h-px flex-1 bg-[var(--border)]" />
           </div>
         )}
@@ -249,7 +246,7 @@ export default function DiscoverPageClient() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
                         <div className="absolute left-3 top-3 flex items-center gap-2">
-                          <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
+                          <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] font-medium text-[var(--gold)]">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.status && <StatusBadge status={post.status} />}
@@ -269,7 +266,7 @@ export default function DiscoverPageClient() {
                             )}
                           </div>
                           {post.user?.username && (
-                            <span className="truncate text-[12px] text-[var(--text-muted)] font-medium">
+                            <span className="truncate text-[12px] font-medium text-[var(--text-muted)]">
                               @{post.user.username}
                             </span>
                           )}

@@ -293,7 +293,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
             {collection.description && (
               <span className="block">{formatDisplaySentence(collection.description)}</span>
             )}
-            <span className="mt-3 block text-[12.5px] text-[var(--text-muted)] font-medium">
+            <span className="mt-3 block text-[12.5px] font-medium text-[var(--text-muted)]">
               Güncellendi {formatDate(collection.updatedAt)}
               {collection.owner && (
                 <>
@@ -343,13 +343,13 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <section className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-colors duration-500 ease-out-expo focus-within:border-[var(--text-faint)] sm:p-6">
           <div className="mb-4 flex items-center gap-2">
             <PencilSimpleIcon size={12} weight="bold" className="text-[var(--gold)]" />
-            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
               Koleksiyonu Düzenle
             </p>
           </div>
           <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr]">
             <label className="block">
-              <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
+              <span className="mb-2 flex items-center justify-between text-[12.5px] font-medium text-[var(--text-muted)]">
                 Başlık
                 <span className="text-[var(--text-faint)]">{title.length}/80</span>
               </span>
@@ -361,7 +361,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               />
             </label>
             <label className="block">
-              <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
+              <span className="mb-2 flex items-center justify-between text-[12.5px] font-medium text-[var(--text-muted)]">
                 Açıklama
                 <span className="text-[var(--text-faint)]">{description.length}/400</span>
               </span>
@@ -405,9 +405,6 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <section className="mt-12">
           <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="dn-eyebrow">
-                <span className="text-[var(--gold)]">(A)</span> Eklenebilir
-              </p>
               <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
                 Koleksiyona <Em>Not</Em> Ekle
               </h2>
@@ -430,7 +427,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 />
               </label>
               <div className="mt-2 flex items-center justify-between">
-                <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
                   {availablePosts.length} uygun not
                 </p>
                 {postQuery.trim() && (
@@ -491,7 +488,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-[12px] text-[var(--text-muted)] font-medium">
+                        <span className="text-[12px] font-medium text-[var(--text-muted)]">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}
@@ -544,8 +541,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="dn-eyebrow">
-              <span className="text-[var(--gold)]">(B)</span> {filteredCollectionPosts.length}/
-              {collection.postCount} not
+              {filteredCollectionPosts.length}/{collection.postCount} not
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
               Koleksiyondaki <Em>Notlar</Em>
@@ -621,7 +617,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
                     />
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
-                    <span className="absolute left-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] text-[var(--text-primary)] backdrop-blur-sm font-medium">
+                    <span className="absolute left-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-primary)] backdrop-blur-sm">
                       {String(i + 1).padStart(2, "0")} · {getCategoryLabel(post.category)}
                     </span>
                   </div>
@@ -651,7 +647,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   )}
                   <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-3">
                     <StarRating rating={post.rating} size={12} />
-                    <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                    <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
                       {post.date}
                     </span>
                   </div>
