@@ -2,50 +2,36 @@
 
 /*
   LAYOUT: Two full-bleed ticker rows between hairlines, running in opposite directions.
-  Speed and direction react to scroll velocity (skew on fast scroll).
+  The drift is a CSS keyframe on transform (compositor-only, zero JS per frame);
+  scroll velocity only adds a skew, which settles to 0 when the page is still.
 */
-import { useRef } from "react";
 import {
   motion,
-  useAnimationFrame,
-  useMotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   useVelocity,
 } from "framer-motion";
-import { wrap } from "./Motion";
 
-function Row({ children, baseVelocity }: { children: React.ReactNode; baseVelocity: number }) {
+/* 4 copies, loop over one copy (25%). ~11.4s per copy ≈ the old 2.2%/s drift. */
+function Row({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) {
   const reduce = useReducedMotion();
-  const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 4], { clamp: false });
   const skew = useTransform(smoothVelocity, [-2000, 2000], [8, -8]);
-  const x = useTransform(baseX, (v) => `${wrap(-25, 0, v)}%`);
-  const direction = useRef(1);
-
-  useAnimationFrame((_, delta) => {
-    if (reduce) return;
-    let moveBy = direction.current * baseVelocity * (delta / 1000);
-    const vf = velocityFactor.get();
-    if (vf < 0) direction.current = -1;
-    else if (vf > 0) direction.current = 1;
-    moveBy += direction.current * moveBy * vf;
-    baseX.set(baseX.get() + moveBy);
-  });
 
   return (
     <div className="flex overflow-hidden whitespace-nowrap">
-      <motion.div className="flex flex-nowrap" style={{ x, skewX: reduce ? 0 : skew }}>
-        {[0, 1, 2, 3].map((k) => (
-          <span key={k} className="flex shrink-0 items-center" aria-hidden={k > 0}>
-            {children}
-          </span>
-        ))}
+      <motion.div className="flex" style={{ skewX: reduce ? 0 : skew }}>
+        <div className={`dn-marquee-track flex flex-nowrap ${reverse ? "dn-marquee-reverse" : ""}`}>
+          {[0, 1, 2, 3].map((k) => (
+            <span key={k} className="flex shrink-0 items-center" aria-hidden={k > 0}>
+              {children}
+            </span>
+          ))}
+        </div>
       </motion.div>
     </div>
   );
@@ -71,7 +57,7 @@ export function Marquee() {
       aria-label="Arşiv türleri"
       className="relative border-y border-[var(--border)] py-4 sm:py-6"
     >
-      <Row baseVelocity={-2.2}>
+      <Row>
         {WORDS.map((w) => (
           <span
             key={w}
@@ -82,7 +68,7 @@ export function Marquee() {
           </span>
         ))}
       </Row>
-      <Row baseVelocity={2.2}>
+      <Row reverse>
         {["İzle", "Oku", "Oyna", "Gez", "Yaz"].map((w) => (
           <span
             key={w}

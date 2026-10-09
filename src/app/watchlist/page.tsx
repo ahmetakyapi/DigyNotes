@@ -451,13 +451,13 @@ export default function WatchlistPage() {
                   )}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)] backdrop-blur-sm">
+                    <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
                   </div>
                   {typeof item.externalRating === "number" && item.externalRating > 0 && (
-                    <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] text-[var(--text-primary)] backdrop-blur-sm">
+                    <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] text-[var(--text-primary)]">
                       <StarIcon size={10} weight="fill" className="text-[var(--gold)]" />
                       {item.externalRating.toFixed(1)}
                     </div>

@@ -20,6 +20,7 @@ import {
   motion,
   useMotionValue,
   useMotionValueEvent,
+  useInView,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -46,41 +47,58 @@ function Reel({
 }) {
   const [i, setI] = useState(0);
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLSpanElement>(null);
+  /* Only tick while on screen: three reels used to keep animating (and
+     re-rendering) long after the hero had scrolled away. */
+  const inView = useInView(ref, { margin: "100px" });
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || !inView) return;
     let interval: ReturnType<typeof setInterval> | undefined;
+    const tick = () => {
+      if (!document.hidden) setI((v) => (v + 1) % items.length);
+    };
     const start = setTimeout(() => {
-      setI((v) => (v + 1) % items.length);
-      interval = setInterval(() => setI((v) => (v + 1) % items.length), REEL_MS);
+      tick();
+      interval = setInterval(tick, REEL_MS);
     }, REEL_MS + offset);
     return () => {
       clearTimeout(start);
       if (interval) clearInterval(interval);
     };
-  }, [items.length, offset, reduce]);
+  }, [items.length, offset, reduce, inView]);
   const item = items[i];
 
   return (
     <span
+      ref={ref}
       className={`group/reel relative inline-block h-[0.82em] ${width} translate-y-[0.06em] -rotate-[3deg] overflow-hidden rounded-full bg-[var(--bg-raised)] align-baseline shadow-[var(--shadow-deep)] ring-[1.5px] ring-accent/45 transition-transform duration-700 ease-out-expo hover:rotate-0 hover:scale-[1.04]`}
     >
       <AnimatePresence initial={false}>
+        {/* Bottom-up wipe from two counter-moving transforms (GPU) instead of
+            an animated clip-path, which repainted on the main thread. */}
         <motion.span
           key={item.src}
-          className="absolute inset-0"
-          initial={{ clipPath: "inset(100% 0% 0% 0%)", scale: 1.3 }}
-          animate={{ clipPath: "inset(0% 0% 0% 0%)", scale: 1.06 }}
+          className="absolute inset-0 overflow-hidden"
+          initial={{ y: "100%" }}
+          animate={{ y: "0%" }}
           exit={{ opacity: 1 }}
           transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
         >
-          <Image
-            src={item.src}
-            alt=""
-            fill
-            sizes="(min-width:768px) 300px, 45vw"
-            className="object-cover"
-            priority={i === 0}
-          />
+          <motion.span
+            className="absolute inset-0"
+            initial={{ y: "-100%", scale: 1.3 }}
+            animate={{ y: "0%", scale: 1.06 }}
+            transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
+          >
+            <Image
+              src={item.src}
+              alt=""
+              fill
+              sizes="(min-width:768px) 300px, 45vw"
+              className="object-cover"
+              priority={i === 0}
+            />
+          </motion.span>
         </motion.span>
       </AnimatePresence>
       <span className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.75)] via-transparent to-transparent" />
@@ -98,12 +116,10 @@ function Reel({
         </motion.span>
       </AnimatePresence>
       {!reduce && (
-        <motion.span
+        <span
           key={`bar-${i}`}
-          className="absolute bottom-0 left-0 h-[2px] bg-[#b9a8ff]"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: (i === 0 ? REEL_MS + offset : REEL_MS) / 1000, ease: "linear" }}
+          className="dn-reel-bar absolute bottom-0 left-0 h-[2px] w-full bg-[#b9a8ff]"
+          style={{ animationDuration: `${i === 0 ? REEL_MS + offset : REEL_MS}ms` }}
         />
       )}
     </span>

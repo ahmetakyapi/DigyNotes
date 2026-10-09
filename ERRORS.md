@@ -627,4 +627,19 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-PERF-001: Scrolling feels janky (20–30 fps) across the app
+
+**First seen**: 2026-10-09
+**Symptom**: Pages "kasıyor" while scrolling, worst in light theme; the landing burns CPU even when idle.
+**Root cause** (measured with CDP traces at 4× CPU throttle):
+1. `.dn-grain` was an SVG `feTurbulence` filter on a 200%-viewport fixed layer, animated forever (plus `mix-blend-mode` + `filter: invert` in light theme) → full-screen repaint every frame.
+2. Large `backdrop-blur-2xl` on the sticky header / tab bar and `backdrop-blur` on chips repeated in every card.
+3. Landing: hero reels animated `width` (layout) and `clip-path` from JS and kept ticking off-screen; the marquee moved via a JS `useAnimationFrame` loop (~300 style writes/s at idle).
+**Fix**: Static pre-rendered grain tile (`public/grain-*.webp`), viewport-sized, `contain: strict`; header/tab blur → `backdrop-blur-md`, no blur on list chips; reel bar = CSS `scaleX` keyframe, reel wipe = two counter-moving transforms, reels pause when off-screen (`useInView`); marquee = CSS `translate3d` keyframe (scroll skew kept).
+**Result**: /notes 20–30 → 46–51 fps, post page 49 → 59 fps; landing idle style writes ~400/s → ~0.
+**Prevention**: Never animate `width`/`height`/`clip-path`/`filter` per frame or SVG filters on large layers; prefer CSS keyframes on `transform`/`opacity`; pause decorative loops off-screen; no `backdrop-blur` on elements repeated in lists. Re-measure with `Emulation.setCPUThrottlingRate` before/after.
+**Files**: `src/app/globals.css`, `src/components/GradientMesh.tsx`, `src/components/landing/{Hero,Marquee}.tsx`, `src/components/AppShell.tsx`, `src/components/appshell/MobileTabBar.tsx`
+
+---
+
 *Last updated: 2026-10-09*

@@ -30,7 +30,7 @@ export function MobileTabBar({
       className="fixed inset-x-3 z-40 sm:hidden"
       style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)" }}
     >
-      <div className="mx-auto flex max-w-xl items-center gap-1 rounded-[22px] border border-[var(--border)] bg-[var(--header-glass)] p-1.5 shadow-[0_20px_40px_-16px_rgb(var(--ink-rgb)/0.55)] backdrop-blur-2xl backdrop-saturate-150">
+      <div className="mx-auto flex max-w-xl items-center gap-1 rounded-[22px] border border-[var(--border)] bg-[var(--header-glass)] p-1.5 shadow-[0_20px_40px_-16px_rgb(var(--ink-rgb)/0.55)] backdrop-blur-md backdrop-saturate-150">
         <MobileTab
           href="/notes"
           active={isNotes}

@@ -334,7 +334,7 @@ export default function NotesPageClient({
                   sizes="(min-width:1024px) 150px, 30vw"
                   className="object-cover opacity-70 grayscale-[35%] transition-all duration-700 ease-out-expo group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0"
                 />
-                <span className="dn-mono absolute left-2 top-2 rounded-full bg-[rgb(var(--ink-rgb)/0.6)] px-2 py-0.5 text-[9.5px] text-[#f2efe8] backdrop-blur-md">
+                <span className="dn-mono absolute left-2 top-2 rounded-full bg-[rgb(var(--ink-rgb)/0.7)] px-2 py-0.5 text-[9.5px] text-[#f2efe8]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>

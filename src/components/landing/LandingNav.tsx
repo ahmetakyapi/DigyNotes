@@ -37,7 +37,7 @@ export function LandingNav() {
     >
       <div
         className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 py-4 transition-all duration-500 sm:px-10 ${
-          solid ? "bg-[var(--header-glass)] backdrop-blur-xl" : "bg-transparent"
+          solid ? "bg-[var(--header-glass)] backdrop-blur-md" : "bg-transparent"
         }`}
       >
         <Link

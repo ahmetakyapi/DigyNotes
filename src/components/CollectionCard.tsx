@@ -74,7 +74,7 @@ export default function CollectionCard({
           </div>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
-        <span className="dn-mono absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-primary)] backdrop-blur-sm">
+        <span className="dn-mono absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
           {collection.postCount} not
         </span>
       </div>

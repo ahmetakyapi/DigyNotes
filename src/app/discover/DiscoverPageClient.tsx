@@ -249,7 +249,7 @@ export default function DiscoverPageClient() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
                         <div className="absolute left-3 top-3 flex items-center gap-2">
-                          <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)] backdrop-blur-sm">
+                          <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)]">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.status && <StatusBadge status={post.status} />}

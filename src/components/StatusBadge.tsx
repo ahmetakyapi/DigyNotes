@@ -65,7 +65,7 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
 
   return (
     <span
-      className={`dn-mono inline-flex items-center gap-1.5 rounded-full border font-medium uppercase tracking-[0.1em] backdrop-blur-md ${textSize} ${padding}`}
+      className={`dn-mono inline-flex items-center gap-1.5 rounded-full border font-medium uppercase tracking-[0.1em] ${textSize} ${padding}`}
       style={{
         color: styles.textColor,
         borderColor: styles.borderColor,

@@ -151,7 +151,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
       </a>
 
       {/* ─── HEADER ─── */}
-      <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--header-glass)] backdrop-blur-2xl backdrop-saturate-150">
+      <header className="sticky top-0 z-40 border-b border-[var(--border-header)] bg-[var(--header-glass)] backdrop-blur-md">
         <div className="mx-auto max-w-5xl pl-0 pr-2.5 sm:px-6">
           {/* ══ TOP ROW ══ */}
           <div className="flex h-[58px] items-center justify-between sm:h-[60px]">

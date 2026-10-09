@@ -69,7 +69,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="dn-mono rounded-full border border-white/25 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-white/85 backdrop-blur-md">
+            <span className="dn-mono rounded-full border border-white/25 bg-ink/35 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-white/85">
               {getCategoryLabel(post.category)}
               {post.years ? ` · ${post.years}` : ""}
             </span>

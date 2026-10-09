@@ -147,7 +147,7 @@ function PostCard({ post }: { post: Post }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute left-3 top-3 flex items-center gap-1.5">
-          <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)] backdrop-blur-sm">
+          <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
             {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}
