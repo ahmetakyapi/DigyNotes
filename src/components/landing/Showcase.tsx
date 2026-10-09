@@ -205,14 +205,14 @@ export function Showcase() {
   return (
     <section id="vitrin" ref={ref} className="relative scroll-mt-20 px-5 py-16 sm:px-10 md:py-24">
       <div className="mx-auto max-w-[1600px]">
-        <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
               <span className="text-[var(--gold)]">(04)</span> Uygulamadan Bir Kare
             </span>
-            <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-              <MaskLine>Tüm Notların,</MaskLine>
-              <MaskLine delay={0.08}>
+            <h2 className="mt-4 text-[clamp(2.6rem,5.2vw,5.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
+              <MaskLine>
+                Tüm Notların,{" "}
                 <span className="dn-display font-normal italic tracking-[-0.02em]">
                   Tek Bakışta.
                 </span>

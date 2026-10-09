@@ -306,7 +306,7 @@ export default function NotesPageClient({
         <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
           <span className="text-[var(--gold)]">(00)</span> İlk Adım
         </p>
-        <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)]">
+        <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
           Henüz Hiç <span className="dn-display font-normal italic tracking-[-0.02em]">Notun</span>{" "}
           Yok
           <span className="text-[var(--gold)]">.</span>

@@ -1,6 +1,6 @@
 /*
-  LAYOUT: Inline typographic wordmark — "Digy" grotesk + "notes" serif italic,
-  with a lime signal dot. Scales with font-size of the parent (size prop).
+  LAYOUT: Inline typographic wordmark — "Digy" grotesk + "Notes" serif italic,
+  with a accent dot. Scales with font-size of the parent (size prop).
 */
 type WordmarkProps = {
   className?: string;
@@ -19,11 +19,11 @@ export function Wordmark({ className = "", size = "md" }: WordmarkProps) {
       className={`inline-flex select-none items-baseline leading-none text-[var(--text-primary)] ${SIZE[size]} ${className}`}
       aria-label="DigyNotes"
     >
-      <span aria-hidden className="font-sans font-extrabold tracking-[-0.055em]">
+      <span aria-hidden className="font-sans font-extrabold tracking-[-0.035em]">
         Digy
       </span>
-      <span aria-hidden className="dn-display -ml-[0.02em] text-[1.12em] italic tracking-[-0.02em]">
-        notes
+      <span aria-hidden className="dn-display ml-[0.03em] text-[1.08em] italic tracking-[-0.015em]">
+        Notes
       </span>
       <span
         aria-hidden

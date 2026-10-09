@@ -31,7 +31,9 @@ export function PageHeader({
   className?: string;
 }) {
   const reduce = useReducedMotion();
-  const visibleStats = (stats ?? []).filter((s) => s.value !== 0 && s.value !== "0" && s.value != null);
+  const visibleStats = (stats ?? []).filter(
+    (s) => s.value !== 0 && s.value !== "0" && s.value != null
+  );
   return (
     <header className={`mb-8 sm:mb-10 ${className}`}>
       <div className="flex items-center justify-between gap-4">
@@ -49,7 +51,7 @@ export function PageHeader({
       </div>
 
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h1 className="max-w-[760px] overflow-hidden pb-[0.06em] pt-[0.12em] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
+        <h1 className="max-w-[760px] overflow-hidden pb-[0.06em] pt-[0.12em] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)] [text-wrap:balance]">
           <motion.span
             className="block"
             initial={reduce ? false : { y: "105%" }}

@@ -344,7 +344,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
               {user.isPublic ? "Açık Profil" : "Gizli Profil"}
             </span>
           </div>
-          <h1 className="mt-3 break-words text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)]">
+          <h1 className="mt-3 break-words text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)]">
             {user.name}
             <Dot />
           </h1>

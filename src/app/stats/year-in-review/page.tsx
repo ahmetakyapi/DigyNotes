@@ -100,7 +100,7 @@ const CATEGORY_VERBS: Record<string, string | null> = {
 
 const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
 const statementClass =
-  "max-w-4xl text-[clamp(2rem,5.2vw,4rem)] font-extrabold leading-[0.98] tracking-[-0.045em] text-[var(--text-primary)]";
+  "max-w-4xl text-[clamp(2rem,5.2vw,4rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[var(--text-primary)]";
 
 /* ── Helpers ── */
 function formatDate(iso: string) {
@@ -629,7 +629,7 @@ function YearHero({
       <h1 className="mt-6 overflow-hidden pb-[0.04em] pt-[0.1em]">
         <motion.span
           key={year}
-          className="dn-display block text-[clamp(7rem,22vw,18rem)] italic leading-[0.8] tracking-[-0.05em] text-[var(--text-primary)]"
+          className="dn-display block text-[clamp(7rem,22vw,18rem)] italic leading-[0.8] tracking-[-0.035em] text-[var(--text-primary)]"
           initial={reduce ? false : { y: "100%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           transition={{ duration: 1.1, ease: EASE }}

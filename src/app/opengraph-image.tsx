@@ -17,7 +17,7 @@ const LAVENDER = "#b9a8ff";
    TOP: "Dn." mark tile + mono label.  CENTER: two-line headline (grotesk + serif italic).
    BOTTOM: category line left, domain right, hairline above. */
 export default async function OgImage() {
-  const sansText = "DSana Kalan Her Şey,(DN)KİŞİSEL NOT DEFTERİNFİLM—DİZİOYUNKTPGEZdigynotes.";
+  const sansText = "DSana Kalan Her Şey,(DN)KİŞİSEL NOT DEFTERİNFİLM—DİZİOYUNKTPGEZDigyNotes.";
   const fonts = await loadBrandFonts(sansText + "Burada.n");
 
   return new ImageResponse(
@@ -122,7 +122,7 @@ export default async function OgImage() {
         }}
       >
         <span>FİLM — DİZİ — OYUN — KİTAP — GEZİ</span>
-        <span style={{ color: BONE }}>digynotes</span>
+        <span style={{ color: BONE }}>DigyNotes</span>
       </div>
     </div>,
     { ...size, fonts }

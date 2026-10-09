@@ -382,7 +382,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
               <span className="text-[var(--text-faint)]"> · En Çok: {topCategory}</span>
             )}
           </p>
-          <h1 className="mt-2 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)]">
+          <h1 className="mt-2 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
             {user.name}
             <span className="text-[var(--gold)]">.</span>
           </h1>

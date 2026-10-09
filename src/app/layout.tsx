@@ -1,20 +1,18 @@
 import "./globals.css";
-import { Hanken_Grotesk, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Schibsted_Grotesk, Newsreader, JetBrains_Mono } from "next/font/google";
 import { Metadata, Viewport } from "next";
 
-const sans = Hanken_Grotesk({
+const sans = Schibsted_Grotesk({
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-sans",
   display: "swap",
 });
-const display = Instrument_Serif({
+const display = Newsreader({
   subsets: ["latin", "latin-ext"],
-  weight: "400",
   style: ["normal", "italic"],
+  axes: ["opsz"],
   variable: "--font-display",
   display: "swap",
-  adjustFontFallback: false,
 });
 const mono = JetBrains_Mono({
   subsets: ["latin", "latin-ext"],

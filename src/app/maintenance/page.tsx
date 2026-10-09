@@ -25,7 +25,7 @@ export default async function MaintenancePage() {
 
       <div
         aria-hidden
-        className="relative mt-6 flex items-center gap-[0.06em] text-[clamp(7rem,26vw,16rem)] font-extrabold leading-[0.8] tracking-[-0.06em] text-[var(--text-primary)]"
+        className="relative mt-6 flex items-center gap-[0.06em] text-[clamp(7rem,26vw,16rem)] font-extrabold leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)]"
       >
         <span>5</span>
         <span className="relative inline-flex h-[0.74em] w-[1.25em] items-center justify-center rounded-full border-2 border-dashed border-[var(--text-faint)]">
@@ -37,7 +37,7 @@ export default async function MaintenancePage() {
         <span>3</span>
       </div>
 
-      <h1 className="relative mt-8 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.045em] text-[var(--text-primary)]">
+      <h1 className="relative mt-8 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--text-primary)]">
         Kısa Bir{" "}
         <span className="dn-display font-normal italic tracking-[-0.02em]">Bakımdayız</span>
         <span className="text-[var(--gold)]">.</span>

@@ -78,7 +78,7 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
           <p className="dn-mono mb-5 text-[10.5px] uppercase tracking-[0.16em] text-[#a8a399]">
             <span className="text-[#b9a8ff]">(DN)</span> Kişisel Not Defterin
           </p>
-          <p className="max-w-[560px] text-[clamp(2.6rem,4.2vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[#f2efe8]">
+          <p className="max-w-[560px] text-[clamp(2.6rem,4.2vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[#f2efe8]">
             Sana Kalan Her Şey,{" "}
             <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span>
             <span className="text-[#b9a8ff]">.</span>
@@ -125,7 +125,7 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
             <span className="text-[var(--gold)]">({mode === "login" ? "01" : "00"})</span>{" "}
             {copy.label}
           </p>
-          <h1 className="mt-4 text-[44px] font-extrabold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)] sm:text-[52px]">
+          <h1 className="mt-4 text-[44px] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[52px]">
             {copy.title}
           </h1>
           <p className="mb-9 mt-3 text-[15px] text-[var(--text-secondary)]">{copy.subtitle}</p>

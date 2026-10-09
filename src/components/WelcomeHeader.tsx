@@ -65,7 +65,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
         {greeting} <span className="text-[var(--text-faint)]">—</span> {today}
       </p>
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[46px]">
+        <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.03em] text-[var(--text-primary)] [text-wrap:balance] sm:text-[46px]">
           {name ? (
             <>
               Merhaba {firstName}, Bugün Ne{" "}

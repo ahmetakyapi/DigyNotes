@@ -9,7 +9,7 @@
     02 "Bir Kitap Bitirdin."    card turns like a page (rotateY) into a book cover
     03 "Bir Şehirde Kayboldun." circular iris opens onto a city photograph
     04 "Hepsi Bir İz Bıraktı."  the three fan out, then collapse into one lavender dot
-    05 mark                     the dot becomes the end of "Digynotes." + tagline
+    05 mark                     the dot becomes the end of "DigyNotes." + tagline
     → the curtain splits (top half lifts, bottom half drops) to reveal the page.
   Clock lives at module level so StrictMode double effects / remounts resume, never restart.
   Tap anywhere or "Geç" to skip. Reduced motion: never shown.
@@ -65,7 +65,7 @@ function Headline({ scene }: { scene: number }) {
   return (
     <motion.p
       key={scene}
-      className="flex flex-wrap justify-center gap-x-[0.24em] text-center text-[clamp(2.3rem,8vw,5.2rem)] font-extrabold leading-[0.95] tracking-[-0.05em] text-[#f2efe8]"
+      className="flex flex-wrap justify-center gap-x-[0.24em] text-center text-[clamp(2.3rem,8vw,5.2rem)] font-extrabold leading-[0.95] tracking-[-0.035em] text-[#f2efe8]"
       exit={{ opacity: 0, y: -24, filter: "blur(6px)", transition: { duration: 0.22 } }}
     >
       {words.map((w, i) => (
@@ -195,7 +195,7 @@ function MarkFrame({ animate }: { animate: boolean }) {
     <div className="flex flex-col items-center justify-center">
       <div className="flex items-baseline text-[clamp(3.6rem,15vw,10rem)] leading-none text-[#f2efe8]">
         <span className="overflow-hidden pb-[0.06em]">
-          <motion.span className="inline-block font-extrabold tracking-[-0.055em]" {...enter(0.05)}>
+          <motion.span className="inline-block font-extrabold tracking-[-0.04em]" {...enter(0.05)}>
             Digy
           </motion.span>
         </span>
@@ -204,7 +204,7 @@ function MarkFrame({ animate }: { animate: boolean }) {
             className="dn-display inline-block text-[1.1em] italic tracking-[-0.02em]"
             {...enter(0.15)}
           >
-            notes
+            Notes
           </motion.span>
         </span>
         <motion.span

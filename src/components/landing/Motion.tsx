@@ -104,7 +104,7 @@ export function MaskLine({
       className={`-mt-[0.14em] block overflow-hidden pb-[0.08em] pt-[0.14em] ${className}`}
     >
       <motion.span
-        className="block will-change-transform"
+        className="block will-change-transform [text-wrap:balance]"
         initial={reduce ? false : { y: "110%", rotate: 2 }}
         animate={inView ? { y: "0%", rotate: 0 } : undefined}
         transition={{ duration: 1.1, ease: EASE_OUT_EXPO, delay }}

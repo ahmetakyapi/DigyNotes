@@ -75,7 +75,7 @@ export function Marquee() {
         {WORDS.map((w) => (
           <span
             key={w}
-            className="flex items-center text-[clamp(3.5rem,11vw,10rem)] font-extrabold leading-[1] tracking-[-0.05em] text-[var(--text-primary)]"
+            className="flex items-center text-[clamp(3.5rem,11vw,10rem)] font-extrabold leading-[1] tracking-[-0.035em] text-[var(--text-primary)]"
           >
             {w}
             <Star />

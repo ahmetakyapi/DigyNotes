@@ -40,9 +40,9 @@ export function Steps() {
         <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
           <span className="text-[var(--gold)]">(06)</span> Nasıl Çalışır
         </span>
-        <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-          <MaskLine>Üç Adımda</MaskLine>
-          <MaskLine delay={0.08}>
+        <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
+          <MaskLine>
+            Üç Adımda{" "}
             <span className="dn-display font-normal italic tracking-[-0.02em]">Hazırsın.</span>
           </MaskLine>
         </h2>
@@ -77,9 +77,9 @@ export function FinalCta() {
   return (
     <section className="relative overflow-hidden px-5 pb-16 pt-8 sm:px-10 md:pb-24 md:pt-10">
       <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
-        <h2 className="text-[clamp(3.4rem,12vw,13rem)] font-extrabold leading-[0.86] tracking-[-0.06em] text-[var(--text-primary)]">
-          <MaskLine>Unutmadan</MaskLine>
-          <MaskLine delay={0.1}>
+        <h2 className="text-[clamp(3.4rem,12vw,13rem)] font-extrabold leading-[0.86] tracking-[-0.04em] text-[var(--text-primary)]">
+          <MaskLine>
+            Unutmadan{" "}
             <span className="dn-display font-normal italic tracking-[-0.03em]">Not Al</span>
             <span className="text-[var(--gold)]">.</span>
           </MaskLine>
@@ -193,8 +193,8 @@ export function LandingFooter() {
       </div>
 
       <div aria-hidden className="relative mt-6 select-none overflow-hidden leading-none">
-        <p className="translate-y-[18%] whitespace-nowrap text-center text-[21.5vw] font-extrabold leading-[0.8] tracking-[-0.07em] text-[var(--text-primary)]">
-          Digy<span className="dn-display font-normal italic tracking-[-0.04em]">notes</span>
+        <p className="translate-y-[18%] whitespace-nowrap text-center text-[21.5vw] font-extrabold leading-[0.8] tracking-[-0.045em] text-[var(--text-primary)]">
+          Digy<span className="dn-display font-normal italic tracking-[-0.04em]">Notes</span>
           <span className="text-[var(--gold)]">.</span>
         </p>
       </div>

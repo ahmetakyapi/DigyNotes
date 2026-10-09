@@ -20,9 +20,9 @@ async function loadFont(family: string, axis: string, text: string) {
 
 export async function loadBrandFonts(text: string) {
   const [sans, sansMed, serif] = await Promise.all([
-    loadFont("Hanken+Grotesk", "wght@800", text),
-    loadFont("Hanken+Grotesk", "wght@500", text),
-    loadFont("Instrument+Serif", "ital@1", text),
+    loadFont("Schibsted+Grotesk", "wght@800", text),
+    loadFont("Schibsted+Grotesk", "wght@500", text),
+    loadFont("Newsreader", "ital,opsz,wght@1,72,400", text),
   ]);
   return [
     ...(sans

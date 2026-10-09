@@ -145,7 +145,7 @@ export function WelcomeReveal() {
           <p className="dn-mono text-[11px] uppercase tracking-[0.2em] text-[#77726a]">
             <span className="text-[#b9a8ff]">(DN)</span> Tekrar Merhaba
           </p>
-          <p className="mt-5 text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[#f2efe8]">
+          <p className="mt-5 text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[#f2efe8]">
             Hoş Geldin{name ? "," : ""}
             {name && (
               <>

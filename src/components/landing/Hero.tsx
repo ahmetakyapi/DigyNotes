@@ -267,7 +267,7 @@ export function Hero() {
                   }
             }
           >
-            <h1 className="text-[clamp(3.6rem,17vw,6rem)] font-extrabold leading-[0.9] tracking-[-0.055em] text-[var(--text-primary)] md:text-[clamp(5rem,10.4vw,11.5rem)]">
+            <h1 className="text-[clamp(3.6rem,17vw,6rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)] md:text-[clamp(5rem,10.4vw,11.5rem)]">
               <span className="sr-only">Sana Kalan Her Şey, Burada.</span>
               <span aria-hidden className="hidden md:block">
                 <motion.span className="block" style={line(l1x)}>
@@ -412,7 +412,7 @@ export function Hero() {
               className="absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-14 lg:px-24"
               style={{ opacity: wordsOpacity }}
             >
-              <div className="flex flex-wrap gap-x-[0.28em] text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.055em] text-[#f2efe8]">
+              <div className="flex flex-wrap gap-x-[0.28em] text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-[#f2efe8]">
                 {VERBS.map((w, i) => (
                   <Verb
                     key={w}
@@ -428,7 +428,7 @@ export function Hero() {
               className="absolute inset-0 flex items-center justify-center px-6"
               style={{ opacity: outro, scale: outroScale }}
             >
-              <p className="text-center text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.055em] text-[#f2efe8]">
+              <p className="text-center text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-[#f2efe8]">
                 Hepsini{" "}
                 <span className="dn-display font-normal italic tracking-[-0.03em] text-[#b9a8ff]">
                   Not Al.

@@ -129,9 +129,9 @@ on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light
 ```
 
 - Alpha variants: use Tailwind `bg-accent/10`, `border-accent-2/30` or `rgb(var(--gold-rgb)/0.2)` — never hardcode hex.
-- Fonts: Hanken Grotesk (sans, `--font-sans`), Instrument Serif (`.dn-display`, italic accents), JetBrains Mono (`.dn-mono`, index labels/meta).
+- Fonts: Schibsted Grotesk (sans + headings, `--font-sans`), Newsreader italic (`.dn-display`, accents; opsz axis), JetBrains Mono (`.dn-mono`, index labels/meta). Headline tracking no tighter than `-0.04em`; two-part headings live in ONE `MaskLine` (wraps with `[text-wrap:balance]`).
 - Signature patterns: mono index labels `(01)`, serif-italic accent word inside bold grotesk headlines, accent period/dot, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
-- Logo: `src/components/Wordmark.tsx` (typographic) — the PNG logo is no longer used in the UI.
+- Logo: `src/components/Wordmark.tsx` (typographic "Digy" + italic "Notes" — always capital N) — the PNG logo is no longer used in the UI.
 - UI copy: headings, subtitles, buttons and tabs use Turkish Title Case ("Arşivini Başlat", "Giriş Yap"); conjunctions (ve, ile, da/de, ki) stay lowercase. Toasts/placeholders/body stay sentence case.
 - Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
 

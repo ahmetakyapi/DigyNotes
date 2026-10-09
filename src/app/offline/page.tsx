@@ -43,7 +43,7 @@ export default function OfflinePage() {
         <span className="absolute right-[12%] top-[6%] h-3 w-3 animate-pulse rounded-full bg-[var(--accent-2)]" />
       </div>
 
-      <h1 className="relative mt-10 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.045em] text-[var(--text-primary)]">
+      <h1 className="relative mt-10 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--text-primary)]">
         İnternet <span className="dn-display font-normal italic tracking-[-0.02em]">Bağlantın</span>{" "}
         Yok
         <span className="text-[var(--gold)]">.</span>

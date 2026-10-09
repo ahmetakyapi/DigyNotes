@@ -377,9 +377,9 @@ export function Features() {
       <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         <span className="text-[var(--gold)]">(05)</span> Özellikler
       </span>
-      <h2 className="mt-4 max-w-[14ch] text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-        <MaskLine>Küçük Ayrıntılar,</MaskLine>
-        <MaskLine delay={0.08}>
+      <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
+        <MaskLine>
+          Küçük Ayrıntılar,{" "}
           <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Fark.</span>
         </MaskLine>
       </h2>
