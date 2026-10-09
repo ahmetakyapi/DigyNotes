@@ -14,6 +14,7 @@ const display = Instrument_Serif({
   style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
+  adjustFontFallback: false,
 });
 const mono = JetBrains_Mono({
   subsets: ["latin", "latin-ext"],
