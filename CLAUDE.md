@@ -143,7 +143,7 @@ on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light
 ```
 
 - Alpha variants: use Tailwind `bg-accent/10`, `border-accent-2/30` or `rgb(var(--gold-rgb)/0.2)` — never hardcode hex.
-- Fonts: Schibsted Grotesk (sans + headings, `--font-sans`), Newsreader italic (`.dn-display`, accents; opsz axis), JetBrains Mono (`.dn-mono`, index labels/meta). Headline tracking no tighter than `-0.04em`; two-part headings live in ONE `MaskLine` (wraps with `[text-wrap:balance]`).
+- Fonts: Schibsted Grotesk (sans + headings, `--font-sans`), Newsreader italic (`.dn-display`, accents; opsz axis), JetBrains Mono (`.dn-mono`, numbers/dates/URLs only). Headline tracking no tighter than `-0.04em`; two-part headings live in ONE `MaskLine` (wraps with `[text-wrap:balance]`).
 - Signature patterns: section eyebrows `.dn-eyebrow` (`(01)` index in accent + label, sans 14–15px), serif-italic accent word inside bold grotesk headlines, accent period/dot, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
 - Readability: no tiny uppercase mono labels (retired 2026-10-09 — they were unreadable). Labels/meta/chips are sans, normal case, `font-medium`, min 11px (12–12.5px typical), `--text-muted` or stronger; `.dn-mono` only for numbers, dates, URLs.
 - Logo: `src/components/Wordmark.tsx` (typographic "Digy" + italic "Notes" — always capital N) — the PNG logo is no longer used in the UI.

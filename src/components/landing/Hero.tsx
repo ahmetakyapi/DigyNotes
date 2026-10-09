@@ -126,6 +126,26 @@ function Reel({
   );
 }
 
+/* Own component so the scroll-driven rating re-renders only these few nodes,
+   not the whole hero tree, and only when the half-star value changes. */
+function LiveRating({ mv }: { mv: MotionValue<number> }) {
+  const [rating, setRating] = useState(0);
+  const last = useRef(0);
+  useMotionValueEvent(mv, "change", (v) => {
+    const next = Math.round(v * 2) / 2;
+    if (next !== last.current) {
+      last.current = next;
+      setRating(next);
+    }
+  });
+  return (
+    <div className="mt-1 flex items-center gap-2">
+      <StarsBar value={rating} />
+      <span className="dn-mono text-[11px] tabular-nums text-[#f2efe8]">{rating.toFixed(1)}</span>
+    </div>
+  );
+}
+
 const WALL = [
   "perfect-days",
   "elden-ring",
@@ -225,8 +245,6 @@ export function Hero() {
   const cardY = useTransform(p, [0.5, 0.62], [80, 0]);
   const cardOpacity = useTransform(p, [0.5, 0.6], [0, 1]);
   const ratingMV = useTransform(p, [0.56, 0.8], [0, 4.5]);
-  const [rating, setRating] = useState(0);
-  useMotionValueEvent(ratingMV, "change", (v) => setRating(Math.round(v * 2) / 2));
 
   /* Mouse parallax for floaters */
   const mx = useMotionValue(0);
@@ -252,7 +270,7 @@ export function Hero() {
         {/* ── ACT 1 ── */}
         <div className="relative flex h-full min-h-[100svh] flex-col px-5 pb-6 pt-20 sm:px-10 sm:pb-8 sm:pt-24">
           <motion.div
-            className="mx-auto flex w-full max-w-[1600px] items-center justify-between border-b border-[var(--border)] pb-3 dn-eyebrow"
+            className="dn-eyebrow mx-auto flex w-full max-w-[1600px] items-center justify-between border-b border-[var(--border)] pb-3"
             style={reduce ? undefined : { opacity: chromeOpacity }}
           >
             <span>
@@ -380,7 +398,7 @@ export function Hero() {
                 <span className="absolute -bottom-1 left-0 h-px w-full bg-current transition-transform duration-500 ease-out-expo group-hover:origin-right group-hover:scale-x-0" />
               </Link>
             </div>
-            <dl className="hidden gap-1.5 text-right text-[12.5px] text-[var(--text-muted)] md:grid md:justify-self-end font-medium">
+            <dl className="hidden gap-1.5 text-right text-[12.5px] font-medium text-[var(--text-muted)] md:grid md:justify-self-end">
               {[
                 ["Kategori", "05", ""],
                 ["Yarım Puan", "½", ""],
@@ -474,12 +492,7 @@ export function Hero() {
                   <p className="dn-display text-2xl italic leading-tight text-[#f2efe8]">
                     Perfect Days
                   </p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <StarsBar value={rating} />
-                    <span className="dn-mono text-[11px] tabular-nums text-[#f2efe8]">
-                      {rating.toFixed(1)}
-                    </span>
-                  </div>
+                  <LiveRating mv={ratingMV} />
                 </div>
               </div>
             </motion.div>

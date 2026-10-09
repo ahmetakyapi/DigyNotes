@@ -6,7 +6,7 @@
   Hides on scroll-down, returns on scroll-up; gains glass background after the hero fold.
 */
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Wordmark } from "@/components/Wordmark";
 import { LandingThemeToggle } from "@/components/LandingThemeToggle";
@@ -23,10 +23,20 @@ export function LandingNav() {
   const [hidden, setHidden] = useState(false);
   const [solid, setSolid] = useState(false);
 
+  /* Scroll fires every frame; only touch React state when a flag flips. */
+  const flags = useRef({ hidden: false, solid: false });
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
-    setHidden(y > prev && y > 240);
-    setSolid(y > 40);
+    const nextHidden = y > prev && y > 240;
+    const nextSolid = y > 40;
+    if (nextHidden !== flags.current.hidden) {
+      flags.current.hidden = nextHidden;
+      setHidden(nextHidden);
+    }
+    if (nextSolid !== flags.current.solid) {
+      flags.current.solid = nextSolid;
+      setSolid(nextSolid);
+    }
   });
 
   return (

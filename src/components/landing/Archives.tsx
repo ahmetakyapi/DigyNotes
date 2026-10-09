@@ -33,7 +33,7 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
       className="group relative grid h-full w-full shrink-0 grid-rows-[auto_1fr] overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8 lg:w-[min(74vw,980px)] lg:grid-cols-[1fr_1.05fr] lg:grid-rows-1 lg:gap-10 lg:p-10"
     >
       <div className="relative z-10 flex flex-col">
-        <div className="flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
+        <div className="flex items-center justify-between text-[12.5px] font-medium text-[var(--text-muted)]">
           <span>
             <span className="text-[var(--gold)]">{a.index}</span> / 05
           </span>
@@ -107,6 +107,7 @@ export function Archives() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [distance, setDistance] = useState(0);
   const [active, setActive] = useState(1);
+  const activeRef = useRef(1);
 
   useIsoLayoutEffect(() => {
     if (!isDesktop) return;
@@ -124,7 +125,11 @@ export function Archives() {
   const rawX = useTransform(scrollYProgress, [0, 1], [0, -distance]);
   const x = useSpring(rawX, { stiffness: 140, damping: 30, mass: 0.4 });
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    setActive(Math.min(ARCHIVES.length, Math.max(1, Math.round(v * (ARCHIVES.length - 1)) + 1)));
+    const next = Math.min(ARCHIVES.length, Math.max(1, Math.round(v * (ARCHIVES.length - 1)) + 1));
+    if (next !== activeRef.current) {
+      activeRef.current = next;
+      setActive(next);
+    }
   });
 
   const heading = (
