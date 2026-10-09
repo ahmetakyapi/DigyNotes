@@ -60,10 +60,12 @@ function Reel({ images, offset = 0, className = "" }: { images: string[]; offset
   );
 }
 
+const MOBILE_STRIP = [`${MEDIA}/outer-wilds.webp`, `${MEDIA}/perfect-days.webp`, `${MEDIA}/kyoto.webp`];
+
 const FLOATERS = [
-  { src: `${MEDIA}/perfect-days.webp`, title: "Perfect Days", rating: "5.0", cls: "right-[6%] top-[22%] w-[176px] rotate-[6deg]", depth: 1.4 },
-  { src: `${MEDIA}/outer-wilds.webp`, title: "Outer Wilds", rating: "5.0", cls: "right-[19%] top-[44%] w-[146px] -rotate-[8deg]", depth: 0.8 },
-  { src: `${MEDIA}/kyoto.webp`, title: "Kyoto", rating: "4.5", cls: "right-[4%] top-[58%] w-[124px] rotate-[3deg]", depth: 1.9 },
+  { src: `${MEDIA}/perfect-days.webp`, title: "Perfect Days", rating: "5.0", cls: "right-[5%] top-[20%] w-[150px] rotate-[6deg] xl:w-[176px]", depth: 1.4 },
+  { src: `${MEDIA}/outer-wilds.webp`, title: "Outer Wilds", rating: "5.0", cls: "right-[19%] top-[40%] w-[124px] -rotate-[8deg] xl:top-[44%] xl:w-[146px]", depth: 0.8 },
+  { src: `${MEDIA}/kyoto.webp`, title: "Kyoto", rating: "4.5", cls: "right-[4%] top-[58%] hidden w-[124px] rotate-[3deg] xl:block", depth: 1.9 },
 ];
 
 export function Hero() {
@@ -146,6 +148,25 @@ export function Hero() {
             </MaskLine>
           </span>
         </h1>
+
+        {/* mobile poster strip */}
+        <div aria-hidden className="mt-10 flex justify-center gap-3 md:hidden">
+          {MOBILE_STRIP.map((src, i) => (
+            <div
+              key={src}
+              className={`w-[27%] ${["-rotate-6 translate-y-3", "z-10 -translate-y-1", "rotate-6 translate-y-3"][i]}`}
+            >
+              <motion.div
+                className="relative aspect-[2/3] overflow-hidden rounded-xl border border-[var(--border)] shadow-[var(--shadow-deep)]"
+                initial={reduce ? false : { opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, ease: EASE_OUT_EXPO, delay: 0.55 + i * 0.1 }}
+              >
+                <Image src={src} alt="" fill sizes="30vw" className="object-cover" />
+              </motion.div>
+            </div>
+          ))}
+        </div>
       </motion.div>
 
       {/* bottom row */}
