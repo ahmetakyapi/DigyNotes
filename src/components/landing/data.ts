@@ -18,7 +18,8 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Film",
     verb: "İzlediklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
-    description: "Yönetmen, yıl ve afiş TMDB'den kendiliğinden gelir. Sen yalnızca o sahnenin sende bıraktığını yaz.",
+    description:
+      "Yönetmen, yıl ve afiş TMDB'den kendiliğinden gelir. Sen yalnızca o sahnenin sende bıraktığını yaz.",
     images: [
       { src: `${MEDIA}/perfect-days.webp`, title: "Perfect Days", meta: "Wim Wenders · 2023" },
       { src: `${MEDIA}/aftersun.webp`, title: "Aftersun", meta: "Charlotte Wells · 2022" },
@@ -32,7 +33,8 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Dizi",
     verb: "Takip Ettiklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
-    description: "Yarım bıraktığın sezonları, bitirdiğin finalleri ve sırada bekleyenleri tek bakışta ayır.",
+    description:
+      "Yarım bıraktığın sezonları, bitirdiğin finalleri ve sırada bekleyenleri tek bakışta ayır.",
     images: [
       { src: `${MEDIA}/severance.webp`, title: "Severance", meta: "Apple TV+ · 2022–" },
       { src: `${MEDIA}/shogun.webp`, title: "Shōgun", meta: "FX · 2024" },
@@ -46,7 +48,8 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Oyun",
     verb: "Oynadıkların",
     statuses: ["Tamamlandı", "Oynanıyor", "Oynanacak"],
-    description: "Geliştirici ve çıkış yılı RAWG'den dolar; saatlerce kaybolduğun dünyalar not defterinde yerini alır.",
+    description:
+      "Geliştirici ve çıkış yılı RAWG'den dolar; saatlerce kaybolduğun dünyalar not defterinde yerini alır.",
     images: [
       { src: `${MEDIA}/outer-wilds.webp`, title: "Outer Wilds", meta: "Mobius Digital · 2019" },
       { src: `${MEDIA}/elden-ring.webp`, title: "Elden Ring", meta: "FromSoftware · 2022" },
@@ -60,11 +63,20 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Kitap",
     verb: "Okudukların",
     statuses: ["Okundu", "Okunuyor", "Okunacak"],
-    description: "Yazar ve kapak Open Library'den. Altını çizdiğin cümleler, kenara düştüğün notlar burada kalır.",
+    description:
+      "Yazar ve kapak Open Library'den. Altını çizdiğin cümleler, kenara düştüğün notlar burada kalır.",
     images: [
-      { src: `${MEDIA}/kurk-mantolu-madonna.webp`, title: "Kürk Mantolu Madonna", meta: "Sabahattin Ali · 1943" },
+      {
+        src: `${MEDIA}/kurk-mantolu-madonna.webp`,
+        title: "Kürk Mantolu Madonna",
+        meta: "Sabahattin Ali · 1943",
+      },
       { src: `${MEDIA}/stoner.webp`, title: "Stoner", meta: "John Williams · 1965" },
-      { src: `${MEDIA}/klara-and-the-sun.webp`, title: "Klara and the Sun", meta: "Kazuo Ishiguro · 2021" },
+      {
+        src: `${MEDIA}/klara-and-the-sun.webp`,
+        title: "Klara and the Sun",
+        meta: "Kazuo Ishiguro · 2021",
+      },
     ],
     source: "Open Library",
   },
@@ -74,7 +86,8 @@ export const ARCHIVES: ArchiveItem[] = [
     label: "Gezi",
     verb: "Gezdiklerin",
     statuses: ["Gidildi", "Planlandı"],
-    description: "Yerler OpenStreetMap'ten bulunur, haritada iğneye dönüşür. Bir sokağın kokusunu bile not edebilirsin.",
+    description:
+      "Yerler OpenStreetMap'ten bulunur, haritada iğneye dönüşür. Bir sokağın kokusunu bile not edebilirsin.",
     images: [
       { src: `${MEDIA}/kyoto.webp`, title: "Kyoto", meta: "Japonya · 2024" },
       { src: `${MEDIA}/kapadokya.webp`, title: "Kapadokya", meta: "Nevşehir · 2025" },
@@ -84,20 +97,22 @@ export const ARCHIVES: ArchiveItem[] = [
   },
 ];
 
-export const REEL = [
-  `${MEDIA}/perfect-days.webp`,
-  `${MEDIA}/elden-ring.webp`,
-  `${MEDIA}/kurk-mantolu-madonna.webp`,
-  `${MEDIA}/kyoto.webp`,
-  `${MEDIA}/severance.webp`,
-  `${MEDIA}/aftersun.webp`,
+export type ReelItem = { src: string; title: string; kind: string };
+
+export const REEL: ReelItem[] = [
+  { src: `${MEDIA}/perfect-days.webp`, title: "Perfect Days", kind: "Film" },
+  { src: `${MEDIA}/elden-ring.webp`, title: "Elden Ring", kind: "Oyun" },
+  { src: `${MEDIA}/disco-elysium.webp`, title: "Disco Elysium", kind: "Oyun" },
+  { src: `${MEDIA}/kyoto.webp`, title: "Kyoto", kind: "Gezi" },
+  { src: `${MEDIA}/severance.webp`, title: "Severance", kind: "Dizi" },
+  { src: `${MEDIA}/aftersun.webp`, title: "Aftersun", kind: "Film" },
 ];
 
-export const REEL_B = [
-  `${MEDIA}/dune-part-two.webp`,
-  `${MEDIA}/stoner.webp`,
-  `${MEDIA}/outer-wilds.webp`,
-  `${MEDIA}/mardin.webp`,
-  `${MEDIA}/shogun.webp`,
-  `${MEDIA}/hades.webp`,
+export const REEL_B: ReelItem[] = [
+  { src: `${MEDIA}/dune-part-two.webp`, title: "Dune: Part Two", kind: "Film" },
+  { src: `${MEDIA}/stoner.webp`, title: "Stoner", kind: "Kitap" },
+  { src: `${MEDIA}/outer-wilds.webp`, title: "Outer Wilds", kind: "Oyun" },
+  { src: `${MEDIA}/mardin.webp`, title: "Mardin", kind: "Gezi" },
+  { src: `${MEDIA}/shogun.webp`, title: "Shōgun", kind: "Dizi" },
+  { src: `${MEDIA}/hades.webp`, title: "Hades", kind: "Oyun" },
 ];

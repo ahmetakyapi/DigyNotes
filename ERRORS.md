@@ -616,4 +616,15 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-UI-006: Inline styles from framer-motion leak between conditional render branches
+
+**First seen**: 2026-10-09
+**Symptom**: Intro curtain's top half is transparent during the split, so the page shows through.
+**Root cause**: The component returned a different tree per phase but with the same root element type; React reused the root and its first child, and the previous `motion.div`'s animated inline `background` stuck to the new child, overriding its `bg-*` class.
+**Fix**: Give each branch's root a distinct `key` (`key="stage"` / `key="split"`) so React remounts instead of reusing.
+**Prevention**: When a component switches between visually different layouts built from `motion.*` elements, key the roots.
+**Files**: `src/components/intro/IntroFilm.tsx`
+
+---
+
 *Last updated: 2026-10-09*

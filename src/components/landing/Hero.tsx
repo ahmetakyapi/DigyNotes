@@ -28,17 +28,21 @@ import {
 } from "framer-motion";
 import { ArrowDownIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { EASE_OUT_EXPO, Magnetic, MaskLine } from "./Motion";
-import { MEDIA, REEL, REEL_B } from "./data";
+import { IntroFilm } from "@/components/intro/IntroFilm";
+import { MEDIA, REEL, REEL_B, type ReelItem } from "./data";
 
-/* ── Inline cycling poster capsule ── */
+/* ── Inline cycling poster capsule ──
+   A tilted "projector window" set inside the headline: covers wipe up one after another,
+   a mono caption names the current title, and a hairline at the bottom fills per frame. */
+const REEL_MS = 2000;
 function Reel({
-  images,
+  items,
   offset = 0,
-  className = "",
+  width = "w-[1.8em]",
 }: {
-  images: string[];
+  items: ReelItem[];
   offset?: number;
-  className?: string;
+  width?: string;
 }) {
   const [i, setI] = useState(0);
   const reduce = useReducedMotion();
@@ -46,216 +50,63 @@ function Reel({
     if (reduce) return;
     let interval: ReturnType<typeof setInterval> | undefined;
     const start = setTimeout(() => {
-      interval = setInterval(() => setI((v) => (v + 1) % images.length), 1800);
-    }, offset);
+      setI((v) => (v + 1) % items.length);
+      interval = setInterval(() => setI((v) => (v + 1) % items.length), REEL_MS);
+    }, REEL_MS + offset);
     return () => {
       clearTimeout(start);
       if (interval) clearInterval(interval);
     };
-  }, [images.length, offset, reduce]);
+  }, [items.length, offset, reduce]);
+  const item = items[i];
 
   return (
     <span
-      className={`relative inline-block h-[0.74em] w-[1.6em] translate-y-[0.04em] overflow-hidden rounded-full bg-[var(--bg-raised)] align-baseline ring-1 ring-[var(--border)] ${className}`}
+      className={`group/reel relative inline-block h-[0.82em] ${width} translate-y-[0.06em] -rotate-[3deg] overflow-hidden rounded-full bg-[var(--bg-raised)] align-baseline shadow-[var(--shadow-deep)] ring-[1.5px] ring-accent/45 transition-transform duration-700 ease-out-expo hover:rotate-0 hover:scale-[1.04]`}
     >
       <AnimatePresence initial={false}>
         <motion.span
-          key={images[i]}
+          key={item.src}
           className="absolute inset-0"
-          initial={{ clipPath: "inset(100% 0% 0% 0%)", scale: 1.25 }}
-          animate={{ clipPath: "inset(0% 0% 0% 0%)", scale: 1 }}
+          initial={{ clipPath: "inset(100% 0% 0% 0%)", scale: 1.3 }}
+          animate={{ clipPath: "inset(0% 0% 0% 0%)", scale: 1.06 }}
           exit={{ opacity: 1 }}
           transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
         >
           <Image
-            src={images[i]}
+            src={item.src}
             alt=""
             fill
-            sizes="240px"
+            sizes="(min-width:768px) 300px, 45vw"
             className="object-cover"
             priority={i === 0}
           />
         </motion.span>
       </AnimatePresence>
-    </span>
-  );
-}
-
-/* ── One-time (per session) cinematic intro ──
-   ACT A (0 → 1.1s): ink stage; a small capsule "projector window" flicks through covers
-                     like a film reel while a mono counter runs 00 → 100.
-   ACT B (1.1 → 1.9s): the reel collapses; a giant "Dn." mark assembles (D rises, italic n
-                     slides in, accent dot pops).
-   ACT C (1.9 → 2.8s): the curtain splits — top half lifts, bottom half drops — revealing the page.
-   Flag is written only on completion (StrictMode-safe); a 4s safety timer always releases it. */
-const INTRO_REEL = [
-  `${MEDIA}/perfect-days.webp`,
-  `${MEDIA}/elden-ring.webp`,
-  `${MEDIA}/stoner.webp`,
-  `${MEDIA}/kyoto.webp`,
-  `${MEDIA}/severance.webp`,
-  `${MEDIA}/outer-wilds.webp`,
-  `${MEDIA}/aftersun.webp`,
-  `${MEDIA}/kurk-mantolu-madonna.webp`,
-];
-const SPLIT = [0.83, 0, 0.17, 1] as const;
-
-/* Module-level clock: survives StrictMode double effects and remounts (see ERR-UI-003). */
-let introStartedAt: number | null = null;
-let introDone = false;
-const INTRO_MARK_AT = 1150;
-const INTRO_SPLIT_AT = 1950;
-const INTRO_END_AT = 2900;
-
-function IntroCurtain() {
-  const reduce = useReducedMotion();
-  const [phase, setPhase] = useState<"off" | "reel" | "mark" | "split">("off");
-  const [n, setN] = useState(0);
-  const [frame, setFrame] = useState(0);
-
-  useEffect(() => {
-    if (reduce || introDone) return;
-    if (introStartedAt === null) {
-      try {
-        if (sessionStorage.getItem("dn_intro_seen")) {
-          introDone = true;
-          return;
-        }
-      } catch {
-        introDone = true;
-        return;
-      }
-      introStartedAt = performance.now();
-    }
-    const start = introStartedAt;
-    const finish = () => {
-      introDone = true;
-      try {
-        sessionStorage.setItem("dn_intro_seen", "1");
-      } catch {
-        /* storage unavailable: intro simply plays again next visit */
-      }
-      setPhase("off");
-    };
-    const phaseAt = (elapsed: number) =>
-      elapsed >= INTRO_SPLIT_AT ? "split" : elapsed >= INTRO_MARK_AT ? "mark" : "reel";
-    const elapsed0 = performance.now() - start;
-    if (elapsed0 >= INTRO_END_AT) {
-      finish();
-      return;
-    }
-    setPhase(phaseAt(elapsed0));
-    let raf = 0;
-    const tick = (t: number) => {
-      const elapsed = t - start;
-      const k = Math.min(1, elapsed / 1100);
-      setN(Math.round((1 - Math.pow(1 - k, 2)) * 100));
-      setFrame(Math.floor(elapsed / 120));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    const at = (ms: number, fn: () => void) => setTimeout(fn, Math.max(0, ms - elapsed0));
-    const timers = [
-      at(INTRO_MARK_AT, () => setPhase("mark")),
-      at(INTRO_SPLIT_AT, () => setPhase("split")),
-      at(INTRO_END_AT, finish),
-      at(4000, finish),
-    ];
-    return () => {
-      cancelAnimationFrame(raf);
-      timers.forEach(clearTimeout);
-    };
-  }, [reduce]);
-
-  if (phase === "off") return null;
-
-  const stage = (
-    <>
-      {/* ACT A — reel window */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 h-[min(34vw,180px)] w-[min(56vw,300px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full ring-1 ring-white/10"
-        initial={{ scale: 0.6, opacity: 0 }}
-        animate={phase === "reel" ? { scale: 1, opacity: 1 } : { scale: 0.2, opacity: 0 }}
-        transition={{ duration: phase === "reel" ? 0.6 : 0.45, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {INTRO_REEL.map((src, i) => (
-          <Image
-            key={src}
-            src={src}
-            alt=""
-            fill
-            sizes="300px"
-            className={`object-cover ${frame % INTRO_REEL.length === i ? "opacity-100" : "opacity-0"}`}
-            priority={i < 3}
-          />
-        ))}
-      </motion.div>
-
-      {/* ACT B — mark */}
-      {phase !== "reel" && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex items-baseline text-[clamp(7rem,24vw,17rem)] leading-none text-[#f2efe8]">
-            <motion.span
-              className="font-extrabold tracking-[-0.06em]"
-              initial={{ y: "40%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            >
-              D
-            </motion.span>
-            <motion.span
-              className="dn-display -ml-[0.04em] text-[1.06em] italic"
-              initial={{ x: "-30%", opacity: 0 }}
-              animate={{ x: "0%", opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
-            >
-              n
-            </motion.span>
-            <motion.span
-              className="ml-[0.06em] inline-block h-[0.16em] w-[0.16em] rounded-full bg-[#b9a8ff]"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 14, delay: 0.3 }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* counter + label */}
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-6 sm:p-10">
-        <span className="dn-mono text-[11px] uppercase tabular-nums tracking-[0.16em] text-[#77726a]">
-          <span className="text-[#b9a8ff]">(DN)</span> {String(n).padStart(3, "0")}%
-        </span>
-        <span className="dn-mono text-[11px] uppercase tracking-[0.16em] text-[#77726a]">
-          Kişisel Kültür Arşivi
-        </span>
-      </div>
-    </>
-  );
-
-  const half = (top: boolean) => (
-    <motion.div
-      className={`absolute inset-x-0 overflow-hidden bg-[#0b0b0a] ${top ? "top-0 h-1/2" : "bottom-0 h-1/2"}`}
-      animate={phase === "split" ? { y: top ? "-101%" : "101%" } : { y: "0%" }}
-      transition={{ duration: 0.95, ease: SPLIT }}
-    >
-      <div className={`absolute inset-x-0 h-[100svh] ${top ? "top-0" : "bottom-0"}`}>{stage}</div>
-    </motion.div>
-  );
-
-  return (
-    <div aria-hidden className="fixed inset-0 z-[110]">
-      {half(true)}
-      {half(false)}
-      {phase === "split" && (
-        <motion.div
-          className="absolute inset-x-0 top-1/2 h-px bg-[#b9a8ff]"
-          initial={{ scaleX: 0, opacity: 1 }}
-          animate={{ scaleX: 1, opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      <span className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.75)] via-transparent to-transparent" />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={item.title}
+          className="dn-mono absolute bottom-[0.17em] left-[0.42em] flex items-center gap-[0.35em] whitespace-nowrap text-[clamp(7px,0.085em,12px)] font-medium uppercase tracking-[0.14em] text-[#f2efe8]"
+          initial={{ y: "120%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-120%", opacity: 0 }}
+          transition={{ duration: 0.45, ease: EASE_OUT_EXPO }}
+        >
+          <span className="inline-block h-[0.55em] w-[0.55em] rounded-full bg-[#b9a8ff]" />
+          {item.kind} · {item.title}
+        </motion.span>
+      </AnimatePresence>
+      {!reduce && (
+        <motion.span
+          key={`bar-${i}`}
+          className="absolute bottom-0 left-0 h-[2px] bg-[#b9a8ff]"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: (i === 0 ? REEL_MS + offset : REEL_MS) / 1000, ease: "linear" }}
         />
       )}
-    </div>
+    </span>
   );
 }
 
@@ -380,7 +231,7 @@ export function Hero() {
         my.set(e.clientY / globalThis.innerHeight - 0.5);
       }}
     >
-      <IntroCurtain />
+      <IntroFilm />
       <div className={`${reduce ? "relative" : "sticky top-0 h-[100svh]"} overflow-hidden`}>
         {/* ── ACT 1 ── */}
         <div className="relative flex h-full min-h-[100svh] flex-col px-5 pb-6 pt-20 sm:px-10 sm:pb-8 sm:pt-24">
@@ -421,7 +272,7 @@ export function Hero() {
               <span aria-hidden className="hidden md:block">
                 <motion.span className="block" style={line(l1x)}>
                   <MaskLine delay={0.15}>
-                    Sana <Reel images={REEL} /> Kalan
+                    Sana <Reel items={REEL} /> Kalan
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
@@ -434,14 +285,14 @@ export function Hero() {
                 <motion.span className="block" style={line(l3x)}>
                   <MaskLine delay={0.39}>
                     Arşivi<span className="text-[var(--gold)]">.</span>{" "}
-                    <Reel images={REEL_B} offset={900} className="w-[1.25em]" />
+                    <Reel items={REEL_B} offset={900} width="w-[1.4em]" />
                   </MaskLine>
                 </motion.span>
               </span>
               <span aria-hidden className="block md:hidden">
                 <motion.span className="block" style={line(l1x)}>
                   <MaskLine delay={0.15}>
-                    Sana <Reel images={REEL} />
+                    Sana <Reel items={REEL} width="w-[2.3em]" />
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
