@@ -36,7 +36,7 @@ export function FullScreenLoader({ show, message = "Notlarınız yükleniyor" }:
       <div className="relative mt-6 h-px w-40 overflow-hidden bg-[var(--border)]">
         <span className="dn-loader-sweep absolute inset-y-0 left-0 w-1/3 bg-[var(--gold)]" />
       </div>
-      <p className="dn-mono mt-5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <p className="mt-5 text-[12.5px] text-[var(--text-muted)] font-medium">
         {message}
       </p>
     </div>

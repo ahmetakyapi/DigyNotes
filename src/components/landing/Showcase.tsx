@@ -143,7 +143,7 @@ function AppMock() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.95)] via-[rgb(var(--ink-rgb)/0.35)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
-            <div className="dn-mono flex gap-2 text-[9px] uppercase tracking-[0.12em]">
+            <div className="flex gap-2 text-[11px] font-medium">
               <span className="rounded-full bg-[#b9a8ff] px-2 py-0.5 text-[#0b0b0a]">
                 Öne Çıkan
               </span>
@@ -207,7 +207,7 @@ export function Showcase() {
       <div className="mx-auto max-w-[1600px]">
         <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="dn-eyebrow">
               <span className="text-[var(--gold)]">(04)</span> Uygulamadan Bir Kare
             </span>
             <h2 className="mt-4 text-[clamp(2.6rem,5.2vw,5.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
@@ -238,7 +238,7 @@ export function Showcase() {
                 delay={0.3 + i * 0.12}
                 className={`absolute z-10 hidden lg:block ${n.cls}`}
               >
-                <span className="dn-mono inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--header-glass)] px-3.5 py-2 text-[10.5px] uppercase tracking-[0.1em] text-[var(--text-primary)] backdrop-blur-xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--header-glass)] px-3.5 py-2 text-[12.5px] text-[var(--text-primary)] backdrop-blur-xl font-medium">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
                   {n.label}
                 </span>

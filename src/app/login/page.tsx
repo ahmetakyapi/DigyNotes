@@ -60,7 +60,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-email"
-              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+              className="mb-2 block text-[12.5px] font-medium text-[var(--text-muted)]"
             >
               E-posta
             </label>
@@ -80,7 +80,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="login-password"
-              className="dn-mono mb-2 block text-[10.5px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)]"
+              className="mb-2 block text-[12.5px] font-medium text-[var(--text-muted)]"
             >
               Şifre
             </label>

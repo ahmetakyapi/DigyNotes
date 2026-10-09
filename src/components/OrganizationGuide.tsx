@@ -35,7 +35,7 @@ export function OrganizationGuide({
     <section className="border-t border-[var(--border)] pt-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
-          <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
             Düzenleme
           </p>
           <h2 className="mt-3 text-xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] sm:text-2xl">
@@ -44,7 +44,7 @@ export function OrganizationGuide({
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
         </div>
         {currentSurface && (
-          <span className="dn-mono inline-flex w-fit items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <span className="inline-flex w-fit items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             Şu an: {currentSurface.label}
           </span>
@@ -60,7 +60,7 @@ export function OrganizationGuide({
               key={surface.key}
               className="grid gap-2 py-5 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6"
             >
-              <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+              <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
                 <span className={isCurrent ? "text-[var(--gold)]" : ""}>
                   ({String(index + 1).padStart(2, "0")})
                 </span>{" "}
@@ -80,7 +80,7 @@ export function OrganizationGuide({
               </div>
               <div className="flex items-center sm:justify-end">
                 {isCurrent ? (
-                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                  <span className="text-[12.5px] text-[var(--gold)] font-medium">
                     Buradasın
                   </span>
                 ) : (

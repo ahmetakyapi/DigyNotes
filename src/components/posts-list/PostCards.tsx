@@ -19,7 +19,7 @@ import { shouldHideExcerpt } from "./posts-list-utils";
 function PostMeta({ post }: { readonly post: Post }) {
   const rt = formatReadingTime(estimateReadingTime(post.content));
   return (
-    <span className="dn-mono text-[10px] text-[var(--text-muted)]">
+    <span className="dn-mono text-[12px] text-[var(--text-muted)]">
       {rt ? `${rt} · ${post.date}` : post.date}
     </span>
   );
@@ -61,7 +61,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
         />
 
         <div className="absolute left-5 top-5 flex items-center gap-2">
-          <span className="dn-mono rounded-full bg-[#b9a8ff] px-3 py-1 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[#0b0b0a]">
+          <span className="rounded-full bg-[#b9a8ff] px-3 py-1 text-[11px] font-medium text-[#0b0b0a]">
             {activeTab === "kaydedilenler" ? "Kaydedilen" : "Öne Çıkan"}
           </span>
           {post.status && <StatusBadge status={post.status} />}
@@ -69,7 +69,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="dn-mono rounded-full border border-white/25 bg-ink/35 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-white/85">
+            <span className="rounded-full border border-white/25 bg-ink/35 px-2.5 py-1 text-[12px] text-white/85 font-medium">
               {getCategoryLabel(post.category)}
               {post.years ? ` · ${post.years}` : ""}
             </span>
@@ -87,7 +87,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
             {post.rating > 0 && (
               <span className="text-xs text-[var(--media-text-secondary)]">{post.rating}/5</span>
             )}
-            <span className="dn-mono ml-auto hidden text-[10.5px] uppercase tracking-[0.12em] text-[var(--media-text-secondary)] sm:inline">
+            <span className="ml-auto hidden text-[12.5px] text-[var(--media-text-secondary)] sm:inline font-medium">
               {post.date}
             </span>
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f2efe8] text-[#0b0b0a] transition-transform duration-700 ease-out-expo group-hover:rotate-45 sm:ml-4">
@@ -126,7 +126,7 @@ export const PostGridCard = React.memo(function PostGridCard({
       <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-[var(--text-faint)] sm:flex-row">
         {showIndex && (
           <div className="flex h-9 flex-shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
-            <span className="dn-mono text-[10px] tabular-nums text-[var(--text-faint)] transition-colors duration-300 group-hover:text-[var(--gold)]">
+            <span className="dn-mono text-[12px] tabular-nums text-[var(--text-faint)] transition-colors duration-300 group-hover:text-[var(--gold)]">
               {String(index + 2).padStart(2, "0")}
             </span>
           </div>
@@ -147,7 +147,7 @@ export const PostGridCard = React.memo(function PostGridCard({
         <div className="flex min-w-0 flex-1 flex-col justify-between p-4 sm:p-5">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
-              <span className="dn-mono flex-shrink-0 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[var(--gold)]">
+              <span className="flex-shrink-0 text-[11px] font-medium text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
@@ -166,7 +166,7 @@ export const PostGridCard = React.memo(function PostGridCard({
                 </span>
               )}
               {post.years && (
-                <span className="dn-mono text-[10px] text-[var(--text-muted)]">{post.years}</span>
+                <span className="dn-mono text-[12px] text-[var(--text-muted)]">{post.years}</span>
               )}
               {post.status && <StatusBadge status={post.status} />}
             </div>
@@ -246,11 +246,11 @@ export const PostListCard = React.memo(function PostListCard({
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
-            <span className="dn-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-[var(--gold)]">
+            <span className="text-[11px] font-medium text-[var(--gold)]">
               {getCategoryLabel(post.category)}
             </span>
             {post.years && (
-              <span className="dn-mono text-[10px] text-[var(--text-muted)]">{post.years}</span>
+              <span className="dn-mono text-[12px] text-[var(--text-muted)]">{post.years}</span>
             )}
             {post.status && <StatusBadge status={post.status} />}
           </div>

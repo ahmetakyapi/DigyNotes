@@ -465,12 +465,12 @@ export default function NewPostPage() {
           actions={
             <>
               {autofillDone && (
-                <span className="dn-mono hidden items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--accent-2)] sm:inline-flex">
+                <span className="hidden items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-2.5 py-1 text-[12px] text-[var(--accent-2)] sm:inline-flex font-medium">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-2)]" /> Otomatik
                   Dolduruldu
                 </span>
               )}
-              <span className="dn-mono inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)]">
+              <span className="inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
                 Taslak
               </span>
               <button
@@ -573,7 +573,7 @@ export default function NewPostPage() {
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
         <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
-            <p className="dn-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="dn-eyebrow">
               <span className="text-[var(--gold)]">(+)</span> Yeni Not · {categoryLabel}
             </p>
             {title ? (
@@ -589,7 +589,7 @@ export default function NewPostPage() {
 
           <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             {lastSavedAt && (
-              <span className="dn-mono mr-1 hidden text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)] md:inline">
+              <span className="mr-1 hidden text-[12px] text-[var(--text-muted)] md:inline font-medium">
                 Taslak kaydedildi
               </span>
             )}

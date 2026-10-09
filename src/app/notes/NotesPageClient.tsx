@@ -303,7 +303,7 @@ export default function NotesPageClient({
        BOTTOM: primary pill + discover link. */
     return (
       <div className="mx-auto max-w-5xl px-3 pb-16 pt-10 sm:px-6 sm:pt-14">
-        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="dn-eyebrow">
           <span className="text-[var(--gold)]">(00)</span> İlk Adım
         </p>
         <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
@@ -334,7 +334,7 @@ export default function NotesPageClient({
                   sizes="(min-width:1024px) 150px, 30vw"
                   className="object-cover opacity-70 grayscale-[35%] transition-all duration-700 ease-out-expo group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0"
                 />
-                <span className="dn-mono absolute left-2 top-2 rounded-full bg-[rgb(var(--ink-rgb)/0.7)] px-2 py-0.5 text-[9.5px] text-[#f2efe8]">
+                <span className="dn-mono absolute left-2 top-2 rounded-full bg-[rgb(var(--ink-rgb)/0.7)] px-2 py-0.5 text-[11px] text-[#f2efe8]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>

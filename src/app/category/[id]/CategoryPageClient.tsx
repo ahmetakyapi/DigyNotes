@@ -308,7 +308,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
                           {post.years && (
-                            <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
                               {post.years}
                             </span>
                           )}
@@ -330,7 +330,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       </div>
                       <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
                         <StarRating rating={post.rating} size={12} />
-                        <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                        <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
                           {post.date}
                         </span>
                       </div>

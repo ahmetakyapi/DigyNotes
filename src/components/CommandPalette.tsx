@@ -343,7 +343,7 @@ export default function CommandPalette() {
                   <p className="dn-display text-2xl italic text-[var(--text-secondary)]">
                     {searching ? "Arşivde aranıyor…" : "Eşleşen bir şey yok."}
                   </p>
-                  <p className="dn-mono mt-2 text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+                  <p className="mt-2 text-[12px] text-[var(--text-muted)] font-medium">
                     Başlık, yönetmen, yazar ya da etiket dene
                   </p>
                 </li>
@@ -353,7 +353,7 @@ export default function CommandPalette() {
                   if (sectionItems.length === 0) return null;
                   return (
                     <li key={section}>
-                      <div className="dn-mono px-5 pb-1.5 pt-3 text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                      <div className="px-5 pb-1.5 pt-3 text-[12px] text-[var(--text-muted)] font-medium">
                         {section}
                       </div>
                       <ul>
@@ -389,7 +389,7 @@ export default function CommandPalette() {
                                 <span className="flex-1">{item.label}</span>
                                 {item.hint &&
                                   (item.section === "Notlar" ? (
-                                    <span className="dn-mono text-[10px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                                    <span className="text-[12px] text-[var(--text-muted)] font-medium">
                                       {item.hint}
                                     </span>
                                   ) : (
@@ -411,7 +411,7 @@ export default function CommandPalette() {
               )}
             </ul>
 
-            <div className="dn-mono flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+            <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5 text-[12px] text-[var(--text-muted)] font-medium">
               <span>
                 <kbd className="font-mono">↑↓</kbd> gezin · <kbd className="font-mono">↵</kbd> seç
               </span>

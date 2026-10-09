@@ -203,7 +203,7 @@ export default function DiscoverPageClient() {
               </div>
             )}
 
-            <div className="dn-mono mt-4 text-center text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            <div className="mt-4 text-center text-[12px] text-[var(--text-muted)] font-medium">
               <span className="text-[var(--text-secondary)]">{users.length}</span> profil
               {query.trim() && <span className="text-[var(--text-faint)]"> · arama: {query}</span>}
             </div>
@@ -213,7 +213,7 @@ export default function DiscoverPageClient() {
         {/* LAYOUT: Section break — mono index label between hairlines. */}
         {showTrending && (
           <div className="mb-6 mt-14 flex items-center gap-4">
-            <span className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="dn-eyebrow flex items-center gap-2">
               <span className="text-[var(--gold)]">(09.1)</span>
               Popüler Notlar
             </span>
@@ -249,7 +249,7 @@ export default function DiscoverPageClient() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.85)] via-transparent to-transparent" />
                         <div className="absolute left-3 top-3 flex items-center gap-2">
-                          <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)]">
+                          <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.status && <StatusBadge status={post.status} />}
@@ -263,13 +263,13 @@ export default function DiscoverPageClient() {
                           <div className="flex items-center gap-2">
                             <StarRating rating={post.rating} size={11} />
                             {post.rating > 0 && (
-                              <span className="dn-mono text-[10px] text-[var(--text-muted)]">
+                              <span className="dn-mono text-[12px] text-[var(--text-muted)]">
                                 {post.rating}/5
                               </span>
                             )}
                           </div>
                           {post.user?.username && (
-                            <span className="dn-mono truncate text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                            <span className="truncate text-[12px] text-[var(--text-muted)] font-medium">
                               @{post.user.username}
                             </span>
                           )}

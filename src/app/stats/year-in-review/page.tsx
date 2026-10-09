@@ -98,7 +98,7 @@ const CATEGORY_VERBS: Record<string, string | null> = {
   other: null,
 };
 
-const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const monoLabel = "text-[12.5px] text-[var(--text-muted)] font-medium";
 const statementClass =
   "max-w-4xl text-[clamp(2rem,5.2vw,4rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[var(--text-primary)]";
 
@@ -171,7 +171,7 @@ export default function YearInReviewPage() {
             {["Düzenli Not Ekle", "Puan Ver", "Etiket Kullan"].map((tip) => (
               <span
                 key={tip}
-                className="dn-mono rounded-full border border-[var(--border)] px-3 py-1.5 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]"
+                className="rounded-full border border-[var(--border)] px-3 py-1.5 text-[12.5px] text-[var(--text-muted)] font-medium"
               >
                 {tip}
               </span>
@@ -435,7 +435,7 @@ export default function YearInReviewPage() {
                     <p className="truncate text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover/item:text-[var(--gold)] sm:text-xl">
                       {post.title}
                     </p>
-                    <p className="dn-mono mt-1 truncate text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                    <p className="mt-1 truncate text-[12.5px] text-[var(--text-muted)] font-medium">
                       {getCategoryLabel(post.category)}
                       {post.creator ? ` · ${post.creator}` : ""}
                     </p>
@@ -494,7 +494,7 @@ export default function YearInReviewPage() {
                 >
                   <HashIcon size={12} weight="bold" />
                   {tag.name}
-                  <span className="dn-mono ml-0.5 text-[10.5px] tabular-nums text-[var(--text-muted)]">
+                  <span className="dn-mono ml-0.5 text-[12.5px] tabular-nums text-[var(--text-muted)]">
                     ({tag.count})
                   </span>
                 </Link>
@@ -608,7 +608,7 @@ function YearHero({
   return (
     <header className="pb-12 sm:pb-16">
       <div className="flex items-center justify-between gap-4">
-        <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="dn-eyebrow flex items-center gap-2">
           <span className="text-[var(--gold)]">(14)</span>
           <span className="h-px w-5 bg-[var(--border)]" />
           Yıllık Özet
@@ -705,10 +705,10 @@ function Chapter({
       transition={{ duration: 0.9, ease: EASE }}
     >
       <div className="md:sticky md:top-24 md:self-start">
-        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+        <p className="text-[12.5px] text-[var(--gold)] font-medium">
           Bölüm {index}
         </p>
-        <p className="dn-mono mt-1.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="mt-1.5 text-[12.5px] text-[var(--text-muted)] font-medium">
           {kicker}
         </p>
       </div>
@@ -792,7 +792,7 @@ function TimelineCard({
       <p className="text-xl font-semibold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover/link:text-[var(--gold)]">
         {post.title}
       </p>
-      <p className="dn-mono mt-2 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+      <p className="mt-2 text-[12.5px] text-[var(--text-muted)] font-medium">
         {getCategoryLabel(post.category)} · {formatDate(post.createdAt)}
       </p>
     </Link>

@@ -33,7 +33,7 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
       className="group relative grid h-full w-full shrink-0 grid-rows-[auto_1fr] overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8 lg:w-[min(74vw,980px)] lg:grid-cols-[1fr_1.05fr] lg:grid-rows-1 lg:gap-10 lg:p-10"
     >
       <div className="relative z-10 flex flex-col">
-        <div className="dn-mono flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <div className="flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
           <span>
             <span className="text-[var(--gold)]">{a.index}</span> / 05
           </span>
@@ -52,7 +52,7 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
           {a.statuses.map((s, i) => (
             <span
               key={s}
-              className={`dn-mono rounded-full border px-3 py-1.5 text-[10.5px] uppercase tracking-[0.1em] ${
+              className={`rounded-full border px-3 py-1.5 text-[13px] font-medium ${
                 i === 0
                   ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--text-on-accent)]"
                   : "border-[var(--border)] text-[var(--text-muted)]"
@@ -89,7 +89,7 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
                 <span className="block truncate text-[12px] font-semibold text-[var(--text-primary)]">
                   {img.title}
                 </span>
-                <span className="dn-mono block truncate text-[10px] text-[var(--text-muted)]">
+                <span className="dn-mono block truncate text-[12px] text-[var(--text-muted)]">
                   {img.meta}
                 </span>
               </figcaption>
@@ -130,7 +130,7 @@ export function Archives() {
   const heading = (
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-5 sm:px-10 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <span className="dn-eyebrow">
           <span className="text-[var(--gold)]">(03)</span> Neleri Not Alabilirsin?
         </span>
         <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">

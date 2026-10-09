@@ -238,13 +238,13 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             {post.user.username && (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="dn-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
+                className="text-[12px] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)] font-medium"
               >
                 @{post.user.username}
               </Link>
             )}
           </div>
-          <span className="dn-mono ml-auto shrink-0 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+          <span className="ml-auto shrink-0 text-[12px] text-[var(--text-muted)] font-medium">
             {post.date}
           </span>
         </div>
@@ -262,7 +262,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.82)] via-transparent to-transparent" />
             <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
-              <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)]">
+              <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
                 {getCategoryLabel(post.category)}
               </span>
               {post.status && <StatusBadge status={post.status} />}
@@ -274,7 +274,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
               {displayTitle}
             </h3>
             {post.creator && (
-              <p className="dn-mono mt-2 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="mt-2 text-[12px] text-[var(--text-muted)] font-medium">
                 {displayCreator}
               </p>
             )}
@@ -296,7 +296,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-              <p className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              <p className="text-[12px] text-[var(--text-muted)] font-medium">
                 Takip Ettiğin Kişi
               </p>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)]">

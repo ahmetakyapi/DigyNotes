@@ -2,7 +2,7 @@
 
 /*
   LAYOUT: Editorial page masthead shared by every app screen.
-  ROW 1: mono eyebrow "(03) — Akış" · optional right-aligned action slot.
+  ROW 1: eyebrow "(03) — Akış" · optional right-aligned action slot.
   ROW 2: oversized grotesk title (serif-italic accent word allowed) · big serif stats on md+.
   ROW 3: short description, then a hairline that draws itself left → right.
 */
@@ -38,7 +38,7 @@ export function PageHeader({
     <header className={`mb-8 sm:mb-10 ${className}`}>
       <div className="flex items-center justify-between gap-4">
         <motion.p
-          className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]"
+          className="dn-eyebrow flex items-center gap-2"
           initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: EASE }}
@@ -74,7 +74,7 @@ export function PageHeader({
                 <dd className="dn-display text-[38px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
                   {s.value}
                 </dd>
-                <dt className="dn-mono order-last mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                <dt className="order-last mt-1 text-[12px] text-[var(--text-muted)] font-medium">
                   {s.label}
                 </dt>
               </div>

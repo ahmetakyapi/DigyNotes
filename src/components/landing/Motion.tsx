@@ -74,7 +74,7 @@ export function LandingCursor() {
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
       >
         {label ? (
-          <span className="dn-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[#0b0b0a]">
+          <span className="text-[12px] font-medium text-[#0b0b0a]">
             {label}
           </span>
         ) : null}

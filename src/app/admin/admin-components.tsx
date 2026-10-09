@@ -56,7 +56,7 @@ export function KpiCard({
 }) {
   return (
     <div className="group relative bg-[var(--bg-card)] px-5 py-5 transition-colors duration-300 ease-out-expo hover:bg-[var(--bg-raised)]">
-      <p className="dn-mono flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <p className="flex items-center gap-1.5 text-[12.5px] text-[var(--text-muted)] font-medium">
         {index && <span className="text-[var(--gold)]">({index})</span>}
         {label}
       </p>
@@ -86,7 +86,7 @@ export function Card({
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           {index && (
-            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+            <p className="text-[12.5px] text-[var(--gold)] font-medium">
               ({index})
             </p>
           )}
@@ -114,7 +114,7 @@ export function WorkspaceGuide({
 }) {
   return (
     <section className="rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6">
-      <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+      <p className="text-[12.5px] text-[var(--gold)] font-medium">
         {eyebrow}
       </p>
       <h2 className="mt-3 text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)] sm:text-2xl">
@@ -127,7 +127,7 @@ export function WorkspaceGuide({
             key={card.label}
             className={`px-4 py-4 ${i > 0 ? "border-t border-[var(--border)] sm:border-l sm:border-t-0" : ""}`}
           >
-            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
               {card.label}
             </p>
             <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{card.text}</p>
@@ -165,7 +165,7 @@ export function ActionFeedbackBanner({ feedback }: { readonly feedback: AdminFee
     <div className={`rounded-[20px] border px-5 py-4 ${palette.frame}`}>
       <div className="flex items-center gap-2.5">
         <span className={`h-1.5 w-1.5 rounded-full ${palette.dot}`} />
-        <span className={`dn-mono text-[10.5px] uppercase tracking-[0.16em] ${palette.tag}`}>
+        <span className={`text-[12.5px] ${palette.tag} font-medium`}>
           {palette.label}
         </span>
         <p className="text-sm font-semibold text-[var(--text-primary)]">{feedback.title}</p>
@@ -173,7 +173,7 @@ export function ActionFeedbackBanner({ feedback }: { readonly feedback: AdminFee
       <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{feedback.detail}</p>
       {feedback.followUp && (
         <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
-          <span className="dn-mono uppercase tracking-[0.12em]">Sonraki Adım ·</span>{" "}
+          <span className="font-semibold">Sonraki Adım ·</span>{" "}
           {feedback.followUp}
         </p>
       )}
@@ -194,7 +194,7 @@ export const DarkTooltip = ({
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
       {label && (
-        <p className="dn-mono mb-1.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+        <p className="mb-1.5 text-[12px] text-[var(--text-muted)] font-medium">
           {label}
         </p>
       )}
@@ -264,7 +264,7 @@ export function Pagination({
     "inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30";
   return (
     <div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3 sm:px-5">
-      <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
         Sayfa <span className="text-[var(--text-primary)]">{page}</span> / {totalPages}
       </span>
       <div className="flex gap-2">
@@ -307,7 +307,7 @@ export function ConfirmModal({
           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-danger/30 text-danger">
             <TrashIcon size={16} weight="bold" />
           </span>
-          <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-danger">
+          <p className="text-[12.5px] text-danger font-medium">
             Kalıcı İşlem
           </p>
         </div>

@@ -166,7 +166,7 @@ function RecommendedCard({ post }: { post: Post }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.88)] via-[rgb(var(--ink-rgb)/0.1)] to-transparent" />
           <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-            <span className="dn-mono rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--gold)]">
+            <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
               {getCategoryLabel(post.category)}
             </span>
             {post.status && <StatusBadge status={post.status} />}
@@ -175,7 +175,7 @@ function RecommendedCard({ post }: { post: Post }) {
 
         <div className="flex flex-1 flex-col gap-3 p-5">
           {post.user?.username && (
-            <span className="dn-mono inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)]">
+            <span className="inline-flex items-center gap-1.5 text-[12px] text-[var(--gold)] font-medium">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
               Benzer Zevk
             </span>
@@ -185,7 +185,7 @@ function RecommendedCard({ post }: { post: Post }) {
               {displayTitle}
             </h2>
             {post.creator && (
-              <p className="dn-mono mt-1.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="mt-1.5 text-[12px] text-[var(--text-muted)] font-medium">
                 {displayCreator}
               </p>
             )}
@@ -209,7 +209,7 @@ function RecommendedCard({ post }: { post: Post }) {
           </div>
 
           <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4">
-            <span className="dn-mono truncate text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+            <span className="truncate text-[12px] text-[var(--text-muted)] font-medium">
               {post.user?.username ? `@${post.user.username}` : "Topluluktan"}
             </span>
             <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[var(--gold)]">

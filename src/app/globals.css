@@ -138,6 +138,22 @@ html[data-theme="light"] .dn-grain {
   background-image: url("/grain-light.webp");
 }
 
+/* Section eyebrow: "(03) Neleri Not Alabilirsin?" — readable sans label,
+   index number in the accent colour (replaced 10.5px uppercase mono). */
+.dn-eyebrow {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .dn-eyebrow {
+    font-size: 15px;
+  }
+}
+
 /* Landing marquee: compositor-only loop over one of four copies. */
 .dn-marquee-track {
   animation: dn-marquee 11.4s linear infinite;

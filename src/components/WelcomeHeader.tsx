@@ -60,7 +60,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
       className="mx-auto max-w-5xl px-3 pb-2 pt-5 sm:px-6 sm:pt-7"
     >
       {/* LAYOUT: mono dateline → editorial greeting (left) · big serif stats (right, md+) */}
-      <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <p className="flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
         <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
         {greeting} <span className="text-[var(--text-faint)]">—</span> {today}
       </p>
@@ -107,7 +107,7 @@ function Stat({ value, label }: { value: React.ReactNode; label: string }) {
       <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
         {value}
       </span>
-      <span className="dn-mono mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+      <span className="mt-1 text-[12px] text-[var(--text-muted)] font-medium">
         {label}
       </span>
     </span>

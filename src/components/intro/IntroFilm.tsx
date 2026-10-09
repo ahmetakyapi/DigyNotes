@@ -219,7 +219,7 @@ function MarkFrame({ animate }: { animate: boolean }) {
         />
       </div>
       <motion.p
-        className="dn-mono mt-5 text-[11px] uppercase tracking-[0.2em] text-[#77726a]"
+        className="mt-5 text-[13px] text-[#77726a] font-medium"
         {...(animate
           ? {
               initial: { opacity: 0 },
@@ -359,7 +359,7 @@ export function IntroFilm() {
           );
         })}
       </div>
-      <p className="dn-mono absolute left-5 top-10 text-[10.5px] uppercase tracking-[0.18em] text-[#77726a] sm:left-10 sm:top-14">
+      <p className="absolute left-5 top-10 text-[12.5px] text-[#77726a] sm:left-10 sm:top-14 font-medium">
         <span className="text-[#b9a8ff]">(DN)</span>{" "}
         {String(Math.min(scene + 1, 5)).padStart(2, "0")} / 05
       </p>
@@ -386,7 +386,7 @@ export function IntroFilm() {
           e.stopPropagation();
           skip();
         }}
-        className="dn-mono absolute bottom-6 right-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-[10.5px] uppercase tracking-[0.18em] text-[#a8a399] transition-colors duration-200 hover:border-white/40 hover:text-[#f2efe8] sm:bottom-10 sm:right-10"
+        className="absolute bottom-6 right-5 cursor-pointer rounded-full border border-white/15 px-4 py-2 text-[12.5px] text-[#a8a399] transition-colors duration-200 hover:border-white/40 hover:text-[#f2efe8] sm:bottom-10 sm:right-10 font-medium"
       >
         Geç →
       </button>

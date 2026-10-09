@@ -60,12 +60,12 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
   const styles = getStatusStyles(status);
-  const textSize = size === "md" ? "text-xs" : "text-[10px]";
+  const textSize = size === "md" ? "text-[13px]" : "text-[12px]";
   const padding = size === "md" ? "px-2.5 py-1" : "px-2 py-0.5";
 
   return (
     <span
-      className={`dn-mono inline-flex items-center gap-1.5 rounded-full border font-medium uppercase tracking-[0.1em] ${textSize} ${padding}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border font-medium ${textSize} ${padding}`}
       style={{
         color: styles.textColor,
         borderColor: styles.borderColor,

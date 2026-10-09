@@ -68,7 +68,7 @@ export function WelcomeCover({ show }: { show: boolean }) {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(11,11,10,0.55),#0b0b0a_75%)]" />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <motion.p
-              className="dn-mono text-[11px] uppercase tracking-[0.2em] text-[#a8a399]"
+              className="text-[13px] text-[#a8a399] font-medium"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45, duration: 0.6 }}
@@ -142,7 +142,7 @@ export function WelcomeReveal() {
     >
       <div className={`absolute inset-x-0 h-[100vh] ${top ? "top-0" : "bottom-0"}`}>
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <p className="dn-mono text-[11px] uppercase tracking-[0.2em] text-[#77726a]">
+          <p className="text-[13px] text-[#77726a] font-medium">
             <span className="text-[#b9a8ff]">(DN)</span> Tekrar Merhaba
           </p>
           <p className="mt-5 text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[#f2efe8]">

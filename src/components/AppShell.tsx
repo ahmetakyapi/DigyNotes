@@ -162,7 +162,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               className="group flex flex-shrink-0 items-center gap-3 pl-3.5 transition-opacity duration-200 hover:opacity-80 sm:pl-0"
             >
               <Wordmark size="md" />
-              <span className="dn-mono hidden border-l border-[var(--border)] pl-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)] lg:inline">
+              <span className="hidden border-l border-[var(--border)] pl-3 text-[12px] text-[var(--text-muted)] lg:inline font-medium">
                 Not Defterin
               </span>
             </Link>
@@ -417,7 +417,7 @@ function NavTab({
       }`}
     >
       <span
-        className={`dn-mono text-[9.5px] transition-colors duration-200 ${
+        className={`dn-mono text-[11px] transition-colors duration-200 ${
           active
             ? "text-[var(--gold)]"
             : "text-[var(--text-faint)] group-hover:text-[var(--text-muted)]"

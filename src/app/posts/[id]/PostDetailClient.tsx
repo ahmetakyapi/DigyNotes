@@ -647,7 +647,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       {/* ─── Hero Image ─── */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
         {/* Breadcrumb */}
-        <nav className="dn-mono mb-4 flex items-center gap-2 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+        <nav className="mb-4 flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
           <Link href="/notes" className="transition-colors hover:text-[var(--gold)]">
             Notlar
           </Link>
@@ -834,7 +834,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-10 sm:pb-10">
             <div className="max-w-3xl md:max-w-[58%]">
               <div className="mb-3 flex items-center gap-2">
-                <span className="dn-mono inline-block rounded-full bg-[#b9a8ff] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#0b0b0a]">
+                <span className="inline-block rounded-full bg-[#b9a8ff] px-2.5 py-0.5 text-[12px] font-medium text-[#0b0b0a]">
                   {categoryLabel}
                 </span>
                 {post.status && <StatusBadge status={post.status} />}

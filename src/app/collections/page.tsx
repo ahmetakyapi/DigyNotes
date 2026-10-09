@@ -170,13 +170,13 @@ export default function CollectionsPage() {
       >
         <div className="mb-4 flex items-center gap-2">
           <PlusIcon size={12} weight="bold" className="text-[var(--gold)]" />
-          <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
             Yeni Koleksiyon
           </p>
         </div>
         <div className="grid items-end gap-4 sm:grid-cols-[1fr_1.4fr_auto]">
           <label className="block">
-            <span className="dn-mono mb-2 flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
               Başlık
               <span className="text-[var(--text-faint)]">{title.length}/80</span>
             </span>
@@ -189,7 +189,7 @@ export default function CollectionsPage() {
             />
           </label>
           <label className="block">
-            <span className="dn-mono mb-2 flex items-center justify-between text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
               Açıklama
               <span className="text-[var(--text-faint)]">{description.length}/400</span>
             </span>

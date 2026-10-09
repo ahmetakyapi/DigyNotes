@@ -35,7 +35,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const inputBase =
   "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 const labelClass =
-  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const sectionClass =
   "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5 xl:p-6";
 const toggleCardClass =
@@ -447,11 +447,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           description={title ? <span className="line-clamp-1">{title}</span> : undefined}
           actions={
             <>
-              <span className="dn-mono hidden items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-[var(--gold)] sm:inline-flex">
+              <span className="hidden items-center rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[12px] text-[var(--gold)] sm:inline-flex font-medium">
                 Düzenleniyor
               </span>
               {isDirty && (
-                <span className="dn-mono inline-flex items-center gap-1.5 rounded-full border border-danger/25 bg-danger/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-danger">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-danger/25 bg-danger/10 px-2.5 py-1 text-[12px] text-danger font-medium">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--danger)]" />
                   Kaydedilmedi
                 </span>
@@ -638,7 +638,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               </p>
               <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--border)]">
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
                     Kategori
                   </dt>
                   <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
@@ -646,7 +646,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   </dd>
                 </div>
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
                     Durum
                   </dt>
                   <dd className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
@@ -654,7 +654,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   </dd>
                 </div>
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
-                  <dt className="dn-mono text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                  <dt className="text-[11px] text-[var(--text-muted)] font-medium">
                     Puan
                   </dt>
                   <dd className="dn-display mt-0.5 text-xl italic leading-tight text-[var(--text-primary)]">
@@ -712,10 +712,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           "linear-gradient(180deg, var(--media-overlay-soft) 0%, var(--media-overlay-mid) 60%, var(--media-overlay-strong) 100%)",
                       }}
                     />
-                    <span className="dn-mono absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--gold)] backdrop-blur-md">
+                    <span className="absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[11px] text-[var(--gold)] backdrop-blur-md font-medium">
                       Kapak Önizleme
                     </span>
-                    <span className="dn-mono absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--media-control-text)] backdrop-blur-sm">
+                    <span className="absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[11px] text-[var(--media-control-text)] backdrop-blur-sm font-medium">
                       {isLandscape ? "Yatay Görsel" : "Dikey Görsel"}
                     </span>
                   </div>
@@ -734,7 +734,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               <label className={labelClass}>Puan</label>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                <span className="dn-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+                <span className="text-[12.5px] text-[var(--text-secondary)] font-medium">
                   {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
@@ -782,7 +782,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               />
               Kapak, Puan ve Ayarlar
               {rating > 0 && (
-                <span className="dn-mono ml-auto text-[10.5px] uppercase tracking-[0.14em] text-[var(--gold)]">
+                <span className="ml-auto text-[12.5px] text-[var(--gold)] font-medium">
                   {rating}/5
                 </span>
               )}
@@ -801,7 +801,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <label className={labelClass}>Puan</label>
                 <div className="mt-1 flex flex-wrap items-center gap-3">
                   <StarRating rating={rating} interactive onRate={setRating} size={24} />
-                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+                  <span className="text-[12.5px] text-[var(--text-secondary)] font-medium">
                     {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
                   </span>
                   {rating > 0 && (
@@ -841,7 +841,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
         <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
           <div className="min-w-0">
-            <p className="dn-mono flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="dn-eyebrow flex items-center gap-1.5">
               <span className="text-[var(--gold)]">(✎)</span> Düzenleniyor
               {isDirty && (
                 <span className="inline-flex items-center gap-1 text-danger">

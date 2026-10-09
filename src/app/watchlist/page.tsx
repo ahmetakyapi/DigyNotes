@@ -275,7 +275,7 @@ export default function WatchlistPage() {
             >
               {getCategoryLabel(category)}
               <span
-                className={`dn-mono text-[10px] ${
+                className={`dn-mono text-[12px] ${
                   activeCategory === category ? "opacity-60" : "text-[var(--text-faint)]"
                 }`}
               >
@@ -286,7 +286,7 @@ export default function WatchlistPage() {
         </div>
 
         <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors duration-500 ease-out-expo focus-within:border-[var(--text-faint)] sm:p-5">
-          <p className="dn-mono mb-3 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="mb-3 text-[12.5px] text-[var(--text-muted)] font-medium">
             {getCategoryLabel(activeCategory)} Ara ve Ekle
           </p>
           <MediaSearch
@@ -351,7 +351,7 @@ export default function WatchlistPage() {
         {/* LAYOUT: Section heading (mono count + grotesk title) left, search + sort pills right; 1/2/3 col poster cards. */}
         <div className="mb-5 mt-12 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
               {filteredItems.length}/{countsByCategory[activeCategory] ?? 0} kayıt
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
@@ -451,13 +451,13 @@ export default function WatchlistPage() {
                   )}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
+                    <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] text-[var(--text-primary)] font-medium">
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
                   </div>
                   {typeof item.externalRating === "number" && item.externalRating > 0 && (
-                    <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] text-[var(--text-primary)]">
+                    <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12.5px] text-[var(--text-primary)]">
                       <StarIcon size={10} weight="fill" className="text-[var(--gold)]" />
                       {item.externalRating.toFixed(1)}
                     </div>
@@ -479,7 +479,7 @@ export default function WatchlistPage() {
                       {item.excerpt}
                     </p>
                   )}
-                  <div className="dn-mono mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+                  <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4 text-[12.5px] text-[var(--text-muted)] font-medium">
                     <span>Eklendi {formatDate(item.addedAt)}</span>
                     <span>{getPlannedLabel(normalizeCategory(item.category))}</span>
                   </div>

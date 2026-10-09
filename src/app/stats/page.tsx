@@ -80,7 +80,7 @@ const TICK_STYLE = {
   fontFamily: "var(--font-mono), ui-monospace, monospace",
 };
 
-const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const monoLabel = "text-[12.5px] text-[var(--text-muted)] font-medium";
 
 /* ── Shared Components ── */
 function Reveal({
@@ -454,7 +454,7 @@ export default function PersonalStatsPage() {
                   <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
                     {data.kpis.totalPosts}
                   </span>
-                  <span className="dn-mono mt-1 text-[9.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  <span className="mt-1 text-[11px] text-[var(--text-muted)] font-medium">
                     Not
                   </span>
                 </div>
@@ -477,7 +477,7 @@ export default function PersonalStatsPage() {
                       <span className="text-sm font-semibold tabular-nums text-[var(--text-primary)]">
                         {item.count}
                       </span>
-                      <span className="dn-mono w-9 text-right text-[10.5px] tabular-nums text-[var(--text-muted)]">
+                      <span className="dn-mono w-9 text-right text-[12.5px] tabular-nums text-[var(--text-muted)]">
                         %{pct}
                       </span>
                     </div>
@@ -566,7 +566,7 @@ export default function PersonalStatsPage() {
                       >
                         <HashIcon size={10} weight="bold" />
                         {tag.name}
-                        <span className="dn-mono ml-0.5 text-[10px] tabular-nums text-[var(--text-muted)]">
+                        <span className="dn-mono ml-0.5 text-[12px] tabular-nums text-[var(--text-muted)]">
                           {tag.count}
                         </span>
                       </Link>

@@ -72,7 +72,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
       {/* LAYOUT: Sort pill aligned right above the grid. */}
       <div className="mb-6 flex items-center justify-between gap-3">
-        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
           Sıralama
         </p>
         <select
@@ -147,7 +147,7 @@ function PostCard({ post }: { post: Post }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute left-3 top-3 flex items-center gap-1.5">
-          <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-primary)]">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] text-[var(--text-primary)] font-medium">
             {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}

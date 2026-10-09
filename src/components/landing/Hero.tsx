@@ -252,7 +252,7 @@ export function Hero() {
         {/* ── ACT 1 ── */}
         <div className="relative flex h-full min-h-[100svh] flex-col px-5 pb-6 pt-20 sm:px-10 sm:pb-8 sm:pt-24">
           <motion.div
-            className="dn-mono mx-auto flex w-full max-w-[1600px] items-center justify-between border-b border-[var(--border)] pb-3 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]"
+            className="mx-auto flex w-full max-w-[1600px] items-center justify-between border-b border-[var(--border)] pb-3 dn-eyebrow"
             style={reduce ? undefined : { opacity: chromeOpacity }}
           >
             <span>
@@ -380,7 +380,7 @@ export function Hero() {
                 <span className="absolute -bottom-1 left-0 h-px w-full bg-current transition-transform duration-500 ease-out-expo group-hover:origin-right group-hover:scale-x-0" />
               </Link>
             </div>
-            <dl className="dn-mono hidden gap-1.5 text-right text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)] md:grid md:justify-self-end">
+            <dl className="hidden gap-1.5 text-right text-[12.5px] text-[var(--text-muted)] md:grid md:justify-self-end font-medium">
               {[
                 ["Kategori", "05", ""],
                 ["Yarım Puan", "½", ""],
@@ -467,7 +467,7 @@ export function Hero() {
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="dn-mono flex items-center gap-2 text-[9.5px] uppercase tracking-[0.14em]">
+                  <div className="flex items-center gap-2 text-[11px] font-medium">
                     <span className="text-[#b9a8ff]">Film</span>
                     <span className="text-white/50">İzlendi</span>
                   </div>
@@ -590,7 +590,7 @@ function Floater({
             <span className="truncate text-[11px] font-semibold text-[var(--text-primary)]">
               {f.title}
             </span>
-            <span className="dn-mono text-[10px] text-[var(--gold)]">★ {f.rating}</span>
+            <span className="dn-mono text-[12px] text-[var(--gold)]">★ {f.rating}</span>
           </figcaption>
         </motion.div>
       </motion.div>

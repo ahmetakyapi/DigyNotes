@@ -21,14 +21,14 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const inputBase =
   "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";
 const labelClass =
-  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 /* LAYOUT: mono step index "01 — Label" with a short hairline, used atop every composer card */
 function StepLabel({ index, label }: { readonly index: string; readonly label: string }) {
   return (
-    <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+    <p className="flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
       <span className="text-[var(--gold)]">{index}</span>
       <span className="h-px w-4 bg-[var(--border)]" />
       {label}
@@ -114,7 +114,7 @@ export function CategorySearchSection({
               <span className="truncate text-base font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
                 {supportsAutofill ? guidance.searchTitle : "Başlıkla Başla"}
               </span>
-              <span className="dn-mono shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
+              <span className="dn-mono shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-muted)]">
                 {completedStepCount}/4
               </span>
               <span className="hidden shrink-0 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 text-[10px] font-medium text-[var(--gold)] sm:inline">

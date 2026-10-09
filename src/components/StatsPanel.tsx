@@ -20,7 +20,7 @@ const FALLBACK_COLORS = [
   { fill: "var(--text-faint)" },
 ];
 
-const monoLabel = "dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+const monoLabel = "text-[12.5px] text-[var(--text-muted)] font-medium";
 const panelClass = "rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 
 function getCategoryColor(cat: string, idx = 0) {
@@ -141,7 +141,7 @@ function HorizBar({
       </div>
       <div className="flex w-16 flex-shrink-0 items-center justify-end gap-2">
         <span className="text-xs font-bold text-[var(--text-primary)]">{count}</span>
-        <span className="dn-mono text-[10px] text-[var(--text-muted)]">{pct.toFixed(0)}%</span>
+        <span className="dn-mono text-[12px] text-[var(--text-muted)]">{pct.toFixed(0)}%</span>
       </div>
     </div>
   );
@@ -186,7 +186,7 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
         return (
           <div key={d.month} className="group relative flex flex-1 flex-col items-center gap-1.5">
             {d.count > 0 && (
-              <div className="dn-mono absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-primary)] group-hover:flex">
+              <div className="dn-mono absolute -top-7 left-1/2 z-10 hidden -translate-x-1/2 items-center whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-primary)] group-hover:flex">
                 {d.count} not
               </div>
             )}
@@ -204,7 +204,7 @@ function MonthlyChart({ data }: { data: { month: string; short: string; count: n
               />
             </div>
             <span
-              className={`dn-mono text-[9px] uppercase ${isLast ? "text-accent" : "text-[var(--text-muted)]"}`}
+              className={`text-[11px] font-medium ${isLast ? "text-accent" : "text-[var(--text-muted)]"}`}
             >
               {d.short}
             </span>
@@ -398,7 +398,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 <span className="dn-display text-3xl italic leading-none text-[var(--text-primary)]">
                   {stats.total}
                 </span>
-                <span className="dn-mono text-[9px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                <span className="text-[11px] text-[var(--text-muted)] font-medium">
                   Not
                 </span>
               </div>
@@ -469,7 +469,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
               <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
                 {s.count}
               </span>
-              <p className="dn-mono flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              <p className="flex items-center gap-1.5 text-[12px] text-[var(--text-muted)] font-medium">
                 <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
                 {s.label}
               </p>
@@ -495,7 +495,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       <div className={panelClass}>
         <div className="mb-4 flex items-center justify-between">
           <SectionLabel>Aylık Aktivite</SectionLabel>
-          <span className="dn-mono mb-4 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+          <span className="mb-4 text-[12px] text-[var(--text-muted)] font-medium">
             Son 8 ay
           </span>
         </div>
@@ -553,7 +553,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 {/* Rating */}
                 <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
                   <StarRating rating={post.rating} size={11} />
-                  <span className="dn-mono text-[10px] text-accent">{post.rating}/5</span>
+                  <span className="dn-mono text-[12px] text-accent">{post.rating}/5</span>
                 </div>
               </Link>
             ))}

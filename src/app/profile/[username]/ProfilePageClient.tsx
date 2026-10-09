@@ -376,7 +376,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
             )}
           </div>
 
-          <p className="dn-mono mt-6 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="dn-eyebrow mt-6">
             <span className="text-[var(--gold)]">(@)</span> {user.username}
             {topCategory && (
               <span className="text-[var(--text-faint)]"> · En Çok: {topCategory}</span>
@@ -409,21 +409,21 @@ export default function ProfilePageClient({ username }: { readonly username: str
               <ProfileStat value={user.followingCount} label="Takip" />
             </button>
             {user.avgRating > 0 && <ProfileStat value={user.avgRating} label="Ort. Puan" accent />}
-            <div className="dn-mono ml-auto flex flex-col gap-1 text-right text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+            <div className="ml-auto flex flex-col gap-1 text-right text-[12px] text-[var(--text-muted)] font-medium">
               <span>Katıldı · {joinedDate}</span>
               <span>Son Giriş · {lastLoginDate}</span>
             </div>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="dn-mono rounded-full border border-[var(--border)] px-3 py-1 text-[10.5px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+            <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[12.5px] text-[var(--text-muted)] font-medium">
               {posts.length} Herkese Açık Not
             </span>
-            <span className="dn-mono rounded-full border border-[var(--border)] px-3 py-1 text-[10.5px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+            <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[12.5px] text-[var(--text-muted)] font-medium">
               {collections.length} Koleksiyon
             </span>
             {currentUser?.id && currentUser.id !== user.id && isFollowingProfile && (
-              <span className="dn-mono rounded-full bg-accent/12 px-3 py-1 text-[10.5px] uppercase tracking-[0.1em] text-[var(--gold)]">
+              <span className="rounded-full bg-accent/12 px-3 py-1 text-[12.5px] text-[var(--gold)] font-medium">
                 Takip Ediyorsun
               </span>
             )}
@@ -767,7 +767,7 @@ function ProfileStat({
       >
         {value}
       </span>
-      <span className="dn-mono mt-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+      <span className="mt-1 text-[12px] text-[var(--text-muted)] font-medium">
         {label}
       </span>
     </span>

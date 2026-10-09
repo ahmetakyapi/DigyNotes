@@ -8,7 +8,7 @@ import { customLoader } from "@/lib/image";
 import toast from "react-hot-toast";
 
 const labelClass =
-  "dn-mono mb-2 block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]";
+  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
@@ -65,7 +65,7 @@ export function StatusSidebar({
 
         <div className="mt-4 border-t border-[var(--border)] pt-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
               Puan
             </span>
             {rating > 0 && (
@@ -267,7 +267,7 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
     <div className={cardClass}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className={`${labelClass} mb-0`}>Etiketler</p>
-        <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-1 text-[10px] text-[var(--text-secondary)]">
+        <span className="dn-mono rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2.5 py-1 text-[12px] text-[var(--text-secondary)]">
           {tags.length}/10
         </span>
       </div>

@@ -128,7 +128,7 @@ function timeAgo(iso: string | null) {
 function StatCell({ value, label, index }: { value: number; label: string; index: string }) {
   return (
     <div className="bg-[var(--bg-card)] px-5 py-5 transition-colors duration-300 ease-out-expo hover:bg-[var(--bg-raised)]">
-      <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <p className="dn-eyebrow">
         <span className="text-[var(--gold)]">({index})</span> {label}
       </p>
       <p className="dn-display mt-3 text-[44px] italic tabular-nums leading-none tracking-[-0.02em] text-[var(--text-primary)]">
@@ -149,7 +149,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] py-3 last:border-0">
-      <span className="dn-mono shrink-0 pt-0.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <span className="shrink-0 pt-0.5 text-[12.5px] text-[var(--text-muted)] font-medium">
         {label}
       </span>
       <span
@@ -173,7 +173,7 @@ function SectionTitle({
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+        <p className="text-[12.5px] text-[var(--gold)] font-medium">
           ({index})
         </p>
         <h3 className="mt-1 text-[15px] font-semibold tracking-[-0.01em] text-[var(--text-primary)]">
@@ -198,7 +198,7 @@ const DarkTooltip = ({
   return (
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
       {label && (
-        <p className="dn-mono mb-1 text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+        <p className="mb-1 text-[12px] text-[var(--text-muted)] font-medium">
           {label}
         </p>
       )}
@@ -315,7 +315,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           <ArrowLeftIcon size={12} weight="bold" />
           Admin Paneli
         </button>
-        <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="dn-eyebrow flex items-center gap-2">
           <span className="text-[var(--gold)]">(16)</span>
           <span className="h-px w-5 bg-[var(--border)]" />
           Yönetim / Kullanıcı
@@ -330,12 +330,12 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             {user.isAdmin && (
-              <span className="dn-mono rounded-full border border-accent/35 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] text-accent">
+              <span className="rounded-full border border-accent/35 px-2.5 py-0.5 text-[12px] text-accent font-medium">
                 Admin
               </span>
             )}
             <span
-              className={`dn-mono rounded-full border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] ${
+              className={`rounded-full border px-2.5 py-0.5 text-[12px] font-medium ${
                 user.isPublic
                   ? "border-accent-2/35 text-accent-2"
                   : "border-[var(--border)] text-[var(--text-muted)]"
@@ -348,7 +348,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
             {user.name}
             <Dot />
           </h1>
-          <p className="dn-mono mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+          <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--text-muted)] font-medium">
             {user.username && (
               <>
                 <span className="normal-case tracking-normal text-[var(--text-secondary)]">
@@ -391,7 +391,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 index="A"
                 title={`${RANGE_LABELS[range]} Aktivitesi`}
                 aside={
-                  <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
                     <span className="dn-display text-2xl normal-case italic tracking-normal text-[var(--text-primary)]">
                       {chartTotal}
                     </span>
@@ -454,7 +454,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 index="B"
                 title="Aktivite Geçmişi"
                 aside={
-                  <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                  <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
                     {logsTotal} Kayıt
                   </span>
                 }
@@ -491,7 +491,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                             </p>
                           )}
                         </div>
-                        <span className="dn-mono shrink-0 pt-0.5 text-[10px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                        <span className="shrink-0 pt-0.5 text-[12px] text-[var(--text-muted)] font-medium">
                           {new Date(log.createdAt).toLocaleString("tr-TR", {
                             day: "numeric",
                             month: "short",
@@ -537,7 +537,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       <span>
                         <span className="block">{fmtFull(user.lastLoginAt)}</span>
                         {timeAgo(user.lastLoginAt) && (
-                          <span className="dn-mono text-[10px] font-normal uppercase tracking-[0.12em] text-[var(--gold)]">
+                          <span className="text-[12px] font-normal text-[var(--gold)] font-medium">
                             {timeAgo(user.lastLoginAt)}
                           </span>
                         )}
@@ -554,7 +554,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                       <span>
                         <span className="block">{fmtFull(user.lastLogoutAt)}</span>
                         {timeAgo(user.lastLogoutAt) && (
-                          <span className="dn-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                          <span className="text-[12px] text-[var(--text-muted)] font-medium">
                             {timeAgo(user.lastLogoutAt)}
                           </span>
                         )}

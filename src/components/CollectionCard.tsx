@@ -69,12 +69,12 @@ export default function CollectionCard({
             ))}
           </div>
         ) : (
-          <div className="dn-mono flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgb(var(--gold-rgb)/0.14),transparent_60%)] text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgb(var(--gold-rgb)/0.14),transparent_60%)] text-[12.5px] text-[var(--text-muted)] font-medium">
             Boş Koleksiyon
           </div>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
-        <span className="dn-mono absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-primary)]">
+        <span className="absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12.5px] text-[var(--text-primary)] font-medium">
           {collection.postCount} not
         </span>
       </div>
@@ -90,7 +90,7 @@ export default function CollectionCard({
         )}
 
         {showOwner && collection.owner && (
-          <p className="dn-mono mt-3 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+          <p className="mt-3 text-[12.5px] text-[var(--text-muted)] font-medium">
             {collection.owner.name}
             {collection.owner.username ? ` · @${collection.owner.username}` : ""}
           </p>
@@ -98,7 +98,7 @@ export default function CollectionCard({
 
         <div className="mt-auto pt-4">
           <div className="flex items-center justify-between border-t border-[var(--border)] pt-4">
-            <span className="dn-mono text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
+            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
               Güncellendi {formatDate(collection.updatedAt)}
             </span>
             <ArrowUpRightIcon

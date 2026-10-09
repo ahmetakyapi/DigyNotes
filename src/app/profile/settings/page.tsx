@@ -14,7 +14,7 @@ const inputBase =
 const textareaBase =
   "w-full px-4 py-3 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm leading-relaxed resize-none";
 const labelClass =
-  "dn-mono block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2";
+  "block text-[12.5px] text-[var(--text-muted)] mb-2 font-medium";
 const rowButtonClass =
   "group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5 text-left transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50";
 const errorTextClass = "mt-1.5 text-xs text-[var(--danger)]";
@@ -39,7 +39,7 @@ function SettingsSection({
       className={`grid gap-5 border-t border-[var(--border)] py-8 md:grid-cols-[200px_minmax(0,1fr)] md:gap-10 ${className}`}
     >
       <div>
-        <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        <p className="dn-eyebrow flex items-center gap-2">
           <span className="text-[var(--gold)]">({index})</span>
           {label}
         </p>
@@ -430,7 +430,7 @@ export default function ProfileSettingsPage() {
             </div>
             {usernameHint && <p className="mt-1.5 text-xs">{usernameHint}</p>}
             {username && (
-              <p className="dn-mono mt-1.5 text-[10.5px] tracking-[0.04em] text-[var(--text-faint)]">
+              <p className="dn-mono mt-1.5 text-[12.5px] tracking-[0.04em] text-[var(--text-faint)]">
                 /profile/{username}
               </p>
             )}
@@ -441,7 +441,7 @@ export default function ProfileSettingsPage() {
               <label htmlFor="settings-bio" className={`${labelClass} mb-0`}>
                 Hakkında
               </label>
-              <span className="dn-mono text-[10.5px] tabular-nums text-[var(--text-faint)]">
+              <span className="dn-mono text-[12.5px] tabular-nums text-[var(--text-faint)]">
                 {bio.length}/200
               </span>
             </div>
@@ -596,7 +596,7 @@ export default function ProfileSettingsPage() {
                   Tablo olarak açmak için CSV dosyası
                 </p>
               </div>
-              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+              <span className="text-[12.5px] text-[var(--gold)] font-medium">
                 {exportingFormat === "csv" ? "Hazırlanıyor..." : "CSV"}
               </span>
             </button>
@@ -612,7 +612,7 @@ export default function ProfileSettingsPage() {
                   Tüm verilerin, JSON dosyası olarak
                 </p>
               </div>
-              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+              <span className="text-[12.5px] text-[var(--gold)] font-medium">
                 {exportingFormat === "json" ? "Hazırlanıyor..." : "JSON"}
               </span>
             </button>
@@ -637,7 +637,7 @@ export default function ProfileSettingsPage() {
       {/* LAYOUT: floating glass pill save bar — visibility status left, İptal + Kaydet right */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:pb-6">
         <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between gap-4 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
-          <p className="dn-mono flex min-w-0 items-center gap-2 truncate text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          <p className="flex min-w-0 items-center gap-2 truncate text-[12.5px] text-[var(--text-muted)] font-medium">
             <span
               className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
                 isPublic ? "bg-[var(--gold)]" : "bg-[var(--text-faint)]"

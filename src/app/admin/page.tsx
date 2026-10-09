@@ -586,7 +586,7 @@ export default function AdminPage() {
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               }`}
             >
-              <span className="dn-mono text-[10px] opacity-60">
+              <span className="dn-mono text-[12px] opacity-60">
                 {String(i + 1).padStart(2, "0")}
               </span>
               {t.icon}
@@ -627,7 +627,7 @@ export default function AdminPage() {
 
               {/* Series range */}
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
                   Trend Periyodu ·{" "}
                   <span className="text-[var(--text-primary)]">{SERIES_LABELS[seriesRange]}</span>
                 </p>
@@ -790,7 +790,7 @@ export default function AdminPage() {
                               <span className="text-[12px] font-semibold tabular-nums text-[var(--text-primary)]">
                                 {s.count}
                               </span>
-                              <span className="dn-mono w-9 text-right text-[10px] tabular-nums text-[var(--text-muted)]">
+                              <span className="dn-mono w-9 text-right text-[12px] tabular-nums text-[var(--text-muted)]">
                                 {total ? Math.round((s.count / total) * 100) : 0}%
                               </span>
                             </div>
@@ -952,7 +952,7 @@ export default function AdminPage() {
                         className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors duration-200 ${tone}`}
                       >
                         #{tag.name}
-                        <span className="dn-mono ml-1.5 text-[10px] tabular-nums opacity-60">
+                        <span className="dn-mono ml-1.5 text-[12px] tabular-nums opacity-60">
                           {tag.count}
                         </span>
                       </span>
@@ -987,7 +987,7 @@ export default function AdminPage() {
                 className={SEARCH_INPUT}
               />
             </div>
-            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {usersTotal}
               </span>
@@ -998,7 +998,7 @@ export default function AdminPage() {
           {/* Bulk action bar */}
           {selectedUsers.size > 0 && (
             <div className="flex flex-wrap items-center gap-3 rounded-[22px] border border-accent/25 bg-accent/5 px-4 py-2.5 sm:rounded-full sm:pl-5">
-              <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+              <span className="text-[12.5px] text-[var(--gold)] font-medium">
                 {selectedUsers.size} Seçildi
               </span>
               <div className="flex flex-wrap gap-2 sm:ml-auto">
@@ -1047,7 +1047,7 @@ export default function AdminPage() {
                   checked={users.length > 0 && selectedUsers.size === users.length}
                   onChange={toggleSelectAll}
                 />
-                <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
                   Tümünü Seç
                 </span>
               </label>
@@ -1088,7 +1088,7 @@ export default function AdminPage() {
                         <p className="mt-0.5 truncate text-[12px] text-[var(--text-muted)]">
                           {u.email}
                         </p>
-                        <div className="dn-mono mt-1.5 flex flex-wrap items-center gap-3 text-[10.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[12.5px] text-[var(--text-muted)] font-medium">
                           <span>
                             <span className="tabular-nums text-[var(--text-primary)]">
                               {u.postCount}
@@ -1224,7 +1224,7 @@ export default function AdminPage() {
                                 <UserBadges user={u} compact />
                               </div>
                               {u.username && (
-                                <p className="dn-mono text-[10.5px] text-[var(--text-muted)]">
+                                <p className="dn-mono text-[12.5px] text-[var(--text-muted)]">
                                   @{u.username}
                                 </p>
                               )}
@@ -1238,7 +1238,7 @@ export default function AdminPage() {
                         <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">
                           {u.followerCount}
                         </td>
-                        <td className="dn-mono whitespace-nowrap px-4 py-3 text-center text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                        <td className="whitespace-nowrap px-4 py-3 text-center text-[12.5px] text-[var(--text-muted)] font-medium">
                           {new Date(u.createdAt).toLocaleDateString("tr-TR", {
                             day: "numeric",
                             month: "short",
@@ -1328,7 +1328,7 @@ export default function AdminPage() {
                 className={SEARCH_INPUT}
               />
             </div>
-            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {postsTotal}
               </span>
@@ -1364,7 +1364,7 @@ export default function AdminPage() {
                         >
                           {p.title}
                         </p>
-                        <div className="dn-mono mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px] uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                        <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-[var(--text-muted)] font-medium">
                           <span>{p.category}</span>
                           {p.user && (
                             <span className="normal-case tracking-normal">{p.user.name}</span>
@@ -1458,7 +1458,7 @@ export default function AdminPage() {
                             <span className="text-xs text-[var(--text-muted)]">—</span>
                           )}
                         </td>
-                        <td className="dn-mono whitespace-nowrap px-4 py-3 text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                        <td className="whitespace-nowrap px-4 py-3 text-[12.5px] text-[var(--text-muted)] font-medium">
                           {fmtShortDate(p.createdAt)}
                         </td>
                         <td className="px-4 py-3">
@@ -1508,7 +1508,7 @@ export default function AdminPage() {
       {tab === "activity" && (
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
               Aktivite Periyodu ·{" "}
               <span className="text-[var(--text-primary)]">{RANGE_LABELS[activityRange]}</span>
             </p>
@@ -1579,7 +1579,7 @@ export default function AdminPage() {
                 ))}
               </div>
             </div>
-            <p className="dn-mono flex items-baseline gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {logsTotal}
               </span>
@@ -1619,7 +1619,7 @@ export default function AdminPage() {
                         <div className="min-w-0 flex-1">
                           <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
                             <ActionTag meta={meta} />
-                            <span className="dn-mono text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
                               {fmtTime(log.createdAt)}
                             </span>
                           </div>
@@ -1630,7 +1630,7 @@ export default function AdminPage() {
                                 {log.user.name}
                               </span>
                               {log.user.username && (
-                                <span className="dn-mono text-[10.5px] text-[var(--text-muted)]">
+                                <span className="dn-mono text-[12.5px] text-[var(--text-muted)]">
                                   @{log.user.username}
                                 </span>
                               )}
@@ -1694,7 +1694,7 @@ export default function AdminPage() {
                           key={log.id}
                           className="transition-colors duration-200 hover:bg-[var(--bg-raised)]"
                         >
-                          <td className="dn-mono whitespace-nowrap px-4 py-3 text-[10.5px] uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                          <td className="whitespace-nowrap px-4 py-3 text-[12.5px] text-[var(--text-muted)] font-medium">
                             {fmtTime(log.createdAt)}
                           </td>
                           <td className="px-4 py-3">
@@ -1706,7 +1706,7 @@ export default function AdminPage() {
                                     {log.user.name}
                                   </p>
                                   {log.user.username && (
-                                    <p className="dn-mono text-[10px] text-[var(--text-muted)]">
+                                    <p className="dn-mono text-[12px] text-[var(--text-muted)]">
                                       @{log.user.username}
                                     </p>
                                   )}
@@ -1756,7 +1756,7 @@ export default function AdminPage() {
                     <UserPlusIcon size={17} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                    <p className="text-[12.5px] text-[var(--gold)] font-medium">
                       (01)
                     </p>
                     <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
@@ -1797,7 +1797,7 @@ export default function AdminPage() {
                     <WrenchIcon size={17} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--gold)]">
+                    <p className="text-[12.5px] text-[var(--gold)] font-medium">
                       (02)
                     </p>
                     <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
@@ -1834,7 +1834,7 @@ export default function AdminPage() {
                   <div className="space-y-2">
                     <label
                       htmlFor="admin-maintenance-message"
-                      className="dn-mono block text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]"
+                      className="block text-[12.5px] text-[var(--text-muted)] font-medium"
                     >
                       Bakım Mesajı
                     </label>
@@ -1903,7 +1903,7 @@ export default function AdminPage() {
    ══════════════════════════════════════════════ */
 
 const TH =
-  "dn-mono px-4 py-3.5 text-left text-[10px] font-normal uppercase tracking-[0.16em] text-[var(--text-muted)]";
+  "px-4 py-3.5 text-left text-[12px] font-normal text-[var(--text-muted)] font-medium";
 
 const SEARCH_INPUT =
   "w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-10 pr-4 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm";
@@ -1976,7 +1976,7 @@ function ToggleSwitch({
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="dn-mono text-[9px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+      <span className="text-[11px] text-[var(--text-muted)] font-medium">
         {label}
       </span>
       <Switch active={active} tone={tone} onClick={onClick} title={label} />
@@ -1997,7 +1997,7 @@ function Avatar({ name, size }: { name: string; size: "xs" | "sm" | "md" }) {
 }
 
 const BADGE =
-  "dn-mono inline-flex shrink-0 items-center rounded-full border px-1.5 py-px text-[9px] uppercase tracking-[0.12em]";
+  "inline-flex shrink-0 items-center rounded-full border px-1.5 py-px text-[11px] font-medium";
 
 function UserBadges({ user, compact = false }: { user: UserRow; compact?: boolean }) {
   return (
@@ -2045,7 +2045,7 @@ function StatePill({
   const dot = on ? "bg-accent" : offTone === "danger" ? "bg-danger" : "bg-[var(--text-muted)]";
   return (
     <span
-      className={`dn-mono inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10.5px] uppercase tracking-[0.16em] ${cls}`}
+      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[12.5px] ${cls} font-medium`}
     >
       <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
       {on ? onLabel : offLabel}

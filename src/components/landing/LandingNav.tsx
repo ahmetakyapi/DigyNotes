@@ -55,7 +55,7 @@ export function LandingNav() {
               href={l.href}
               className="group flex items-baseline gap-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
             >
-              <span className="dn-mono text-[9.5px] text-[var(--text-faint)] transition-colors duration-200 group-hover:text-[var(--gold)]">
+              <span className="dn-mono text-[11px] text-[var(--text-faint)] transition-colors duration-200 group-hover:text-[var(--gold)]">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="relative">

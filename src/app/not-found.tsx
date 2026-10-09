@@ -19,7 +19,7 @@ export default function NotFound() {
         className="pointer-events-none absolute left-1/2 top-1/3 h-[50vmin] w-[80vmin] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--gold-rgb)/0.12),transparent)] blur-2xl"
       />
 
-      <p className="dn-mono relative text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+      <p className="dn-eyebrow relative">
         <span className="text-[var(--gold)]">(404)</span> — Sayfa Bulunamadı
       </p>
 
@@ -61,7 +61,7 @@ export default function NotFound() {
         </Link>
       </div>
 
-      <p className="dn-mono relative mt-12 text-[10px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
+      <p className="relative mt-12 text-[12px] text-[var(--text-muted)] font-medium">
         HTTP 404 · Not Found · DigyNotes
       </p>
     </div>
