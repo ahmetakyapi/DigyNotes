@@ -100,7 +100,7 @@ export default function FeedPageClient() {
             <UsersThreeIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Akışı görmek için giriş yap
+            Akışı Görmek İçin Giriş Yap
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Burası takip ettiğin kişilerin en yeni notları için ayrıldı. Giriş yaptığında akış,
@@ -110,12 +110,12 @@ export default function FeedPageClient() {
             href="/login"
             className="hover:bg-accent/12 bg-accent/8 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 px-5 py-3 text-sm font-semibold text-accent-light transition-colors"
           >
-            Giriş yap
+            Giriş Yap
           </Link>
         </div>
       ) : loadFailed ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Akış yüklenemedi</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Akış Yüklenemedi</h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Takip akışını şu anda getiremedik. Biraz sonra yeniden deneyebilir veya Keşfet
             yüzeyinden yeni içeriklere dönebilirsin.
@@ -127,7 +127,7 @@ export default function FeedPageClient() {
             <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Akışın henüz boş görünüyor
+            Akışın Henüz Boş Görünüyor
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Henüz kimseyi takip etmiyorsun ya da takip ettiklerinden yeni içerik gelmedi. Keşfet
@@ -184,7 +184,7 @@ export default function FeedPageClient() {
                 ) : (
                   <>
                     <ArrowDownIcon size={16} weight="bold" />
-                    Daha fazla yükle
+                    Daha Fazla Yükle
                   </>
                 )}
               </button>

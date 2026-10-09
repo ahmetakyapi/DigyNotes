@@ -11,7 +11,7 @@ export default function PostError({ reset }: { reset: () => void }) {
           <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
         </svg>
       </div>
-      <h2 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">Not yüklenirken bir hata oluştu</h2>
+      <h2 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">Not Yüklenirken Bir Hata Oluştu</h2>
       <p className="mb-6 max-w-sm text-sm text-[var(--text-muted)]">
         Sayfa beklenmedik bir hatayla karşılaştı. Tekrar deneyebilir veya notlarına geri dönebilirsin.
       </p>
@@ -20,13 +20,13 @@ export default function PostError({ reset }: { reset: () => void }) {
           onClick={reset}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--gold)]"
         >
-          Tekrar dene
+          Tekrar Dene
         </button>
         <Link
           href="/notes"
           className="rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
         >
-          Notlarıma dön
+          Notlarıma Dön
         </Link>
       </div>
     </div>

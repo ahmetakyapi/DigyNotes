@@ -62,7 +62,7 @@ export default function CommandPalette() {
     const base: CommandItem[] = [
       {
         id: "new-post",
-        label: "Yeni not oluştur",
+        label: "Yeni Not Oluştur",
         keywords: "ekle yeni not post",
         hint: "N",
         icon: <PencilSimpleIcon size={16} weight="duotone" />,
@@ -106,7 +106,7 @@ export default function CommandPalette() {
       },
       {
         id: "watchlist",
-        label: "İzleme listesi",
+        label: "İzleme Listesi",
         keywords: "izlenecek kaydet watchlist",
         icon: <BookmarkSimpleIcon size={16} weight="duotone" />,
         action: () => router.push("/watchlist"),
@@ -122,7 +122,7 @@ export default function CommandPalette() {
       },
       {
         id: "settings",
-        label: "Profil ayarları",
+        label: "Profil Ayarları",
         keywords: "settings ayar profil hesap",
         icon: <GearIcon size={16} weight="duotone" />,
         action: () => router.push("/profile/settings"),
@@ -130,7 +130,7 @@ export default function CommandPalette() {
       },
       {
         id: "toggle-theme",
-        label: theme.theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç",
+        label: theme.theme === "dark" ? "Açık Temaya Geç" : "Koyu Temaya Geç",
         keywords: "tema theme light dark açık koyu",
         icon:
           theme.theme === "dark" ? (

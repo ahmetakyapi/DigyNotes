@@ -360,7 +360,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
       <section className="mt-6">
         <OrganizationGuide
           current="collections"
-          title="Bu koleksiyonun rolü"
+          title="Bu Koleksiyonun Rolü"
           description="Kaydettiklerim kısa yoldan geri dönmek, İstek Listesi henüz nota çevrilmemiş içerikleri tutmak içindir. Koleksiyonlar ise bitmiş notları aynı tema altında bir araya getirir."
         />
       </section>
@@ -397,7 +397,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-                Koleksiyona not ekle
+                Koleksiyona Not Ekle
               </h2>
               <p className="mt-1 text-sm text-[var(--text-muted)]">
                 Sadece kendi notlarını bu koleksiyona ekleyebilirsin. Bu alan, uzun vadeli bir tema
@@ -424,7 +424,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                 onClick={() => setPostQuery("")}
                 className="text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
               >
-                Aramayı temizle
+                Aramayı Temizle
               </button>
             </div>
           )}
@@ -474,7 +474,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       disabled={pendingPostId === post.id}
                       className="rounded-xl bg-accent hover:bg-accent-dark px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all disabled:opacity-50"
                     >
-                      {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona ekle"}
+                      {pendingPostId === post.id ? "Ekleniyor..." : "Koleksiyona Ekle"}
                     </button>
                   </div>
                 ))}
@@ -491,7 +491,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                     }
                     className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-accent-light"
                   >
-                    Daha fazla göster
+                    Daha Fazla Göster
                   </button>
                 </div>
               )}
@@ -522,7 +522,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                   onClick={() => setCollectionQuery("")}
                   className="self-end text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
                 >
-                  Aramayı temizle
+                  Aramayı Temizle
                 </button>
               )}
             </div>
@@ -543,7 +543,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
               onClick={() => setCollectionQuery("")}
               className="mt-3 text-xs font-medium text-accent-light transition-colors hover:text-accent-light"
             >
-              Aramayı temizle
+              Aramayı Temizle
             </button>
           </div>
         ) : (
@@ -600,7 +600,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
                       disabled={pendingPostId === post.id}
                       className="hover:bg-[#e53e3e]/8 w-full rounded-xl border border-[#e53e3e]/20 px-3 py-2 text-xs font-semibold text-[#e53e3e] transition-colors disabled:opacity-50"
                     >
-                      {pendingPostId === post.id ? "Çıkarılıyor..." : "Koleksiyondan çıkar"}
+                      {pendingPostId === post.id ? "Çıkarılıyor..." : "Koleksiyondan Çıkar"}
                     </button>
                   )}
                 </div>

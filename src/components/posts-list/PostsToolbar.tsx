@@ -266,7 +266,7 @@ export function PostsEmptyState({
       </p>
       {(hasSearch || activeTab !== "kaydedilenler" || hasVisiblePosts) && (
         <button onClick={onClearFilters} className="text-xs text-[var(--gold)] hover:underline">
-          Filtreleri temizle
+          Filtreleri Temizle
         </button>
       )}
       {hasMore && onLoadMore && (
@@ -275,7 +275,7 @@ export function PostsEmptyState({
           disabled={isLoadingMore}
           className="mt-3 rounded-lg border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--gold)] disabled:opacity-50"
         >
-          {isLoadingMore ? "Yükleniyor..." : "Daha fazla yükle"}
+          {isLoadingMore ? "Yükleniyor..." : "Daha Fazla Yükle"}
         </button>
       )}
     </div>

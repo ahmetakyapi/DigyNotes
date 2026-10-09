@@ -108,7 +108,7 @@ export function CategorySearchSection({
             <div className="flex min-w-0 items-center gap-2.5">
               <InfoIcon size={16} weight="bold" className="shrink-0 text-[var(--gold)]" />
               <span className="truncate text-sm font-semibold text-[var(--text-primary)]">
-                {supportsAutofill ? guidance.searchTitle : "Başlıkla başla"}
+                {supportsAutofill ? guidance.searchTitle : "Başlıkla Başla"}
               </span>
               <span className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-muted)]">
                 {completedStepCount}/4
@@ -251,8 +251,8 @@ export function FieldsSection({
         </p>
         <h3 className="text-lg font-semibold text-[var(--text-primary)]">
           {supportsAutofill
-            ? "Başlığı ve temel durumu netleştir"
-            : "Durum ve temel alanları tamamla"}
+            ? "Başlığı ve Temel Durumu Netleştir"
+            : "Durum ve Temel Alanları Tamamla"}
         </h3>
       </div>
 
@@ -382,7 +382,7 @@ function LocationBlock({
             rel="noreferrer"
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
           >
-            Haritada aç
+            Haritada Aç
           </a>
         )}
       </div>

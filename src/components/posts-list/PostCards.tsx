@@ -61,7 +61,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
         />
 
         <div className="absolute left-5 top-5 flex items-center gap-2">
-          <span className="dn-mono rounded-full bg-[#d4f53c] px-3 py-1 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[#0b0b0a]">
+          <span className="dn-mono rounded-full bg-[#b9a8ff] px-3 py-1 text-[9.5px] font-medium uppercase tracking-[0.14em] text-[#0b0b0a]">
             {activeTab === "kaydedilenler" ? "Kaydedilen" : "Öne Çıkan"}
           </span>
           {post.status && <StatusBadge status={post.status} />}

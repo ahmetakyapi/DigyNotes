@@ -42,7 +42,7 @@ export default async function MaintenancePage() {
           Bakım Modu
         </p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--text-primary)] sm:text-4xl">
-          Sistem kısa süreliğine düzenleniyor
+          Sistem Kısa Süreliğine Düzenleniyor
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--text-secondary)] sm:text-[15px]">
           {message}
@@ -85,7 +85,7 @@ export default async function MaintenancePage() {
             href="/"
             className="inline-flex min-w-[180px] justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-5 py-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
-            Ana sayfaya dön
+            Ana Sayfaya Dön
           </Link>
         </div>
       </div>

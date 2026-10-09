@@ -67,7 +67,10 @@ export function LandingCursor() {
     >
       <motion.div
         className="flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#f2efe8]"
-        animate={{ width: active ? (label ? 92 : 56) : 12, height: active ? (label ? 92 : 56) : 12 }}
+        animate={{
+          width: active ? (label ? 92 : 56) : 12,
+          height: active ? (label ? 92 : 56) : 12,
+        }}
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
       >
         {label ? (
@@ -96,7 +99,10 @@ export function MaskLine({
   const inView = useInView(ref, { once, margin: "0px 0px -10% 0px" });
   const reduce = useReducedMotion();
   return (
-    <span ref={ref} className={`-mt-[0.14em] block overflow-hidden pb-[0.08em] pt-[0.14em] ${className}`}>
+    <span
+      ref={ref}
+      className={`-mt-[0.14em] block overflow-hidden pb-[0.08em] pt-[0.14em] ${className}`}
+    >
       <motion.span
         className="block will-change-transform"
         initial={reduce ? false : { y: "110%", rotate: 2 }}
@@ -136,7 +142,13 @@ export function FadeUp({
 }
 
 /* ── Magnetic wrapper: pulls its child toward the pointer ── */
-export function Magnetic({ children, strength = 0.35 }: { children: ReactNode; strength?: number }) {
+export function Magnetic({
+  children,
+  strength = 0.35,
+}: {
+  children: ReactNode;
+  strength?: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);

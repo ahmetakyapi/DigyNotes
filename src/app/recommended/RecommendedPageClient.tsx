@@ -88,7 +88,7 @@ export default function RecommendedPageClient() {
             <SparkleIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Önerileri görmek için giriş yap
+            Önerileri Görmek İçin Giriş Yap
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Bu yüzey senin arşivine bakarak çalışır. Giriş yaptığında etiketlerin ve notların
@@ -98,12 +98,12 @@ export default function RecommendedPageClient() {
             href="/login"
             className="hover:bg-accent/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
-            Giriş yap
+            Giriş Yap
           </Link>
         </div>
       ) : loadFailed ? (
         <div className="rounded-[32px] border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-20 text-center shadow-[var(--shadow-soft)]">
-          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Öneriler yüklenemedi</h2>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Öneriler Yüklenemedi</h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Öneri motorundan şu anda cevap alamadık. Notlarına geri dönüp yeni etiketler ekleyebilir
             veya biraz sonra tekrar deneyebilirsin.
@@ -115,7 +115,7 @@ export default function RecommendedPageClient() {
             <CompassIcon size={28} weight="duotone" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Henüz öneri görünmüyor
+            Henüz Öneri Görünmüyor
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Etiketli notların arttıkça sana daha isabetli öneriler göstermeye başlayacağız. Bu
@@ -126,7 +126,7 @@ export default function RecommendedPageClient() {
             className="hover:bg-accent/16 mt-6 inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3 text-sm font-semibold text-[var(--gold)] transition-colors"
           >
             <SparkleIcon size={16} weight="duotone" />
-            Notlarıma dön
+            Notlarıma Dön
           </Link>
         </div>
       ) : (
@@ -202,7 +202,7 @@ function RecommendedCard({ post }: { post: Post }) {
 
           <div className="flex items-center justify-between border-t border-[var(--border)] pt-4 text-xs text-[var(--text-faint)]">
             <span>
-              {post.user?.username ? `Kaynak: @${post.user.username}` : "Topluluk önerisi"}
+              {post.user?.username ? `Kaynak: @${post.user.username}` : "Topluluk Önerisi"}
             </span>
             <span className="font-medium text-[var(--gold)]">Aç →</span>
           </div>

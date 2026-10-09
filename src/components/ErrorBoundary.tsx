@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <WarningCircleIcon size={28} weight="duotone" color="#e53e3e" />
           </div>
           <h2 className="mt-5 text-xl font-semibold text-[var(--text-primary)]">
-            Bir şeyler ters gitti
+            Bir Şeyler Ters Gitti
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-secondary)]">
             Sayfa beklenmedik bir hata ile karşılaştı. Lütfen sayfayı yenileyin veya daha sonra

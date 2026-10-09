@@ -1002,7 +1002,7 @@ export default function AdminPage() {
                             </button>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili gizle" : "Profili herkese aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}>
+                            <button onClick={(e) => { e.stopPropagation(); togglePublic(u); }} title={u.isPublic ? "Profili Gizle" : "Profili Herkese Aç"} className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-all duration-200 ${u.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}>
                               <span className={`absolute h-3.5 w-3.5 rounded-full bg-white shadow transition-all duration-200 ${u.isPublic ? "left-[18px]" : "left-[3px]"}`} />
                             </button>
                           </td>

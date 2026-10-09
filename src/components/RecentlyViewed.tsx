@@ -196,7 +196,7 @@ export default function RecentlyViewed() {
 
           <button
             onClick={handleClearAll}
-            title="Geçmişi temizle"
+            title="Geçmişi Temizle"
             className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--danger,#e53e3e)]"
           >
             <XIcon size={12} weight="bold" />

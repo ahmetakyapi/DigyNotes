@@ -307,7 +307,7 @@ export default function NewPostPage() {
     },
     {
       step: "2",
-      label: supportsAutofill ? guidance.searchTitle : "Manuel başlangıç",
+      label: supportsAutofill ? guidance.searchTitle : "Manuel Başlangıç",
       detail: supportsAutofill ? guidance.searchHint : guidance.manualHint,
       complete: supportsAutofill ? autofillDone || hasLocation : Boolean(title || creator || image),
     },
@@ -386,7 +386,7 @@ export default function NewPostPage() {
   const completedStepCount = flowSteps.filter((item) => item.complete).length;
   const nextPendingStep = flowSteps.find((item) => !item.complete);
   const nextActionText = autofillDone
-    ? "Başlık ve durumu tamamla"
+    ? "Başlık ve Durumu Tamamla"
     : (nextPendingStep?.label ?? "İçeriğe geç");
 
   const sidebarCards = (

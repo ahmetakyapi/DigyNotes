@@ -9,7 +9,7 @@ export default function CategoryError({ reset }: { reset: () => void }) {
           <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
         </svg>
       </div>
-      <h2 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">Kategori yüklenirken bir hata oluştu</h2>
+      <h2 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">Kategori Yüklenirken Bir Hata Oluştu</h2>
       <p className="mb-6 max-w-sm text-sm text-[var(--text-muted)]">
         Sayfa beklenmedik bir hatayla karşılaştı. Tekrar deneyebilirsin.
       </p>
@@ -17,7 +17,7 @@ export default function CategoryError({ reset }: { reset: () => void }) {
         onClick={reset}
         className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--gold)]"
       >
-        Tekrar dene
+        Tekrar Dene
       </button>
     </div>
   );

@@ -6,7 +6,7 @@ interface RetryButtonProps {
 }
 
 export function RetryButton({
-  label = "Tekrar dene",
+  label = "Tekrar Dene",
   className = "",
 }: RetryButtonProps) {
   return (

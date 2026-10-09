@@ -127,7 +127,7 @@ export default function FollowListModal({
                 onClick={load}
                 className="text-xs text-[var(--gold)] transition-colors hover:text-[#e0c068]"
               >
-                Tekrar dene
+                Tekrar Dene
               </button>
             </div>
           ) : users.length === 0 ? (

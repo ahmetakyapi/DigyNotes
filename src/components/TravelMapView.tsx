@@ -213,7 +213,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                     <p className="mt-1 text-[11px] text-[var(--text-muted)]">{post.years}</p>
                   )}
                   <p className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--text-secondary)]">
-                    {post.excerpt || "Gezi notu"}
+                    {post.excerpt || "Gezi Notu"}
                   </p>
                 </div>
               </div>

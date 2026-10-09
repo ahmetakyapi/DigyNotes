@@ -16,7 +16,7 @@ export const ARCHIVES: ArchiveItem[] = [
     key: "film",
     index: "01",
     label: "Film",
-    verb: "izlediklerin",
+    verb: "İzlediklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
     description: "Yönetmen, yıl ve afiş TMDB'den kendiliğinden gelir. Sen yalnızca o sahnenin sende bıraktığını yaz.",
     images: [
@@ -30,7 +30,7 @@ export const ARCHIVES: ArchiveItem[] = [
     key: "dizi",
     index: "02",
     label: "Dizi",
-    verb: "takip ettiklerin",
+    verb: "Takip Ettiklerin",
     statuses: ["İzlendi", "İzleniyor", "İzlenecek"],
     description: "Yarım bıraktığın sezonları, bitirdiğin finalleri ve sırada bekleyenleri tek bakışta ayır.",
     images: [
@@ -44,7 +44,7 @@ export const ARCHIVES: ArchiveItem[] = [
     key: "oyun",
     index: "03",
     label: "Oyun",
-    verb: "oynadıkların",
+    verb: "Oynadıkların",
     statuses: ["Tamamlandı", "Oynanıyor", "Oynanacak"],
     description: "Geliştirici ve çıkış yılı RAWG'den dolar; saatlerce kaybolduğun dünyalar not defterinde yerini alır.",
     images: [
@@ -58,7 +58,7 @@ export const ARCHIVES: ArchiveItem[] = [
     key: "kitap",
     index: "04",
     label: "Kitap",
-    verb: "okudukların",
+    verb: "Okudukların",
     statuses: ["Okundu", "Okunuyor", "Okunacak"],
     description: "Yazar ve kapak Open Library'den. Altını çizdiğin cümleler, kenara düştüğün notlar burada kalır.",
     images: [
@@ -72,7 +72,7 @@ export const ARCHIVES: ArchiveItem[] = [
     key: "gezi",
     index: "05",
     label: "Gezi",
-    verb: "gezdiklerin",
+    verb: "Gezdiklerin",
     statuses: ["Gidildi", "Planlandı"],
     description: "Yerler OpenStreetMap'ten bulunur, haritada iğneye dönüşür. Bir sokağın kokusunu bile not edebilirsin.",
     images: [

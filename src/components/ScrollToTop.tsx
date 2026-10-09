@@ -25,7 +25,7 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={scrollUp}
-      aria-label="Yukarı dön"
+      aria-label="Yukarı Dön"
       className={`hover:border-[var(--gold)]/40 fixed bottom-20 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition-all duration-300 hover:text-[var(--gold)] active:scale-95 sm:bottom-6 sm:right-6 sm:h-11 sm:w-11 ${
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
       }`}

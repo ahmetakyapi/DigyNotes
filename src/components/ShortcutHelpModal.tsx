@@ -13,13 +13,13 @@ interface Shortcut {
 }
 
 const SHORTCUTS: Shortcut[] = [
-  { key: "N", label: "Yeni not oluştur" },
-  { key: "S", label: "Arama kutusuna odaklan" },
-  { key: "H", label: "Ana sayfaya git" },
-  { key: "F", label: "Akış sayfasına git" },
-  { key: "D", label: "Keşfet sayfasına git" },
-  { key: "?", label: "Bu yardımı göster" },
-  { key: "Esc", label: "Modalı kapat" },
+  { key: "N", label: "Yeni Not Oluştur" },
+  { key: "S", label: "Arama Kutusuna Odaklan" },
+  { key: "H", label: "Ana Sayfaya Git" },
+  { key: "F", label: "Akış Sayfasına Git" },
+  { key: "D", label: "Keşfet Sayfasına Git" },
+  { key: "?", label: "Bu Yardımı Göster" },
+  { key: "Esc", label: "Modalı Kapat" },
 ];
 
 export default function ShortcutHelpModal() {

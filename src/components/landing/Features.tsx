@@ -38,13 +38,15 @@ function Tile({
         <h3 className="mt-3 text-2xl font-bold leading-[1.05] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[28px]">
           {title}
         </h3>
-        <div className="relative mt-6 flex-1">{children}</div>
+        <div className="relative mt-5 flex-1">{children}</div>
       </div>
     </FadeUp>
   );
 }
 
-const em = (s: string) => <span className="dn-display font-normal italic tracking-[-0.01em]">{s}</span>;
+const em = (s: string) => (
+  <span className="dn-display font-normal italic tracking-[-0.01em]">{s}</span>
+);
 
 /* A — rating playground */
 function RatingPlayground() {
@@ -100,14 +102,17 @@ function RatingPlayground() {
           })}
         </div>
         <p className="mt-4 max-w-[360px] text-sm leading-relaxed text-[var(--text-secondary)]">
-          Üzerinde gezin, tıkla. Beş yıldız bazen yetmez, bazen fazla gelir — DigyNotes yarım puanları da sayar.
+          Üzerinde gezin, tıkla. Beş yıldız bazen yetmez, bazen fazla gelir — DigyNotes yarım
+          puanları da sayar.
         </p>
       </div>
       <div className="text-right">
-        <span className="dn-display block text-[clamp(6rem,14vw,11rem)] italic leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)] tabular-nums">
+        <span className="dn-display block text-[clamp(6rem,14vw,11rem)] italic tabular-nums leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)]">
           {shown.toFixed(1)}
         </span>
-        <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">/ 5 — senin puanın</span>
+        <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+          / 5 — Senin Puanın
+        </span>
       </div>
     </div>
   );
@@ -117,7 +122,11 @@ function RatingPlayground() {
 const SEARCHES = [
   { q: "Perfect Days", src: `${MEDIA}/perfect-days.webp`, meta: "Film · Wim Wenders · 2023" },
   { q: "Elden Ring", src: `${MEDIA}/elden-ring.webp`, meta: "Oyun · FromSoftware · 2022" },
-  { q: "Kürk Mantolu", src: `${MEDIA}/kurk-mantolu-madonna.webp`, meta: "Kitap · Sabahattin Ali · 1943" },
+  {
+    q: "Kürk Mantolu",
+    src: `${MEDIA}/kurk-mantolu-madonna.webp`,
+    meta: "Kitap · Sabahattin Ali · 1943",
+  },
 ];
 function SearchTyping() {
   const ref = useRef<HTMLDivElement>(null);
@@ -143,7 +152,12 @@ function SearchTyping() {
   return (
     <div ref={ref} className="flex h-full flex-col gap-3">
       <div className="flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 py-3">
-        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-[var(--text-muted)]" strokeWidth="2" aria-hidden>
+        <svg
+          viewBox="0 0 24 24"
+          className="h-4 w-4 fill-none stroke-[var(--text-muted)]"
+          strokeWidth="2"
+          aria-hidden
+        >
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" />
         </svg>
@@ -187,8 +201,8 @@ function SearchTyping() {
 /* C — follow & feed */
 function FeedVisual() {
   const people = [
-    { n: "Elif", c: "bg-[#b1a4ff]", t: "Aftersun'a 5 yıldız verdi" },
-    { n: "Can", c: "bg-[#d4f53c]", t: "Outer Wilds notunu yazdı" },
+    { n: "Elif", c: "bg-[#ffb088]", t: "Aftersun'a 5 yıldız verdi" },
+    { n: "Can", c: "bg-[#b9a8ff]", t: "Outer Wilds notunu yazdı" },
     { n: "Deniz", c: "bg-[#ff8a65]", t: "Kyoto'yu haritaya ekledi" },
   ];
   return (
@@ -202,7 +216,9 @@ function FeedVisual() {
           transition={{ delay: 0.15 * i, duration: 0.7, ease: EASE_OUT_EXPO }}
           className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] px-3 py-2.5"
         >
-          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-[#0b0b0a] ${p.c}`}>
+          <span
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-[#0b0b0a] ${p.c}`}
+          >
             {p.n[0]}
           </span>
           <span className="truncate text-[13px] text-[var(--text-secondary)]">
@@ -241,7 +257,7 @@ function CollectionFan() {
         ))}
       </div>
       <p className="dn-mono mt-2 text-center text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
-        Japonya Dosyası · 3 not
+        Japonya Dosyası · 3 Not
       </p>
       <p className="mt-auto pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
         Türler arası koleksiyonlar kur: bir film, bir dizi ve bir şehir aynı rafta.
@@ -263,13 +279,31 @@ function TravelMap() {
     <div className="flex h-full flex-col">
       <svg viewBox="0 0 180 90" className="w-full" aria-hidden>
         {dots.map(([x, y]) => (
-          <circle key={`${x}-${y}`} cx={x * 10 + 5} cy={y * 10 + 5} r="1.1" fill="var(--text-faint)" />
+          <circle
+            key={`${x}-${y}`}
+            cx={x * 10 + 5}
+            cy={y * 10 + 5}
+            r="1.1"
+            fill="var(--text-faint)"
+          />
         ))}
         {pins.map((p, i) => (
           <g key={p.l}>
             <circle cx={p.x * 10} cy={p.y * 10} r="7" fill="var(--gold)" opacity="0.18">
-              <animate attributeName="r" values="4;10;4" dur="2.4s" begin={`${i * 0.6}s`} repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.35;0;0.35" dur="2.4s" begin={`${i * 0.6}s`} repeatCount="indefinite" />
+              <animate
+                attributeName="r"
+                values="4;10;4"
+                dur="2.4s"
+                begin={`${i * 0.6}s`}
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="opacity"
+                values="0.35;0;0.35"
+                dur="2.4s"
+                begin={`${i * 0.6}s`}
+                repeatCount="indefinite"
+              />
             </circle>
             <circle cx={p.x * 10} cy={p.y * 10} r="3" fill="var(--gold)" />
             <text
@@ -315,13 +349,17 @@ function YearStrip() {
       </div>
       <div className="grid grid-cols-3 gap-6 md:gap-10">
         {[
-          ["88", "not"],
-          ["4.3", "ort. puan"],
-          ["Tem", "en dolu ay"],
+          ["88", "Not"],
+          ["4.3", "Ort. Puan"],
+          ["Tem", "En Dolu Ay"],
         ].map(([n, l]) => (
           <div key={l}>
-            <span className="dn-display block text-5xl italic leading-none text-[var(--text-primary)] sm:text-6xl">{n}</span>
-            <span className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">{l}</span>
+            <span className="dn-display block text-5xl italic leading-none text-[var(--text-primary)] sm:text-6xl">
+              {n}
+            </span>
+            <span className="dn-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+              {l}
+            </span>
           </div>
         ))}
       </div>
@@ -331,34 +369,58 @@ function YearStrip() {
 
 export function Features() {
   return (
-    <section id="ozellikler" className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-28 sm:px-10 md:py-40">
+    <section
+      id="ozellikler"
+      className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-16 sm:px-10 md:py-24"
+    >
       <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         <span className="text-[var(--gold)]">(05)</span> Özellikler
       </span>
       <h2 className="mt-4 max-w-[14ch] text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-        <MaskLine>Küçük ayrıntılar,</MaskLine>
+        <MaskLine>Küçük Ayrıntılar,</MaskLine>
         <MaskLine delay={0.08}>
-          <span className="dn-display font-normal italic tracking-[-0.02em]">büyük hafıza.</span>
+          <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Hafıza.</span>
         </MaskLine>
       </h2>
 
-      <div className="mt-16 grid gap-4 md:grid-cols-6">
-        <Tile index="A — Puan" title={<>Yarım yıldız {em("bile")} önemli.</>} className="md:col-span-4" cursor="Dene">
+      <div className="mt-10 grid gap-3 md:grid-cols-6 md:gap-4">
+        <Tile
+          index="A — Puan"
+          title={<>Yarım Yıldız {em("Bile")} Önemli.</>}
+          className="md:col-span-4"
+          cursor="Dene"
+        >
           <RatingPlayground />
         </Tile>
-        <Tile index="B — Otomatik" title={<>Yaz, {em("gerisi")} dolsun.</>} className="md:col-span-2">
+        <Tile
+          index="B — Otomatik"
+          title={<>Yaz, {em("Gerisi")} Dolsun.</>}
+          className="md:col-span-2"
+        >
           <SearchTyping />
         </Tile>
-        <Tile index="C — Sosyal" title={<>Takip et, {em("akışı")} izle.</>} className="md:col-span-2">
+        <Tile
+          index="C — Sosyal"
+          title={<>Takip Et, {em("Akışı")} İzle.</>}
+          className="md:col-span-2"
+        >
           <FeedVisual />
         </Tile>
-        <Tile index="D — Koleksiyon" title={<>Kendi {em("rafını")} kur.</>} className="md:col-span-2">
+        <Tile
+          index="D — Koleksiyon"
+          title={<>Kendi {em("Rafını")} Kur.</>}
+          className="md:col-span-2"
+        >
           <CollectionFan />
         </Tile>
-        <Tile index="E — Harita" title={<>Gezilerin {em("haritada.")}</>} className="md:col-span-2">
+        <Tile index="E — Harita" title={<>Gezilerin {em("Haritada.")}</>} className="md:col-span-2">
           <TravelMap />
         </Tile>
-        <Tile index="F — Yıl özeti" title={<>Bir yılın {em("dökümü,")} tek ekranda.</>} className="md:col-span-6">
+        <Tile
+          index="F — Yıl özeti"
+          title={<>Bir Yılın {em("Dökümü,")} Tek Ekranda.</>}
+          className="md:col-span-6"
+        >
           <YearStrip />
         </Tile>
       </div>

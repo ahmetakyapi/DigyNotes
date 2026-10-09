@@ -226,13 +226,13 @@ export default function NotesPageClient({
               href="/notes"
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:text-[var(--gold)]"
             >
-              Aramayı temizle
+              Aramayı Temizle
             </Link>
             <Link
               href="/new-post"
               className="rounded-lg bg-accent hover:bg-accent-dark px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
             >
-              Yeni not ekle
+              Yeni Not Ekle
             </Link>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function NotesPageClient({
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
           </svg>
         </div>
-        <h2 className="mb-2 text-xl font-bold text-[var(--text-primary)]">İlk notunu oluştur</h2>
+        <h2 className="mb-2 text-xl font-bold text-[var(--text-primary)]">İlk Notunu Oluştur</h2>
         <p className="mb-6 max-w-md text-sm text-[var(--text-muted)]">
           İzlediğin filmleri, okuduğun kitapları, oynadığın oyunları ve gezdiğin yerleri not al.
           Puanla, etiketle ve koleksiyonlar oluştur.
@@ -278,7 +278,7 @@ export default function NotesPageClient({
           href="/new-post"
           className="rounded-lg bg-accent hover:bg-accent-dark px-6 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
         >
-          İlk notu ekle
+          İlk Notu Ekle
         </Link>
 
         <p className="mt-8 text-xs text-[var(--text-muted)]">

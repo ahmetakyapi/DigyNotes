@@ -317,7 +317,7 @@ export function PostsList({
               >
                 {(() => {
                   if (currentIsLoadingMore) return "Daha fazla yükleniyor...";
-                  if (currentHasMore) return "Daha fazla yükle";
+                  if (currentHasMore) return "Daha Fazla Yükle";
                   return "Tüm içerikler yüklendi";
                 })()}
               </button>

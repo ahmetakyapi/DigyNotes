@@ -355,7 +355,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     href="/login"
                     className="hover:bg-accent/18 rounded-lg border border-accent/35 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition-colors"
                   >
-                    Takip etmek için giriş yap
+                    Takip Etmek İçin Giriş Yap
                   </Link>
                 )}
               </div>
@@ -587,7 +587,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
           ) : filteredCollections.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
               <p className="text-sm text-[var(--text-muted)]">
-                Aramana uyan koleksiyon bulunamadı.
+                Aramana Uyan Koleksiyon Bulunamadı.
               </p>
             </div>
           ) : (

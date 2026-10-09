@@ -14,12 +14,54 @@ import { MEDIA } from "./data";
 import { FadeUp, MaskLine } from "./Motion";
 
 const ROWS = [
-  { src: `${MEDIA}/past-lives.webp`, title: "Past Lives", meta: "Celine Song · 2023", cat: "Film", status: "İzlendi", r: 4.5 },
-  { src: `${MEDIA}/severance.webp`, title: "Severance", meta: "Dan Erickson · 2022–", cat: "Dizi", status: "İzleniyor", r: 5 },
-  { src: `${MEDIA}/disco-elysium.webp`, title: "Disco Elysium", meta: "ZA/UM · 2019", cat: "Oyun", status: "Oynanıyor", r: 5 },
-  { src: `${MEDIA}/stoner.webp`, title: "Stoner", meta: "John Williams · 1965", cat: "Kitap", status: "Okunuyor", r: 5 },
-  { src: `${MEDIA}/dune-part-two.webp`, title: "Dune: Part Two", meta: "D. Villeneuve · 2024", cat: "Film", status: "İzlendi", r: 4.5 },
-  { src: `${MEDIA}/kapadokya.webp`, title: "Kapadokya", meta: "Nevşehir · 2025", cat: "Gezi", status: "Gidildi", r: 5 },
+  {
+    src: `${MEDIA}/past-lives.webp`,
+    title: "Past Lives",
+    meta: "Celine Song · 2023",
+    cat: "Film",
+    status: "İzlendi",
+    r: 4.5,
+  },
+  {
+    src: `${MEDIA}/severance.webp`,
+    title: "Severance",
+    meta: "Dan Erickson · 2022–",
+    cat: "Dizi",
+    status: "İzleniyor",
+    r: 5,
+  },
+  {
+    src: `${MEDIA}/disco-elysium.webp`,
+    title: "Disco Elysium",
+    meta: "ZA/UM · 2019",
+    cat: "Oyun",
+    status: "Oynanıyor",
+    r: 5,
+  },
+  {
+    src: `${MEDIA}/stoner.webp`,
+    title: "Stoner",
+    meta: "John Williams · 1965",
+    cat: "Kitap",
+    status: "Okunuyor",
+    r: 5,
+  },
+  {
+    src: `${MEDIA}/dune-part-two.webp`,
+    title: "Dune: Part Two",
+    meta: "D. Villeneuve · 2024",
+    cat: "Film",
+    status: "İzlendi",
+    r: 4.5,
+  },
+  {
+    src: `${MEDIA}/kapadokya.webp`,
+    title: "Kapadokya",
+    meta: "Nevşehir · 2025",
+    cat: "Gezi",
+    status: "Gidildi",
+    r: 5,
+  },
 ];
 
 export function Stars({ value, size = 10 }: { value: number; size?: number }) {
@@ -76,11 +118,15 @@ function AppMock() {
               key={t}
               className={`relative flex shrink-0 items-baseline gap-1 pb-2.5 ${i === 0 ? "text-[var(--text-primary)]" : ""}`}
             >
-              <span className={`dn-mono text-[8px] ${i === 0 ? "text-[var(--gold)]" : "text-[var(--text-faint)]"}`}>
+              <span
+                className={`dn-mono text-[8px] ${i === 0 ? "text-[var(--gold)]" : "text-[var(--text-faint)]"}`}
+              >
                 0{i}
               </span>
               {t}
-              {i === 0 && <span className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-[var(--gold)]" />}
+              {i === 0 && (
+                <span className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-[var(--gold)]" />
+              )}
             </span>
           ))}
         </div>
@@ -88,14 +134,26 @@ function AppMock() {
       {/* body */}
       <div className="grid gap-4 p-5 sm:p-8 md:grid-cols-[1.15fr_1fr]">
         <div className="relative min-h-[260px] overflow-hidden rounded-[18px] border border-[var(--border)] md:min-h-[360px]">
-          <Image src={`${MEDIA}/perfect-days.webp`} alt="" fill sizes="600px" className="object-cover" />
+          <Image
+            src={`${MEDIA}/perfect-days.webp`}
+            alt=""
+            fill
+            sizes="600px"
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.95)] via-[rgb(var(--ink-rgb)/0.35)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
             <div className="dn-mono flex gap-2 text-[9px] uppercase tracking-[0.12em]">
-              <span className="rounded-full bg-[#d4f53c] px-2 py-0.5 text-[#0b0b0a]">Öne çıkan</span>
-              <span className="rounded-full border border-white/25 px-2 py-0.5 text-white/80">Film · 2023</span>
+              <span className="rounded-full bg-[#b9a8ff] px-2 py-0.5 text-[#0b0b0a]">
+                Öne Çıkan
+              </span>
+              <span className="rounded-full border border-white/25 px-2 py-0.5 text-white/80">
+                Film · 2023
+              </span>
             </div>
-            <p className="dn-display mt-3 text-4xl italic leading-none text-[#fbf9f4]">Perfect Days</p>
+            <p className="dn-display mt-3 text-4xl italic leading-none text-[#fbf9f4]">
+              Perfect Days
+            </p>
             <p className="mt-1 text-[12px] text-white/60">Wim Wenders</p>
             <div className="mt-3">
               <Stars value={5} size={12} />
@@ -116,7 +174,9 @@ function AppMock() {
                   <span className="text-[var(--gold)]">{r.cat}</span>
                   <span>{r.status}</span>
                 </div>
-                <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">{r.title}</p>
+                <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
+                  {r.title}
+                </p>
                 <p className="truncate text-[10.5px] text-[var(--text-muted)]">{r.meta}</p>
               </div>
               <Stars value={r.r} size={9} />
@@ -129,9 +189,9 @@ function AppMock() {
 }
 
 const NOTES = [
-  { label: "Kapak & künye otomatik", cls: "left-[-3%] top-[24%]" },
-  { label: "½ puan hassasiyeti", cls: "right-[-2%] top-[38%]" },
-  { label: "Durum: izlendi / izlenecek", cls: "left-[2%] bottom-[10%]" },
+  { label: "Kapak & Künye Otomatik", cls: "left-[-3%] top-[24%]" },
+  { label: "½ Puan Hassasiyeti", cls: "right-[-2%] top-[38%]" },
+  { label: "Durum: İzlendi / İzlenecek", cls: "left-[2%] bottom-[10%]" },
 ];
 
 export function Showcase() {
@@ -143,7 +203,7 @@ export function Showcase() {
   const y = useTransform(scrollYProgress, [0, 1], [120, 0]);
 
   return (
-    <section id="vitrin" ref={ref} className="relative scroll-mt-20 px-5 py-28 sm:px-10 md:py-40">
+    <section id="vitrin" ref={ref} className="relative scroll-mt-20 px-5 py-16 sm:px-10 md:py-24">
       <div className="mx-auto max-w-[1600px]">
         <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
           <div>
@@ -153,17 +213,17 @@ export function Showcase() {
             <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
               <MaskLine>Arşivin,</MaskLine>
               <MaskLine delay={0.08}>
-                <span className="dn-display font-normal italic tracking-[-0.02em]">sahnede.</span>
+                <span className="dn-display font-normal italic tracking-[-0.02em]">Sahnede.</span>
               </MaskLine>
             </h2>
           </div>
           <FadeUp className="max-w-[360px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
-            Her not bir afiş, bir puan ve birkaç cümle. Son eklediklerin öne çıkar, gerisi düzenli bir raf
-            gibi dizilir — sabitle, arşivle, filtrele.
+            Her not bir afiş, bir puan ve birkaç cümle. Son eklediklerin öne çıkar, gerisi düzenli
+            bir raf gibi dizilir — sabitle, arşivle, filtrele.
           </FadeUp>
         </div>
 
-        <div className="relative mt-16 [perspective:1800px] md:mt-24">
+        <div className="relative mt-10 [perspective:1800px] md:mt-14">
           <motion.div
             style={reduce ? undefined : { rotateX, scale, y, transformOrigin: "50% 0%" }}
             className="relative mx-auto max-w-[1180px]"

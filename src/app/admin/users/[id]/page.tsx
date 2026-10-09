@@ -479,7 +479,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   disabled={loadingMore}
                   className="mt-4 w-full rounded-xl border border-[var(--border)] py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {loadingMore ? "Yükleniyor…" : "Daha fazla göster"}
+                  {loadingMore ? "Yükleniyor…" : "Daha Fazla Göster"}
                 </button>
               )}
             </div>
@@ -584,7 +584,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                 </div>
                 <button
                   onClick={togglePublic}
-                  title={user.isPublic ? "Profili gizle" : "Profili herkese aç"}
+                  title={user.isPublic ? "Profili Gizle" : "Profili Herkese Aç"}
                   className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-all duration-200 ${user.isPublic ? "bg-accent-light" : "bg-[var(--bg-raised)]"}`}
                 >
                   <span
@@ -599,7 +599,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                   rel="noreferrer"
                   className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-muted)] transition-colors hover:border-accent/30 hover:text-[var(--text-primary)]"
                 >
-                  Profil sayfasına git
+                  Profil Sayfasına Git
                   <svg
                     width="11"
                     height="11"

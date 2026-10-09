@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════
    DigyNotes — Theme CSS Custom Properties
    "Cinémathèque": warm ink (dark) + bone paper (light),
-   one acid-lime signal accent, lilac secondary.
+   one lavender signal accent, apricot secondary.
    Channel vars (*-rgb) power Tailwind alpha modifiers.
 ═══════════════════════════════════════════ */
 
@@ -22,13 +22,13 @@
   --border-subtle: #1f1e1b;
   --border-header: #23221e;
 
-  --gold: #d4f53c;
-  --gold-light: #e6ff86;
-  --gold-dark: #b3d41c;
-  --gold-rgb: 212 245 60;
-  --gold-light-rgb: 230 255 134;
-  --accent-2: #b1a4ff;
-  --accent-2-rgb: 177 164 255;
+  --gold: #b9a8ff;
+  --gold-light: #d6ccff;
+  --gold-dark: #9a86f7;
+  --gold-rgb: 185 168 255;
+  --gold-light-rgb: 214 204 255;
+  --accent-2: #ffb088;
+  --accent-2-rgb: 255 176 136;
   --text-on-accent: #0b0b0a;
 
   --text-primary: #f2efe8;
@@ -49,7 +49,7 @@
   --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
   --card-surface: linear-gradient(180deg, #151513 0%, #111110 100%);
   --media-panel-bg: #121210;
-  --media-panel-sheen: rgba(212, 245, 60, 0.05);
+  --media-panel-sheen: rgba(185, 168, 255, 0.05);
   --media-overlay-strong: rgba(11, 11, 10, 0.9);
   --media-overlay-mid: rgba(11, 11, 10, 0.55);
   --media-overlay-soft: rgba(11, 11, 10, 0.1);
@@ -59,13 +59,13 @@
   --media-control-border: rgba(242, 239, 232, 0.2);
   --media-control-text: #fbf9f4;
   --media-control-hover-bg: rgba(11, 11, 10, 0.8);
-  --media-control-hover-border: rgba(212, 245, 60, 0.6);
+  --media-control-hover-border: rgba(185, 168, 255, 0.6);
   --media-glow: 0 30px 60px -20px rgba(0, 0, 0, 0.75);
   --shadow-deep: 0 80px 160px -60px rgba(0, 0, 0, 0.9);
   --image-edge-fade: rgba(19, 19, 17, 0.96);
-  --new-note-glow: 0 0 0 1px rgba(212, 245, 60, 0.35), 0 8px 24px -8px rgba(212, 245, 60, 0.35);
-  --new-note-glow-breathe: 0 0 0 1px rgba(212, 245, 60, 0.45), 0 10px 30px -8px rgba(212, 245, 60, 0.45);
-  --new-note-glow-strong: 0 0 0 1px rgba(212, 245, 60, 0.6), 0 12px 36px -8px rgba(212, 245, 60, 0.55);
+  --new-note-glow: 0 0 0 1px rgba(185, 168, 255, 0.35), 0 8px 24px -8px rgba(185, 168, 255, 0.35);
+  --new-note-glow-breathe: 0 0 0 1px rgba(185, 168, 255, 0.45), 0 10px 30px -8px rgba(185, 168, 255, 0.45);
+  --new-note-glow-strong: 0 0 0 1px rgba(185, 168, 255, 0.6), 0 12px 36px -8px rgba(185, 168, 255, 0.55);
 
   /* ── Motion ── */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -82,7 +82,7 @@
   --transition-slow: 500ms var(--ease-out-expo);
 
   /* ── Focus Rings ── */
-  --ring-accent: 0 0 0 2px rgba(212, 245, 60, 0.45);
+  --ring-accent: 0 0 0 2px rgba(185, 168, 255, 0.45);
   --ring-danger: 0 0 0 2px rgba(255, 90, 78, 0.45);
 
   /* ── Z-index Scale ── */
@@ -107,13 +107,13 @@ html[data-theme="light"] {
   --border-subtle: #e3ddd1;
   --border-header: #dcd5c7;
 
-  --gold: #4f7300;
-  --gold-light: #66900a;
-  --gold-dark: #3c5800;
-  --gold-rgb: 79 115 0;
-  --gold-light-rgb: 102 144 10;
-  --accent-2: #5b46d8;
-  --accent-2-rgb: 91 70 216;
+  --gold: #5b42d6;
+  --gold-light: #7259e8;
+  --gold-dark: #4430b5;
+  --gold-rgb: 91 66 214;
+  --gold-light-rgb: 114 89 232;
+  --accent-2: #b4541f;
+  --accent-2-rgb: 180 84 31;
   --text-on-accent: #faf8f3;
 
   --text-primary: #14130f;
@@ -134,7 +134,7 @@ html[data-theme="light"] {
   --shadow-soft: 0 8px 22px -12px rgba(60, 50, 30, 0.2);
   --card-surface: linear-gradient(180deg, #fbf9f5 0%, #f6f3ec 100%);
   --media-panel-bg: #e8e3d8;
-  --media-panel-sheen: rgba(79, 115, 0, 0.06);
+  --media-panel-sheen: rgba(91, 66, 214, 0.06);
   --media-overlay-strong: rgba(20, 19, 15, 0.78);
   --media-overlay-mid: rgba(20, 19, 15, 0.45);
   --media-overlay-soft: rgba(20, 19, 15, 0.06);
@@ -144,7 +144,7 @@ html[data-theme="light"] {
   --media-control-border: rgba(20, 19, 15, 0.16);
   --media-control-text: #14130f;
   --media-control-hover-bg: rgba(250, 248, 243, 0.98);
-  --media-control-hover-border: rgba(79, 115, 0, 0.5);
+  --media-control-hover-border: rgba(91, 66, 214, 0.5);
   --media-glow: 0 18px 40px -18px rgba(60, 50, 30, 0.3);
   --shadow-deep: 0 60px 120px -60px rgba(60, 50, 30, 0.45);
   --image-edge-fade: rgba(250, 248, 243, 0);
@@ -152,7 +152,7 @@ html[data-theme="light"] {
   --new-note-glow-breathe: 0 0 0 1px rgba(20, 19, 15, 0.9), 0 8px 20px -10px rgba(20, 19, 15, 0.35);
   --new-note-glow-strong: 0 0 0 1px rgba(20, 19, 15, 1), 0 12px 26px -10px rgba(20, 19, 15, 0.45);
 
-  --ring-accent: 0 0 0 2px rgba(79, 115, 0, 0.4);
+  --ring-accent: 0 0 0 2px rgba(91, 66, 214, 0.4);
   --ring-danger: 0 0 0 2px rgba(212, 52, 42, 0.4);
 }
 

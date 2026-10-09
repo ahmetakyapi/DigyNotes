@@ -46,7 +46,7 @@ export default function OfflinePage() {
           Çevrimdışı mod
         </p>
         <h1 className="mt-3 text-3xl font-black tracking-tight text-[var(--text-primary)] sm:text-4xl">
-          Bağlantı şu anda kullanılamıyor
+          Bağlantı Şu Anda Kullanılamıyor
         </h1>
         <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-[var(--text-secondary)] sm:text-[15px]">
           Daha önce açılmış sayfaları tekrar deneyebilirsin. Bağlantı geri geldiğinde uygulama
@@ -82,7 +82,7 @@ export default function OfflinePage() {
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <RetryButton
-            label="Yeniden dene"
+            label="Yeniden Dene"
             className="inline-flex min-w-[170px] justify-center rounded-2xl bg-accent hover:bg-accent-dark px-5 py-3 text-sm font-semibold text-[var(--text-on-accent)] transition-all"
           />
           <Link

@@ -143,7 +143,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-[var(--bg-card)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-[var(--gold)] focus:shadow-lg focus:ring-1 focus:ring-[var(--border)]"
       >
-        Ana içeriğe geç
+        Ana İçeriğe Geç
       </a>
 
       {/* ─── HEADER ─── */}
@@ -159,7 +159,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             >
               <Wordmark size="md" />
               <span className="dn-mono hidden border-l border-[var(--border)] pl-3 text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)] lg:inline">
-                Kişisel arşiv
+                Kişisel Arşiv
               </span>
             </Link>
 
@@ -191,8 +191,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               {/* Theme toggle — hidden on mobile, moved to settings */}
               <button
                 onClick={toggleTheme}
-                title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-                aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+                title={theme === "dark" ? "Açık Temaya Geç" : "Koyu Temaya Geç"}
+                aria-label={theme === "dark" ? "Açık Temaya Geç" : "Koyu Temaya Geç"}
                 className="hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-accent-light sm:flex"
               >
                 {theme === "dark" ? <SunIcon size={16} /> : <MoonIcon size={16} />}
@@ -212,9 +212,9 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 <Link
                   href="/new-post"
                   onClick={handleNewNoteClick}
-                  aria-label="Yeni not ekle"
+                  aria-label="Yeni Not Ekle"
                   aria-describedby={showNewNoteHint ? "new-note-mobile-hint" : undefined}
-                  title="Yeni not ekle"
+                  title="Yeni Not Ekle"
                   className="dn-new-note-soft-glow group flex h-10 items-center justify-center gap-1.5 rounded-full bg-[var(--gold)] px-3.5 text-[var(--text-on-accent)] transition-all duration-300 ease-out-expo hover:-translate-y-px hover:bg-[var(--gold-light)] active:scale-[0.96] sm:h-9 sm:px-4 sm:text-[13px] sm:font-semibold"
                 >
                   {/* Plus icon */}

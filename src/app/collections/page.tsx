@@ -142,7 +142,7 @@ export default function CollectionsPage() {
             href="/notes"
             className="text-xs text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
           >
-            Notlarıma dön
+            Notlarıma Dön
           </Link>
         </div>
         <div className="mt-3 h-px w-full bg-[var(--border)]" />
@@ -212,7 +212,7 @@ export default function CollectionsPage() {
       ) : collections.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-14 text-center">
           <h2 className="text-base font-semibold text-[var(--text-primary)]">
-            İlk koleksiyonunu oluşturarak başla
+            İlk Koleksiyonunu Oluşturarak Başla
           </h2>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Henüz bir koleksiyonun yok. Bir başlık ve kısa açıklama ekleyerek ilk seçkini birkaç
@@ -226,7 +226,7 @@ export default function CollectionsPage() {
       ) : filteredCollections.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-14 text-center">
           <h2 className="text-base font-semibold text-[var(--text-primary)]">
-            Aramana uyan koleksiyon bulunamadı.
+            Aramana Uyan Koleksiyon Bulunamadı.
           </h2>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Farklı bir anahtar kelime deneyebilir veya filtreyi temizleyerek tüm koleksiyonlarını

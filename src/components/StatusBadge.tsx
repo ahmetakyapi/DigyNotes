@@ -26,20 +26,20 @@ function getStatusStyles(status: string) {
 
   if (completed.includes(status)) {
     return {
-      textColor: "#e2ff7a",
-      borderColor: "rgba(212, 245, 60, 0.32)",
+      textColor: "#d6ccff",
+      borderColor: "rgba(185, 168, 255, 0.32)",
       backgroundColor: "rgba(11, 11, 10, 0.72)",
-      dotColor: "#d4f53c",
+      dotColor: "#b9a8ff",
       boxShadow: "none",
     };
   }
 
   if (ongoing.includes(status)) {
     return {
-      textColor: "#cfc6ff",
-      borderColor: "rgba(177, 164, 255, 0.34)",
+      textColor: "#ffc9ad",
+      borderColor: "rgba(255, 176, 136, 0.34)",
       backgroundColor: "rgba(11, 11, 10, 0.72)",
-      dotColor: "#b1a4ff",
+      dotColor: "#ffb088",
       boxShadow: "none",
     };
   }

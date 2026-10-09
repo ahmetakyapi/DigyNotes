@@ -830,7 +830,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <div className="absolute bottom-0 left-0 right-0 px-5 pb-7 sm:px-10 sm:pb-10">
             <div className="max-w-3xl md:max-w-[58%]">
               <div className="mb-3 flex items-center gap-2">
-                <span className="dn-mono inline-block rounded-full bg-[#d4f53c] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#0b0b0a]">
+                <span className="dn-mono inline-block rounded-full bg-[#b9a8ff] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#0b0b0a]">
                   {categoryLabel}
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
@@ -978,7 +978,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 rel="noreferrer"
                 className="rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
               >
-                Haritada aç
+                Haritada Aç
               </a>
             </div>
             <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_220px]">
@@ -1269,7 +1269,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
               <h2 className="text-sm font-semibold text-[var(--text-secondary)]">
-                Bu içerik hakkında diğer notlar
+                Bu İçerik Hakkında Diğer Notlar
               </h2>
               <span className="rounded-full bg-[var(--bg-raised)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">
                 {communityPosts.length}

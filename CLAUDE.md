@@ -123,16 +123,17 @@ bg-base   var(--bg-base)    #0b0b0a / #f1ede4
 bg-card   var(--bg-card)    #131311 / #faf8f3
 border    var(--border)     #282722 / #d8d1c3
 text      var(--text-primary) #f2efe8 / #14130f  (secondary, muted, faint)
-accent    var(--gold)       #d4f53c (acid lime) / #4f7300 (olive)  → Tailwind `accent`, `gold`
-accent-2  var(--accent-2)   #b1a4ff (lilac) / #5b46d8
-on-accent var(--text-on-accent)  ink on lime (dark) / paper on olive (light)
+accent    var(--gold)       #b9a8ff (lavender) / #5b42d6 (violet)  → Tailwind `accent`, `gold`
+accent-2  var(--accent-2)   #ffb088 (apricot) / #b4541f
+on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light)
 ```
 
 - Alpha variants: use Tailwind `bg-accent/10`, `border-accent-2/30` or `rgb(var(--gold-rgb)/0.2)` — never hardcode hex.
 - Fonts: Hanken Grotesk (sans, `--font-sans`), Instrument Serif (`.dn-display`, italic accents), JetBrains Mono (`.dn-mono`, index labels/meta).
-- Signature patterns: mono index labels `(01)`, serif-italic accent word inside bold grotesk headlines, lime period/dot, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
+- Signature patterns: mono index labels `(01)`, serif-italic accent word inside bold grotesk headlines, accent period/dot, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
 - Logo: `src/components/Wordmark.tsx` (typographic) — the PNG logo is no longer used in the UI.
-- Landing: `src/components/landing/*` (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
+- UI copy: headings, subtitles, buttons and tabs use Turkish Title Case ("Arşivini Başlat", "Giriş Yap"); conjunctions (ve, ile, da/de, ki) stay lowercase. Toasts/placeholders/body stay sentence case.
+- Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
 
 ## Architecture Patterns
 

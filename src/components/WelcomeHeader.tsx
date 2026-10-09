@@ -55,7 +55,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="mx-auto max-w-5xl px-3 pb-4 pt-7 sm:px-6 sm:pt-10"
+      className="mx-auto max-w-5xl px-3 pb-2 pt-5 sm:px-6 sm:pt-7"
     >
       {/* LAYOUT: mono dateline → editorial greeting (left) · big serif stats (right, md+) */}
       <p className="dn-mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
@@ -66,26 +66,26 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
         <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[46px]">
           {name ? (
             <>
-              {firstName}, <span className="dn-display font-normal italic tracking-[-0.02em]">arşivin</span> seni
-              bekliyor<span className="text-[var(--gold)]">.</span>
+              {firstName}, <span className="dn-display font-normal italic tracking-[-0.02em]">Arşivin</span> Seni
+              Bekliyor<span className="text-[var(--gold)]">.</span>
             </>
           ) : (
-            "Hoş geldin"
+            "Hoş Geldin"
           )}
         </h1>
 
         {stats.total > 0 && (
           <div className="flex items-end gap-6 sm:gap-8">
-            <Stat value={<AnimatedCounter value={stats.total} />} label="not" />
+            <Stat value={<AnimatedCounter value={stats.total} />} label="Not" />
             {stats.avgRating > 0 && (
               <Stat
                 value={
                   <AnimatedCounter value={stats.avgRating} format={(n) => n.toFixed(1).replace(".", ",")} />
                 }
-                label="ort. puan"
+                label="Ort. Puan"
               />
             )}
-            {stats.thisMonth > 0 && <Stat value={<AnimatedCounter value={stats.thisMonth} />} label="bu ay" />}
+            {stats.thisMonth > 0 && <Stat value={<AnimatedCounter value={stats.thisMonth} />} label="Bu Ay" />}
           </div>
         )}
       </div>

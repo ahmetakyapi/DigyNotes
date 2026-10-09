@@ -40,7 +40,11 @@ export function LandingNav() {
           solid ? "bg-[var(--header-glass)] backdrop-blur-xl" : "bg-transparent"
         }`}
       >
-        <Link href="/" aria-label="DigyNotes" className="transition-opacity duration-200 hover:opacity-75">
+        <Link
+          href="/"
+          aria-label="DigyNotes"
+          className="transition-opacity duration-200 hover:opacity-75"
+        >
           <Wordmark size="md" />
         </Link>
 
@@ -68,7 +72,7 @@ export function LandingNav() {
             href="/login"
             className="hidden px-2 text-[13px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)] sm:block"
           >
-            Giriş yap
+            Giriş Yap
           </Link>
           <Link
             href="/register"
@@ -77,7 +81,7 @@ export function LandingNav() {
           >
             <span className="absolute inset-0 translate-y-full rounded-full bg-[var(--gold)] transition-transform duration-500 ease-out-expo group-hover:translate-y-0" />
             <span className="relative transition-colors duration-300 group-hover:text-[var(--text-on-accent)]">
-              Kayıt ol
+              Kayıt Ol
             </span>
           </Link>
         </div>

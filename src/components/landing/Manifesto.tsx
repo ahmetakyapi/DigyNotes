@@ -44,13 +44,13 @@ export function Manifesto() {
   const words = TEXT.split(" ");
 
   return (
-    <section className="mx-auto grid max-w-[1600px] gap-10 px-5 py-28 sm:px-10 md:grid-cols-[minmax(180px,1fr)_3fr] md:py-44">
+    <section className="mx-auto grid max-w-[1600px] gap-6 px-5 py-16 sm:px-10 md:grid-cols-[minmax(180px,1fr)_3fr] md:py-24">
       <div className="dn-mono flex flex-col gap-3 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         <span>
           <span className="text-[var(--gold)]">(02)</span> Manifesto
         </span>
         <span className="hidden max-w-[200px] normal-case leading-relaxed tracking-normal text-[var(--text-faint)] md:block">
-          Bir puan, bir etiket, birkaç cümle. Hafızan için yeterli.
+          Bir Puan, Bir Etiket, Birkaç Cümle. Hafızan İçin Yeterli.
         </span>
       </div>
       <p
@@ -62,7 +62,12 @@ export function Manifesto() {
           : words.map((w, i) => {
               const start = i / words.length;
               return (
-                <Word key={`${w}-${i}`} word={w} progress={scrollYProgress} range={[start, start + 1 / words.length]} />
+                <Word
+                  key={`${w}-${i}`}
+                  word={w}
+                  progress={scrollYProgress}
+                  range={[start, start + 1 / words.length]}
+                />
               );
             })}
       </p>

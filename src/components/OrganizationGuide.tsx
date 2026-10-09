@@ -11,7 +11,7 @@ const SURFACE_ORDER: OrganizationSurfaceKey[] = ["bookmarks", "watchlist", "coll
 
 export function OrganizationGuide({
   current,
-  title = "Organizasyon katmanları",
+  title = "Organizasyon Katmanları",
   description = "Her yüzey farklı bir ihtiyacı çözer; hızlı kayıt, sonra bakma ve uzun vadeli gruplama aynı şey değil.",
 }: {
   current?: OrganizationSurfaceKey;

@@ -161,7 +161,7 @@ export default function YearInReviewPage() {
             puanlar ve etiketler yıl hikayesini daha anlamlı hale getirir.
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-            {["Farklı aylarda not ekle", "Puan ve etiket kullan", "Yıl içi ritmi biriktir"].map(
+            {["Farklı Aylarda Not Ekle", "Puan ve Etiket Kullan", "Yıl İçi Ritmi Biriktir"].map(
               (tip) => (
                 <span
                   key={tip}

@@ -36,11 +36,11 @@ export interface PostComposerGuidance {
 
 const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = {
   movies: {
-    heroEyebrow: "İzlediğini hızla yakala",
-    heroTitle: "Film notunu tek akışta başlat",
+    heroEyebrow: "İzlediğini Hızla Yakala",
+    heroTitle: "Film Notunu Tek Akışta Başlat",
     heroDescription:
       "Önce filmi bul, sonra başlığı ve durumunu netleştir. Form geri kalan alanları buna göre sakinleştirir.",
-    searchTitle: "Filmi ara",
+    searchTitle: "Filmi Ara",
     searchDescription: "Arama sonuçlarıyla başlık, yönetmen, yıl ve kapak hızlıca yerleşsin.",
     searchHint:
       "Doğru filmi seçtiğinde temel alanlar dolar; sen doğrudan yorumunu ve puanını eklemeye geçersin.",
@@ -57,11 +57,11 @@ const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = 
     manualHint: "",
   },
   series: {
-    heroEyebrow: "Takibi kaybetme",
-    heroTitle: "Dizi notunu bölüm bölüm değil, niyetle aç",
+    heroEyebrow: "Takibi Kaybetme",
+    heroTitle: "Dizi Notunu Bölüm Bölüm Değil, Niyetle Aç",
     heroDescription:
       "Diziyi bul, izleme durumunu seç ve sonra sezonlar arasında kaybolmadan notunu yapılandır.",
-    searchTitle: "Diziyi ara",
+    searchTitle: "Diziyi Ara",
     searchDescription:
       "Başlık, yayın yılları, yapım bilgisi ve kapak mümkün olduğunca otomatik dolsun.",
     searchHint:
@@ -79,10 +79,10 @@ const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = 
     manualHint: "",
   },
   game: {
-    heroEyebrow: "Oynadığın şeyi bağlamıyla sakla",
-    heroTitle: "Oyun notunu hızla kur",
+    heroEyebrow: "Oynadığın Şeyi Bağlamıyla Sakla",
+    heroTitle: "Oyun Notunu Hızla Kur",
     heroDescription: "Önce oyunu seç, sonra durum ve kişisel notlarla deneyimini arşive sabitle.",
-    searchTitle: "Oyunu ara",
+    searchTitle: "Oyunu Ara",
     searchDescription:
       "Başlık, geliştirici, çıkış yılı ve kapak aramayla gelsin; sen oynanış hissine odaklan.",
     searchHint:
@@ -100,11 +100,11 @@ const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = 
     manualHint: "",
   },
   book: {
-    heroEyebrow: "Okuduğunu düşünceyle kaydet",
-    heroTitle: "Kitap notunu sade ama yönlendirilmiş başlat",
+    heroEyebrow: "Okuduğunu Düşünceyle Kaydet",
+    heroTitle: "Kitap Notunu Sade Ama Yönlendirilmiş Başlat",
     heroDescription:
       "Kitabı bul, başlığı ve yılı oturt, sonra altını çizmek istediğin fikirleri yerleştir.",
-    searchTitle: "Kitabı ara",
+    searchTitle: "Kitabı Ara",
     searchDescription: "Başlık, yazar, yayın yılı ve kapak gibi temel alanları aramayla toparla.",
     searchHint:
       "Kitabı seçtikten sonra ilk satıra senden hangi fikri ya da duyguyu aldığına yazmak iyi bir başlangıçtır.",
@@ -121,11 +121,11 @@ const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = 
     manualHint: "",
   },
   travel: {
-    heroEyebrow: "Yeri kaydet, hissi kaçırma",
-    heroTitle: "Gezi notunu rota gibi aç",
+    heroEyebrow: "Yeri Kaydet, Hissi Kaçırma",
+    heroTitle: "Gezi Notunu Rota Gibi Aç",
     heroDescription:
       "Önce yeri seç, sonra başlık ve ziyaret bilgisini netleştir. Koordinatlar yalnızca gezi akışında görünür.",
-    searchTitle: "Yeri bul",
+    searchTitle: "Yeri Bul",
     searchDescription:
       "Konumu seçtiğinde başlık, koordinatlar ve varsa görsel daha anlaşılır bir başlangıç oluşturur.",
     searchHint:
@@ -144,11 +144,11 @@ const CATEGORY_COMPOSER_GUIDANCE: Record<FixedCategory, PostComposerGuidance> = 
     manualHint: "",
   },
   other: {
-    heroEyebrow: "Serbest ama başıboş değil",
-    heroTitle: "Diğer notunu niyetle kur",
+    heroEyebrow: "Serbest Ama Başıboş Değil",
+    heroTitle: "Diğer Notunu Niyetle Kur",
     heroDescription:
       "Bu kategori manuel giriş içindir. Başlığı, durumu ve kaynağı sen belirlersin; form geri kalanını sade tutar.",
-    searchTitle: "Manuel başlangıç",
+    searchTitle: "Manuel Başlangıç",
     searchDescription:
       "Bu kategoride otomatik arama yok. Notu doğrudan başlık ve içerik üzerinden kur.",
     searchHint:

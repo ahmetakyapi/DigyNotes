@@ -13,30 +13,41 @@ import { motion } from "framer-motion";
 import { EASE_OUT_EXPO, FadeUp, Magnetic, MaskLine } from "./Motion";
 
 const STEPS = [
-  { n: "01", t: "Kaydını aç", d: "E-posta ve şifre. Otuz saniye sürmez, kredi kartı istemez." },
-  { n: "02", t: "Adını yaz, seç", d: "Kapak, künye ve yıl kendiliğinden dolar. Sen durumunu ve puanını seç." },
-  { n: "03", t: "Kendi cümlelerinle sakla", d: "Zengin metin, etiketler, spoiler uyarısı. Sonra akışta paylaş — ya da yalnız sende kalsın." },
+  { n: "01", t: "Kaydını Aç", d: "E-posta ve şifre. Otuz saniye sürmez, kredi kartı istemez." },
+  {
+    n: "02",
+    t: "Adını Yaz, Seç",
+    d: "Kapak, künye ve yıl kendiliğinden dolar. Sen durumunu ve puanını seç.",
+  },
+  {
+    n: "03",
+    t: "Kendi Cümlelerinle Sakla",
+    d: "Zengin metin, etiketler, spoiler uyarısı. Sonra akışta paylaş — ya da yalnız sende kalsın.",
+  },
 ];
 
 export function Steps() {
   return (
-    <section id="nasil" className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-28 sm:px-10 md:py-40">
+    <section
+      id="nasil"
+      className="mx-auto max-w-[1600px] scroll-mt-20 px-5 py-16 sm:px-10 md:py-24"
+    >
       <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
         <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-          <span className="text-[var(--gold)]">(06)</span> Nasıl çalışır
+          <span className="text-[var(--gold)]">(06)</span> Nasıl Çalışır
         </span>
         <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-          <MaskLine>Üç adım.</MaskLine>
+          <MaskLine>Üç Adım.</MaskLine>
           <MaskLine delay={0.08}>
-            <span className="dn-display font-normal italic tracking-[-0.02em]">Fazlası değil.</span>
+            <span className="dn-display font-normal italic tracking-[-0.02em]">Fazlası Değil.</span>
           </MaskLine>
         </h2>
       </div>
 
-      <ol className="mt-16 border-t border-[var(--border)]">
+      <ol className="mt-10 border-t border-[var(--border)]">
         {STEPS.map((s, i) => (
           <FadeUp key={s.n} delay={i * 0.08}>
-            <li className="group relative grid cursor-default items-center gap-4 overflow-hidden border-b border-[var(--border)] py-8 md:grid-cols-[minmax(160px,1fr)_1.4fr_1.6fr_auto] md:gap-10 md:py-12">
+            <li className="group relative grid cursor-default items-center gap-4 overflow-hidden border-b border-[var(--border)] py-6 md:grid-cols-[minmax(160px,1fr)_1.4fr_1.6fr_auto] md:gap-10 md:py-9">
               <span className="absolute inset-0 origin-bottom scale-y-0 bg-[var(--bg-card)] transition-transform duration-700 ease-out-expo group-hover:scale-y-100" />
               <span className="dn-display relative text-[clamp(4rem,8vw,7.5rem)] italic leading-[0.8] text-transparent transition-colors duration-500 [-webkit-text-stroke:1px_var(--text-muted)] group-hover:text-[var(--gold)] group-hover:[-webkit-text-stroke:1px_var(--gold)]">
                 {s.n}
@@ -44,7 +55,9 @@ export function Steps() {
               <h3 className="relative text-2xl font-bold tracking-[-0.035em] text-[var(--text-primary)] transition-transform duration-700 ease-out-expo group-hover:translate-x-2 sm:text-3xl">
                 {s.t}
               </h3>
-              <p className="relative max-w-[460px] text-[15px] leading-relaxed text-[var(--text-secondary)]">{s.d}</p>
+              <p className="relative max-w-[460px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
+                {s.d}
+              </p>
               <span className="relative hidden h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-muted)] transition-all duration-500 ease-out-expo group-hover:rotate-45 group-hover:border-[var(--gold)] group-hover:bg-[var(--gold)] group-hover:text-[var(--text-on-accent)] md:flex">
                 <ArrowUpRightIcon size={18} />
               </span>
@@ -58,12 +71,12 @@ export function Steps() {
 
 export function FinalCta() {
   return (
-    <section className="relative overflow-hidden px-5 pb-28 pt-12 sm:px-10 md:pb-40 md:pt-16">
+    <section className="relative overflow-hidden px-5 pb-16 pt-8 sm:px-10 md:pb-24 md:pt-10">
       <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
         <h2 className="text-[clamp(3.4rem,12vw,13rem)] font-extrabold leading-[0.86] tracking-[-0.06em] text-[var(--text-primary)]">
           <MaskLine>Hatırlamaya</MaskLine>
           <MaskLine delay={0.1}>
-            <span className="dn-display font-normal italic tracking-[-0.03em]">değer</span>
+            <span className="dn-display font-normal italic tracking-[-0.03em]">Değer</span>
             <span className="text-[var(--gold)]">.</span>
           </MaskLine>
         </h2>
@@ -82,8 +95,12 @@ export function FinalCta() {
             >
               <span className="absolute inset-0 scale-0 rounded-full bg-[var(--text-primary)] transition-transform duration-700 ease-out-expo group-hover:scale-100" />
               <span className="relative flex flex-col items-center gap-1 transition-colors duration-500 group-hover:text-[var(--bg-base)]">
-                <ArrowUpRightIcon size={28} weight="bold" className="transition-transform duration-700 ease-out-expo group-hover:rotate-45" />
-                <span className="text-lg font-bold tracking-[-0.02em]">Ücretsiz başla</span>
+                <ArrowUpRightIcon
+                  size={28}
+                  weight="bold"
+                  className="transition-transform duration-700 ease-out-expo group-hover:rotate-45"
+                />
+                <span className="text-lg font-bold tracking-[-0.02em]">Ücretsiz Başla</span>
               </span>
             </Link>
           </Magnetic>
@@ -107,8 +124,8 @@ export function LandingFooter() {
     {
       t: "Uygulama",
       l: [
-        ["Giriş yap", "/login"],
-        ["Kayıt ol", "/register"],
+        ["Giriş Yap", "/login"],
+        ["Kayıt Ol", "/register"],
         ["Keşfet", "/discover"],
       ],
     },
@@ -121,14 +138,17 @@ export function LandingFooter() {
     },
   ];
   return (
-    <footer className="relative overflow-hidden border-t border-[var(--border)] pt-16">
+    <footer className="relative overflow-hidden border-t border-[var(--border)] pt-12">
       <div className="mx-auto grid max-w-[1600px] gap-10 px-5 sm:px-10 md:grid-cols-[2fr_1fr_1fr_1fr_auto]">
         <p className="dn-display max-w-[340px] text-3xl italic leading-tight text-[var(--text-secondary)]">
-          İzlediklerin, okudukların, gezdiklerin — <span className="text-[var(--text-primary)]">hepsi bir yerde.</span>
+          İzlediklerin, Okudukların, Gezdiklerin —{" "}
+          <span className="text-[var(--text-primary)]">Hepsi Bir Yerde.</span>
         </p>
         {cols.map((c) => (
           <div key={c.t}>
-            <p className="dn-mono mb-4 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">{c.t}</p>
+            <p className="dn-mono mb-4 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+              {c.t}
+            </p>
             <ul className="space-y-2">
               {c.l.map(([label, href]) => {
                 const external = href.startsWith("http");
@@ -141,7 +161,10 @@ export function LandingFooter() {
                     >
                       {label}
                       {external && (
-                        <ArrowUpRightIcon size={12} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        <ArrowUpRightIcon
+                          size={12}
+                          className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                        />
                       )}
                     </a>
                   </li>
@@ -153,16 +176,16 @@ export function LandingFooter() {
         <button
           type="button"
           onClick={() => globalThis.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Yukarı dön"
+          aria-label="Yukarı Dön"
           className="flex h-12 w-12 cursor-pointer items-center justify-center self-start rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
         >
           <ArrowUpIcon size={16} />
         </button>
       </div>
 
-      <div className="dn-mono mx-auto mt-16 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)] sm:px-10">
+      <div className="dn-mono mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-muted)] sm:px-10">
         <span>© {new Date().getFullYear()} DigyNotes</span>
-        <span>Kişisel kullanım için · Ücretsiz</span>
+        <span>Kişisel Kullanım İçin · Ücretsiz</span>
       </div>
 
       <div aria-hidden className="relative mt-6 select-none overflow-hidden leading-none">

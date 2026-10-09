@@ -20,7 +20,7 @@ export const ORGANIZATION_SURFACES: Record<
     description:
       "Bir nota hızlıca geri dönmek istediğinde kullan. Geçici değildir, ama gruplama da yapmaz.",
     href: "/notes?tab=kaydedilenler",
-    cta: "Kaydettiklerime git",
+    cta: "Kaydettiklerime Git",
   },
   watchlist: {
     key: "watchlist",
@@ -29,7 +29,7 @@ export const ORGANIZATION_SURFACES: Record<
     description:
       "Henüz nota dönüştürmediğin film, dizi, kitap, oyun ve gezi fikirlerini burada beklet.",
     href: "/watchlist",
-    cta: "İstek listesine git",
+    cta: "İstek Listesine Git",
   },
   collections: {
     key: "collections",
@@ -38,6 +38,6 @@ export const ORGANIZATION_SURFACES: Record<
     description:
       "Tamamlanmış notlarını tema, dönem ya da duygu ekseninde bir araya getirip sergile.",
     href: "/collections",
-    cta: "Koleksiyonlara git",
+    cta: "Koleksiyonlara Git",
   },
 };

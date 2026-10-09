@@ -270,7 +270,7 @@ export default function WatchlistPage() {
             lockedTab={getSearchTabForCategory(activeCategory) ?? "film"}
             onSelect={setSelectedResult}
             onAction={addToWatchlist}
-            actionLabel={pendingExternalId ? "Ekleniyor..." : "Listeye ekle"}
+            actionLabel={pendingExternalId ? "Ekleniyor..." : "Listeye Ekle"}
           />
         </div>
 

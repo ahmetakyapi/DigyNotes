@@ -17,13 +17,7 @@ import {
 } from "framer-motion";
 import { wrap } from "./Motion";
 
-function Row({
-  children,
-  baseVelocity,
-}: {
-  children: React.ReactNode;
-  baseVelocity: number;
-}) {
+function Row({ children, baseVelocity }: { children: React.ReactNode; baseVelocity: number }) {
   const reduce = useReducedMotion();
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
@@ -61,7 +55,11 @@ const WORDS = ["Film", "Dizi", "Oyun", "Kitap", "Gezi"];
 
 function Star() {
   return (
-    <svg viewBox="0 0 24 24" className="mx-[0.35em] h-[0.42em] w-[0.42em] shrink-0 fill-[var(--gold)]" aria-hidden>
+    <svg
+      viewBox="0 0 24 24"
+      className="mx-[0.35em] h-[0.42em] w-[0.42em] shrink-0 fill-[var(--gold)]"
+      aria-hidden
+    >
       <path d="M12 0c.6 6.4 5 11 12 12-7 1-11.4 5.6-12 12-.6-6.4-5-11-12-12 7-1 11.4-5.6 12-12Z" />
     </svg>
   );
@@ -69,7 +67,10 @@ function Star() {
 
 export function Marquee() {
   return (
-    <section aria-label="Arşiv türleri" className="relative border-y border-[var(--border)] py-6 sm:py-10">
+    <section
+      aria-label="Arşiv türleri"
+      className="relative border-y border-[var(--border)] py-4 sm:py-6"
+    >
       <Row baseVelocity={-2.2}>
         {WORDS.map((w) => (
           <span
@@ -82,13 +83,15 @@ export function Marquee() {
         ))}
       </Row>
       <Row baseVelocity={2.2}>
-        {["izle", "oku", "oyna", "gez", "yaz"].map((w) => (
+        {["İzle", "Oku", "Oyna", "Gez", "Yaz"].map((w) => (
           <span
             key={w}
             className="dn-display flex items-center px-[0.2em] text-[clamp(3.5rem,11vw,10rem)] italic leading-[1.05] tracking-[-0.03em] text-transparent [-webkit-text-stroke:1px_var(--text-muted)]"
           >
             {w}
-            <span className="mx-[0.3em] not-italic text-[var(--text-faint)] [-webkit-text-stroke:0]">/</span>
+            <span className="mx-[0.3em] not-italic text-[var(--text-faint)] [-webkit-text-stroke:0]">
+              /
+            </span>
           </span>
         ))}
       </Row>

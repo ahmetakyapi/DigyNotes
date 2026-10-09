@@ -195,7 +195,7 @@ export default function PersonalStatsPage() {
             href="/new-post"
             className="mt-6 inline-flex rounded-xl bg-[var(--gold)] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 active:scale-95"
           >
-            İlk notu oluştur
+            İlk Notu Oluştur
           </Link>
         </div>
       </main>

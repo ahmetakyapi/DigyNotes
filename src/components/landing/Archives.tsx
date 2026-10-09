@@ -45,7 +45,9 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
         <p className="mt-2 text-lg font-semibold tracking-[-0.02em] text-[var(--text-secondary)]">
           — {a.verb}
         </p>
-        <p className="mt-6 max-w-[380px] text-[15px] leading-relaxed text-[var(--text-secondary)]">{a.description}</p>
+        <p className="mt-6 max-w-[380px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
+          {a.description}
+        </p>
         <div className="mt-auto flex flex-wrap gap-2 pt-8">
           {a.statuses.map((s, i) => (
             <span
@@ -75,11 +77,21 @@ function ArchiveCard({ a }: { a: ArchiveItem }) {
               className={`absolute w-[42%] transition-transform duration-700 ease-out-expo ${pos}`}
             >
               <div className="relative aspect-[2/3] overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--bg-raised)] shadow-[0_30px_60px_-25px_rgb(var(--ink-rgb)/0.75)]">
-                <Image src={img.src} alt={img.title} fill sizes="(min-width:1024px) 220px, 40vw" className="object-cover" />
+                <Image
+                  src={img.src}
+                  alt={img.title}
+                  fill
+                  sizes="(min-width:1024px) 220px, 40vw"
+                  className="object-cover"
+                />
               </div>
               <figcaption className="mt-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                <span className="block truncate text-[12px] font-semibold text-[var(--text-primary)]">{img.title}</span>
-                <span className="dn-mono block truncate text-[10px] text-[var(--text-muted)]">{img.meta}</span>
+                <span className="block truncate text-[12px] font-semibold text-[var(--text-primary)]">
+                  {img.title}
+                </span>
+                <span className="dn-mono block truncate text-[10px] text-[var(--text-muted)]">
+                  {img.meta}
+                </span>
               </figcaption>
             </figure>
           );
@@ -119,12 +131,13 @@ export function Archives() {
     <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-6 px-5 sm:px-10 lg:flex-row lg:items-end lg:justify-between">
       <div>
         <span className="dn-mono text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-          <span className="text-[var(--gold)]">(03)</span> Beş arşiv, tek defter
+          <span className="text-[var(--gold)]">(03)</span> Beş Arşiv, Tek Defter
         </span>
         <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.05em] text-[var(--text-primary)]">
-          <MaskLine>Her türün</MaskLine>
+          <MaskLine>Her Türün</MaskLine>
           <MaskLine delay={0.08}>
-            kendi <span className="dn-display font-normal italic tracking-[-0.02em]">rafı</span> var.
+            Kendi <span className="dn-display font-normal italic tracking-[-0.02em]">Rafı</span>{" "}
+            Var.
           </MaskLine>
         </h2>
       </div>
@@ -141,9 +154,9 @@ export function Archives() {
 
   if (!isDesktop) {
     return (
-      <section id="arsivler" ref={sectionRef} className="relative scroll-mt-20 py-20">
+      <section id="arsivler" ref={sectionRef} className="relative scroll-mt-20 py-14">
         {heading}
-        <div className="mt-12 flex flex-col gap-5 px-5 sm:px-10">
+        <div className="mt-8 flex flex-col gap-4 px-5 sm:px-10">
           {ARCHIVES.map((a) => (
             <ArchiveCard key={a.key} a={a} />
           ))}
@@ -159,15 +172,20 @@ export function Archives() {
       className="relative"
       style={{ height: `calc(100vh + ${distance}px)` }}
     >
-      <div className="sticky top-0 flex h-screen flex-col justify-center gap-12 overflow-hidden py-16">
+      <div className="sticky top-0 flex h-screen flex-col justify-center gap-8 overflow-hidden py-10">
         {heading}
-        <motion.div ref={trackRef} className="flex h-[min(62vh,600px)] w-max gap-6 px-10" style={{ x }}>
+        <motion.div
+          ref={trackRef}
+          className="flex h-[min(62vh,600px)] w-max gap-6 px-10"
+          style={{ x }}
+        >
           {ARCHIVES.map((a) => (
             <ArchiveCard key={a.key} a={a} />
           ))}
           <div className="flex w-[30vw] shrink-0 items-center justify-center">
             <p className="dn-display max-w-[320px] text-4xl italic leading-tight text-[var(--text-muted)]">
-              …ve <span className="text-[var(--text-primary)]">Diğer</span>: kategorisi olmayan her şey için.
+              …ve <span className="text-[var(--text-primary)]">Diğer</span>: Kategorisi Olmayan Her
+              Şey İçin.
             </p>
           </div>
         </motion.div>

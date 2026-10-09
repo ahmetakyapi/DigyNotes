@@ -562,7 +562,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                           rel="noreferrer"
                           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-[11px] font-medium text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)]"
                         >
-                          Haritada aç
+                          Haritada Aç
                         </a>
                       )}
                     </div>
@@ -752,7 +752,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   />
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-[var(--text-primary)]">
-                      Spoiler uyarısı ekle
+                      Spoiler Uyarısı Ekle
                     </span>
                     <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
                       Detay sayfasında içerik blur olur ve okur önce onay verir.

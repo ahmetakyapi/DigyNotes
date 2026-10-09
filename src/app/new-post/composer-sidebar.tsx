@@ -44,7 +44,7 @@ export function StatusSidebar({
       <p className={labelClass}>Not Durumu</p>
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] p-3.5">
         <p className="text-sm font-semibold text-[var(--text-primary)]">
-          {title || "Başlık bekliyor"}
+          {title || "Başlık Bekliyor"}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <span className="border-[var(--gold)]/20 bg-[var(--gold)]/8 rounded-full border px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)]">
@@ -93,11 +93,11 @@ export function StatusSidebar({
               checked={hasSpoiler}
               onChange={(event) => onSpoilerChange(event.target.checked)}
               className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-accent focus:ring-accent"
-              aria-label="Spoiler uyarısı ekle"
+              aria-label="Spoiler Uyarısı Ekle"
             />
             <span className="min-w-0">
               <span className="block text-sm font-semibold text-[var(--text-primary)]">
-                Spoiler uyarısı ekle
+                Spoiler Uyarısı Ekle
               </span>
               <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">
                 İçerik detay sayfasında önce onayla açılır.

@@ -192,13 +192,13 @@ export default function NotificationsPage() {
               onClick={() => signIn()}
               className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-dark active:scale-95"
             >
-              Giriş yap
+              Giriş Yap
             </button>
             <Link
               href="/discover"
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
             >
-              Keşfe dön
+              Keşfe Dön
             </Link>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default function NotificationsPage() {
             className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/30 hover:text-[var(--gold)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
-            {markingAll ? "İşleniyor..." : "Tümünü okundu yap"}
+            {markingAll ? "İşleniyor..." : "Tümünü Okundu Yap"}
           </button>
         </div>
         <div className="mt-3 h-px w-full bg-[var(--border)]" />
