@@ -192,8 +192,8 @@ export function LandingFooter() {
         <span>Ücretsiz · Kişisel Kullanım İçin</span>
       </div>
 
-      <div aria-hidden className="relative mt-6 select-none overflow-hidden leading-none">
-        <p className="translate-y-[18%] whitespace-nowrap text-center text-[21.5vw] font-extrabold leading-[0.8] tracking-[-0.045em] text-[var(--text-primary)]">
+      <div aria-hidden className="relative mt-8 select-none overflow-hidden px-3 pb-[2.5vw]">
+        <p className="whitespace-nowrap text-center text-[18.5vw] font-extrabold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)]">
           Digy<span className="dn-display font-normal italic tracking-[-0.04em]">Notes</span>
           <span className="text-[var(--gold)]">.</span>
         </p>
