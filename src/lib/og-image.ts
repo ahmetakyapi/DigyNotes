@@ -1,4 +1,5 @@
-import sharp from "sharp";
+import { PNG } from "pngjs";
+import jpeg from "jpeg-js";
 import type { ImageResponse } from "next/og";
 
 /**
@@ -6,7 +7,10 @@ import type { ImageResponse } from "next/og";
  *
  * WhatsApp is the strictest consumer: it skips the image when the file is large
  * (the old PNG cards were ~535 KB) or slow, and it caches whatever it got for a long
- * time. So cards are re-encoded as progressive JPEG (~60–120 KB) and cached at the CDN.
+ * time. So cards are re-encoded as JPEG (~60–150 KB) and cached at the CDN.
+ *
+ * Pure JS on purpose (pngjs + jpeg-js): sharp's native binary built fine locally but the
+ * Vercel deployment with it failed (2026-10-10), and a 1200×630 encode is ~100 ms anyway.
  */
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
@@ -14,14 +18,16 @@ export const OG_SIZE = { width: 1200, height: 630 } as const;
 const CACHE_PUBLIC = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800";
 /** Placeholder cards (private / missing note) must not stick once the note is shared. */
 const CACHE_SHORT = "public, max-age=60, s-maxage=300";
+/** Covers are embedded as-is; anything bigger would slow the card past chat timeouts. */
+const MAX_COVER_BYTES = 3_000_000;
 
 export async function toJpegResponse(image: ImageResponse, opts: { short?: boolean } = {}) {
-  const png = Buffer.from(await image.arrayBuffer());
-  const jpeg = await sharp(png).jpeg({ quality: 84, progressive: true, mozjpeg: true }).toBuffer();
-  return new Response(new Uint8Array(jpeg), {
+  const png = PNG.sync.read(Buffer.from(await image.arrayBuffer()));
+  const out = jpeg.encode({ data: png.data, width: png.width, height: png.height }, 84).data;
+  return new Response(new Uint8Array(out), {
     headers: {
       "Content-Type": "image/jpeg",
-      "Content-Length": String(jpeg.byteLength),
+      "Content-Length": String(out.byteLength),
       "Cache-Control": opts.short ? CACHE_SHORT : CACHE_PUBLIC,
     },
   });
@@ -46,11 +52,11 @@ function isPublicImageUrl(src: string) {
 }
 
 /**
- * Fetches a cover and returns it as a JPEG data URL sized for the card. Satori can't
- * decode WebP and chokes on big files, so everything goes through sharp first.
- * Returns null on any failure: the card then draws a typographic tile instead.
+ * Fetches a cover and returns it as a data URL for Satori, which draws JPEG and PNG only
+ * (no WebP) and scales it with `objectFit`. Returns null on any failure or other format:
+ * the card then draws a typographic tile instead.
  */
-export async function loadCover(src: string | null | undefined, width: number, height: number) {
+export async function loadCover(src: string | null | undefined) {
   if (!src) return null;
   try {
     // Follow redirects by hand (Open Library covers redirect to archive.org) so every
@@ -70,16 +76,12 @@ export async function loadCover(src: string | null | undefined, width: number, h
       url = new URL(next, url).toString();
       res = null;
     }
-    if (!res || !res.ok || !(res.headers.get("content-type") ?? "").startsWith("image/"))
-      return null;
-    if (Number(res.headers.get("content-length") ?? 0) > 8_000_000) return null;
+    const type = (res?.headers.get("content-type") ?? "").split(";")[0].trim();
+    if (!res || !res.ok || !/^image\/(jpeg|jpg|png)$/.test(type)) return null;
+    if (Number(res.headers.get("content-length") ?? 0) > MAX_COVER_BYTES) return null;
     const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.byteLength > 8_000_000) return null;
-    const out = await sharp(buf)
-      .resize(width * 2, height * 2, { fit: "cover", position: "attention" })
-      .jpeg({ quality: 82 })
-      .toBuffer();
-    return `data:image/jpeg;base64,${out.toString("base64")}`;
+    if (buf.byteLength > MAX_COVER_BYTES) return null;
+    return `data:${type === "image/jpg" ? "image/jpeg" : type};base64,${buf.toString("base64")}`;
   } catch {
     return null;
   }

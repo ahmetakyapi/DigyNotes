@@ -155,7 +155,7 @@ on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light
 
 ## Share Previews (WhatsApp, iMessage, X)
 
-- Cards: `src/app/opengraph-image.tsx` (site), `src/app/posts/[id]/opengraph-image.tsx` (note), `src/app/profile/[username]/opengraph-image.tsx` (profile). Node runtime, 1200×630, returned as **JPEG** via `toJpegResponse` (`src/lib/og-image.ts`, sharp). Pieces live in `src/lib/og-parts.tsx` (`OgWordmark`, `OgStars`, `OgGlow`, `renderOgNotice`).
+- Cards: `src/app/opengraph-image.tsx` (site), `src/app/posts/[id]/opengraph-image.tsx` (note), `src/app/profile/[username]/opengraph-image.tsx` (profile). Node runtime, 1200×630, returned as **JPEG** via `toJpegResponse` (`src/lib/og-image.ts`, pure-JS pngjs + jpeg-js — no sharp, see ERR-OG-001). Pieces live in `src/lib/og-parts.tsx` (`OgWordmark`, `OgStars`, `OgGlow`, `renderOgNotice`).
 - Read at phone size (~0.28×): no text under ~26px, no uppercase labels, at most ~5 things to read. Fonts come from disk (`assets/og-fonts/`), never from Google at render time.
 - Metadata always points `og:image` at our card with `?v=<updatedAt>`, never at the raw cover. Private or missing content gets a "Bu Not Gizli" / "Bulunamadı" card; drafts and deleted notes are never drawn.
 - In-app sharing: `ShareButton` → `ShareSheet` (preview of the real card, WhatsApp/Telegram/X, copy, save the card as an image, and a warning when others can't open the link).

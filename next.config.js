@@ -1,4 +1,4 @@
-const OG_TRACE = ["./assets/og-fonts/**", "./node_modules/@img/**"];
+const OG_TRACE = ["./assets/og-fonts/**"];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -33,10 +33,8 @@ const nextConfig = {
     ],
   },
   experimental: {
-    // Share cards read their fonts from disk (src/lib/og-fonts.ts) and re-encode with
-    // sharp (src/lib/og-image.ts). File tracing sees neither a path built from
-    // process.cwd() nor sharp's platform binary (loaded by a computed require), so
-    // both ship with those routes explicitly.
+    // Share cards read their fonts from disk (src/lib/og-fonts.ts); file tracing can't
+    // see a path built from process.cwd(), so ship the files with those routes.
     outputFileTracingIncludes: {
       "/opengraph-image": OG_TRACE,
       "/posts/[id]/opengraph-image": OG_TRACE,

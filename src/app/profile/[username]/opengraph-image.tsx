@@ -47,8 +47,8 @@ export default async function ProfileOpenGraphImage({ params }: { params: { user
 
   const [fonts, avatar, ...covers] = await Promise.all([
     loadBrandFonts(),
-    loadCover(user.avatarUrl, 120, 120),
-    ...recent.map((p) => loadCover(p.image, POSTER.width, POSTER.height)),
+    loadCover(user.avatarUrl),
+    ...recent.map((p) => loadCover(p.image)),
   ]);
   const posters = covers.filter((c): c is string => Boolean(c)).slice(0, FAN.length);
   const bio = user.bio ? truncateText(user.bio, 90) : null;

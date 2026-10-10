@@ -44,8 +44,8 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
 
   const [fonts, cover, avatar] = await Promise.all([
     loadBrandFonts(),
-    loadCover(post.image, COVER.width, COVER.height),
-    loadCover(post.user?.avatarUrl, 56, 56),
+    loadCover(post.image),
+    loadCover(post.user?.avatarUrl),
   ]);
 
   const categoryLabel = getCategoryLabel(post.category);
