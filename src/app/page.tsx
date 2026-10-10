@@ -7,7 +7,7 @@ import { Archives } from "@/components/landing/Archives";
 import { Showcase } from "@/components/landing/Showcase";
 import { Features } from "@/components/landing/Features";
 import { FinalCta, LandingFooter, Steps } from "@/components/landing/Outro";
-import { LandingCursor, SmoothScroll } from "@/components/landing/Motion";
+import { SmoothScroll } from "@/components/landing/Motion";
 
 export const metadata: Metadata = {
   title: "DigyNotes — Film, Dizi, Oyun, Kitap ve Gezi Notları",
@@ -24,7 +24,6 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-[var(--bg-base)] text-[var(--text-primary)]">
       <SmoothScroll />
-      <LandingCursor />
       <LandingNav />
       <main>
         <Hero />

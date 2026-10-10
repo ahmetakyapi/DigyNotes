@@ -105,7 +105,7 @@ function Reel({
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={item.title}
-          className="dn-mono absolute bottom-[0.17em] left-[0.42em] flex items-center gap-[0.35em] whitespace-nowrap text-[clamp(7px,0.085em,12px)] font-medium uppercase tracking-[0.14em] text-[#f2efe8]"
+          className="absolute inset-x-0 bottom-[0.2em] flex items-center justify-center gap-[0.35em] whitespace-nowrap text-[clamp(11px,0.075em,13px)] font-medium tracking-normal text-[#f2efe8]"
           initial={{ y: "120%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           exit={{ y: "-120%", opacity: 0 }}
@@ -128,6 +128,7 @@ function Reel({
 
 /* Own component so the scroll-driven rating re-renders only these few nodes,
    not the whole hero tree, and only when the half-star value changes. */
+const RATING_MAX = 4.5;
 function LiveRating({ mv }: { mv: MotionValue<number> }) {
   const [rating, setRating] = useState(0);
   const last = useRef(0);
@@ -138,10 +139,20 @@ function LiveRating({ mv }: { mv: MotionValue<number> }) {
       setRating(next);
     }
   });
+  const done = rating >= RATING_MAX;
   return (
     <div className="mt-1 flex items-center gap-2">
       <StarsBar value={rating} />
       <span className="dn-mono text-[11px] tabular-nums text-[#f2efe8]">{rating.toFixed(1)}</span>
+      {/* The note "saves" itself once the scroll-driven rating lands. */}
+      <span
+        className={`ml-auto inline-flex items-center gap-1 rounded-full bg-[#b9a8ff]/15 px-2 py-0.5 text-[11px] font-medium text-[#b9a8ff] transition-[opacity,transform] duration-500 ease-out-expo ${done ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"}`}
+      >
+        <svg viewBox="0 0 16 16" className="h-3 w-3 fill-none stroke-current" strokeWidth={2.2} aria-hidden>
+          <path d="M3.5 8.5l3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Kaydedildi
+      </span>
     </div>
   );
 }
@@ -244,7 +255,7 @@ export function Hero() {
   const outroScale = useTransform(outro, [0, 1], [0.9, 1]);
   const cardY = useTransform(p, [0.5, 0.62], [80, 0]);
   const cardOpacity = useTransform(p, [0.5, 0.6], [0, 1]);
-  const ratingMV = useTransform(p, [0.56, 0.8], [0, 4.5]);
+  const ratingMV = useTransform(p, [0.56, 0.76], [0, RATING_MAX]);
 
   /* Mouse parallax for floaters */
   const mx = useMotionValue(0);
@@ -293,7 +304,7 @@ export function Hero() {
               <span aria-hidden className="hidden md:block">
                 <motion.span className="block" style={line(l1x)}>
                   <MaskLine delay={0.15}>
-                    Sana <Reel items={REEL} /> Kalan
+                    Sana Kalan <Reel items={REEL} />
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
@@ -312,12 +323,12 @@ export function Hero() {
               </span>
               <span aria-hidden className="block md:hidden">
                 <motion.span className="block" style={line(l1x)}>
-                  <MaskLine delay={0.15}>
-                    Sana <Reel items={REEL} width="w-[2.3em]" />
-                  </MaskLine>
+                  <MaskLine delay={0.15}>Sana</MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
-                  <MaskLine delay={0.25}>Kalan</MaskLine>
+                  <MaskLine delay={0.25}>
+                    Kalan <Reel items={REEL} width="w-[2.1em]" />
+                  </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l3x)}>
                   <MaskLine delay={0.35}>
@@ -368,7 +379,6 @@ export function Hero() {
               <Magnetic>
                 <Link
                   href="/register"
-                  data-cursor="Başla"
                   className="group relative inline-flex h-14 items-center gap-3 overflow-hidden rounded-full bg-[var(--gold)] pl-7 pr-2 text-[15px] font-semibold text-[var(--text-on-accent)] transition-transform duration-300 active:scale-95"
                 >
                   <span className="relative">Hemen Başla</span>

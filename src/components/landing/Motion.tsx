@@ -33,56 +33,6 @@ export function SmoothScroll() {
   return null;
 }
 
-/* ── Custom cursor: blend-difference dot that swells over [data-cursor] targets ── */
-export function LandingCursor() {
-  const x = useMotionValue(-100);
-  const y = useMotionValue(-100);
-  const sx = useSpring(x, { stiffness: 600, damping: 40, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 600, damping: 40, mass: 0.4 });
-  const [label, setLabel] = useState<string | null>(null);
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    const fine = globalThis.matchMedia?.("(pointer: fine)").matches;
-    const reduce = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduce) return;
-    setEnabled(true);
-    const move = (e: PointerEvent) => {
-      x.set(e.clientX);
-      y.set(e.clientY);
-      const target = (e.target as HTMLElement | null)?.closest?.("[data-cursor]");
-      setLabel(target ? target.getAttribute("data-cursor") || "" : null);
-    };
-    globalThis.addEventListener("pointermove", move, { passive: true });
-    return () => globalThis.removeEventListener("pointermove", move);
-  }, [x, y]);
-
-  if (!enabled) return null;
-  const active = label !== null;
-  return (
-    <motion.div
-      aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[120] hidden mix-blend-difference md:block"
-      style={{ x: sx, y: sy }}
-    >
-      <motion.div
-        className="flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#f2efe8]"
-        animate={{
-          width: active ? (label ? 92 : 56) : 12,
-          height: active ? (label ? 92 : 56) : 12,
-        }}
-        transition={{ type: "spring", stiffness: 380, damping: 28 }}
-      >
-        {label ? (
-          <span className="text-[12px] font-medium text-[#0b0b0a]">
-            {label}
-          </span>
-        ) : null}
-      </motion.div>
-    </motion.div>
-  );
-}
-
 /* ── Masked line reveal: text slides up from behind an overflow mask ── */
 export function MaskLine({
   children,

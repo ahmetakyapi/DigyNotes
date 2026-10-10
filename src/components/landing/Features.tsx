@@ -18,18 +18,15 @@ function Tile({
   title,
   children,
   className = "",
-  cursor,
 }: {
   index: string;
   title: ReactNode;
   children: ReactNode;
   className?: string;
-  cursor?: string;
 }) {
   return (
     <FadeUp className={className}>
       <div
-        data-cursor={cursor}
         className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8"
       >
         <div className="text-[12.5px] font-medium text-[var(--text-muted)]">
@@ -384,7 +381,6 @@ export function Features() {
           index="A — Puan"
           title={<>Yarım Yıldız {em("Bile")} Önemli.</>}
           className="md:col-span-4"
-          cursor="Dene"
         >
           <RatingPlayground />
         </Tile>

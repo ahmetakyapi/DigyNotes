@@ -29,7 +29,6 @@ function useIsDesktop() {
 function ArchiveCard({ a }: { a: ArchiveItem }) {
   return (
     <article
-      data-cursor="Arşiv"
       className="group relative grid h-full w-full shrink-0 grid-rows-[auto_1fr] overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8 lg:w-[min(74vw,980px)] lg:grid-cols-[1fr_1.05fr] lg:grid-rows-1 lg:gap-10 lg:p-10"
     >
       <div className="relative z-10 flex flex-col">

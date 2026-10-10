@@ -148,7 +148,8 @@ on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light
 - Readability: no tiny uppercase mono labels (retired 2026-10-09 — they were unreadable). Labels/meta/chips are sans, normal case, `font-medium`, min 11px (12–12.5px typical), `--text-muted` or stronger; `.dn-mono` only for numbers, dates, URLs.
 - Logo: `src/components/Wordmark.tsx` (typographic "Digy" + italic "Notes" — always capital N) — the PNG logo is no longer used in the UI.
 - UI copy: headings, subtitles, buttons and tabs use Turkish Title Case ("Arşivini Başlat", "Giriş Yap"); conjunctions (ve, ile, da/de, ki) stay lowercase. Toasts/placeholders/body stay sentence case.
-- Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
+- Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects).
+- Cursor: NO custom cursor (removed 2026-10-10 at the owner's request) — normal mouse everywhere; don't re-add `data-cursor` labels. Auth: `src/components/AuthShell.tsx`.
 
 ## Architecture Patterns
 

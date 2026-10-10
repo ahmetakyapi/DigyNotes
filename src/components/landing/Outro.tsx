@@ -91,7 +91,6 @@ export function FinalCta() {
           <Magnetic strength={0.4}>
             <Link
               href="/register"
-              data-cursor=""
               className="group relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full bg-[var(--gold)] text-[var(--text-on-accent)] transition-transform duration-500 ease-out-expo active:scale-95 sm:h-56 sm:w-56"
             >
               <span className="absolute inset-0 scale-0 rounded-full bg-[var(--text-primary)] transition-transform duration-700 ease-out-expo group-hover:scale-100" />

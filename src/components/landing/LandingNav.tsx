@@ -86,7 +86,6 @@ export function LandingNav() {
           </Link>
           <Link
             href="/register"
-            data-cursor=""
             className="group relative inline-flex h-10 items-center overflow-hidden rounded-full bg-[var(--text-primary)] px-5 text-[13px] font-semibold text-[var(--bg-base)] transition-transform duration-300 active:scale-95"
           >
             <span className="absolute inset-0 translate-y-full rounded-full bg-[var(--gold)] transition-transform duration-500 ease-out-expo group-hover:translate-y-0" />
