@@ -41,13 +41,16 @@ function RotatingVerb({ start }: { start: number }) {
     <motion.span
       layout={!reduce}
       transition={{ layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
-      className="relative -mt-[0.22em] inline-flex overflow-hidden pb-[0.08em] pt-[0.22em] align-bottom"
+      /* Baseline-aligned with "Bugün Ne": `align-bottom` put the serif's baseline
+         ~10 px above the grotesk's at 48 px, and the İ dot touched line one. The
+         top padding keeps the dot inside the clipping box. */
+      className="relative inline-flex overflow-hidden pb-[0.1em] pl-[0.04em] pt-[0.26em] align-baseline"
     >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={VERBS[i]}
           aria-hidden
-          className="dn-display inline-block font-normal italic tracking-[-0.02em] text-[var(--gold)]"
+          className="dn-display inline-block text-[1.08em] !font-semibold italic tracking-[-0.025em] text-[var(--gold)]"
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           exit={{ y: "-100%", opacity: 0 }}
