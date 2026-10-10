@@ -668,4 +668,40 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-SEO-001: Public notes show "İçerik bulunamadı" when signed out; crawlers get empty pages
+
+**First seen**: 2026-10-10
+**Symptom**: Opening a public note signed out showed "İçerik bulunamadı" (`curl /api/posts/<id>` → 307 to `/login`). Search engines got no note text; `/discover` and `/profile/[username]` served only a full-screen loader in their HTML.
+**Root cause**:
+1. `/api/posts/:path*` is in the middleware matcher, so the browser fetch of the note (and its likes/comments) was redirected to the login page for anonymous visitors.
+2. The note, profile, tag and discover pages fetched everything in the browser.
+3. `SessionProvider` had no initial session, so `useSession()` was `"loading"` during server rendering and `ConditionalAppShell` rendered `FullScreenLoader` instead of the page for `/discover` and `/profile`.
+**Fix**: Middleware `authorized` callback lets anonymous GET through to `/api/posts/[id]`, `…/likes`, `…/comments`, `/api/posts/related` (handlers check `getPostReadAccess`). Pages read their data on the server with the same loaders as the APIs (`post-detail.ts`, `profile-data.ts`, `public-posts.ts`, `public-users.ts`) and pass it as initial state. The root layout passes `getServerSession()` to `SessionProvider`.
+**Prevention**: Check a public page signed out with `curl <url> | grep <some note text>`. Never gate a public page's data behind a matcher entry; render public content on the server.
+**Files**: `src/middleware.ts`, `src/app/layout.tsx`, `src/components/SessionProviderWrapper.tsx`, `src/app/{posts/[id],profile/[username],tag/[name],discover}/page.tsx`, `src/lib/{post-detail,profile-data,public-posts,public-users}.ts`
+
+---
+
+## ERR-DATA-012: Drafts and trashed notes readable by link, listed in "related" and the sitemap
+
+**First seen**: 2026-10-10
+**Symptom**: Anyone with the link could read another user's draft or trashed note via `/api/posts/[id]` (the share sheet says they can't); drafts/trashed notes appeared in related notes and in `sitemap.xml`.
+**Root cause**: `canReadPost` only checked the author's `isPublic`; `/api/posts/related` and `sitemap.ts` did not filter `isDraft`/`isDeleted`.
+**Fix**: `canReadPost` now allows drafts and deleted notes only to their owner and admins (`getPostReadAccess` selects both flags); related and sitemap queries filter them out.
+**Prevention**: Any query that lists or exposes notes to other people filters `isDraft: false, isDeleted: false` (or uses `publicPostsWhere`).
+**Files**: `src/lib/post-access.ts`, `src/app/api/posts/related/route.ts`, `src/app/sitemap.ts`
+
+---
+
+## ERR-BUILD-005: `TypeError: w is not a function` collecting `/sitemap/[__metadata_id__]`
+
+**First seen**: 2026-10-10
+**Symptom**: `next build` fails with `Failed to collect page data for /sitemap/[__metadata_id__]`.
+**Root cause**: Next 14.0 decides a `sitemap.ts` is a multi-sitemap by searching its source text for the name of the multi-sitemap export — a comment mentioning it is enough. It then calls that (missing) function.
+**Fix**: Remove the word from `src/app/sitemap.ts`, comments included.
+**Prevention**: Don't mention Next's multi-sitemap export by name in `sitemap.ts`.
+**Files**: `src/app/sitemap.ts`
+
+---
+
 *Last updated: 2026-10-10*

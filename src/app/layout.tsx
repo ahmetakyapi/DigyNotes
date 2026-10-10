@@ -31,6 +31,8 @@ import { GradientMesh } from "@/components/GradientMesh";
 import CommandPalette from "@/components/CommandPalette";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/metadata";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -47,7 +49,7 @@ export const metadata: Metadata = {
     default: "DigyNotes",
     template: "%s | DigyNotes",
   },
-  description: "Film, dizi ve kitap notlarını tut, derecelendir ve kategorilere ayır.",
+  description: "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
   keywords: [
     "film notları",
     "dizi notları",
@@ -111,7 +113,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Known on the server so semi-public pages (/discover, /profile) render their
+  // content in the first HTML instead of a session loader.
+  const session = await getServerSession(authOptions).catch(() => null);
+
   return (
     <html
       lang="tr"
@@ -131,7 +137,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10">
           <MaintenanceGuard>
             <ThemeProvider>
-              <SessionProviderWrapper>
+              <SessionProviderWrapper session={session}>
                 <ServiceWorkerRegistration />
                 <ErrorBoundary>
                   <ConditionalAppShell>{children}</ConditionalAppShell>

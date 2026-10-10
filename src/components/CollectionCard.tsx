@@ -7,11 +7,13 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { ResilientImage } from "@/components/ResilientImage";
 
+/* Fixed zone: profiles render these cards on the server first (hydration). */
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString("tr-TR", {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "Europe/Istanbul",
   });
 }
 
@@ -69,12 +71,12 @@ export default function CollectionCard({
             ))}
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgb(var(--gold-rgb)/0.14),transparent_60%)] text-[12.5px] text-[var(--text-muted)] font-medium">
+          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,rgb(var(--gold-rgb)/0.14),transparent_60%)] text-[12.5px] font-medium text-[var(--text-muted)]">
             Boş Koleksiyon
           </div>
         )}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
-        <span className="absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12.5px] text-[var(--text-primary)] font-medium">
+        <span className="absolute right-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12.5px] font-medium text-[var(--text-primary)]">
           {collection.postCount} not
         </span>
       </div>
@@ -90,7 +92,7 @@ export default function CollectionCard({
         )}
 
         {showOwner && collection.owner && (
-          <p className="mt-3 text-[12.5px] text-[var(--text-muted)] font-medium">
+          <p className="mt-3 text-[12.5px] font-medium text-[var(--text-muted)]">
             {collection.owner.name}
             {collection.owner.username ? ` · @${collection.owner.username}` : ""}
           </p>
@@ -98,7 +100,7 @@ export default function CollectionCard({
 
         <div className="mt-auto pt-4">
           <div className="flex items-center justify-between border-t border-[var(--border)] pt-4">
-            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+            <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
               Güncellendi {formatDate(collection.updatedAt)}
             </span>
             <ArrowUpRightIcon

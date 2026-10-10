@@ -33,21 +33,48 @@ interface PublicUser {
   isFollowing: boolean;
 }
 
-export default function ProfilePageClient({ username }: { readonly username: string }) {
+interface PrivateProfile {
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+}
+
+/** What page.tsx read on the server (`getProfilePageData`, JSON-serialised). */
+export type ProfileInitialData =
+  | { kind: "ok"; data: { user: PublicUser; posts: Post[]; collections: Collection[] } }
+  | { kind: "private"; profile: PrivateProfile };
+
+/* Joined / last-login stamps: fixed zone so the server's first render and the
+   browser agree (hydration). */
+const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
+  day: "numeric",
+  year: "numeric",
+  month: "long",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Europe/Istanbul",
+};
+
+export default function ProfilePageClient({
+  username,
+  initialData,
+}: {
+  readonly username: string;
+  readonly initialData?: ProfileInitialData;
+}) {
   const { data: session } = useSession();
   const currentUser = session?.user as { id?: string; name?: string } | undefined;
-  const [user, setUser] = useState<PublicUser | null>(null);
-  const [followerCount, setFollowerCount] = useState(0);
-  const [isFollowingProfile, setIsFollowingProfile] = useState(false);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [loading, setLoading] = useState(true);
+  const seeded = initialData?.kind === "ok" ? initialData.data : null;
+  const [user, setUser] = useState<PublicUser | null>(seeded?.user ?? null);
+  const [followerCount, setFollowerCount] = useState(seeded?.user.followerCount ?? 0);
+  const [isFollowingProfile, setIsFollowingProfile] = useState(Boolean(seeded?.user.isFollowing));
+  const [posts, setPosts] = useState<Post[]>(seeded?.posts ?? []);
+  const [collections, setCollections] = useState<Collection[]>(seeded?.collections ?? []);
+  const [loading, setLoading] = useState(!initialData);
   const [notFound, setNotFound] = useState(false);
-  const [privateProfile, setPrivateProfile] = useState<{
-    name: string;
-    username: string;
-    avatarUrl: string | null;
-  } | null>(null);
+  const [privateProfile, setPrivateProfile] = useState<PrivateProfile | null>(
+    initialData?.kind === "private" ? initialData.profile : null
+  );
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(null);
   const [activeTab, setActiveTab] = useState<"posts" | "collections" | "liked">("posts");
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,6 +83,8 @@ export default function ProfilePageClient({ username }: { readonly username: str
   const [likedLoaded, setLikedLoaded] = useState(false);
 
   useEffect(() => {
+    // Server already supplied this profile (page.tsx); no second round trip.
+    if (initialData) return;
     setNotFound(false);
     setPrivateProfile(null);
     fetch(`/api/users/${username}`)
@@ -90,7 +119,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
         setNotFound(true);
         setLoading(false);
       });
-  }, [username]);
+  }, [username, initialData]);
 
   useEffect(() => {
     setSearchQuery("");
@@ -110,23 +139,9 @@ export default function ProfilePageClient({ username }: { readonly username: str
       .finally(() => setLikedLoading(false));
   }, [activeTab, username, likedLoaded]);
 
-  const joinedDate = user
-    ? new Date(user.createdAt).toLocaleString("tr-TR", {
-        day: "numeric",
-        year: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
+  const joinedDate = user ? new Date(user.createdAt).toLocaleString("tr-TR", DATE_TIME_FORMAT) : "";
   const lastLoginDate = user?.lastLoginAt
-    ? new Date(user.lastLoginAt).toLocaleString("tr-TR", {
-        day: "numeric",
-        year: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+    ? new Date(user.lastLoginAt).toLocaleString("tr-TR", DATE_TIME_FORMAT)
     : "Henüz yok";
   const topCategory = useMemo(() => {
     const counts = new Map<string, number>();
@@ -409,8 +424,8 @@ export default function ProfilePageClient({ username }: { readonly username: str
             </button>
             {user.avgRating > 0 && <ProfileStat value={user.avgRating} label="Ort. Puan" accent />}
             <div className="ml-auto flex flex-col gap-1 text-right text-[12px] font-medium text-[var(--text-muted)]">
-              <span>Katıldı · {joinedDate}</span>
-              <span>Son Giriş · {lastLoginDate}</span>
+              <span suppressHydrationWarning>Katıldı · {joinedDate}</span>
+              <span suppressHydrationWarning>Son Giriş · {lastLoginDate}</span>
             </div>
           </div>
 

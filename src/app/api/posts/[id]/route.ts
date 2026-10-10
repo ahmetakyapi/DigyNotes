@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { transformPostTags, sanitizeRating, sanitizePostContent } from "@/lib/api-utils";
+import { sanitizeRating, sanitizePostContent } from "@/lib/api-utils";
 import { normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
-import { getPostReadAccess } from "@/lib/post-access";
+import { getPostDetail } from "@/lib/post-detail";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { handleApiError } from "@/lib/api-server";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
@@ -17,24 +17,12 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   try {
     const session = await getServerSession(authOptions);
     const userId = (session?.user as { id?: string })?.id;
-    const access = await getPostReadAccess(params.id, userId);
-
-    if (!access.post || !access.canRead) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
-    const post = await prisma.post.findUnique({
-      where: { id: params.id },
-      include: {
-        tags: { include: { tag: true } },
-        user: { select: { id: true, name: true, username: true, avatarUrl: true, isPublic: true } },
-      },
-    });
+    const { post } = await getPostDetail(params.id, userId ?? null);
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    return NextResponse.json(transformPostTags(post));
+    return NextResponse.json(post);
   } catch (error) {
     return handleApiError(error, "Not detayı yüklenirken bir hata oluştu.");
   }
@@ -140,7 +128,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       },
     });
 
-    return NextResponse.json(transformPostTags(post));
+    return NextResponse.json(post);
   } catch (error) {
     return handleApiError(error, "Not güncellenirken bir hata oluştu.");
   }

@@ -21,7 +21,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-interface PublicUser {
+export interface PublicUser {
   id: string;
   name: string;
   username: string | null;
@@ -31,11 +31,18 @@ interface PublicUser {
   postCount: number;
 }
 
-export default function DiscoverPageClient() {
+export default function DiscoverPageClient({
+  initialUsers,
+  initialTrending,
+}: {
+  /** Server-read first state (page.tsx): profiles and top-rated notes are in the HTML. */
+  readonly initialUsers?: PublicUser[];
+  readonly initialTrending?: Post[];
+}) {
   const [query, setQuery] = useState("");
-  const [users, setUsers] = useState<PublicUser[]>([]);
-  const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<PublicUser[]>(initialUsers ?? []);
+  const [trendingPosts, setTrendingPosts] = useState<Post[]>(initialTrending ?? []);
+  const [loading, setLoading] = useState(!initialUsers);
   const [currentPage, setCurrentPage] = useState(1);
   const reduce = useReducedMotion();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -55,14 +62,16 @@ export default function DiscoverPageClient() {
     }
   }, []);
 
+  const seeded = Boolean(initialUsers);
   useEffect(() => {
+    if (seeded) return;
     fetchUsers("");
     // Trending postları da çek
     fetch("/api/public/posts?sort=rating&limit=6&paginate=0")
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => setTrendingPosts(Array.isArray(data) ? data : []))
       .catch(() => {});
-  }, [fetchUsers]);
+  }, [fetchUsers, seeded]);
 
   const handleSearch = (val: string) => {
     setQuery(val);

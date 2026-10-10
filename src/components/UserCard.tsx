@@ -23,6 +23,8 @@ export default function UserCard({ user }: UserCardProps) {
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
+        // Fixed zone: /discover renders this on the server first (hydration).
+        timeZone: "Europe/Istanbul",
       })
     : null;
   const content = (
@@ -59,11 +61,13 @@ export default function UserCard({ user }: UserCardProps) {
           Not
         </span>
         {lastSeenLabel && (
-          <span className="bg-accent/8 inline-flex overflow-hidden rounded-full border border-accent/20 text-[11px]">
-            <span className="border-accent/18 border-r px-2.5 py-1.5 font-medium text-[var(--text-faint)]">
+          <span className="inline-flex overflow-hidden rounded-full border border-accent/20 bg-accent/8 text-[11px]">
+            <span className="border-r border-accent/18 px-2.5 py-1.5 font-medium text-[var(--text-faint)]">
               Son Giriş
             </span>
-            <span className="px-3 py-1.5 font-medium text-[var(--gold)]">{lastSeenLabel}</span>
+            <span suppressHydrationWarning className="px-3 py-1.5 font-medium text-[var(--gold)]">
+              {lastSeenLabel}
+            </span>
           </span>
         )}
       </div>
@@ -78,7 +82,7 @@ export default function UserCard({ user }: UserCardProps) {
     return (
       <Link
         href={href}
-        className="hover:border-accent/24 group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-card)]"
+        className="group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-accent/24 hover:shadow-[var(--shadow-card)]"
       >
         {content}
       </Link>

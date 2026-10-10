@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { stripHtml, truncateText } from "@/lib/text";
 
 const DEFAULT_SITE_URL = "http://localhost:3000";
@@ -26,6 +27,54 @@ export function getSiteUrl() {
 
 export function toAbsoluteUrl(path: string) {
   return new URL(path, getSiteUrl()).toString();
+}
+
+/** The site-wide share card (`src/app/opengraph-image.tsx`). */
+export const SITE_SHARE_IMAGE = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  type: "image/jpeg",
+  alt: "DigyNotes — Sana Kalan Her Şey, Burada",
+};
+
+/** Search engines must not index these (auth screens, offline, maintenance, 404). */
+export const NO_INDEX: Metadata["robots"] = { index: false, follow: false };
+
+/**
+ * Title, description, canonical and share tags for a public page in one go. A page's
+ * `openGraph`/`twitter` replace the layout's wholesale, so the share card and the
+ * full title are spelled out here instead of silently falling back to "DigyNotes".
+ * `title` is the bare page name (the layout template adds "| DigyNotes"); pass
+ * `absoluteTitle` for the landing page.
+ */
+export function buildPageMetadata(input: {
+  title: string;
+  description: string;
+  path: string;
+  absoluteTitle?: boolean;
+}): Metadata {
+  const fullTitle = input.absoluteTitle ? input.title : `${input.title} | DigyNotes`;
+  return {
+    title: input.absoluteTitle ? { absolute: input.title } : input.title,
+    description: input.description,
+    alternates: { canonical: input.path },
+    openGraph: {
+      type: "website",
+      siteName: "DigyNotes",
+      locale: "tr_TR",
+      url: toAbsoluteUrl(input.path),
+      title: fullTitle,
+      description: input.description,
+      images: [SITE_SHARE_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description: input.description,
+      images: [SITE_SHARE_IMAGE.url],
+    },
+  };
 }
 
 export function buildPostMetadataDescription(input: {

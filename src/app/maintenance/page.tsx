@@ -1,6 +1,13 @@
+import { Metadata } from "next";
 import { getSiteSetting } from "@/lib/site-settings";
+import { NO_INDEX } from "@/lib/metadata";
 import Link from "next/link";
 import { RetryButton } from "@/components/RetryButton";
+
+export const metadata: Metadata = {
+  title: "Bakımda",
+  robots: NO_INDEX,
+};
 
 /* LAYOUT: Full-screen centred editorial maintenance screen — mirrors the 404 page.
    - mono eyebrow "(503) — Bakım"

@@ -22,6 +22,8 @@ export async function GET(req: NextRequest) {
       where: {
         title: { equals: title, mode: "insensitive" },
         user: { isPublic: true },
+        isDraft: false,
+        isDeleted: false,
         ...(userId ? { userId: { not: userId } } : {}),
         ...(excludePostId ? { id: { not: excludePostId } } : {}),
       },

@@ -60,11 +60,14 @@ interface LikeData {
   liked: boolean;
 }
 
+/* Fixed zone: the server (UTC on Vercel) renders this first, and the browser must
+   print the same day or hydration fails. */
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("tr-TR", {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Europe/Istanbul",
   });
 }
 
@@ -107,18 +110,25 @@ function collectCommentBranchIds(items: Comment[], rootId: string) {
   return ids;
 }
 
-export default function PostDetailClient({ params }: { params: { id: string } }) {
+export default function PostDetailClient({
+  params,
+  initialPost = null,
+}: {
+  params: { id: string };
+  /** The note as the server read it (page.tsx), so the first HTML is the full note. */
+  initialPost?: Post | null;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const currentUserId = session?.user ? (session.user as { id: string }).id : null;
 
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState<Post | null>(initialPost);
+  const [loading, setLoading] = useState(!initialPost);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [pinned, setPinned] = useState(false);
-  const [archived, setArchived] = useState(false);
+  const [pinned, setPinned] = useState(Boolean(initialPost?.isPinned));
+  const [archived, setArchived] = useState(Boolean(initialPost?.isArchived));
   const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
   const [imgOrientation, setImgOrientation] = useState<"portrait" | "landscape" | null>(null);
   const [isSpoilerRevealed, setIsSpoilerRevealed] = useState(false);
@@ -151,13 +161,17 @@ export default function PostDetailClient({ params }: { params: { id: string } })
     }
   };
 
+  /* Still refreshed on mount: the router cache can replay a server-rendered note from
+     before an edit. A failed refresh keeps the server copy; only a 404 clears it. */
   useEffect(() => {
     fetch(`/api/posts/${params.id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        setPost(data);
-        if (data?.isPinned) setPinned(true);
-        if (data?.isArchived) setArchived(true);
+      .then((r) => (r.ok ? r.json() : r.status === 404 ? null : undefined))
+      .then((data: Post | null | undefined) => {
+        if (data !== undefined) {
+          setPost(data);
+          setPinned(Boolean(data?.isPinned));
+          setArchived(Boolean(data?.isArchived));
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));

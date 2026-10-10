@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 interface PostVisibilityRecord {
   id: string;
   userId: string | null;
+  /* Optional so callers that already filtered them (the share card) can pass their row. */
+  isDraft?: boolean;
+  isDeleted?: boolean;
   user: {
     isPublic: boolean;
   } | null;
@@ -15,6 +18,12 @@ export interface PostReadAccess {
   canRead: boolean;
 }
 
+/**
+ * Who may open a note: its owner and admins always; everyone else only when it is
+ * published (not a draft, not in the trash) and its author's profile is public.
+ * Drafts used to be readable by anyone with the link, although the share sheet
+ * promised the opposite.
+ */
 export function canReadPost(
   post: PostVisibilityRecord | null,
   viewerId?: string | null,
@@ -22,9 +31,15 @@ export function canReadPost(
 ) {
   if (!post) return false;
   if (isAdmin) return true;
-  if (!post.userId) return true;
   if (viewerId && post.userId === viewerId) return true;
+  if (post.isDraft || post.isDeleted) return false;
+  if (!post.userId) return true;
   return post.user?.isPublic === true;
+}
+
+/** True when the note is readable by anyone, signed in or not (indexable, shareable). */
+export function isPostPublic(post: PostVisibilityRecord | null) {
+  return canReadPost(post, null, false);
 }
 
 export async function getPostReadAccess(
@@ -37,6 +52,8 @@ export async function getPostReadAccess(
       select: {
         id: true,
         userId: true,
+        isDraft: true,
+        isDeleted: true,
         user: { select: { isPublic: true } },
       },
     }),

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeftIcon, HashIcon } from "@phosphor-icons/react";
@@ -19,14 +19,25 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 type SortOption = "newest" | "oldest" | "rating";
 
-export default function TagPageClient({ params }: { params: { name: string } }) {
+export default function TagPageClient({
+  params,
+  initialPosts,
+}: {
+  params: { name: string };
+  /** First page (newest) read on the server, so the notes are in the HTML. */
+  initialPosts?: Post[];
+}) {
   const tagName = decodeURIComponent(params.name);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>(initialPosts ?? []);
+  const [loading, setLoading] = useState(!initialPosts);
   const [sort, setSort] = useState<SortOption>("newest");
   const reduceMotion = useReducedMotion();
+  // The server copy covers the default sort; fetch only when the sort changes.
+  const skipSeededFetch = useRef(Boolean(initialPosts));
 
   useEffect(() => {
+    if (skipSeededFetch.current && sort === "newest") return;
+    skipSeededFetch.current = false;
     setLoading(true);
     fetch(`/api/public/posts?tag=${encodeURIComponent(tagName)}&sort=${sort}&limit=50`)
       .then((r) => r.json())

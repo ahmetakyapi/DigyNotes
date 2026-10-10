@@ -54,7 +54,7 @@ Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://
 ## Auth & Access
 
 - The `matcher` in `src/middleware.ts` is the single source of truth for protected routes; add every new private page or API there. It covers notes, new-post, `posts/*/edit`, category, feed, recommended, collections, watchlist, stats, notifications, profile/settings, admin, and the posts, categories, tags, bookmarks, watchlist, collections, follows, feed, recommendations, notifications, `users/me` and admin APIs.
-- Public: landing, auth pages, `/discover`, `/profile/[username]`, `/tag/[name]`, `/posts/[id]` (visibility via `getPostReadAccess`: owner, admin, or public author), `/api/public`, `/api/search`, `/api/users/[username]/**`, `/api/users/search`, `/api/community/stats`, `/api/auth/*`.
+- Public: landing, auth pages, `/discover`, `/profile/[username]`, `/tag/[name]`, `/posts/[id]` (visibility via `getPostReadAccess`/`canReadPost`: owner and admin always; others only published — not draft, not deleted — notes of a public author), `/api/public`, `/api/search`, `/api/users/[username]/**`, `/api/users/search`, `/api/community/stats`, `/api/auth/*`. The middleware's `authorized` callback also lets anonymous **GET** through to `/api/posts/[id]`, `…/likes`, `…/comments` and `/api/posts/related` (handlers check access themselves); writes there still need a session.
 - Admin = `User.isAdmin` + `requireAdmin()`. `/api/admin/setup` bootstraps only outside production unless `ENABLE_ADMIN_BOOTSTRAP=true`.
 - Maintenance mode (`SiteSettings.maintenanceMode`, `MaintenanceGuard`) only applies to middleware-matched routes: it reads the `x-pathname` header the middleware sets.
 
@@ -95,6 +95,14 @@ Tokens: `src/styles/theme-variables.css`. Dark (default) = warm ink; light = bon
 - Copy: all UI text Turkish. Headings, subtitles, buttons, tabs and greetings use Turkish Title Case ("Arşivini Başlat", "Giriş Yap", "İyi Geceler"); ve, ile, da/de, ki stay lowercase. Toasts, placeholders and body copy stay sentence case.
 - Motion: animate `transform`/`opacity` only. The page-transition wrapper animates opacity only — transform/filter on an ancestor traps `position: fixed` children (ERR-UI-004). No per-frame width/height/clip-path/filter, no SVG filters on large layers, pause loops off-screen, no `backdrop-blur` on repeated list items (ERR-PERF-001). Honour `useReducedMotion`.
 - Landing: `src/components/landing/*` (Hero = pinned scroll-cinema; Lenis + scroll effects live only here). Auth pages: `src/components/AuthShell.tsx`.
+
+## SEO
+
+- Public pages are server-rendered with their data: `posts/[id]` (`getPostDetail`, `src/lib/post-detail.ts`), `profile/[username]` (`getProfilePageData`, `src/lib/profile-data.ts`), `tag/[name]` and `/discover` (`src/lib/public-posts.ts`, `public-users.ts`) read on the server and pass it to the `*Client` component as initial state; the API routes use the same loaders. The root layout passes the server session to `SessionProvider`, otherwise `ConditionalAppShell` renders only a loader for `/discover` and `/profile` on the server. Dates rendered on the server use `timeZone: "Europe/Istanbul"` (hydration).
+- JSON-LD: builders in `src/lib/structured-data.ts` (tested), rendered by `src/components/JsonLd.tsx` (escapes `<`). Landing: `WebSite` + `Organization` (no `SearchAction`: there is no public search URL). Note: `Review` with typed `itemReviewed` (Movie, TVSeries, VideoGame, Book, TouristDestination, CreativeWork) when rated, else `Article`; profile: `ProfilePage` + `Person`; `BreadcrumbList` on note, profile, tag, discover. Only for publicly visible content.
+- Metadata: `buildPageMetadata` (`src/lib/metadata.ts`) gives title, description, canonical and full share tags; a page's `openGraph` replaces the layout's, so always go through it.
+- noindex: private pages get `X-Robots-Tag: noindex` from the middleware (anonymous crawlers are redirected to `/login`, itself noindex); auth, offline, maintenance, 404, `/collections/*`, empty tag pages, private profiles and non-public notes carry `robots: NO_INDEX`. `robots.ts` disallows only `/api/` — don't add private pages there, a blocked URL never shows its noindex.
+- `sitemap.ts`: landing, `/discover`, public profiles, public notes, tags with public notes, capped below 50k URLs. Missing notes/profiles render the 404 page with noindex but status 200 (Next 14 + `loading.tsx` streams first).
 
 ## Share Previews (WhatsApp, iMessage, X)
 

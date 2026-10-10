@@ -3,6 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sayfa Bulunamadı",
+  robots: { index: false, follow: false },
 };
 
 /* LAYOUT: Full-height centred editorial 404 (works standalone and inside AppShell).
