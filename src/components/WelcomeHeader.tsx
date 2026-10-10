@@ -41,7 +41,7 @@ function RotatingVerb({ start }: { start: number }) {
     <motion.span
       layout={!reduce}
       transition={{ layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
-      className="relative inline-flex overflow-hidden pb-[0.08em] align-bottom"
+      className="relative -mt-[0.22em] inline-flex overflow-hidden pb-[0.08em] pt-[0.22em] align-bottom"
     >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
