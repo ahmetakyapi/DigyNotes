@@ -29,7 +29,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       where: { id: params.id },
       include: {
         tags: { include: { tag: true } },
-        user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+        user: { select: { id: true, name: true, username: true, avatarUrl: true, isPublic: true } },
       },
     });
     if (!post) {

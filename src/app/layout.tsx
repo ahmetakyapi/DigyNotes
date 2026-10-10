@@ -30,6 +30,7 @@ import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { GradientMesh } from "@/components/GradientMesh";
 import CommandPalette from "@/components/CommandPalette";
 import { Analytics } from "@vercel/analytics/next";
+import { getSiteUrl } from "@/lib/metadata";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -38,7 +39,7 @@ export const viewport: Viewport = {
   ],
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -65,7 +66,13 @@ export const metadata: Metadata = {
     description:
       "Film, dizi, oyun, kitap ve gezi notlarını tut, derecelendir ve kategorilere ayır.",
     images: [
-      { url: "/opengraph-image", width: 1200, height: 630, alt: "DigyNotes — Kişisel Not Defteri" },
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "DigyNotes — Sana Kalan Her Şey, Burada",
+      },
     ],
   },
   twitter: {

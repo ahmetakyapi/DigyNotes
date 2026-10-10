@@ -79,6 +79,8 @@ Bu kural sahibinin tüm repolarında geçerli (9 Ekim 2026).
 | `ScrollToTop`            | `src/components/ScrollToTop.tsx`            | Scroll-to-top floating button               |
 | `RecentlyViewed`         | `src/components/RecentlyViewed.tsx`         | Recently viewed posts (localStorage)        |
 | `PasswordStrength`       | `src/components/PasswordStrength.tsx`       | Password strength indicator                 |
+| `ShareButton`            | `src/components/ShareButton.tsx`            | Opens `ShareSheet`                          |
+| `ShareSheet`             | `src/components/ShareSheet.tsx`             | Share dialog with link-preview mock         |
 
 ---
 
@@ -150,6 +152,14 @@ on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light
 - UI copy: headings, subtitles, buttons and tabs use Turkish Title Case ("Arşivini Başlat", "Giriş Yap"); conjunctions (ve, ile, da/de, ki) stay lowercase. Toasts/placeholders/body stay sentence case.
 - Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
 - Cursor: NO custom cursor (removed 2026-10-10 at the owner's request) — normal mouse everywhere; don't re-add `data-cursor` labels.
+
+## Share Previews (WhatsApp, iMessage, X)
+
+- Cards: `src/app/opengraph-image.tsx` (site), `src/app/posts/[id]/opengraph-image.tsx` (note), `src/app/profile/[username]/opengraph-image.tsx` (profile). Node runtime, 1200×630, returned as **JPEG** via `toJpegResponse` (`src/lib/og-image.ts`, sharp). Pieces live in `src/lib/og-parts.tsx` (`OgWordmark`, `OgStars`, `OgGlow`, `renderOgNotice`).
+- Read at phone size (~0.28×): no text under ~26px, no uppercase labels, at most ~5 things to read. Fonts come from disk (`assets/og-fonts/`), never from Google at render time.
+- Metadata always points `og:image` at our card with `?v=<updatedAt>`, never at the raw cover. Private or missing content gets a "Bu Not Gizli" / "Bulunamadı" card; drafts and deleted notes are never drawn.
+- In-app sharing: `ShareButton` → `ShareSheet` (preview of the real card, WhatsApp/Telegram/X, copy, save the card as an image, and a warning when others can't open the link).
+- Details and checks: ERRORS.md → ERR-OG-001.
 
 ## Architecture Patterns
 

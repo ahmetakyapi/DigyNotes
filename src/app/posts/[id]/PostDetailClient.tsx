@@ -15,6 +15,8 @@ import { BookmarkButton } from "@/components/BookmarkButton";
 import { ActionTooltip } from "@/components/ActionTooltip";
 import { AvatarImage } from "@/components/AvatarImage";
 import ShareButton from "@/components/ShareButton";
+import type { SharePreview } from "@/components/ShareSheet";
+import { stripHtml, truncateText } from "@/lib/text";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { buildOpenStreetMapEmbedUrl, buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
@@ -469,6 +471,26 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   const displayTitle = formatDisplayTitle(post.title);
   const displayCreator = formatDisplayTitle(post.creator);
   const displayExcerpt = formatDisplaySentence(post.excerpt);
+
+  /* Share sheet preview: the same JPEG card and description line the server puts in the
+     page's og:image / og:description, so the sheet shows exactly what the chat will. */
+  const shareLead = [
+    post.user?.name,
+    post.rating > 0 ? `★ ${post.rating.toFixed(1).replace(".", ",")}/5` : null,
+    post.status,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const shareText = stripHtml(post.excerpt || post.content || "").trim();
+  const sharePreview: SharePreview = {
+    image: `/posts/${post.id}/opengraph-image?v=${new Date(post.updatedAt).getTime().toString(36)}`,
+    description: truncateText(shareText ? `${shareLead} — ${shareText}` : shareLead, 160),
+    warning: post.isDraft
+      ? "Bu not taslak. Bağlantıyı açan kişi notu göremez; önce yayınlaman gerekiyor."
+      : isOwnPost && post.user?.isPublic === false
+        ? "Profilin gizli olduğu için bağlantıyı açan kişi notu göremez, önizlemede de “Bu Not Gizli” yazar. Profil Ayarları'ndan profilini herkese açık yapabilirsin."
+        : undefined,
+  };
   const createdLabel = formatDate(post.createdAt);
   const authorProfileHref = post.user?.username ? `/profile/${post.user.username}` : null;
   const tagCount = post.tags?.length ?? 0;
@@ -793,6 +815,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     title={post.title}
                     text={`${post.title} — DigyNotes`}
                     label="Paylaş"
+                    preview={sharePreview}
                     className="font-semibold shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     style={{
                       borderColor: "var(--media-control-border)",
@@ -924,7 +947,12 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           {!isOwnPost && (
             <div className="flex shrink-0 items-center gap-2">
               <BookmarkButton postId={post.id} ownerId={post.user?.id} />
-              <ShareButton title={post.title} text={`${post.title} — DigyNotes`} size="sm" />
+              <ShareButton
+                title={post.title}
+                text={`${post.title} — DigyNotes`}
+                size="sm"
+                preview={sharePreview}
+              />
               <ActionTooltip label={likeData.liked ? "Beğeniyi kaldır" : "Beğen"}>
                 <button
                   type="button"

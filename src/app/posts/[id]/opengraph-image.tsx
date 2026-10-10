@@ -2,110 +2,31 @@ import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/categories";
 import { getPostReadAccess } from "@/lib/post-access";
-import { buildPostMetadataDescription, truncateText } from "@/lib/metadata";
+import { stripHtml, truncateText } from "@/lib/metadata";
 import { loadBrandFonts, OG } from "@/lib/og-fonts";
+import { loadCover, OG_SIZE, toJpegResponse } from "@/lib/og-image";
+import { OgGlow, OgStars, OgWordmark, renderOgNotice } from "@/lib/og-parts";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const size = OG_SIZE;
+export const contentType = "image/jpeg";
+export const alt = "DigyNotes notu";
 
-export const size = {
-  width: 1200,
-  height: 630,
-};
+const COVER = { width: 330, height: 495 } as const;
 
-export const contentType = "image/png";
-
-/** Satori can draw JPEG/PNG data URLs but not WebP: fetch the cover and keep it only if supported. */
-async function loadCover(src: string | null | undefined) {
-  if (!src || !/^https?:\/\//.test(src)) return null;
-  try {
-    const res = await fetch(src, { headers: { "User-Agent": "DigyNotesOG/1.0" } });
-    const type = res.headers.get("content-type") ?? "";
-    if (!res.ok || !/image\/(jpeg|jpg|png)/.test(type)) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.byteLength > 4_000_000) return null;
-    return `data:${type.split(";")[0]};base64,${buf.toString("base64")}`;
-  } catch {
-    return null;
-  }
-}
-
-function Mark({ size: s = 64 }: { size?: number }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "baseline",
-        justifyContent: "center",
-        width: s,
-        height: s,
-        borderRadius: s * 0.26,
-        background: OG.card,
-        border: `1px solid ${OG.border}`,
-        paddingTop: s * 0.12,
-      }}
-    >
-      <span style={{ color: OG.bone, fontSize: s * 0.6, fontWeight: 800, letterSpacing: -2 }}>
-        D
-      </span>
-      <span
-        style={{
-          color: OG.bone,
-          fontSize: s * 0.62,
-          fontFamily: "Instrument",
-          fontStyle: "italic",
-        }}
-      >
-        n
-      </span>
-      <span
-        style={{
-          width: s * 0.12,
-          height: s * 0.12,
-          borderRadius: 99,
-          background: OG.lavender,
-          marginLeft: 2,
-        }}
-      />
-    </div>
-  );
-}
-
-async function renderFallbackCard(message: string) {
-  const fonts = await loadBrandFonts(message + "DigyNotesDn.(DN)KİŞİSEL NOT DEFTERİN");
-  return new ImageResponse(
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        width: "100%",
-        height: "100%",
-        background: OG.ink,
-        padding: "64px 72px",
-        fontFamily: "Hanken",
-      }}
-    >
-      <Mark />
-      <span style={{ color: OG.bone, fontSize: 84, fontFamily: "Instrument", fontStyle: "italic" }}>
-        {message}
-      </span>
-      <span style={{ color: OG.muted, fontSize: 20, letterSpacing: 4 }}>
-        <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>KİŞİSEL NOT DEFTERİN
-      </span>
-    </div>,
-    { ...size, fonts }
-  );
-}
+/* The card is read at phone size: WhatsApp shows it ~330 px wide, i.e. at ~0.28×.
+   So nothing on it is smaller than ~26 px, there are at most five things to read
+   (category, title, rating, two lines of note, author), and none of it is uppercase. */
 
 export default async function PostOpenGraphImage({ params }: { params: { id: string } }) {
   const access = await getPostReadAccess(params.id);
-
   if (!access.post || !access.canRead) {
-    return renderFallbackCard("Bu Not Herkese Açık Değil");
+    return renderOgNotice("Bu Not Gizli", "Notu yalnızca sahibi görebilir.");
   }
 
-  const post = await prisma.post.findUnique({
-    where: { id: params.id },
+  const post = await prisma.post.findFirst({
+    where: { id: params.id, isDraft: false, isDeleted: false },
     select: {
       title: true,
       image: true,
@@ -115,211 +36,212 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
       creator: true,
       years: true,
       rating: true,
-      user: {
-        select: {
-          name: true,
-          username: true,
-        },
-      },
-      tags: {
-        select: {
-          tag: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
+      status: true,
+      user: { select: { name: true, username: true, avatarUrl: true } },
     },
   });
+  if (!post) return renderOgNotice("Not Bulunamadı", "Bu not silinmiş ya da taşınmış olabilir.");
 
-  if (!post) {
-    return renderFallbackCard("Not Bulunamadı");
-  }
+  const [fonts, cover, avatar] = await Promise.all([
+    loadBrandFonts(),
+    loadCover(post.image, COVER.width, COVER.height),
+    loadCover(post.user?.avatarUrl, 56, 56),
+  ]);
 
   const categoryLabel = getCategoryLabel(post.category);
-  const description = truncateText(
-    buildPostMetadataDescription({
-      excerpt: post.excerpt,
-      content: post.content,
-      category: categoryLabel,
-      creator: post.creator,
-      years: post.years,
-    }),
-    220
-  );
-  const tagNames = post.tags.map(({ tag }) => tag.name).slice(0, 3);
-  const metaItems = [categoryLabel, post.creator, post.years].filter((value): value is string =>
-    Boolean(value)
-  );
-  const authorLabel = post.user?.name || post.creator || "DigyNotes";
-  const ratingLabel =
-    typeof post.rating === "number" && post.rating > 0 ? `${post.rating.toFixed(1)}/5 puan` : null;
+  const meta = [post.creator, post.years].filter((v): v is string => Boolean(v)).join(" · ");
+  const note = truncateText(stripHtml(post.excerpt || post.content || ""), 160);
+  const rating = typeof post.rating === "number" && post.rating > 0 ? post.rating : null;
+  const author = post.user?.name || post.user?.username || "DigyNotes";
+  const title = truncateText(post.title, 56);
+  /* The right column is ~560 px wide and ~520 px tall. Serif italic runs ~0.37 em per
+     character, so pick the size that keeps short titles on one line, let long ones take
+     two, and give the note whatever height is left (two lines, or one). */
+  const titleSize = title.length <= 12 ? 104 : title.length <= 15 ? 86 : 70;
+  const titleLines = Math.min(2, Math.ceil(title.length / (560 / (titleSize * 0.37))));
+  const noteLines = titleLines === 1 ? 2 : 1;
 
-  const cover = await loadCover(post.image);
-  const fullStars = Math.floor(post.rating ?? 0);
-  const titleSize = post.title.length > 34 ? 64 : post.title.length > 20 ? 80 : 96;
-  const fonts = await loadBrandFonts(
-    [
-      post.title,
-      description,
-      metaItems.join(" "),
-      tagNames.join(" "),
-      authorLabel,
-      ratingLabel ?? "",
-      "(DN)·@#/5 ★☆ DigyNotesDn. KİŞİSEL NOT DEFTERİN",
-      post.user?.username ?? "",
-      categoryLabel.toLocaleUpperCase("tr-TR"),
-    ].join(" ")
-  );
-
-  /* LAYOUT: 1200×630 ink card. LEFT: tilted cover (or serif category tile).
-     RIGHT: mono meta row → serif-italic title → creator → stars → excerpt → tags + author. */
-  return new ImageResponse(
-    <div
-      style={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
-        background: OG.ink,
-        padding: "56px 64px",
-        gap: 56,
-        position: "relative",
-        fontFamily: "Hanken",
-      }}
-    >
+  /* LAYOUT: 1200×630 ink card, 56 px frame.
+     LEFT  — the cover, slightly tilted (or a serif category tile when there is none).
+     RIGHT — category chip + status · title (serif italic) · creator/year
+             · stars + score · two lines of the note · author row with the wordmark. */
+  return toJpegResponse(
+    new ImageResponse(
       <div
         style={{
-          position: "absolute",
-          top: -300,
-          left: -240,
-          width: 900,
-          height: 900,
-          borderRadius: 9999,
-          background: "radial-gradient(closest-side, rgba(185,168,255,0.2), rgba(185,168,255,0))",
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          background: OG.ink,
+          padding: "56px 64px 52px 64px",
+          gap: 60,
+          position: "relative",
+          fontFamily: "Sans",
         }}
-      />
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={cover}
-            alt=""
-            width={340}
-            height={510}
+      >
+        <OgGlow />
+
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {cover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={cover}
+              alt=""
+              width={COVER.width}
+              height={COVER.height}
+              style={{
+                objectFit: "cover",
+                borderRadius: 26,
+                border: `2px solid ${OG.border}`,
+                transform: "rotate(-3deg)",
+                boxShadow: "0 30px 60px rgba(0,0,0,0.55)",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: COVER.width,
+                height: COVER.height,
+                borderRadius: 26,
+                background: OG.card,
+                border: `2px solid ${OG.border}`,
+                transform: "rotate(-3deg)",
+                color: OG.bone,
+                fontSize: 76,
+                fontFamily: "Serif",
+                fontStyle: "italic",
+              }}
+            >
+              {categoryLabel}
+            </div>
+          )}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <span
+              style={{
+                display: "flex",
+                color: OG.ink,
+                background: OG.lavender,
+                fontSize: 26,
+                fontWeight: 800,
+                borderRadius: 999,
+                padding: "6px 20px",
+              }}
+            >
+              {categoryLabel}
+            </span>
+            {post.status && (
+              <span style={{ color: OG.secondary, fontSize: 28, fontWeight: 500 }}>
+                {post.status}
+              </span>
+            )}
+          </div>
+
+          <span
             style={{
-              objectFit: "cover",
-              borderRadius: 24,
-              border: `1px solid ${OG.border}`,
-              transform: "rotate(-3deg)",
+              display: "block",
+              lineClamp: 2,
+              color: OG.bone,
+              fontSize: titleSize,
+              fontFamily: "Serif",
+              fontStyle: "italic",
+              lineHeight: 1.02,
+              letterSpacing: -1.5,
+              marginTop: 26,
             }}
-          />
-        ) : (
+          >
+            {title}
+          </span>
+          {meta && (
+            <span style={{ color: OG.secondary, fontSize: 30, fontWeight: 500, marginTop: 14 }}>
+              {meta}
+            </span>
+          )}
+
+          {rating && (
+            <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 24 }}>
+              <OgStars value={rating} size={40} />
+              <span style={{ color: OG.bone, fontSize: 36, fontWeight: 800 }}>
+                {rating.toFixed(1).replace(".", ",")}
+              </span>
+            </div>
+          )}
+
+          {/* Whatever height is left; if the title estimate was off, the note is cut
+              here rather than running into the author row. */}
+          <div style={{ display: "flex", flex: 1, minHeight: 0, overflow: "hidden" }}>
+            {note && (
+              <span
+                style={{
+                  display: "block",
+                  lineClamp: noteLines,
+                  color: OG.secondary,
+                  fontSize: 27,
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                  marginTop: 22,
+                }}
+              >
+                {note}
+              </span>
+            )}
+          </div>
+
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              width: 340,
-              height: 510,
-              borderRadius: 24,
-              background: OG.card,
-              border: `1px solid ${OG.border}`,
-              color: OG.bone,
-              fontSize: 72,
-              fontFamily: "Instrument",
-              fontStyle: "italic",
+              justifyContent: "space-between",
+              paddingTop: 22,
+              borderTop: `2px solid ${OG.border}`,
             }}
           >
-            {categoryLabel}
-          </div>
-        )}
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ color: OG.muted, fontSize: 18, letterSpacing: 4 }}>
-            <span style={{ color: OG.lavender, marginRight: 14 }}>(DN)</span>
-            {metaItems.join("  ·  ").toLocaleUpperCase("tr-TR")}
-          </span>
-          <Mark size={56} />
-        </div>
-
-        <span
-          style={{
-            color: OG.bone,
-            fontSize: titleSize,
-            fontFamily: "Instrument",
-            fontStyle: "italic",
-            lineHeight: 0.95,
-            letterSpacing: -2,
-            marginTop: 36,
-          }}
-        >
-          {post.title}
-        </span>
-
-        {ratingLabel && (
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 22 }}>
-            <div style={{ display: "flex", gap: 6 }}>
-              {[0, 1, 2, 3, 4].map((i) => (
-                <svg key={i} width="28" height="28" viewBox="0 0 24 24">
-                  <path
-                    d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"
-                    fill={i < fullStars ? OG.lavender : OG.border}
-                  />
-                </svg>
-              ))}
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              {avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatar}
+                  alt=""
+                  width={52}
+                  height={52}
+                  style={{ borderRadius: 999, objectFit: "cover" }}
+                />
+              ) : (
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 52,
+                    height: 52,
+                    borderRadius: 999,
+                    background: OG.card,
+                    border: `2px solid ${OG.border}`,
+                    color: OG.lavender,
+                    fontSize: 26,
+                    fontWeight: 800,
+                  }}
+                >
+                  {author.charAt(0).toLocaleUpperCase("tr-TR")}
+                </span>
+              )}
+              <span style={{ color: OG.bone, fontSize: 28, fontWeight: 800 }}>{author}</span>
+              {post.user?.username && (
+                <span style={{ color: OG.muted, fontSize: 26, fontWeight: 500 }}>
+                  @{post.user.username}
+                </span>
+              )}
             </div>
-            <span style={{ color: OG.bone, fontSize: 22, fontWeight: 500 }}>{ratingLabel}</span>
+            <OgWordmark size={34} />
           </div>
-        )}
-
-        <span
-          style={{
-            color: OG.secondary,
-            fontSize: 24,
-            fontWeight: 500,
-            lineHeight: 1.45,
-            marginTop: 22,
-          }}
-        >
-          {truncateText(description, 150)}
-        </span>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginTop: "auto",
-            borderTop: `1px solid ${OG.border}`,
-            paddingTop: 20,
-          }}
-        >
-          <div style={{ display: "flex", gap: 10 }}>
-            {tagNames.map((t) => (
-              <span
-                key={t}
-                style={{
-                  color: OG.secondary,
-                  fontSize: 18,
-                  border: `1px solid ${OG.border}`,
-                  borderRadius: 999,
-                  padding: "6px 14px",
-                }}
-              >
-                #{t}
-              </span>
-            ))}
-          </div>
-          <span style={{ color: OG.bone, fontSize: 20, fontWeight: 500 }}>
-            {authorLabel}
-            {post.user?.username ? `  ·  @${post.user.username}` : ""}
-          </span>
         </div>
-      </div>
-    </div>,
-    { ...size, fonts }
+      </div>,
+      { ...OG_SIZE, fonts }
+    )
   );
 }

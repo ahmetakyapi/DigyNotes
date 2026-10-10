@@ -4,7 +4,12 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
 import { getCategoryLabel } from "@/lib/categories";
-import { buildPostMetadataDescription, toAbsoluteUrl } from "@/lib/metadata";
+import {
+  buildPostMetadataDescription,
+  stripHtml,
+  toAbsoluteUrl,
+  truncateText,
+} from "@/lib/metadata";
 import PostDetailClient from "./PostDetailClient";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +46,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         category: true,
         creator: true,
         years: true,
+        rating: true,
+        status: true,
+        isDraft: true,
+        isDeleted: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -63,22 +72,52 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     if (!post) return { title: "Not Bulunamadı" };
 
     const categoryLabel = getCategoryLabel(post.category);
-    const description = buildPostMetadataDescription({
-      excerpt: post.excerpt,
-      content: post.content,
-      category: categoryLabel,
-      creator: post.creator,
-      years: post.years,
-    });
     const canonicalPath = `/posts/${post.id}`;
-    const isIndexable = access.post.user?.isPublic !== false;
-    const fallbackImage = toAbsoluteUrl(`${canonicalPath}/opengraph-image`);
-    const imageUrl = post.image || fallbackImage;
+    const canonicalUrl = toAbsoluteUrl(canonicalPath);
+    const isShareable = !post.isDraft && !post.isDeleted;
+    const isIndexable = isShareable && access.post.user?.isPublic !== false;
     const authorName = post.user?.name || post.creator || "DigyNotes";
     const tagNames = post.tags.map(({ tag }) => tag.name);
 
+    /* What a chat app prints under the title (WhatsApp shows ~2 lines): who wrote it
+       and the score first, then the note itself. */
+    const rating = post.rating > 0 ? `★ ${post.rating.toFixed(1).replace(".", ",")}/5` : null;
+    const lead = [authorName, rating, post.status].filter(Boolean).join(" · ");
+    const noteText = stripHtml(post.excerpt || post.content || "").trim();
+    const description = truncateText(
+      `${lead} — ${
+        noteText ||
+        buildPostMetadataDescription({
+          excerpt: post.excerpt,
+          content: post.content,
+          category: categoryLabel,
+          creator: post.creator,
+          years: post.years,
+        })
+      }`,
+      200
+    );
+    const shareTitle = [post.title, post.creator ? `(${post.creator})` : null]
+      .filter(Boolean)
+      .join(" ");
+
+    /* Always our own 1200×630 JPEG card, never the raw cover: a 500×750 poster
+       declared as 1200×630 was cropped to a sliver, or dropped, by chat apps.
+       `v` changes when the note is edited, so caches pick up the new card. */
+    const cardUrl = toAbsoluteUrl(
+      `${canonicalPath}/opengraph-image?v=${post.updatedAt.getTime().toString(36)}`
+    );
+    const cardImage = {
+      url: cardUrl,
+      secureUrl: cardUrl,
+      width: 1200,
+      height: 630,
+      type: "image/jpeg",
+      alt: `${post.title} — ${authorName}, DigyNotes`,
+    };
+
     return {
-      title: post.title,
+      title: shareTitle,
       description,
       keywords: [categoryLabel, post.creator, post.years, ...tagNames].filter(
         (value): value is string => Boolean(value)
@@ -98,30 +137,24 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
             },
           },
       openGraph: {
-        title: post.title,
+        title: shareTitle,
         description,
         type: "article",
-        url: canonicalPath,
+        url: canonicalUrl,
+        siteName: "DigyNotes",
+        locale: "tr_TR",
         publishedTime: post.createdAt.toISOString(),
         modifiedTime: post.updatedAt.toISOString(),
         section: categoryLabel,
         authors: [authorName],
         tags: tagNames,
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: post.title,
-          },
-        ],
+        images: [cardImage],
       },
       twitter: {
         card: "summary_large_image",
-        title: post.title,
+        title: shareTitle,
         description,
-        creator: post.user?.username ? `@${post.user.username}` : undefined,
-        images: [imageUrl],
+        images: [cardImage],
       },
     };
   } catch {

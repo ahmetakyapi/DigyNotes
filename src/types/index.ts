@@ -33,6 +33,8 @@ export interface Post {
     name: string;
     username: string | null;
     avatarUrl: string | null;
+    /** Profile visibility; only the single-post endpoint sends it (share sheet). */
+    isPublic?: boolean;
   };
 }
 
