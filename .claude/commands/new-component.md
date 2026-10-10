@@ -67,4 +67,4 @@ Rounded:     rounded-xl
 - React-Quill: `const QuillEditor = dynamic(() => import('react-quill'), { ssr: false })`
 
 ## After Creating
-Add the component to the Component Inventory table in CLAUDE.md.
+No inventory to update — CLAUDE.md doesn't list components. Record only a new rule or gotcha.

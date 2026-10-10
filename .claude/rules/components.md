@@ -1,55 +1,31 @@
 ---
 paths:
   - "src/components/**/*.tsx"
-  - "src/app/**/page.tsx"
-  - "src/app/**/*Client.tsx"
+  - "src/app/**/*.tsx"
 ---
 
-# Component & Page Rules (auto-loaded for .tsx files)
+# Component & Page Rules
+
+Design tokens, type, copy and owner rules: CLAUDE.md → Design System. This file is how to build with them.
 
 ## Client vs Server
-- If the component uses hooks (useState, useEffect, useSession, etc.) → MUST have `"use client"` as FIRST line
-- If the component uses browser APIs (window, document, localStorage) → MUST have `"use client"`
-- If neither → prefer Server Component (omit `"use client"`)
-- Forgetting `"use client"` → hydration error (ERR-007)
+- Hooks or browser APIs → `"use client"` as the very first line (ERR-007); otherwise keep it a Server Component.
+- `window` / `localStorage` / `sessionStorage` only inside effects or handlers (ERR-RT-001). "Show once" UI writes its flag when the animation finishes, never at start, and has a fail-safe hide (ERR-UI-003).
+- `useScroll({ target: ref })`: attach `ref` in every render branch (ERR-UI-001).
 
-## File Header Order (client component)
-```typescript
-"use client";           // ← FIRST, before all imports
+## Styling
+- Tailwind classes with theme tokens. `style={{}}` only for runtime values (motion values, computed widths/positions, Satori/OG JSX) — never static styling. No CSS modules; global CSS lives in `src/app/globals.css` + `src/styles/*`.
+- Icons: `@phosphor-icons/react`. Never `lucide-react`, never emoji as icons.
+- Avoid generic AI looks: no stock purple/blue gradients (gradients only as token-based scrims/fades), no Tailwind gray/white palette (`text-gray-*`, `bg-white`), no icon + title + text three-column feature grid.
+- From a reference screenshot take the structure and spacing, never its colours.
 
-import React from 'react';
-import { useState } from 'react';
-// other imports...
-```
+## Building UI
+- Reuse first: `ui/PageHeader`, `ui/EmptyState`, `ConfirmModal`, then the closest existing page — match its spacing, borders, hover states and text hierarchy.
+- New pages/sections start with a `/* LAYOUT: … */` comment describing structure (existing convention).
+- Every data view handles loading (skeleton), empty (informative Turkish copy, `EmptyState`) and error.
+- Interactive elements: hover + `focus-visible` + disabled states, `transition-colors`, `cursor-pointer`; icon-only buttons get `aria-label`; images get meaningful `alt`.
 
-## Design System — Required Color Tokens
-Use only theme variables (`var(--bg-card)`, `var(--border)`, `var(--text-primary)`, `var(--gold)` …)
-or the Tailwind `accent` / `accent-2` colours. No raw hex. See CLAUDE.md → Design System.
-
-## External Images
-```tsx
-import Image from 'next/image';
-// Always use unoptimized for external URLs:
-<Image src={externalUrl} unoptimized alt="..." width={80} height={80} />
-```
-
-## React-Quill (rich text editor)
-```typescript
-// NEVER import directly — always dynamic:
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-```
-
-## Language
-- All UI text in Turkish: button labels, placeholders, error messages, empty states
-- Examples: "Kaydet", "İptal", "Yükleniyor...", "Gönderi bulunamadı"
-
-## Tailwind Only
-- No `style={{}}` inline styles
-- No CSS modules
-- No external CSS files
-- Use Tailwind utility classes exclusively
-
-## Accessibility
-- Interactive elements need `cursor-pointer` class
-- Buttons need accessible labels or `aria-label`
-- Images need descriptive `alt` text
+## Specific Components
+- External images: `ResilientImage` (passthrough loader + fallback) or `next/image` with `unoptimized` (ERR-006).
+- react-quill: `dynamic(() => import("react-quill"), { ssr: false })` plus `react-quill/dist/quill.snow.css` (ERR-003).
+- `MediaSearch` (`onSelect` callback): after a selection set `skipNextSearchRef.current = true` and `setResults([])`, or the dropdown reopens (ERR-004).

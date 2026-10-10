@@ -1,75 +1,15 @@
 ---
 paths:
-  - "prisma/schema.prisma"
+  - "prisma/**"
   - "prisma.config.ts"
   - "src/lib/prisma.ts"
 ---
 
-# Prisma Schema Rules (auto-loaded for prisma files)
+# Prisma Rules (v7)
 
-## CRITICAL: Datasource Config
-```prisma
-// schema.prisma — datasource MUST NOT have url field:
-datasource db {
-  provider = "postgresql"
-  // ← NO url here. URL lives in prisma.config.ts
-}
-```
-
-```typescript
-// prisma.config.ts — this is where the URL goes:
-import { defineConfig } from 'prisma/config';
-import 'dotenv/config';
-
-export default defineConfig({
-  datasource: {
-    url: process.env.DATABASE_URL!,
-  },
-});
-```
-
-## PrismaClient Singleton Pattern
-```typescript
-// src/lib/prisma.ts — the ONLY place PrismaClient is instantiated:
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-```
-
-## Model Conventions
-```prisma
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Nullable relations (legacy compatibility):
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-
-  @@map("examples")   // optional: snake_case table name
-}
-```
-
-## After Schema Changes — Mandatory Steps
-1. `npx prisma db push --accept-data-loss`
-2. `npx prisma generate`
-3. **Restart dev server** (Ctrl+C → `npm run dev`)
-4. Verify in Prisma Studio: `npx prisma studio`
-
-If step 3 is skipped:
-- New models → undefined at runtime (ERR-001)
-- `_count.select` with new relations → fails (ERR-002)
-
-## DB Connection
-- host: localhost, port: 5432
-- db: digynotes, user: digynotes, pw: digynotes_secret
-- `DATABASE_URL` in `.env` and `.env.local`
-- Docker NOT used — Homebrew PostgreSQL only
+- `schema.prisma`'s datasource has NO `url`; URL, shadow URL and migrations path live in `prisma.config.ts` (ERR-011).
+- `src/lib/prisma.ts` is the only place a client is built: `new PrismaClient({ adapter: new PrismaPg({ connectionString }) })`, cached on `globalThis` outside production. A bare `new PrismaClient()` fails (ERR-009).
+- Models: `id String @id @default(cuid())` (composite `@@id` for join tables), `createdAt @default(now())`, `updatedAt @updatedAt` where edited, `onDelete` on every relation, `@@map("snake_case_plural")`.
+- Check where `DATABASE_URL` points before any DB command — the cloud shell's is production (ERR-ENV-002, see CLAUDE.md).
+- Schema change: `npm run db:push` → `npm run db:generate` → restart the dev server (`npm run dev`). Until the restart new models are `undefined` and `_count.select` on new relations fails — or use `prisma.model.count()` (ERR-001/002).
+- Production (Neon) needs the same change, or prod queries hit missing columns (ERR-DB-005). The `prisma/migrations` chain lags the schema (last migration 2026-03-11, no `isDraft`); don't `migrate deploy` without reading ERR-DB-004.

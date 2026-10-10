@@ -46,7 +46,6 @@ For each new component, follow `/new-component` conventions:
 
 ## Phase 7: Update Documentation
 After implementation:
-1. Add new API routes to CLAUDE.md API Routes section
-2. Add new components to Component Inventory in CLAUDE.md
-3. If any new errors were encountered, add to ERRORS.md
-4. Update MEMORY.md if new architectural patterns were established
+1. New private page or API → add it to the `matcher` in `src/middleware.ts`
+2. If any new errors were encountered, add to ERRORS.md
+3. Update CLAUDE.md if new architectural patterns were established (no route/component inventories)

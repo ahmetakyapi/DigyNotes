@@ -55,4 +55,4 @@ export async function GET(
 
 ## 7. After creating:
 - Add the route to the API Routes table in CLAUDE.md
-- If it uses a new Prisma model, note it in MEMORY.md
+- If it uses a new Prisma model, note it in CLAUDE.md (Data Rules)

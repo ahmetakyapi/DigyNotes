@@ -231,8 +231,7 @@ Proje, Claude Code ile AI destekli geliştirme için yapılandırılmıştır.
 │   └── review.md          # /review     → Convention kontrol listesi
 └── rules/                 # Dosya bazlı otomatik yüklenen kurallar
     ├── api-routes.md      # src/app/api/** açıldığında yüklenir
-    ├── components.md      # .tsx dosyaları için
-    ├── ui-design.md       # UI/UX kuralları (vibe coding standartları)
+    ├── components.md      # .tsx dosyaları için (bileşen + UI kuralları)
     ├── prisma-schema.md   # prisma/ dosyaları için
     └── security.md        # Her zaman aktif
 ```

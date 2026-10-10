@@ -14,232 +14,92 @@ git config user.email "ahmetakyapii@gmail.com"
 
 Bu kural sahibinin tüm repolarında geçerli (9 Ekim 2026).
 
-## Self-Improvement Protocol
+## Session Rules
 
-**CRITICAL: Claude MUST follow these rules every session:**
-
-1. Before starting any task → read `ERRORS.md` to check for known solutions
-2. When an error is encountered and solved → append it to `ERRORS.md` immediately
-3. When the same error appears again → consult `ERRORS.md` first, apply known fix, do NOT repeat the investigation
-4. When a new pattern/architecture decision is confirmed → update `MEMORY.md` accordingly
-5. Keep `ERRORS.md` and `MEMORY.md` updated as the single source of truth for this project
-
----
+- **Check `ERRORS.md` first.** Before a task or any debugging, search it by symptom or code (ERR-…) and apply the known fix instead of re-investigating. When you solve a new error, append it right away using the template at its top.
+- There is no `MEMORY.md`: a confirmed pattern or owner decision goes into this file (or the matching `.claude/rules/*.md`).
+- **Production DB guard.** Cloud shells export a production (Neon) `DATABASE_URL` and dotenv never overrides it (ERR-ENV-002). Never run `prisma db push`/`migrate`, seeds or `npm run dev` against it; for local work prefix commands with `DATABASE_URL=postgresql://digynotes:digynotes_secret@localhost:5432/digynotes`. Never read `.env*`.
+- Path-scoped rules load automatically: `api-routes.md` (API), `components.md` (`.tsx`), `prisma-schema.md` (Prisma), `security.md` (always).
 
 ## Stack
 
-- **Framework**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- **DB**: PostgreSQL (Homebrew v16 locally, Neon eu-central-1 in production) via Prisma ORM v7
-- **Hosting**: Vercel, functions pinned to `fra1` in `vercel.json` (next to the Neon DB and Turkish users; the default `iad1` added ~1.2 s per DB round trip)
-- **Prisma adapter**: `@prisma/adapter-pg` (required — plain `new PrismaClient()` will NOT work)
-- **Auth**: NextAuth v4 (credentials + JWT), config in `src/lib/auth.ts`
-- **Editor**: react-quill — always `dynamic(..., { ssr: false })`
+- Next.js 14.0.4 App Router · React 18 · TypeScript · Tailwind 3.
+- Prisma 7 + `@prisma/adapter-pg` → PostgreSQL. Local: Homebrew `postgresql@16` (no Docker on the owner's machine; `docker-compose.yml` mirrors the same creds) — db/user `digynotes`, pw `digynotes_secret`, port 5432. Production: Neon eu-central-1.
+- Vercel, functions pinned to `fra1` in `vercel.json` (next to Neon and Turkish users; the default `iad1` added ~1.2 s per DB round trip).
+- NextAuth v4 credentials + JWT: `src/lib/auth.ts`.
+- react-quill editor · framer-motion · Lenis (landing only) · recharts · react-hot-toast · sanitize-html · `@phosphor-icons/react`.
+- Media search: TMDB, RAWG, Open Library (`src/components/MediaSearch.tsx`).
 
----
+## Commands
 
-## Key Files
-
-| File                       | Purpose                                             |
-| -------------------------- | --------------------------------------------------- |
-| `ERRORS.md`                | Known error log — check here FIRST before debugging |
-| `src/lib/prisma.ts`        | Prisma singleton with PrismaPg adapter              |
-| `src/lib/auth.ts`          | NextAuth config                                     |
-| `src/middleware.ts`        | Route protection                                    |
-| `src/types/index.ts`       | Shared Post, Category, Tag interfaces               |
-| `src/types/next-auth.d.ts` | Session type augmentation (user.id)                 |
-| `prisma/schema.prisma`     | DB schema (datasource has NO `url` field)           |
-| `prisma.config.ts`         | Prisma v7 config — DB URL lives here                |
-
----
-
-## Full Component Inventory
-
-| Component                | File                                        | Notes                                       |
-| ------------------------ | ------------------------------------------- | ------------------------------------------- |
-| `AppShell`               | `src/components/AppShell.tsx`               | Main nav shell                              |
-| `ConditionalAppShell`    | `src/components/ConditionalAppShell.tsx`    | Hides shell on `/`, `/login`, `/register`   |
-| `SessionProviderWrapper` | `src/components/SessionProviderWrapper.tsx` | NextAuth client wrapper                     |
-| `FollowButton`           | `src/components/FollowButton.tsx`           | Follow/unfollow by username                 |
-| `FollowListModal`        | `src/components/FollowListModal.tsx`        | Followers/following modal                   |
-| `MediaSearch`            | `src/components/MediaSearch.tsx`            | TMDB/RAWG/OpenLibrary search, `onSelect` cb |
-| `TagInput`               | `src/components/TagInput.tsx`               | Debounced autocomplete, Enter/comma to add  |
-| `TagBadge`               | `src/components/TagBadge.tsx`               | Clickable filter badge, removable           |
-| `StarRating`             | `src/components/StarRating.tsx`             | 0–5 stars, 0.5 step                         |
-| `StatusBadge`            | `src/components/StatusBadge.tsx`            | Post status display                         |
-| `PostsList`              | `src/components/PostsList.tsx`              | Posts grid/list                             |
-| `UserCard`               | `src/components/UserCard.tsx`               | User card for discover/profile              |
-| `SearchBar`              | `src/components/SearchBar.tsx`              | Search input                                |
-| `SortFilterBar`          | `src/components/SortFilterBar.tsx`          | Sort/filter controls                        |
-| `StatsPanel`             | `src/components/StatsPanel.tsx`             | User stats                                  |
-| `CommunityStatsCard`     | `src/components/CommunityStatsCard.tsx`     | Community stats                             |
-| `AddCategoryModal`       | `src/components/AddCategoryModal.tsx`       | Category creation modal                     |
-| `ConfirmModal`           | `src/components/ConfirmModal.tsx`           | Generic confirm dialog                      |
-| `FullScreenLoader`       | `src/components/FullScreenLoader.tsx`       | Loading overlay                             |
-| `KeyboardShortcuts`      | `src/components/KeyboardShortcuts.tsx`      | Global keyboard shortcuts (N/S/H/F/D/?)     |
-| `ShortcutHelpModal`      | `src/components/ShortcutHelpModal.tsx`      | Keyboard shortcut help overlay              |
-| `ScrollToTop`            | `src/components/ScrollToTop.tsx`            | Scroll-to-top floating button               |
-| `RecentlyViewed`         | `src/components/RecentlyViewed.tsx`         | Recently viewed posts (localStorage)        |
-| `PasswordStrength`       | `src/components/PasswordStrength.tsx`       | Password strength indicator                 |
-| `ShareButton`            | `src/components/ShareButton.tsx`            | Opens `ShareSheet`                          |
-| `ShareSheet`             | `src/components/ShareSheet.tsx`             | Share dialog with link-preview mock         |
-
----
-
-## API Routes
-
-```
-GET/POST        /api/posts
-GET/PUT/DELETE  /api/posts/[id]
-GET             /api/posts/related
-GET             /api/public/posts
-GET/POST        /api/categories
-GET/PUT/DELETE  /api/categories/[id]
-GET             /api/tags?q=...
-GET/POST/DELETE /api/follows
-GET/PUT         /api/users/me
-GET             /api/users/[username]
-GET             /api/users/[username]/followers
-GET             /api/users/[username]/following
-GET             /api/users/search
-GET             /api/feed
-GET             /api/recommendations
-GET             /api/community/stats
-GET             /api/users/me/year-in-review?year=YYYY
+```bash
+npm run dev        # scripts/restart-local-4300.sh: stops running DigyNotes dev servers, wipes .next, starts on :4300
+npm run typecheck  # prisma generate + tsc -p tsconfig.typecheck.json
+npm run lint       # eslint, --max-warnings=0
+npm test           # node:test suites in tests/*.test.mjs (pure src/lib helpers)
+npm run format     # prettier + tailwind class sort
+npm run db:push | db:generate | db:studio
+brew services start|stop postgresql@16
 ```
 
----
+Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://localhost:4300`), `NEXTAUTH_SECRET`, `NEXT_PUBLIC_TMDB_API_KEY`, `NEXT_PUBLIC_RAWG_API_KEY`, `NEXT_PUBLIC_SITE_URL`; optional `UPSTASH_REDIS_REST_URL`/`_TOKEN` (rate-limit store, in-memory fallback), `ENABLE_ADMIN_BOOTSTRAP`.
 
-## Page Routes
+## Code Map
 
-```
-/              — Landing (public, no AppShell)
-/login         — Login
-/register      — Register
-/notes         — Home (protected)
-/new-post      — Create post (protected)
-/posts/[id]    — Post detail (protected)
-/posts/[id]/edit — Edit post (protected)
-/category/[id] — Category posts ([id] = category NAME)
-/tag/[name]    — Tag posts
-/feed          — Following feed
-/recommended   — Recommended posts
-/discover      — User discovery (public)
-/profile/[username] — Public profile
-/profile/settings  — Profile settings (protected)
-```
+- Pages `src/app/**/page.tsx` (heavy client logic in a sibling `*Client.tsx`); APIs `src/app/api/**/route.ts` — list them with `find src/app -name route.ts`, don't keep inventories here.
+- `src/lib/`: `prisma.ts` (the only PrismaClient), `auth.ts`, `api-server.ts` (`requireAuth`, `requireAdmin`, `handleApiError`, `safeParseBody`), `api-utils.ts` (`transformPostTags`, `sanitizePostContent`, field sanitizers), `rate-limit.ts`, `post-access.ts`, `categories.ts`, `metadata.ts` (`getSiteUrl`), `og-*`.
+- `src/types/index.ts` shared types; `src/types/next-auth.d.ts` adds `session.user.id`.
+- `src/components/ConditionalAppShell.tsx` decides the shell: never on `/`, `/login`, `/register`, `/offline`; `/discover`, `/profile`, `/collections` get it only when signed in.
 
----
+## Auth & Access
 
-## Design System — "Cinémathèque" (2026-10 redesign)
+- The `matcher` in `src/middleware.ts` is the single source of truth for protected routes; add every new private page or API there. It covers notes, new-post, `posts/*/edit`, category, feed, recommended, collections, watchlist, stats, notifications, profile/settings, admin, and the posts, categories, tags, bookmarks, watchlist, collections, follows, feed, recommendations, notifications, `users/me` and admin APIs.
+- Public: landing, auth pages, `/discover`, `/profile/[username]`, `/tag/[name]`, `/posts/[id]` (visibility via `getPostReadAccess`: owner, admin, or public author), `/api/public`, `/api/search`, `/api/users/[username]/**`, `/api/users/search`, `/api/community/stats`, `/api/auth/*`.
+- Admin = `User.isAdmin` + `requireAdmin()`. `/api/admin/setup` bootstraps only outside production unless `ENABLE_ADMIN_BOOTSTRAP=true`.
+- Maintenance mode (`SiteSettings.maintenanceMode`, `MaintenanceGuard`) only applies to middleware-matched routes: it reads the `x-pathname` header the middleware sets.
 
-The old "Dark Premium" gold palette and the Turkish UI rules that referenced it are retired.
-All colours come from CSS variables in `src/styles/theme-variables.css` (dark = warm ink, light = bone paper).
+## Data Rules
 
-```
-bg-base   var(--bg-base)    #0b0b0a / #f1ede4
-bg-card   var(--bg-card)    #131311 / #faf8f3
-border    var(--border)     #282722 / #d8d1c3
-text      var(--text-primary) #f2efe8 / #14130f  (secondary, muted, faint)
-accent    var(--gold)       #b9a8ff (lavender) / #5b42d6 (violet)  → Tailwind `accent`, `gold`
-accent-2  var(--accent-2)   #ffb088 (apricot) / #b4541f
-on-accent var(--text-on-accent)  ink on lavender (dark) / paper on violet (light)
-```
+- `Post.userId` and `Category.userId` are nullable (legacy).
+- `Post.category` is a normalized string (`normalizeCategory`; fixed slugs `movies series game book travel other` in `src/lib/categories.ts`), not a FK. `/category/[id]` takes that **name**, not a DB id (ERR-008).
+- Posts are soft-deleted (`isDeleted` + `deletedAt`); list queries filter `isDeleted: false`. Other flags: `isDraft`, `isPinned`, `isArchived`.
+- Tags are global and unique, lowercased + trimmed, max 10 per post; saving = upsert `Tag` + create `PostTag` (ERR-010). APIs include `{ tags: { include: { tag: true } } }` and return flat `tags: Tag[]` via `transformPostTags`.
+- Quill HTML is sanitized on write (`sanitizePostContent`).
 
-- Alpha variants: use Tailwind `bg-accent/10`, `border-accent-2/30` or `rgb(var(--gold-rgb)/0.2)` — never hardcode hex.
-- Fonts: Schibsted Grotesk (sans + headings, `--font-sans`), Newsreader italic (`.dn-display`, accents; opsz axis), JetBrains Mono (`.dn-mono`, numbers/dates/URLs only). Headline tracking no tighter than `-0.04em`; two-part headings live in ONE `MaskLine` (wraps with `[text-wrap:balance]`).
-- Signature patterns: NO section eyebrows/kickers above headings (removed 2026-10-09 at the owner's request — the heading carries the section; `.dn-eyebrow` remains only for functional labels like notification groups and settings sections, without `(01)` indexes), serif-italic accent word inside bold grotesk headlines, NO trailing period/dot on headings or the wordmark (removed 2026-10-10 at the owner's request; question marks stay), no lone word on the last line of a headline, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
-- Readability: no tiny uppercase mono labels (retired 2026-10-09 — they were unreadable). Labels/meta/chips are sans, normal case, `font-medium`, min 11px (12–12.5px typical), `--text-muted` or stronger; `.dn-mono` only for numbers, dates, URLs. Decimals use a comma (`4,5`, `toFixed(1).replace(".", ",")`); relative times are spelled out ("3 saat önce", not "3 sa").
-- Logo: `src/components/Wordmark.tsx` (typographic "Digy" + italic "Notes" — always capital N, no dot) — the PNG logo is no longer used in the UI.
-- UI copy: headings, subtitles, buttons, tabs and greetings use Turkish Title Case ("Arşivini Başlat", "Giriş Yap", "İyi Geceler"); conjunctions (ve, ile, da/de, ki) stay lowercase. Toasts/placeholders/body stay sentence case.
-- Landing: `src/components/landing/*` (hero = pinned scroll-cinema, `Hero.tsx`) (Lenis smooth scroll + framer-motion scroll effects). Auth: `src/components/AuthShell.tsx`.
-- Cursor: NO custom cursor (removed 2026-10-10 at the owner's request) — normal mouse everywhere; don't re-add `data-cursor` labels.
+## Design System — "Cinémathèque" (2026-10)
+
+Tokens: `src/styles/theme-variables.css`. Dark (default) = warm ink; light = bone paper via `html.light` (`ThemeProvider`, localStorage `dn_theme`).
+
+| Token | Dark / Light |
+| --- | --- |
+| `--bg-base` · `--bg-card` · `--bg-raised` | `#0b0b0a` `#131311` `#1c1b18` / `#f1ede4` `#faf8f3` `#e8e3d8` |
+| `--border` (`-subtle`, `-header`) | `#282722` / `#d8d1c3` |
+| `--text-primary` · `secondary` · `muted` · `faint` | `#f2efe8` … / `#14130f` … |
+| `--gold` = accent | `#b9a8ff` lavender / `#5b42d6` violet |
+| `--accent-2` | `#ffb088` apricot / `#b4541f` |
+| `--text-on-accent` | ink on lavender / paper on violet |
+| `--danger` | `#ff5a4e` / `#d4342a` |
+
+- Use `bg-[var(--bg-card)]`, `text-[var(--text-muted)]`, `border-[var(--border)]`; accent via Tailwind `accent` / `accent-2` with alpha (`bg-accent/10`, `border-accent-2/30`) or `rgb(var(--gold-rgb)/0.2)`; `text-[var(--text-on-accent)]` on accent fills; `ink` (`bg-ink/70`) for theme-independent scrims. Tailwind `gold` / `dn-*` aliases exist but are unused — don't spread them.
+- No hex in themed UI. Literal colours only where CSS variables don't resolve — OG images (`OG` in `src/lib/og-fonts.ts`), `manifest.ts`, viewport `themeColor` (ERR-UI-005) — and in the always-dark intro/landing film scenes.
+- Fonts (`src/app/layout.tsx`): Schibsted Grotesk `--font-sans` (body + headings); Newsreader `--font-display` / `.dn-display` + `italic` for accent words (opsz axis); JetBrains Mono `.dn-mono` only for numbers, dates, URLs.
+- Headlines: tracking no tighter than `-0.04em`; no lone word on the last line (`[text-wrap:balance]`); landing two-part headings live in ONE `MaskLine` (`src/components/landing/Motion.tsx`).
+- Signature: serif-italic accent word inside a bold grotesk headline, pill buttons (`rounded-full`), hairline borders, film grain (`.dn-grain`).
+- Owner rules:
+  - **No eyebrows/kickers above headings** (2026-10-09) — the heading carries the section. `.dn-eyebrow` only for functional labels (notification groups, settings sections), never with `(01)` indexes. `PageHeader`'s `eyebrow` prop is ignored; don't pass it.
+  - **No trailing period/dot** on headings or the wordmark (2026-10-10); question marks stay.
+  - **Readable labels** (2026-10-09): no tiny uppercase mono labels. Labels/meta/chips are sans, normal case, `font-medium`, min 11px (12–12.5px typical), `--text-muted` or stronger.
+  - **Decimal comma** (`4,5` — `toFixed(1).replace(".", ",")`); relative times spelled out ("3 saat önce", not "3 sa").
+  - **No custom cursor** (2026-10-10); normal mouse everywhere, no `data-cursor` labels.
+- Wordmark: `src/components/Wordmark.tsx` — grotesk "Digy" + italic "Notes" (always capital N, no dot). The PNG logo is not used in the UI.
+- Copy: all UI text Turkish. Headings, subtitles, buttons, tabs and greetings use Turkish Title Case ("Arşivini Başlat", "Giriş Yap", "İyi Geceler"); ve, ile, da/de, ki stay lowercase. Toasts, placeholders and body copy stay sentence case.
+- Motion: animate `transform`/`opacity` only. The page-transition wrapper animates opacity only — transform/filter on an ancestor traps `position: fixed` children (ERR-UI-004). No per-frame width/height/clip-path/filter, no SVG filters on large layers, pause loops off-screen, no `backdrop-blur` on repeated list items (ERR-PERF-001). Honour `useReducedMotion`.
+- Landing: `src/components/landing/*` (Hero = pinned scroll-cinema; Lenis + scroll effects live only here). Auth pages: `src/components/AuthShell.tsx`.
 
 ## Share Previews (WhatsApp, iMessage, X)
 
-- Cards: `src/app/opengraph-image.tsx` (site), `src/app/posts/[id]/opengraph-image.tsx` (note), `src/app/profile/[username]/opengraph-image.tsx` (profile). Node runtime, 1200×630, returned as **JPEG** via `toJpegResponse` (`src/lib/og-image.ts`, pure-JS pngjs + jpeg-js — no sharp, see ERR-OG-001). Pieces live in `src/lib/og-parts.tsx` (`OgWordmark`, `OgStars`, `OgGlow`, `renderOgNotice`).
-- Read at phone size (~0.28×): no text under ~26px, no uppercase labels, at most ~5 things to read. Fonts come from disk (`assets/og-fonts/`), never from Google at render time.
-- Metadata always points `og:image` at our card with `?v=<updatedAt>`, never at the raw cover. Private or missing content gets a "Bu Not Gizli" / "Bulunamadı" card; drafts and deleted notes are never drawn.
-- In-app sharing: `ShareButton` → `ShareSheet` (preview of the real card, WhatsApp/Telegram/X, copy, save the card as an image, and a warning when others can't open the link).
-- Details and checks: ERRORS.md → ERR-OG-001.
-
-## Architecture Patterns
-
-### Database
-
-- All API routes use `prisma` from `src/lib/prisma.ts`
-- **After `prisma db push` + `prisma generate`, ALWAYS restart dev server** — new models are undefined until restart
-- DB: host=localhost, db=digynotes, user=digynotes, pw=digynotes_secret (port 5432)
-- Docker NOT installed — use Homebrew PostgreSQL
-
-### Prisma v7 Rules
-
-- `schema.prisma` datasource has NO `url` field — URL lives in `prisma.config.ts`
-- PrismaClient MUST use PrismaPg adapter (see `src/lib/prisma.ts`)
-- `_count.select` with new relation fields fails until server restart → use `prisma.modelName.count()` separately
-
-### Auth
-
-- Protected routes: `/notes/**`, `/new-post`, `/posts/**`, `/category/**`, `/api/posts/**`, `/api/categories/**`
-- Session has `user.id` (augmented in `src/types/next-auth.d.ts`)
-- Get userId in API: `(session.user as { id: string }).id`
-
-### Data
-
-- `Post.userId` and `Category.userId` are nullable `String?` (legacy)
-- Category routing: `/category/[id]` uses category **name**, not DB id
-- Tags: global (shared), max 10 per post, lowercase unique name
-- Posts API includes: `{ tags: { include: { tag: true } } }` → transform to flat `tags: Tag[]`
-
-### MediaSearch Component
-
-- After selection: set `skipNextSearchRef.current = true` + `setResults([])` to prevent dropdown re-opening
-- Props: `onSelect` callback receives selected media object
-
-### External Images
-
-- Always use `next/image` with `unoptimized` prop for external URLs
-- Or provide a custom loader function
-
----
-
-## Coding Conventions
-
-- `"use client"` at top of every client component (forget this → hydration errors)
-- Tailwind classes only — no CSS modules or inline styles
-- Turkish UI text throughout the app
-- API error responses: `{ error: string }` with appropriate HTTP status
-- No Docker — local PostgreSQL only
-- react-quill: always `dynamic(() => import('react-quill'), { ssr: false })`
-
----
-
-## Local Dev Commands
-
-```bash
-# Start dev server
-npm run dev
-
-# DB operations
-npx prisma db push --accept-data-loss   # push schema changes
-npx prisma generate                      # regenerate client after schema change
-npx prisma studio                        # DB GUI
-
-# PostgreSQL (if needed)
-brew services start postgresql@16
-brew services stop postgresql@16
-```
-
----
-
-## Common Gotchas (quick reference — details in ERRORS.md)
-
-1. `prisma.follow undefined` → restart dev server after schema push → **ERR-001**
-2. `_count.select` fails with new relations → restart first → **ERR-002**
-3. react-quill SSR crash → use `dynamic(..., { ssr: false })` → **ERR-003**
-4. MediaSearch dropdown re-opens after selection → use `skipNextSearchRef` → **ERR-004**
-5. `[username]` folder handles profile + followers/following sub-routes → **ERR-005**
-6. External images broken → add `unoptimized` to `next/image` → **ERR-006**
-7. Missing `"use client"` on client components → hydration errors → **ERR-007**
-8. Category `[id]` param = category NAME, not DB id → **ERR-008**
-9. `new PrismaClient()` without adapter fails in Prisma v7 → **ERR-009**
-10. Tags not persisting → must upsert Tag + create PostTag join records → **ERR-010**
+- Cards: `src/app/opengraph-image.tsx` (site), `src/app/posts/[id]/opengraph-image.tsx` (note), `src/app/profile/[username]/opengraph-image.tsx` (profile). Node runtime, 1200×630, returned as **JPEG** via `toJpegResponse` (`src/lib/og-image.ts`, pure-JS pngjs + jpeg-js — never sharp). Parts: `src/lib/og-parts.tsx` (`OgWordmark`, `OgStars`, `OgGlow`, `renderOgNotice`).
+- Read at phone size (~0.28×): no text under ~26px, no uppercase labels, at most ~5 things to read. Fonts load from disk (`assets/og-fonts/`, listed in `outputFileTracingIncludes` in `next.config.js`), never from Google at render time.
+- `og:image` always points at our card with `?v=<updatedAt>`, never at the raw cover. Private or missing content gets a "Bu Not Gizli" / "Bulunamadı" card; drafts and deleted notes are never drawn.
+- In-app: `ShareButton` → `ShareSheet` (real card preview, WhatsApp/Telegram/X, copy, save as image, warning when others can't open the link).
+- Details, speed numbers and the curl check: ERR-OG-001.

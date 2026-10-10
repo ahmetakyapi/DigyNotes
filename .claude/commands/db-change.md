@@ -40,10 +40,7 @@ npx prisma studio
 ```
 
 ### 6. Update CLAUDE.md
-If new models or relations were added, update:
-- Key Files table (if new lib files)
-- Architecture Patterns > Database section
-- Common Gotchas (if new edge cases discovered)
+If new models or relations were added, update CLAUDE.md → Data Rules (and Code Map for new lib files).
 
 ### 7. Update ERRORS.md
 If anything went wrong during this process, document it in ERRORS.md with:
