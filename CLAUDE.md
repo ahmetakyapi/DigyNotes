@@ -18,7 +18,7 @@ Bu kural sahibinin tüm repolarında geçerli (9 Ekim 2026).
 
 - **Check `ERRORS.md` first.** Before a task or any debugging, search it by symptom or code (ERR-…) and apply the known fix instead of re-investigating. When you solve a new error, append it right away using the template at its top.
 - There is no `MEMORY.md`: a confirmed pattern or owner decision goes into this file (or the matching `.claude/rules/*.md`).
-- **Production DB guard.** Cloud shells export a production (Neon) `DATABASE_URL` and dotenv never overrides it (ERR-ENV-002). Never run `prisma db push`/`migrate`, seeds or `npm run dev` against it; for local work prefix commands with `DATABASE_URL=postgresql://digynotes:digynotes_secret@localhost:5432/digynotes`. Never read `.env*`.
+- **Production DB guard.** Cloud shells export a production (Neon) `DATABASE_URL` and dotenv never overrides it (ERR-ENV-002). It may not even be DigyNotes' database (2026-10-10 it pointed at another project's Neon: no `posts` table) — check the schema before trusting it; DigyNotes' own URL lives only in Vercel env. Port 5432 is closed from the cloud sandbox; Neon's HTTPS `/sql` endpoint works. Never run `prisma db push`/`migrate`, seeds or `npm run dev` against it; for local work prefix commands with `DATABASE_URL=postgresql://digynotes:digynotes_secret@localhost:5432/digynotes`. Never read `.env*`.
 - Path-scoped rules load automatically: `api-routes.md` (API), `components.md` (`.tsx`), `prisma-schema.md` (Prisma), `security.md` (always).
 
 ## Stack
