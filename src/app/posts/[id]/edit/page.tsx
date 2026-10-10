@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -183,32 +183,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setIsDirty(initialSnapshotRef.current !== currentSnapshot);
   }, [currentSnapshot, loading]);
 
-  const confirmDiscardChanges = useCallback(() => {
-    if (!isDirty || isSubmitting) return true;
-
-    return window.confirm(
-      "Kaydetmediğin değişiklikler var. Çıkarsan bunlar kaybolacak. Yine de çıkmak istiyor musun?"
-    );
-  }, [isDirty, isSubmitting]);
-
-  const navigateWithDirtyCheck = useCallback(
-    (navigate: () => void) => {
-      if (!confirmDiscardChanges()) return;
-      navigate();
-    },
-    [confirmDiscardChanges]
-  );
-
-  useEffect(() => {
-    const handler = (e: BeforeUnloadEvent) => {
-      if (isDirty && !isSubmitting) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
-  }, [isDirty, isSubmitting]);
+  /* No "unsaved changes?" questions on this page (owner, 2026-10-10): buttons and links just
+     do their job. The old guard read a stale `isDirty` inside the save handler and fired the
+     browser's "Kaydetmediğin değişiklikler var" box right after a successful save. The
+     "Kaydedilmedi" badge in the header still shows when there are unsaved edits. */
 
   // Auto-detect image position based on aspect ratio
   useEffect(() => {
@@ -221,60 +199,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     }, 600);
     return () => clearTimeout(timer);
   }, [image]);
-
-  useEffect(() => {
-    if (!isDirty || isSubmitting) return;
-
-    const handleClickCapture = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0) return;
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-      const target = event.target as HTMLElement | null;
-      const link = target?.closest("a[href]") as HTMLAnchorElement | null;
-      if (!link) return;
-      if (link.target && link.target !== "_self") return;
-
-      const href = link.getAttribute("href");
-      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
-        return;
-      }
-
-      const nextUrl = new URL(link.href, window.location.href);
-      const currentUrl = new URL(window.location.href);
-      if (nextUrl.origin !== currentUrl.origin) return;
-      if (nextUrl.pathname === currentUrl.pathname && nextUrl.search === currentUrl.search) return;
-
-      if (!confirmDiscardChanges()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-
-    const handleSubmitCapture = (event: Event) => {
-      const submittedForm = event.target as HTMLFormElement | null;
-      if (!submittedForm || submittedForm === formRef.current) return;
-
-      if (!confirmDiscardChanges()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-
-    const handlePopState = () => {
-      if (confirmDiscardChanges()) return;
-      window.history.pushState(null, "", window.location.href);
-    };
-
-    document.addEventListener("click", handleClickCapture, true);
-    document.addEventListener("submit", handleSubmitCapture, true);
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      document.removeEventListener("click", handleClickCapture, true);
-      document.removeEventListener("submit", handleSubmitCapture, true);
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [confirmDiscardChanges, isDirty, isSubmitting]);
 
   const handleCategoryChange = (cat: string) => {
     const nextFields = syncPostCategoryDependentFields(cat, {
@@ -353,10 +277,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         },
         "Değişiklikler kaydedilemedi."
       );
+      // Saved: straight back to the note with fresh server data.
       initialSnapshotRef.current = currentSnapshot;
       setIsDirty(false);
       toast.success("Değişiklikler kaydedildi");
-      navigateWithDirtyCheck(() => router.push(`/posts/${params.id}`));
+      router.replace(`/posts/${params.id}`);
+      router.refresh();
     } catch (error) {
       const message = getClientErrorMessage(error, "Değişiklikler kaydedilemedi.");
       setSubmitError(message);
@@ -456,11 +382,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               )}
               <button
                 type="button"
-                onClick={() =>
-                  navigateWithDirtyCheck(() =>
-                    router.push(`/category/${encodeURIComponent(originalCategory)}`)
-                  )
-                }
+                onClick={() => router.push(`/category/${encodeURIComponent(originalCategory)}`)}
                 className="inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
               >
                 <ArrowLeftIcon size={12} weight="bold" />
@@ -851,7 +773,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             <button
               type="button"
-              onClick={() => navigateWithDirtyCheck(() => router.back())}
+              onClick={() => router.back()}
               className="cursor-pointer rounded-full px-3 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
               İptal

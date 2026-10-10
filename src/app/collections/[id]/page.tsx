@@ -29,6 +29,7 @@ import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { confirmToast } from "@/lib/confirm-toast";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -190,12 +191,12 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   const deleteCollection = async () => {
     if (!collection) return;
-    if (
-      typeof window !== "undefined" &&
-      !window.confirm(`"${collection.title}" koleksiyonunu silmek istediğine emin misin?`)
-    ) {
-      return;
-    }
+    const sure = await confirmToast(`"${collection.title}" koleksiyonu silinsin mi?`, {
+      confirmLabel: "Sil",
+      tone: "danger",
+      id: "delete-collection",
+    });
+    if (!sure) return;
 
     setIsDeleting(true);
     try {

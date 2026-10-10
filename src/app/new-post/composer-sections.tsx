@@ -14,7 +14,6 @@ import {
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import type { PostComposerGuidance } from "@/lib/post-config";
 import type { PostCategoryFormConfig } from "@/lib/post-form";
-import { getTemplateSignature } from "@/lib/post-templates";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -452,19 +451,7 @@ export function ContentSection({
         {activeTemplate && (
           <button
             type="button"
-            onClick={() => {
-              const currentSignature = getTemplateSignature(content);
-              if (
-                currentSignature !== "" &&
-                !isTemplateActive &&
-                !globalThis.confirm(
-                  "Yazdıkların şablonla değiştirilecek. Devam etmek istiyor musun?"
-                )
-              ) {
-                return;
-              }
-              onApplyTemplate(category, { force: true });
-            }}
+            onClick={() => onApplyTemplate(category, { force: true })}
             className={`inline-flex shrink-0 cursor-pointer items-center self-start rounded-full border px-3.5 py-1.5 text-[11px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 ${
               isTemplateActive
                 ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
