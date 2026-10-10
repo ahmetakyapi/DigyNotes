@@ -369,7 +369,7 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            className="relative mx-auto grid w-full max-w-[1600px] gap-6 border-t border-[var(--border)] pt-5 md:grid-cols-[1.2fr_1fr_0.8fr] md:items-end"
+            className="relative mx-auto grid w-full max-w-[1600px] gap-6 border-t border-[var(--border)] pt-5 md:grid-cols-[1.2fr_1fr] md:items-end"
             style={reduce ? undefined : { opacity: chromeOpacity, y: chromeY }}
           >
             <p className="max-w-[420px] text-[15px] leading-relaxed text-[var(--text-secondary)] sm:text-base">
@@ -379,7 +379,7 @@ export function Hero() {
               </span>{" "}
               Yıllar sonra dönüp baktığında o anı yeniden hatırla.
             </p>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4 md:justify-self-end">
               <Magnetic>
                 <Link
                   href="/register"
@@ -399,18 +399,6 @@ export function Hero() {
                 <span className="absolute -bottom-1 left-0 h-px w-full bg-current transition-transform duration-500 ease-out-expo group-hover:origin-right group-hover:scale-x-0" />
               </Link>
             </div>
-            <dl className="hidden gap-1.5 text-right text-[12.5px] font-medium text-[var(--text-muted)] md:grid md:justify-self-end">
-              {[
-                ["Kategori", "05", ""],
-                ["Yarım Puan", "½", ""],
-                ["Ücretsiz", "₺0", "text-[var(--gold)]"],
-              ].map(([k, v, c]) => (
-                <div key={k} className="flex justify-end gap-2">
-                  <dt>{k}</dt>
-                  <dd className={c || "text-[var(--text-primary)]"}>{v}</dd>
-                </div>
-              ))}
-            </dl>
           </motion.div>
         </div>
 

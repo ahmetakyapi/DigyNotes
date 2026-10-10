@@ -99,7 +99,7 @@ export function FinalCta() {
                   weight="bold"
                   className="transition-transform duration-700 ease-out-expo group-hover:rotate-45"
                 />
-                <span className="text-lg font-bold tracking-[-0.02em]">Ücretsiz Başla</span>
+                <span className="text-lg font-bold tracking-[-0.02em]">Hemen Başla</span>
               </span>
             </Link>
           </Magnetic>
@@ -182,7 +182,7 @@ export function LandingFooter() {
 
       <div className="mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[12.5px] font-medium text-[var(--text-muted)] sm:px-10">
         <span>© {new Date().getFullYear()} DigyNotes</span>
-        <span>Ücretsiz · Kişisel Kullanım İçin</span>
+        <span>Kişisel Kullanım İçin</span>
       </div>
 
       <div aria-hidden className="relative mt-8 select-none overflow-hidden px-3 pb-[2.5vw]">

@@ -38,7 +38,7 @@ const COPY = {
         Aramıza <span className="dn-display font-normal italic">Katıl</span>
       </>
     ),
-    subtitle: "Yarım dakikada üye ol, tamamen ücretsiz.",
+    subtitle: "Yarım dakikada üye ol, notlarını tutmaya başla.",
   },
 };
 
