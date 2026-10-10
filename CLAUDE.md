@@ -29,7 +29,8 @@ Bu kural sahibinin tüm repolarında geçerli (9 Ekim 2026).
 ## Stack
 
 - **Framework**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- **DB**: PostgreSQL (Homebrew v16) via Prisma ORM v7
+- **DB**: PostgreSQL (Homebrew v16 locally, Neon eu-central-1 in production) via Prisma ORM v7
+- **Hosting**: Vercel, functions pinned to `fra1` in `vercel.json` (next to the Neon DB and Turkish users; the default `iad1` added ~1.2 s per DB round trip)
 - **Prisma adapter**: `@prisma/adapter-pg` (required — plain `new PrismaClient()` will NOT work)
 - **Auth**: NextAuth v4 (credentials + JWT), config in `src/lib/auth.ts`
 - **Editor**: react-quill — always `dynamic(..., { ssr: false })`
