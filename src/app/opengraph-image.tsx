@@ -9,7 +9,7 @@ export const size = OG_SIZE;
 export const contentType = "image/jpeg";
 
 /* LAYOUT: 1200×630 ink card, read at phone size (≈0.28× in WhatsApp).
-   TOP: wordmark.  CENTER: two-line headline (grotesk + serif italic, lavender dot).
+   TOP: wordmark.  CENTER: two-line headline (grotesk + serif italic).
    BOTTOM: one plain sentence naming what you can keep, hairline above. */
 export default async function OgImage() {
   const fonts = await loadBrandFonts();
@@ -74,9 +74,6 @@ export default async function OgImage() {
               }}
             >
               Burada
-            </span>
-            <span style={{ color: OG.lavender, fontSize: 136, fontWeight: 800, lineHeight: 1 }}>
-              .
             </span>
           </span>
         </div>

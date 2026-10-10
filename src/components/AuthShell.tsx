@@ -26,7 +26,7 @@ const COPY = {
     label: "Giriş",
     title: (
       <>
-        Tekrar <span className="dn-display font-normal italic">Hoş Geldin.</span>
+        Tekrar <span className="dn-display font-normal italic">Hoş Geldin</span>
       </>
     ),
     subtitle: "Notların kaldığın yerde seni bekliyor.",
@@ -35,7 +35,7 @@ const COPY = {
     label: "Üye Ol",
     title: (
       <>
-        Aramıza <span className="dn-display font-normal italic">Katıl.</span>
+        Aramıza <span className="dn-display font-normal italic">Katıl</span>
       </>
     ),
     subtitle: "Yarım dakikada üye ol, tamamen ücretsiz.",
@@ -78,7 +78,6 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
           <p className="max-w-[560px] text-[clamp(2.6rem,4.2vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[#f2efe8]">
             Sana Kalan Her Şey,{" "}
             <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span>
-            <span className="text-[#b9a8ff]">.</span>
           </p>
           <div className="mt-8 flex gap-6 text-[12.5px] font-medium text-[#77726a]">
             <span>Film</span>

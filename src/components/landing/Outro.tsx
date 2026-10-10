@@ -40,7 +40,7 @@ export function Steps() {
         <h2 className="text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
           <MaskLine>
             Üç Adımda{" "}
-            <span className="dn-display font-normal italic tracking-[-0.02em]">Hazırsın.</span>
+            <span className="dn-display font-normal italic tracking-[-0.02em]">Hazırsın</span>
           </MaskLine>
         </h2>
       </div>
@@ -78,7 +78,6 @@ export function FinalCta() {
           <MaskLine>
             Unutmadan{" "}
             <span className="dn-display font-normal italic tracking-[-0.03em]">Not Al</span>
-            <span className="text-[var(--gold)]">.</span>
           </MaskLine>
         </h2>
         <motion.div
@@ -142,7 +141,7 @@ export function LandingFooter() {
       <div className="mx-auto grid max-w-[1600px] gap-10 px-5 sm:px-10 md:grid-cols-[2fr_1fr_1fr_1fr_auto]">
         <p className="dn-display max-w-[340px] text-3xl italic leading-tight text-[var(--text-secondary)]">
           İzlediklerin, Okudukların, Gezdiklerin —{" "}
-          <span className="text-[var(--text-primary)]">Hepsi Bir Yerde.</span>
+          <span className="text-[var(--text-primary)]">Hepsi Bir Yerde</span>
         </p>
         {cols.map((c) => (
           <div key={c.t}>
@@ -189,7 +188,6 @@ export function LandingFooter() {
       <div aria-hidden className="relative mt-8 select-none overflow-hidden px-3 pb-[2.5vw]">
         <p className="whitespace-nowrap text-center text-[18.5vw] font-extrabold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)]">
           Digy<span className="dn-display font-normal italic tracking-[-0.04em]">Notes</span>
-          <span className="text-[var(--gold)]">.</span>
         </p>
       </div>
     </footer>

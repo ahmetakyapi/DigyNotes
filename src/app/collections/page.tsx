@@ -10,7 +10,7 @@ import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon, StackIcon } from "@phosph
 import CollectionCard from "@/components/CollectionCard";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Collection } from "@/types";
 
@@ -139,7 +139,6 @@ export default function CollectionsPage() {
         title={
           <>
             <Em>Koleksiyonların</Em>
-            <Dot />
           </>
         }
         description="Notlarını konuya, döneme ya da ruh haline göre gruplandır."
@@ -170,13 +169,11 @@ export default function CollectionsPage() {
       >
         <div className="mb-4 flex items-center gap-2">
           <PlusIcon size={12} weight="bold" className="text-[var(--gold)]" />
-          <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
-            Yeni Koleksiyon
-          </p>
+          <p className="text-[12.5px] font-medium text-[var(--text-muted)]">Yeni Koleksiyon</p>
         </div>
         <div className="grid items-end gap-4 sm:grid-cols-[1fr_1.4fr_auto]">
           <label className="block">
-            <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
+            <span className="mb-2 flex items-center justify-between text-[12.5px] font-medium text-[var(--text-muted)]">
               Başlık
               <span className="text-[var(--text-faint)]">{title.length}/80</span>
             </span>
@@ -189,7 +186,7 @@ export default function CollectionsPage() {
             />
           </label>
           <label className="block">
-            <span className="mb-2 flex items-center justify-between text-[12.5px] text-[var(--text-muted)] font-medium">
+            <span className="mb-2 flex items-center justify-between text-[12.5px] font-medium text-[var(--text-muted)]">
               Açıklama
               <span className="text-[var(--text-faint)]">{description.length}/400</span>
             </span>

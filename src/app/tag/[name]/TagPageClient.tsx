@@ -12,7 +12,7 @@ import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
 import { AvatarImage } from "@/components/AvatarImage";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -46,7 +46,6 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
           <>
             <span className="text-[var(--gold)]">#</span>
             <Em>{tagName}</Em>
-            <Dot />
           </>
         }
         description="Bu etiketi kullanan herkese açık notlar."
@@ -72,9 +71,7 @@ export default function TagPageClient({ params }: { params: { name: string } }) 
 
       {/* LAYOUT: Sort pill aligned right above the grid. */}
       <div className="mb-6 flex items-center justify-between gap-3">
-        <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
-          Sıralama
-        </p>
+        <p className="text-[12.5px] font-medium text-[var(--text-muted)]">Sıralama</p>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
@@ -147,7 +144,7 @@ function PostCard({ post }: { post: Post }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent" />
         <div className="absolute left-3 top-3 flex items-center gap-1.5">
-          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] text-[var(--text-primary)] font-medium">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-primary)]">
             {getCategoryLabel(post.category)}
           </span>
           {post.status && <StatusBadge status={post.status} />}

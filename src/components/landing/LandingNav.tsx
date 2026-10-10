@@ -2,7 +2,7 @@
 
 /*
   LAYOUT: Fixed top bar, 3 zones.
-  LEFT: Wordmark · CENTER (lg+): numbered anchor links in mono · RIGHT: theme, login, register pill.
+  LEFT: Wordmark · CENTER (lg+): anchor links · RIGHT: theme, login, register pill.
   Hides on scroll-down, returns on scroll-up; gains glass background after the hero fold.
 */
 import Link from "next/link";
@@ -59,15 +59,12 @@ export function LandingNav() {
         </Link>
 
         <nav aria-label="Sayfa bölümleri" className="hidden items-center gap-8 lg:flex">
-          {LINKS.map((l, i) => (
+          {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               className="group flex items-baseline gap-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--text-primary)]"
             >
-              <span className="dn-mono text-[11px] text-[var(--text-faint)] transition-colors duration-200 group-hover:text-[var(--gold)]">
-                {String(i + 1).padStart(2, "0")}
-              </span>
               <span className="relative">
                 {l.label}
                 <span className="absolute -bottom-0.5 left-0 h-px w-full origin-right scale-x-0 bg-current transition-transform duration-500 ease-out-expo group-hover:origin-left group-hover:scale-x-100" />

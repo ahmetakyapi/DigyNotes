@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { ArchiveIcon, HeartIcon, PencilSimpleIcon, PushPinIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  ArchiveIcon,
+  HeartIcon,
+  PencilSimpleIcon,
+  PushPinIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -190,7 +196,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   useEffect(() => {
     fetch(`/api/posts/${params.id}/comments`)
       .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((data) => setComments(Array.isArray(data) ? data : data.items ?? []))
+      .then((data) => setComments(Array.isArray(data) ? data : (data.items ?? [])))
       .catch(() => {});
   }, [params.id]);
 
@@ -669,7 +675,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
       {/* ─── Hero Image ─── */}
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
         {/* Breadcrumb */}
-        <nav className="mb-4 flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+        <nav className="mb-4 flex items-center gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
           <Link href="/notes" className="transition-colors hover:text-[var(--gold)]">
             Notlar
           </Link>
@@ -753,7 +759,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!pinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
                       pinned
                         ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                         : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -789,7 +795,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                         toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
                       }
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
                       archived
                         ? "border-[#f59e0b]/50 bg-[#f59e0b]/15 text-[#f59e0b]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -826,27 +832,29 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                   <Link
                     aria-label="Notu düzenle"
                     href={`/posts/${post.id}/edit`}
-                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)] active:scale-95 sm:px-3.5 sm:py-2"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
                       color: "var(--media-control-text)",
                     }}
                   >
-                    <PencilSimpleIcon size={11} weight="fill" /> <span className="hidden sm:inline">Düzenle</span>
+                    <PencilSimpleIcon size={11} weight="fill" />{" "}
+                    <span className="hidden sm:inline">Düzenle</span>
                   </Link>
                   <button
                     aria-label="Notu sil"
                     onClick={() => setIsModalOpen(true)}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold sm:px-3.5 sm:py-2 shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 hover:border-[var(--danger)] hover:text-[var(--danger-light)] disabled:opacity-40"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 hover:border-[var(--danger)] hover:text-[var(--danger-light)] active:scale-95 disabled:opacity-40 sm:px-3.5 sm:py-2"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
                       color: "var(--media-control-text)",
                     }}
                   >
-                    <TrashIcon size={10} weight="fill" /> <span className="hidden sm:inline">Sil</span>
+                    <TrashIcon size={10} weight="fill" />{" "}
+                    <span className="hidden sm:inline">Sil</span>
                   </button>
                 </div>
               </>
@@ -862,7 +870,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 </span>
                 {post.status && <StatusBadge status={post.status} />}
                 {supportsSpoiler && post.hasSpoiler && (
-                  <span className="bg-danger/12 inline-flex items-center rounded-full border border-danger/25 px-2 py-0.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#ffb2b2]">
+                  <span className="inline-flex items-center rounded-full border border-danger/25 bg-danger/12 px-2 py-0.5 text-[12px] font-semibold text-[#ffb2b2]">
                     Spoiler
                   </span>
                 )}
@@ -904,7 +912,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                       <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
                       </svg>
-                      TMDB {post.externalRating.toFixed(1)}
+                      TMDB {post.externalRating.toFixed(1).replace(".", ",")}
                       <span className="font-normal text-[var(--media-text-secondary)] opacity-90">
                         /10
                       </span>
@@ -971,10 +979,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                     animate={likeData.liked ? { scale: [1, 1.4, 1] } : { scale: 1 }}
                     transition={{ duration: 0.5, type: "spring", stiffness: 600, damping: 15 }}
                   >
-                    <HeartIcon
-                      size={16}
-                      weight={likeData.liked ? "fill" : "regular"}
-                    />
+                    <HeartIcon size={16} weight={likeData.liked ? "fill" : "regular"} />
                   </motion.span>
                   <span>{likeData.count > 0 ? likeData.count : ""}</span>
                 </button>
@@ -997,9 +1002,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
           <section className="mb-6 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] px-4 py-3">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                  Konum
-                </p>
+                <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">Konum</p>
                 <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
                   {displayTitle}
                 </p>
@@ -1022,9 +1025,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 referrerPolicy="no-referrer-when-downgrade"
               />
               <div className="border-t border-[var(--border)] bg-[var(--bg-raised)] p-4 text-sm lg:border-l lg:border-t-0">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                  Koordinatlar
-                </p>
+                <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">Koordinatlar</p>
                 <p className="mt-3 text-[var(--text-secondary)]">
                   {formatCoordinate(post.lat)}, {formatCoordinate(post.lng)}
                 </p>
@@ -1043,7 +1044,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
             className={`mb-5 overflow-hidden rounded-2xl border transition-all duration-300 ${
               shouldBlurSpoiler
                 ? "border-danger/20 bg-gradient-to-r from-danger/[0.06] via-danger/[0.03] to-transparent"
-                : "border-accent/20 from-[var(--gold)]/[0.06] via-[var(--gold)]/[0.03] bg-gradient-to-r to-transparent"
+                : "from-[var(--gold)]/[0.06] via-[var(--gold)]/[0.03] border-accent/20 bg-gradient-to-r to-transparent"
             }`}
           >
             <div className="flex items-center gap-3 px-4 py-3">
@@ -1051,7 +1052,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   shouldBlurSpoiler
                     ? "border border-danger/25 bg-danger/10 text-[#ffb2b2]"
-                    : "border-accent/25 bg-accent/10 border text-[var(--gold)]"
+                    : "border border-accent/25 bg-accent/10 text-[var(--gold)]"
                 }`}
               >
                 {shouldBlurSpoiler ? (
@@ -1113,7 +1114,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
                 className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   shouldBlurSpoiler
                     ? "bg-[var(--gold)] text-[var(--text-on-accent)] hover:bg-[var(--gold-light)]"
-                    : "hover:border-accent/30 border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:text-[var(--gold)]"
+                    : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--gold)]"
                 }`}
               >
                 {shouldBlurSpoiler ? "Spoiler'ı Göster" : "Gizle"}
@@ -1125,7 +1126,7 @@ export default function PostDetailClient({ params }: { params: { id: string } })
         <div className="relative">
           <article
             aria-hidden={shouldBlurSpoiler}
-            className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:italic prose-blockquote:font-normal prose-blockquote:leading-tight prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
+            className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
               shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
             }`}
           >
@@ -1164,13 +1165,9 @@ export default function PostDetailClient({ params }: { params: { id: string } })
               </svg>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-base font-semibold text-[var(--text-contrast)]">
-                Yorumlar
-              </h2>
+              <h2 className="text-base font-semibold text-[var(--text-contrast)]">Yorumlar</h2>
               {comments.length > 0 && (
-                <span className="text-sm text-[var(--text-faint)]">
-                  ({comments.length})
-                </span>
+                <span className="text-sm text-[var(--text-faint)]">({comments.length})</span>
               )}
             </div>
           </div>

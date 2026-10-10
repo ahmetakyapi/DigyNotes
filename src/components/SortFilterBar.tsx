@@ -129,7 +129,7 @@ export function SortFilterBar({
             onClick={() => setShowAdvanced(true)}
             className={`h-9 cursor-pointer rounded-xl border px-2.5 text-xs font-semibold transition-colors sm:h-10 sm:px-3 ${
               showAdvanced || activeFilterCount > 0
-                ? "bg-accent/8 border-accent/35 text-[var(--gold)]"
+                ? "border-accent/35 bg-accent/8 text-[var(--gold)]"
                 : "border-[var(--border)] bg-[var(--surface-strong)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
@@ -221,9 +221,7 @@ export function SortFilterBar({
 
               {availableStatuses.length > 0 && (
                 <div className="mt-5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-faint)]">
-                    Durumlar
-                  </p>
+                  <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">Durumlar</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {availableStatuses.map((status) => (
                       <button

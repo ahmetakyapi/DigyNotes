@@ -40,7 +40,6 @@ export default function OfflinePage() {
       <h1 className="relative mt-10 max-w-[680px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--text-primary)]">
         İnternet <span className="dn-display font-normal italic tracking-[-0.02em]">Bağlantın</span>{" "}
         Yok
-        <span className="text-[var(--gold)]">.</span>
       </h1>
       <p className="relative mt-4 max-w-[460px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
         Bağlantın geri geldiğinde kaldığın yerden devam edebilirsin.

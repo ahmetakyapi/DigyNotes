@@ -21,7 +21,7 @@ import {
   getSparseDataLabel,
   getTopItem,
 } from "@/lib/stats-insights";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -140,7 +140,6 @@ function StatsHeader({ data }: { data?: StatsData }) {
       title={
         <>
           Rakamlarla <Em>Notların</Em>
-          <Dot />
         </>
       }
       description="Ne kadar not aldığını, en çok neyi izleyip okuduğunu ve puanlarını gör."
@@ -280,12 +279,10 @@ export default function PersonalStatsPage() {
               <>
                 En çok <Em>{getCategoryLabel(topCategory.name).toLowerCase()}</Em> kategorisinde not
                 tutuyorsun
-                <Dot />
               </>
             ) : (
               <>
                 Notların farklı kategorilere <Em>dağılmış</Em>
-                <Dot />
               </>
             )}
           </p>

@@ -45,3 +45,21 @@ export function buildPostMetadataDescription(input: {
 
   return context ? `${context} • ${summary}` : summary;
 }
+
+/* Link-preview crawlers fetch the page, then the og:image a moment later, and give up
+   on a slow image (WhatsApp shows the link bare). Matches the ones that matter. */
+const PREVIEW_BOT =
+  /whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|discordbot|linkedinbot|skypeuripreview|applebot|pinterest|redditbot|embedly|vkshare/i;
+
+export function isPreviewBot(userAgent: string | null | undefined) {
+  return Boolean(userAgent && PREVIEW_BOT.test(userAgent));
+}
+
+/**
+ * Starts rendering a share card while the crawler is still reading the page, so the
+ * image request that follows is a CDN hit instead of a cold 3–8 s render. Fire and
+ * forget: a failure here only means the crawler renders it itself.
+ */
+export function warmShareImage(url: string) {
+  fetch(url, { headers: { "User-Agent": "DigyNotesWarm/1.0" } }).catch(() => {});
+}

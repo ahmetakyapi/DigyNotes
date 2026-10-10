@@ -23,7 +23,7 @@ import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { MediaSearch, MediaSearchResult } from "@/components/MediaSearch";
 import { ResilientImage } from "@/components/ResilientImage";
 import { StatusBadge, getStatusOptions } from "@/components/StatusBadge";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { WishlistItem } from "@/types";
 
@@ -244,7 +244,6 @@ export default function WatchlistPage() {
         title={
           <>
             <Em>İstek Listen</Em>
-            <Dot />
           </>
         }
         description="Sonra izlemek, okumak ya da gitmek istediklerini buraya ekle."
@@ -286,7 +285,7 @@ export default function WatchlistPage() {
         </div>
 
         <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors duration-500 ease-out-expo focus-within:border-[var(--text-faint)] sm:p-5">
-          <p className="mb-3 text-[12.5px] text-[var(--text-muted)] font-medium">
+          <p className="mb-3 text-[12.5px] font-medium text-[var(--text-muted)]">
             {getCategoryLabel(activeCategory)} Ara ve Ekle
           </p>
           <MediaSearch
@@ -351,7 +350,7 @@ export default function WatchlistPage() {
         {/* LAYOUT: Section heading (mono count + grotesk title) left, search + sort pills right; 1/2/3 col poster cards. */}
         <div className="mb-5 mt-12 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
               {filteredItems.length}/{countsByCategory[activeCategory] ?? 0} kayıt
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
@@ -451,7 +450,7 @@ export default function WatchlistPage() {
                   )}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
                   <div className="absolute left-4 top-4 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] text-[var(--text-primary)] font-medium">
+                    <span className="rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-primary)]">
                       {getCategoryLabel(item.category)}
                     </span>
                     <StatusBadge status={getPlannedLabel(normalizeCategory(item.category))} />
@@ -459,7 +458,7 @@ export default function WatchlistPage() {
                   {typeof item.externalRating === "number" && item.externalRating > 0 && (
                     <div className="dn-mono absolute right-4 top-4 inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12.5px] text-[var(--text-primary)]">
                       <StarIcon size={10} weight="fill" className="text-[var(--gold)]" />
-                      {item.externalRating.toFixed(1)}
+                      {item.externalRating.toFixed(1).replace(".", ",")}
                     </div>
                   )}
                 </div>
@@ -479,7 +478,7 @@ export default function WatchlistPage() {
                       {item.excerpt}
                     </p>
                   )}
-                  <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4 text-[12.5px] text-[var(--text-muted)] font-medium">
+                  <div className="mt-auto flex items-center justify-between border-t border-[var(--border)] pt-4 text-[12.5px] font-medium text-[var(--text-muted)]">
                     <span>Eklendi {formatDate(item.addedAt)}</span>
                     <span>{getPlannedLabel(normalizeCategory(item.category))}</span>
                   </div>

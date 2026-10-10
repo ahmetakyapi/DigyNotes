@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/categories";
-import { getPostReadAccess } from "@/lib/post-access";
+import { canReadPost } from "@/lib/post-access";
 import { stripHtml, truncateText } from "@/lib/metadata";
 import { loadBrandFonts, OG } from "@/lib/og-fonts";
 import { loadCover, OG_SIZE, toJpegResponse } from "@/lib/og-image";
@@ -20,14 +20,15 @@ const COVER = { width: 330, height: 495 } as const;
    (category, title, rating, two lines of note, author), and none of it is uppercase. */
 
 export default async function PostOpenGraphImage({ params }: { params: { id: string } }) {
-  const access = await getPostReadAccess(params.id);
-  if (!access.post || !access.canRead) {
-    return renderOgNotice("Bu Not Gizli", "Notu yalnızca sahibi görebilir.");
-  }
-
-  const post = await prisma.post.findFirst({
-    where: { id: params.id, isDraft: false, isDeleted: false },
+  // One query for visibility and content (this route is latency-bound: chat apps give
+  // up on slow previews). Same rule as getPostReadAccess for an anonymous viewer.
+  const post = await prisma.post.findUnique({
+    where: { id: params.id },
     select: {
+      id: true,
+      userId: true,
+      isDraft: true,
+      isDeleted: true,
       title: true,
       image: true,
       excerpt: true,
@@ -37,10 +38,15 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
       years: true,
       rating: true,
       status: true,
-      user: { select: { name: true, username: true, avatarUrl: true } },
+      user: { select: { isPublic: true, name: true, username: true, avatarUrl: true } },
     },
   });
-  if (!post) return renderOgNotice("Not Bulunamadı", "Bu not silinmiş ya da taşınmış olabilir.");
+  if (!post || post.isDraft || post.isDeleted) {
+    return renderOgNotice("Not Bulunamadı", "Bu not silinmiş ya da taşınmış olabilir.");
+  }
+  if (!canReadPost(post)) {
+    return renderOgNotice("Bu Not Gizli", "Notu yalnızca sahibi görebilir.");
+  }
 
   const [fonts, cover, avatar] = await Promise.all([
     loadBrandFonts(),

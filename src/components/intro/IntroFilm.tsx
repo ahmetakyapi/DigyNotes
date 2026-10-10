@@ -9,7 +9,7 @@
     02 "Bir Kitap Bitirdin."    card turns like a page (rotateY) into a book cover
     03 "Bir Şehirde Kayboldun." circular iris opens onto a city photograph
     04 "Hepsi Bir İz Bıraktı."  the three fan out, then collapse into one lavender dot
-    05 mark                     the dot becomes the end of "DigyNotes." + tagline
+    05 mark                     the "DigyNotes" wordmark rises (no dot) + tagline
     → the curtain splits (top half lifts, bottom half drops) to reveal the page.
   Clock lives at module level so StrictMode double effects / remounts resume, never restart.
   Tap anywhere or "Geç" to skip. Reduced motion: never shown.
@@ -53,10 +53,10 @@ const em = (t: string) => (
 );
 
 const LINES: ReactNode[][] = [
-  ["Bir", em("Film"), "İzledin."],
-  ["Bir", em("Kitap"), "Bitirdin."],
-  ["Bir", em("Şehirde"), "Kayboldun."],
-  ["Hepsi", "Bir", em("İz"), "Bıraktı."],
+  ["Bir", em("Film"), "İzledin"],
+  ["Bir", em("Kitap"), "Bitirdin"],
+  ["Bir", em("Şehirde"), "Kayboldun"],
+  ["Hepsi", "Bir", em("İz"), "Bıraktı"],
 ];
 
 function Headline({ scene }: { scene: number }) {
@@ -207,16 +207,6 @@ function MarkFrame({ animate }: { animate: boolean }) {
             Notes
           </motion.span>
         </span>
-        <motion.span
-          className="ml-[0.08em] inline-block h-[0.2em] w-[0.2em] rounded-full bg-[#b9a8ff]"
-          {...(animate
-            ? {
-                initial: { scale: 3, x: "-4em", opacity: 0.9 },
-                animate: { scale: 1, x: 0, opacity: 1 },
-                transition: { duration: 0.8, ease: EASE },
-              }
-            : {})}
-        />
       </div>
       <motion.p
         className="mt-5 text-[13px] font-medium text-[#77726a]"

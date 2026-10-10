@@ -19,7 +19,7 @@ import { ResilientImage } from "@/components/ResilientImage";
 import StarRating from "@/components/StarRating";
 import { StatusBadge } from "@/components/StatusBadge";
 import TagBadge from "@/components/TagBadge";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const FEED_LIMIT = 20;
@@ -112,7 +112,6 @@ export default function FeedPageClient() {
         title={
           <>
             Takip Ettiklerinden <Em>Son Notlar</Em>
-            <Dot />
           </>
         }
         description="Takip ettiğin kişilerin yeni notları burada, en yenisi en üstte."
@@ -238,13 +237,13 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             {post.user.username && (
               <Link
                 href={`/profile/${post.user.username}`}
-                className="text-[12px] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)] font-medium"
+                className="text-[12px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
               >
                 @{post.user.username}
               </Link>
             )}
           </div>
-          <span className="ml-auto shrink-0 text-[12px] text-[var(--text-muted)] font-medium">
+          <span className="ml-auto shrink-0 text-[12px] font-medium text-[var(--text-muted)]">
             {post.date}
           </span>
         </div>
@@ -262,7 +261,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.82)] via-transparent to-transparent" />
             <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] text-[var(--gold)] font-medium">
+              <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] font-medium text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.status && <StatusBadge status={post.status} />}
@@ -274,7 +273,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
               {displayTitle}
             </h3>
             {post.creator && (
-              <p className="mt-2 text-[12px] text-[var(--text-muted)] font-medium">
+              <p className="mt-2 text-[12px] font-medium text-[var(--text-muted)]">
                 {displayCreator}
               </p>
             )}
@@ -296,9 +295,7 @@ function FeedCard({ post }: Readonly<{ post: Post }>) {
             </div>
 
             <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-              <p className="text-[12px] text-[var(--text-muted)] font-medium">
-                Takip Ettiğin Kişi
-              </p>
+              <p className="text-[12px] font-medium text-[var(--text-muted)]">Takip Ettiğin Kişi</p>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)]">
                 Notu Aç
                 <ArrowRightIcon

@@ -384,7 +384,6 @@ export default function ProfilePageClient({ username }: { readonly username: str
           </p>
           <h1 className="mt-2 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
             {user.name}
-            <span className="text-[var(--gold)]">.</span>
           </h1>
           {user.bio && (
             <p className="dn-display mt-4 max-w-xl text-xl italic leading-snug text-[var(--text-secondary)] sm:text-2xl">
@@ -473,9 +472,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
 
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
-              {tabMeta.label}
-            </p>
+            <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">{tabMeta.label}</p>
             <p className="mt-1 text-xs text-[var(--text-muted)]">{tabMeta.count}</p>
             <div className="relative mt-3 w-full sm:hidden">
               <input
@@ -552,7 +549,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                     <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                          <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
+                          <span className="rounded-full border border-accent/30 px-2 py-0.5 text-[11.5px] font-semibold text-accent">
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.isPinned && (
@@ -690,7 +687,7 @@ export default function ProfilePageClient({ username }: { readonly username: str
                   <div className="flex min-w-0 flex-1 flex-col justify-between p-4">
                     <div>
                       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-sm border border-accent/25 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-accent">
+                        <span className="rounded-full border border-accent/30 px-2 py-0.5 text-[11.5px] font-semibold text-accent">
                           {getCategoryLabel(post.category)}
                         </span>
                         {post.status && <StatusBadge status={post.status} />}

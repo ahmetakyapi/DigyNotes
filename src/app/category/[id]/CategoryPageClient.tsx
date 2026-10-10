@@ -26,7 +26,7 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { ResilientImage } from "@/components/ResilientImage";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -123,7 +123,9 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   const ratedPosts = posts.filter((p) => p.rating);
   const averageRating =
     ratedPosts.length > 0
-      ? (posts.reduce((sum, p) => sum + (p.rating || 0), 0) / ratedPosts.length).toFixed(1)
+      ? (posts.reduce((sum, p) => sum + (p.rating || 0), 0) / ratedPosts.length)
+          .toFixed(1)
+          .replace(".", ",")
       : null;
 
   if (loading) {
@@ -156,7 +158,6 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         title={
           <>
             <Em>{categoryLabel}</Em> Notların
-            <Dot />
           </>
         }
         description={`${categoryLabel} kategorisindeki tüm notların burada. Ara, sırala ya da filtrele.`}
@@ -308,7 +309,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       <div>
                         <div className="mb-2 flex flex-wrap items-center gap-1.5">
                           {post.years && (
-                            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                            <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
                               {post.years}
                             </span>
                           )}
@@ -330,7 +331,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                       </div>
                       <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-3">
                         <StarRating rating={post.rating} size={12} />
-                        <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                        <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
                           {post.date}
                         </span>
                       </div>

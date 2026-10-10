@@ -5,21 +5,12 @@ import { OG_SIZE, toJpegResponse } from "@/lib/og-image";
 /* Satori building blocks shared by the share cards. Satori reads no CSS variables or
    classes, so colours come from the literal `OG` palette (dark brand tokens). */
 
-/** "Digy" grotesk + "Notes" serif italic + lavender dot — same as `Wordmark.tsx`. */
+/** "Digy" grotesk + "Notes" serif italic, no dot — same as `Wordmark.tsx`. */
 export function OgWordmark({ size = 34 }: { size?: number }) {
   return (
     <span style={{ display: "flex", alignItems: "baseline", color: OG.bone }}>
       <span style={{ fontSize: size, fontWeight: 800, letterSpacing: -size * 0.04 }}>Digy</span>
       <span style={{ fontSize: size * 1.08, fontFamily: "Serif", fontStyle: "italic" }}>Notes</span>
-      <span
-        style={{
-          width: size * 0.2,
-          height: size * 0.2,
-          borderRadius: 999,
-          background: OG.lavender,
-          marginLeft: size * 0.08,
-        }}
-      />
     </span>
   );
 }

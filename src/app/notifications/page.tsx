@@ -11,7 +11,7 @@ import {
   FunnelSimpleIcon,
 } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import toast from "react-hot-toast";
 
@@ -196,7 +196,6 @@ export default function NotificationsPage() {
           title={
             <>
               <Em>Bildirimler</Em>
-              <Dot />
             </>
           }
           description="Takip, beğeni ve yorumların hepsi burada."
@@ -244,7 +243,6 @@ export default function NotificationsPage() {
         title={
           <>
             <Em>Bildirimler</Em>
-            <Dot />
           </>
         }
         description="Takip, beğeni ve yorumların hepsi burada."

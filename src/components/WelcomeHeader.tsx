@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Post } from "@/types";
+import { normalizeCategory } from "@/lib/categories";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 
 interface WelcomeHeaderProps {
@@ -11,11 +12,53 @@ interface WelcomeHeaderProps {
 }
 
 function greetingFor(hour: number): string {
-  if (hour < 6) return "İyi geceler";
-  if (hour < 12) return "İyi sabahlar";
-  if (hour < 18) return "İyi öğlenler";
-  if (hour < 22) return "İyi akşamlar";
-  return "İyi geceler";
+  if (hour < 6) return "İyi Geceler";
+  if (hour < 12) return "Günaydın";
+  if (hour < 18) return "İyi Günler";
+  if (hour < 22) return "İyi Akşamlar";
+  return "İyi Geceler";
+}
+
+/* "Son Notlar" covers every category, so the question does too: the accent verb
+   cycles through them, starting from the category of the latest note. */
+const VERBS = ["İzledin", "Okudun", "Oynadın", "Gezdin"] as const;
+const VERB_FOR: Record<string, number> = { movies: 0, series: 0, book: 1, game: 2, travel: 3 };
+const VERB_MS = 2600;
+
+function RotatingVerb({ start }: { start: number }) {
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(start);
+  useEffect(() => setI(start), [start]);
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => {
+      if (!document.hidden) setI((v) => (v + 1) % VERBS.length);
+    }, VERB_MS);
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  return (
+    <motion.span
+      layout={!reduce}
+      transition={{ layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
+      className="relative inline-flex overflow-hidden pb-[0.08em] align-bottom"
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={VERBS[i]}
+          aria-hidden
+          className="dn-display inline-block font-normal italic tracking-[-0.02em] text-[var(--gold)]"
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {VERBS[i]}
+        </motion.span>
+      </AnimatePresence>
+      <span className="sr-only">İzledin, Okudun, Oynadın ya da Gezdin</span>
+    </motion.span>
+  );
 }
 
 export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
@@ -23,6 +66,13 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
   const name = session?.user?.name ?? null;
 
   const greeting = useMemo(() => greetingFor(new Date().getHours()), []);
+  const startVerb = useMemo(() => {
+    const latest = posts.reduce<Post | null>(
+      (a, p) => (!a || new Date(p.createdAt) > new Date(a.createdAt) ? p : a),
+      null
+    );
+    return VERB_FOR[normalizeCategory(latest?.category)] ?? 0;
+  }, [posts]);
 
   const stats = useMemo(() => {
     const total = posts.length;
@@ -44,7 +94,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
 
   if (status === "loading") return null;
 
-  const firstName = name?.split(" ")[0] ?? "tekrar hoş geldin";
+  const firstName = name?.split(" ")[0] ?? null;
 
   const today = new Date().toLocaleDateString("tr-TR", {
     weekday: "long",
@@ -59,22 +109,21 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className="mx-auto max-w-5xl px-3 pb-2 pt-5 sm:px-6 sm:pt-7"
     >
-      {/* LAYOUT: mono dateline → editorial greeting (left) · big serif stats (right, md+) */}
-      <p className="flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+      {/* LAYOUT: dateline → two-line greeting with a rotating verb (left) · big serif stats (right, md+) */}
+      <p className="flex items-center gap-2 text-[13px] font-medium text-[var(--text-muted)]">
         <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-        {greeting} <span className="text-[var(--text-faint)]">—</span> {today}
+        <span className="text-[var(--text-secondary)]">{greeting}</span>
+        <span className="text-[var(--text-faint)]">·</span>
+        {today}
       </p>
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h1 className="max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.03em] text-[var(--text-primary)] [text-wrap:balance] sm:text-[46px]">
-          {name ? (
-            <>
-              Merhaba {firstName}, Bugün Ne{" "}
-              <span className="dn-display font-normal italic tracking-[-0.02em]">İzledin</span>
-              <span className="text-[var(--gold)]">?</span>
-            </>
-          ) : (
-            "Hoş Geldin"
-          )}
+        {/* Two fixed lines: the rotating verb changes width, so the break must not move. */}
+        <h1 className="text-[34px] font-extrabold leading-[1.02] tracking-[-0.03em] text-[var(--text-primary)] sm:text-[48px]">
+          <span className="block">{firstName ? `Merhaba ${firstName},` : "Hoş Geldin,"}</span>
+          <span className="block whitespace-nowrap">
+            Bugün Ne <RotatingVerb start={startVerb} />
+            <span className="text-[var(--gold)]">?</span>
+          </span>
         </h1>
 
         {stats.total > 0 && (
@@ -107,9 +156,7 @@ function Stat({ value, label }: { value: React.ReactNode; label: string }) {
       <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
         {value}
       </span>
-      <span className="mt-1 text-[12px] text-[var(--text-muted)] font-medium">
-        {label}
-      </span>
+      <span className="mt-1 text-[12px] font-medium text-[var(--text-muted)]">{label}</span>
     </span>
   );
 }

@@ -3,7 +3,7 @@
 /*
   LAYOUT: Section title row, then a large app mock in perspective.
   The mock starts tilted (rotateX) and scaled down, flattens to 1:1 as it scrolls into place.
-  MOCK: browser chrome → app header (wordmark, numbered tabs) → hero note card + 2×3 grid of note rows.
+  MOCK: browser chrome → app header (wordmark, tabs) → hero note card + 2×3 grid of note rows.
   Annotation pills with hairline leaders float around the mock on lg+.
 */
 import Image from "next/image";
@@ -118,11 +118,6 @@ function AppMock() {
               key={t}
               className={`relative flex shrink-0 items-baseline gap-1 pb-2.5 ${i === 0 ? "text-[var(--text-primary)]" : ""}`}
             >
-              <span
-                className={`dn-mono text-[8px] ${i === 0 ? "text-[var(--gold)]" : "text-[var(--text-faint)]"}`}
-              >
-                0{i}
-              </span>
               {t}
               {i === 0 && (
                 <span className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-[var(--gold)]" />
@@ -170,7 +165,7 @@ function AppMock() {
                 <Image src={r.src} alt="" fill sizes="60px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="dn-mono flex items-center gap-2 text-[8.5px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                <div className="flex items-center gap-2 text-[10px] font-medium text-[var(--text-muted)]">
                   <span className="text-[var(--gold)]">{r.cat}</span>
                   <span>{r.status}</span>
                 </div>
@@ -211,7 +206,7 @@ export function Showcase() {
               <MaskLine>
                 Tüm Notların,{" "}
                 <span className="dn-display font-normal italic tracking-[-0.02em]">
-                  Tek Bakışta.
+                  Tek Bakışta
                 </span>
               </MaskLine>
             </h2>

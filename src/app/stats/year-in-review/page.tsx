@@ -43,7 +43,7 @@ import {
   getTopItem,
 } from "@/lib/stats-insights";
 import { ResilientImage } from "@/components/ResilientImage";
-import { Em, Dot } from "@/components/ui/PageHeader";
+import { Em } from "@/components/ui/PageHeader";
 
 /* ── Types ── */
 interface YearData {
@@ -218,7 +218,6 @@ export default function YearInReviewPage() {
         statement={
           <>
             Bu yıl <Em>{data.totalPosts}</Em> not yazdın
-            <Dot />
           </>
         }
       >
@@ -239,19 +238,16 @@ export default function YearInReviewPage() {
             favoriteVerb ? (
               <>
                 Bu yıl en çok <Em>{getCategoryLabel(favoriteCategory.name)}</Em> {favoriteVerb}
-                <Dot />
               </>
             ) : (
               <>
                 Bu yıl en çok <Em>{getCategoryLabel(favoriteCategory.name)}</Em> kategorisinde not
                 aldın
-                <Dot />
               </>
             )
           ) : (
             <>
               Bu yıl notların farklı kategorilere <Em>dağılmış</Em>
-              <Dot />
             </>
           )
         }
@@ -311,12 +307,10 @@ export default function YearInReviewPage() {
           data.busiestMonth ? (
             <>
               En çok not aldığın ay <Em>{data.busiestMonth.month}</Em>
-              <Dot />
             </>
           ) : (
             <>
               Aylık tablo için biraz daha <Em>not</Em> gerekiyor
-              <Dot />
             </>
           )
         }
@@ -398,7 +392,6 @@ export default function YearInReviewPage() {
           statement={
             <>
               Yılın <Em>En İyileri</Em>
-              <Dot />
             </>
           }
         >
@@ -463,12 +456,10 @@ export default function YearInReviewPage() {
           topTag ? (
             <>
               En çok kullandığın etiket <Em>#{topTag.name}</Em>
-              <Dot />
             </>
           ) : (
             <>
               Notlarının <Em>%{ratedShare}</Em> kadarına puan verdin
-              <Dot />
             </>
           )
         }
@@ -512,12 +503,10 @@ export default function YearInReviewPage() {
           data.avgRating > 0 ? (
             <>
               Ortalama puanın <Em>{data.avgRating}</Em> oldu
-              <Dot />
             </>
           ) : (
             <>
               Bu yıl henüz <Em>puan</Em> vermedin
-              <Dot />
             </>
           )
         }
@@ -550,7 +539,6 @@ export default function YearInReviewPage() {
         statement={
           <>
             İlk notunu <Em>{formatDate(data.firstPost.createdAt)}</Em> tarihinde yazdın
-            <Dot />
           </>
         }
       >
@@ -630,7 +618,6 @@ function YearHero({
           transition={{ duration: 1.1, ease: EASE }}
         >
           {year}
-          <span className="text-[var(--gold)]">.</span>
         </motion.span>
       </h1>
 

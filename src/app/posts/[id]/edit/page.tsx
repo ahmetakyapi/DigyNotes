@@ -16,7 +16,7 @@ import { getStatusOptions } from "@/components/StatusBadge";
 import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import TagInput from "@/components/TagInput";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { ArrowLeftIcon, ArrowUpRightIcon, CaretRightIcon } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
@@ -440,7 +440,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           title={
             <>
               Notu <Em>Düzenle</Em>
-              <Dot />
             </>
           }
           description={title ? <span className="line-clamp-1">{title}</span> : undefined}

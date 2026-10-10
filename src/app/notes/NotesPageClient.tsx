@@ -306,7 +306,6 @@ export default function NotesPageClient({
         <h2 className="mt-4 max-w-[720px] text-[clamp(2.6rem,7vw,5rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
           Henüz Hiç <span className="dn-display font-normal italic tracking-[-0.02em]">Notun</span>{" "}
           Yok
-          <span className="text-[var(--gold)]">.</span>
         </h2>
         <p className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
           Bir kategori seç ve ilk notunu ekle. Adını yazman yeter, gerisini biz doldururuz.

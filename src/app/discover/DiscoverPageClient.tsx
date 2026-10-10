@@ -16,7 +16,7 @@ import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import type { Post } from "@/types";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -91,7 +91,6 @@ export default function DiscoverPageClient() {
           title={
             <>
               <Em>Keşfet</Em>
-              <Dot />
             </>
           }
           description="Benzer zevklere sahip kişileri bul ve takip et."

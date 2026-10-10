@@ -71,9 +71,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-              Gezi Haritası
-            </p>
+            <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">Gezi Haritası</p>
             <h2 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">
               {points.length} konumluk rota ağı
             </h2>
@@ -100,9 +98,9 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
               }}
             />
           </div>
-          <div className="absolute inset-x-6 top-5 flex items-center justify-between text-[12px] uppercase tracking-[0.14em] text-white/45">
+          <div className="absolute inset-x-6 top-5 flex items-center justify-between text-[12px] font-medium text-white/60">
             <span>Kuzey</span>
-            <span>Konum yoğunluğu</span>
+            <span>Konum Yoğunluğu</span>
           </div>
           <div className="relative h-[420px]">
             {points.map((post, index) => {
@@ -144,9 +142,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             />
           </div>
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] p-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">
-              Seçili Durak
-            </p>
+            <p className="text-[12.5px] font-semibold text-[var(--text-muted)]">Seçili Durak</p>
             <h3 className="mt-2 text-base font-semibold text-[var(--text-primary)]">
               {selectedPost.title}
             </h3>
@@ -172,7 +168,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
             </div>
             <Link
               href={`/posts/${selectedPost.id}`}
-              className="mt-4 inline-flex rounded-xl bg-accent hover:bg-accent-dark px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all"
+              className="mt-4 inline-flex rounded-xl bg-accent px-3 py-2 text-xs font-semibold text-[var(--text-on-accent)] transition-all hover:bg-accent-dark"
             >
               Notu Aç
             </Link>

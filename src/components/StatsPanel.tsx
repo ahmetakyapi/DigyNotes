@@ -343,7 +343,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
           }
         />
         <BigStat
-          value={stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "—"}
+          value={stats.avgRating > 0 ? stats.avgRating.toFixed(1).replace(".", ",") : "—"}
           sub={stats.avgRating > 0 ? "/ 5" : undefined}
           label="Ortalama Puan"
           color="var(--gold-light)"
@@ -398,9 +398,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 <span className="dn-display text-3xl italic leading-none text-[var(--text-primary)]">
                   {stats.total}
                 </span>
-                <span className="text-[11px] text-[var(--text-muted)] font-medium">
-                  Not
-                </span>
+                <span className="text-[11px] font-medium text-[var(--text-muted)]">Not</span>
               </div>
             </div>
             {/* Legend + bars */}
@@ -469,7 +467,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
               <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
                 {s.count}
               </span>
-              <p className="flex items-center gap-1.5 text-[12px] text-[var(--text-muted)] font-medium">
+              <p className="flex items-center gap-1.5 text-[12px] font-medium text-[var(--text-muted)]">
                 <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
                 {s.label}
               </p>
@@ -495,9 +493,7 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
       <div className={panelClass}>
         <div className="mb-4 flex items-center justify-between">
           <SectionLabel>Aylık Aktivite</SectionLabel>
-          <span className="mb-4 text-[12px] text-[var(--text-muted)] font-medium">
-            Son 8 ay
-          </span>
+          <span className="mb-4 text-[12px] font-medium text-[var(--text-muted)]">Son 8 ay</span>
         </div>
         <MonthlyChart data={stats.months} />
       </div>

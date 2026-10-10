@@ -162,7 +162,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               className="group flex flex-shrink-0 items-center gap-3 pl-3.5 transition-opacity duration-200 hover:opacity-80 sm:pl-0"
             >
               <Wordmark size="md" />
-              <span className="hidden border-l border-[var(--border)] pl-3 text-[12px] text-[var(--text-muted)] lg:inline font-medium">
+              <span className="hidden border-l border-[var(--border)] pl-3 text-[12px] font-medium text-[var(--text-muted)] lg:inline">
                 Not Defterin
               </span>
             </Link>
@@ -319,17 +319,12 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             ref={scrollRef}
             className="scrollbar-hide hidden items-center overflow-x-auto sm:flex"
           >
-            <NavTab
-              index={0}
-              active={activeCategory === "all"}
-              onClick={() => router.push("/notes")}
-            >
+            <NavTab active={activeCategory === "all"} onClick={() => router.push("/notes")}>
               Son Notlar
             </NavTab>
-            {FIXED_CATEGORIES.map((cat, i) => (
+            {FIXED_CATEGORIES.map((cat) => (
               <NavTab
                 key={cat}
-                index={i + 1}
                 active={activeCategory === cat}
                 onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
               >
@@ -396,12 +391,10 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
 /* ── Reusable nav tab ── */
 function NavTab({
-  index,
   active,
   onClick,
   children,
 }: {
-  readonly index: number;
   readonly active: boolean;
   readonly onClick: () => void;
   readonly children: React.ReactNode;
@@ -416,15 +409,6 @@ function NavTab({
           : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
       }`}
     >
-      <span
-        className={`dn-mono text-[11px] transition-colors duration-200 ${
-          active
-            ? "text-[var(--gold)]"
-            : "text-[var(--text-faint)] group-hover:text-[var(--text-muted)]"
-        }`}
-      >
-        {String(index).padStart(2, "0")}
-      </span>
       {children}
       {active && (
         <motion.span

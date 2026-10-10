@@ -44,11 +44,21 @@ export function PostsTabSwitcher({
 
   const activeCount = counts[TAB_CONFIG.find((t) => t.key === activeTab)?.countKey ?? ""] ?? 0;
   const activeLabel =
-    activeTab === "notlar" ? "not" : activeTab === "kaydedilenler" ? "kayıt" : activeTab === "taslaklar" ? "taslak" : "arşiv";
+    activeTab === "notlar"
+      ? "not"
+      : activeTab === "kaydedilenler"
+        ? "kayıt"
+        : activeTab === "taslaklar"
+          ? "taslak"
+          : "arşiv";
 
   // Taslaklar ve Arşiv sekmelerini sadece içerik varsa göster
   const visibleTabs = TAB_CONFIG.filter(
-    (t) => t.key === "notlar" || t.key === "kaydedilenler" || counts[t.countKey] > 0 || activeTab === t.key
+    (t) =>
+      t.key === "notlar" ||
+      t.key === "kaydedilenler" ||
+      counts[t.countKey] > 0 ||
+      activeTab === t.key
   );
 
   return (
@@ -81,7 +91,7 @@ export function PostsTabSwitcher({
               {" · "}
               <span className="text-[var(--gold)]">
                 {"★ "}
-                {avgRating.toFixed(1)}
+                {avgRating.toFixed(1).replace(".", ",")}
               </span>
               {" ort."}
             </>

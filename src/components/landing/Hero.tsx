@@ -143,12 +143,19 @@ function LiveRating({ mv }: { mv: MotionValue<number> }) {
   return (
     <div className="mt-1 flex items-center gap-2">
       <StarsBar value={rating} />
-      <span className="dn-mono text-[11px] tabular-nums text-[#f2efe8]">{rating.toFixed(1)}</span>
+      <span className="dn-mono text-[11px] tabular-nums text-[#f2efe8]">
+        {rating.toFixed(1).replace(".", ",")}
+      </span>
       {/* The note "saves" itself once the scroll-driven rating lands. */}
       <span
         className={`ml-auto inline-flex items-center gap-1 rounded-full bg-[#b9a8ff]/15 px-2 py-0.5 text-[11px] font-medium text-[#b9a8ff] transition-[opacity,transform] duration-500 ease-out-expo ${done ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"}`}
       >
-        <svg viewBox="0 0 16 16" className="h-3 w-3 fill-none stroke-current" strokeWidth={2.2} aria-hidden>
+        <svg
+          viewBox="0 0 16 16"
+          className="h-3 w-3 fill-none stroke-current"
+          strokeWidth={2.2}
+          aria-hidden
+        >
           <path d="M3.5 8.5l3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         Kaydedildi
@@ -216,7 +223,7 @@ const MOBILE_STRIP = [
   `${MEDIA}/perfect-days.webp`,
   `${MEDIA}/kyoto.webp`,
 ];
-const VERBS = ["İzle.", "Oku.", "Oyna.", "Gez."];
+const VERBS = ["İzle", "Oku", "Oyna", "Gez"];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -300,7 +307,7 @@ export function Hero() {
             }
           >
             <h1 className="text-[clamp(3.6rem,17vw,6rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)] md:text-[clamp(5rem,10.4vw,11.5rem)]">
-              <span className="sr-only">Sana Kalan Her Şey, Burada.</span>
+              <span className="sr-only">Sana Kalan Her Şey, Burada</span>
               <span aria-hidden className="hidden md:block">
                 <motion.span className="block" style={line(l1x)}>
                   <MaskLine delay={0.15}>
@@ -316,8 +323,7 @@ export function Hero() {
                 </motion.span>
                 <motion.span className="block" style={line(l3x)}>
                   <MaskLine delay={0.39}>
-                    Burada<span className="text-[var(--gold)]">.</span>{" "}
-                    <Reel items={REEL_B} offset={900} width="w-[1.4em]" />
+                    Burada <Reel items={REEL_B} offset={900} width="w-[1.4em]" />
                   </MaskLine>
                 </motion.span>
               </span>
@@ -338,9 +344,7 @@ export function Hero() {
                   </MaskLine>
                 </motion.span>
                 <motion.span className="block" style={line(l2x)}>
-                  <MaskLine delay={0.45}>
-                    Burada<span className="text-[var(--gold)]">.</span>
-                  </MaskLine>
+                  <MaskLine delay={0.45}>Burada</MaskLine>
                 </motion.span>
               </span>
             </h1>
@@ -443,15 +447,24 @@ export function Hero() {
               className="absolute inset-0 flex flex-col items-start justify-center px-6 sm:px-14 lg:px-24"
               style={{ opacity: wordsOpacity }}
             >
-              <div className="flex flex-wrap gap-x-[0.28em] text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-[#f2efe8]">
-                {VERBS.map((w, i) => (
-                  <Verb
-                    key={w}
-                    word={w}
-                    p={p}
-                    range={[0.46 + i * 0.05, 0.52 + i * 0.05]}
-                    italic={i % 2 === 1}
-                  />
+              {/* Two pairs that never split: all four on one line when they fit,
+                  otherwise "İzle Oku" / "Oyna Gez" — never a lone word on its own row. */}
+              <div className="flex flex-wrap gap-x-[0.28em] text-[clamp(3.2rem,8.6vw,9.5rem)] font-extrabold leading-[0.95] tracking-[-0.04em] text-[#f2efe8]">
+                {[VERBS.slice(0, 2), VERBS.slice(2)].map((pair, g) => (
+                  <span key={g} className="flex gap-x-[0.28em] whitespace-nowrap">
+                    {pair.map((w, j) => {
+                      const i = g * 2 + j;
+                      return (
+                        <Verb
+                          key={w}
+                          word={w}
+                          p={p}
+                          range={[0.46 + i * 0.05, 0.52 + i * 0.05]}
+                          italic={i % 2 === 1}
+                        />
+                      );
+                    })}
+                  </span>
                 ))}
               </div>
             </motion.div>
@@ -462,7 +475,7 @@ export function Hero() {
               <p className="text-center text-[clamp(3.4rem,11vw,11rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-[#f2efe8]">
                 Hepsini{" "}
                 <span className="dn-display font-normal italic tracking-[-0.03em] text-[#b9a8ff]">
-                  Not Al.
+                  Not Al
                 </span>
               </p>
             </motion.div>

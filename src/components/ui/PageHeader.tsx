@@ -100,5 +100,5 @@ export function Em({ children }: { children: ReactNode }) {
 
 /** Accent full stop that ends DigyNotes headlines. */
 export function Dot() {
-  return <span className="text-[var(--gold)]">.</span>;
+  return;
 }

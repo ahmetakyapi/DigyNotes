@@ -27,7 +27,7 @@ import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -282,12 +282,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
       <PageHeader
         index="11"
         eyebrow="Koleksiyon"
-        title={
-          <>
-            {formatDisplayTitle(collection.title)}
-            <Dot />
-          </>
-        }
+        title={<>{formatDisplayTitle(collection.title)}</>}
         description={
           <>
             {collection.description && (

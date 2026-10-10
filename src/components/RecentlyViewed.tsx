@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { ClockCounterClockwiseIcon, XIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+import {
+  ClockCounterClockwiseIcon,
+  XIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
+} from "@phosphor-icons/react";
 import { getPostImageSrc } from "@/lib/post-image";
 import { ResilientImage } from "@/components/ResilientImage";
 import { getCategoryLabel } from "@/lib/categories";
@@ -48,14 +53,16 @@ export function addRecentView(post: {
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return "az önce";
-  if (mins < 60) return `${mins} dk önce`;
+  if (mins < 1) return "Az önce";
+  if (mins < 60) return `${mins} dakika önce`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} sa önce`;
+  if (hours < 24) return `${hours} saat önce`;
   const days = Math.floor(hours / 24);
-  if (days === 1) return "dün";
+  if (days === 1) return "Dün";
   if (days < 7) return `${days} gün önce`;
-  return `${Math.floor(days / 7)} hf önce`;
+  if (days < 30) return `${Math.floor(days / 7)} hafta önce`;
+  if (days < 365) return `${Math.floor(days / 30)} ay önce`;
+  return `${Math.floor(days / 365)} yıl önce`;
 }
 
 /**
@@ -161,17 +168,17 @@ export default function RecentlyViewed() {
   if (dismissed || items.length === 0) return null;
 
   return (
-    <section className="mb-0.5 sm:mb-1">
+    <section className="mb-1 sm:mb-2">
       {/* Header */}
-      <div className="mb-1 flex items-center gap-1.5 sm:mb-1.5 sm:gap-2">
+      <div className="mb-2 flex items-center gap-2 sm:mb-2.5">
         <ClockCounterClockwiseIcon
-          size={12}
+          size={14}
           weight="bold"
           className="flex-shrink-0 text-[var(--text-muted)]"
         />
-        <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)] sm:text-[11px]">
-          Son görüntülenenler
-        </span>
+        <h2 className="text-[13.5px] font-semibold text-[var(--text-secondary)]">
+          Son Görüntülenenler
+        </h2>
 
         <div className="ml-auto flex items-center gap-1">
           {/* Scroll okları — sadece taşma varsa göster */}
@@ -217,7 +224,7 @@ export default function RecentlyViewed() {
 
         <div
           ref={scrollRef}
-          className="scrollbar-hide -mx-1 flex cursor-grab gap-1.5 overflow-x-auto px-1 pb-1 sm:gap-3"
+          className="scrollbar-hide -mx-1 flex cursor-grab gap-2.5 overflow-x-auto px-1 pb-1 sm:gap-3"
           style={{ touchAction: "pan-x" }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -227,35 +234,36 @@ export default function RecentlyViewed() {
         >
           {items.map((item) => (
             <Link key={item.id} href={`/posts/${item.id}`} className="group flex-shrink-0">
-              <div className="hover:border-accent/25 min-w-[160px] max-w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-200 hover:shadow-[0_2px_12px_rgb(var(--gold-rgb)/0.06)] sm:min-w-[180px]">
+              <div className="w-[168px] flex-shrink-0 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-[border-color,transform,box-shadow] duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:border-accent/30 group-hover:shadow-[0_10px_30px_-12px_rgb(var(--gold-rgb)/0.35)] sm:w-[196px]">
                 {/* Poster */}
-                <div className="relative h-14 w-full overflow-hidden sm:h-20">
+                <div className="relative h-20 w-full overflow-hidden sm:h-24">
                   <ResilientImage
                     src={getPostImageSrc(item.image, item.category)}
                     alt={item.title}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 ease-out-expo group-hover:scale-[1.06]"
                     sizes="260px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-1">
-                    <span className="rounded-sm border border-accent/25 bg-black/50 px-1.5 py-0.5 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--gold)]">
+                    <span className="rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
                       {getCategoryLabel(item.category)}
                     </span>
                     {item.rating > 0 && (
-                      <span className="flex items-center gap-0.5 rounded-sm bg-black/50 px-1.5 py-0.5 text-[11px] font-medium text-[var(--gold)]">
-                        ★ {item.rating}
+                      <span className="flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                        <span className="text-[#b9a8ff]">★</span>
+                        {item.rating.toFixed(1).replace(".", ",")}
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* Bilgi */}
-                <div className="px-1.5 py-1 sm:px-2 sm:py-1.5">
-                  <p className="truncate text-[11px] font-semibold leading-tight text-[var(--text-primary)] transition-colors group-hover:text-[var(--gold)] sm:text-xs">
+                <div className="px-3 py-2.5">
+                  <p className="truncate text-[13px] font-semibold leading-tight text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
                     {item.title}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-[var(--text-muted)] sm:text-[12px]">
+                  <p className="mt-1 text-[12px] font-medium text-[var(--text-muted)]">
                     {timeAgo(item.viewedAt)}
                   </p>
                 </div>

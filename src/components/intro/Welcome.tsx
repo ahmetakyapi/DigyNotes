@@ -151,7 +151,6 @@ export function WelcomeReveal() {
                 <span className="dn-display font-normal italic tracking-[-0.02em]">{name}</span>
               </>
             )}
-            <span className="text-[#b9a8ff]">.</span>
           </p>
         </div>
       </div>

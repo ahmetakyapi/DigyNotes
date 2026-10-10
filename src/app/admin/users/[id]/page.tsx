@@ -16,7 +16,6 @@ import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { ArrowLeftIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
-import { Dot } from "@/components/ui/PageHeader";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
 /* ─── types ─── */
@@ -333,7 +332,6 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           </div>
           <h1 className="mt-3 break-words text-[clamp(2.2rem,6vw,4rem)] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)]">
             {user.name}
-            <Dot />
           </h1>
           <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-medium text-[var(--text-muted)]">
             {user.username && (

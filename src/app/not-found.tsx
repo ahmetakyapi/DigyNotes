@@ -25,9 +25,7 @@ export default function NotFound() {
       >
         <span>4</span>
         <span className="relative inline-flex h-[0.74em] w-[1.25em] items-center justify-center rounded-full border-2 border-dashed border-[var(--text-faint)]">
-          <span className="dn-mono text-[0.08em] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-            Yok
-          </span>
+          <span className="text-[0.09em] font-medium text-[var(--text-muted)]">Yok</span>
           <span className="absolute -right-[0.02em] -top-[0.02em] h-[0.12em] w-[0.12em] animate-pulse rounded-full bg-[var(--gold)]" />
         </span>
         <span>4</span>
@@ -36,7 +34,6 @@ export default function NotFound() {
       <h1 className="relative mt-8 max-w-[640px] text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[0.95] tracking-[-0.03em] text-[var(--text-primary)]">
         Aradığın Sayfa{" "}
         <span className="dn-display font-normal italic tracking-[-0.02em]">Burada</span> Değil
-        <span className="text-[var(--gold)]">.</span>
       </h1>
       <p className="relative mt-4 max-w-[440px] text-[15px] leading-relaxed text-[var(--text-secondary)]">
         Bağlantı yanlış olabilir ya da sayfa kaldırılmış. Notların yerinde, merak etme.

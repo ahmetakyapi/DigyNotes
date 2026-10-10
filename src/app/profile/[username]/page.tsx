@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { toAbsoluteUrl } from "@/lib/metadata";
+import { headers } from "next/headers";
+import { isPreviewBot, toAbsoluteUrl, warmShareImage } from "@/lib/metadata";
 import ProfilePageClient from "./ProfilePageClient";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,7 @@ export async function generateMetadata({
        no updatedAt, so the cache key turns over daily to pick up new covers. */
     const day = Math.floor(Date.now() / 86_400_000).toString(36);
     const cardUrl = toAbsoluteUrl(`${path}/opengraph-image?v=${day}`);
+    if (isPreviewBot(headers().get("user-agent"))) warmShareImage(cardUrl);
     const card = {
       url: cardUrl,
       secureUrl: cardUrl,

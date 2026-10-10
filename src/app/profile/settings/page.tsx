@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
 import { ArrowUpRightIcon, CaretRightIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 
 const inputBase =
   "w-full h-12 px-4 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm";
@@ -349,7 +349,6 @@ export default function ProfileSettingsPage() {
           title={
             <>
               Profilini <Em>Düzenle</Em>
-              <Dot />
             </>
           }
           description="Profil bilgilerini güncelle, kimlerin görebileceğini seç ve istediğin zaman verilerini indir."

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,9 +7,11 @@ import { getPostReadAccess } from "@/lib/post-access";
 import { getCategoryLabel } from "@/lib/categories";
 import {
   buildPostMetadataDescription,
+  isPreviewBot,
   stripHtml,
   toAbsoluteUrl,
   truncateText,
+  warmShareImage,
 } from "@/lib/metadata";
 import PostDetailClient from "./PostDetailClient";
 
@@ -107,6 +110,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const cardUrl = toAbsoluteUrl(
       `${canonicalPath}/opengraph-image?v=${post.updatedAt.getTime().toString(36)}`
     );
+    if (isShareable && isPreviewBot(headers().get("user-agent"))) warmShareImage(cardUrl);
     const cardImage = {
       url: cardUrl,
       secureUrl: cardUrl,

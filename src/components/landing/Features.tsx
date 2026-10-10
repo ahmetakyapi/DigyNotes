@@ -26,9 +26,7 @@ function Tile({
 }) {
   return (
     <FadeUp className={className}>
-      <div
-        className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8"
-      >
+      <div className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-500 hover:border-[var(--text-faint)] sm:p-8">
         <div className="text-[12.5px] font-medium text-[var(--text-muted)]">
           <span className="text-[var(--gold)]">{index}</span>
         </div>
@@ -105,7 +103,7 @@ function RatingPlayground() {
       </div>
       <div className="text-right">
         <span className="dn-display block text-[clamp(6rem,14vw,11rem)] italic tabular-nums leading-[0.8] tracking-[-0.04em] text-[var(--text-primary)]">
-          {shown.toFixed(1)}
+          {shown.toFixed(1).replace(".", ",")}
         </span>
         <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
           / 5 — Senin Puanın
@@ -372,45 +370,45 @@ export function Features() {
       <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
         <MaskLine>
           Küçük Ayrıntılar,{" "}
-          <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Fark.</span>
+          <span className="dn-display font-normal italic tracking-[-0.02em]">Büyük Fark</span>
         </MaskLine>
       </h2>
 
       <div className="mt-10 grid gap-3 md:grid-cols-6 md:gap-4">
         <Tile
           index="A — Puan"
-          title={<>Yarım Yıldız {em("Bile")} Önemli.</>}
+          title={<>Yarım Yıldız {em("Bile")} Önemli</>}
           className="md:col-span-4"
         >
           <RatingPlayground />
         </Tile>
         <Tile
           index="B — Otomatik"
-          title={<>Adını Yaz, {em("Gerisi")} Gelsin.</>}
+          title={<>Adını Yaz, {em("Gerisi")} Gelsin</>}
           className="md:col-span-2"
         >
           <SearchTyping />
         </Tile>
         <Tile
           index="C — Sosyal"
-          title={<>Arkadaşlarını {em("Takip")} Et.</>}
+          title={<>Arkadaşlarını {em("Takip")} Et</>}
           className="md:col-span-2"
         >
           <FeedVisual />
         </Tile>
         <Tile
           index="D — Koleksiyon"
-          title={<>Kendi {em("Listelerini")} Oluştur.</>}
+          title={<>Kendi {em("Listelerini")} Oluştur</>}
           className="md:col-span-2"
         >
           <CollectionFan />
         </Tile>
-        <Tile index="E — Harita" title={<>Gezilerin {em("Haritada.")}</>} className="md:col-span-2">
+        <Tile index="E — Harita" title={<>Gezilerin {em("Haritada")}</>} className="md:col-span-2">
           <TravelMap />
         </Tile>
         <Tile
           index="F — Yıl Özeti"
-          title={<>Yılın {em("Özeti,")} Tek Ekranda.</>}
+          title={<>Yılın {em("Özeti,")} Tek Ekranda</>}
           className="md:col-span-6"
         >
           <YearStrip />

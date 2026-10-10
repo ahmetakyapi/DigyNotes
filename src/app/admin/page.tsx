@@ -30,7 +30,7 @@ import {
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 
@@ -562,7 +562,6 @@ export default function AdminPage() {
         title={
           <>
             Admin <Em>Paneli</Em>
-            <Dot />
           </>
         }
         description="Kullanıcıları, içerikleri ve site ayarlarını tek bir masadan izle ve yönet."
@@ -627,7 +626,7 @@ export default function AdminPage() {
 
               {/* Series range */}
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
                   Trend Periyodu ·{" "}
                   <span className="text-[var(--text-primary)]">{SERIES_LABELS[seriesRange]}</span>
                 </p>
@@ -987,7 +986,7 @@ export default function AdminPage() {
                 className={SEARCH_INPUT}
               />
             </div>
-            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="flex items-baseline gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {usersTotal}
               </span>
@@ -998,7 +997,7 @@ export default function AdminPage() {
           {/* Bulk action bar */}
           {selectedUsers.size > 0 && (
             <div className="flex flex-wrap items-center gap-3 rounded-[22px] border border-accent/25 bg-accent/5 px-4 py-2.5 sm:rounded-full sm:pl-5">
-              <span className="text-[12.5px] text-[var(--gold)] font-medium">
+              <span className="text-[12.5px] font-medium text-[var(--gold)]">
                 {selectedUsers.size} Seçildi
               </span>
               <div className="flex flex-wrap gap-2 sm:ml-auto">
@@ -1047,7 +1046,7 @@ export default function AdminPage() {
                   checked={users.length > 0 && selectedUsers.size === users.length}
                   onChange={toggleSelectAll}
                 />
-                <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
                   Tümünü Seç
                 </span>
               </label>
@@ -1088,7 +1087,7 @@ export default function AdminPage() {
                         <p className="mt-0.5 truncate text-[12px] text-[var(--text-muted)]">
                           {u.email}
                         </p>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[12.5px] text-[var(--text-muted)] font-medium">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-3 text-[12.5px] font-medium text-[var(--text-muted)]">
                           <span>
                             <span className="tabular-nums text-[var(--text-primary)]">
                               {u.postCount}
@@ -1238,7 +1237,7 @@ export default function AdminPage() {
                         <td className="px-4 py-3 text-center text-sm tabular-nums text-[var(--text-muted)]">
                           {u.followerCount}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-center text-[12.5px] text-[var(--text-muted)] font-medium">
+                        <td className="whitespace-nowrap px-4 py-3 text-center text-[12.5px] font-medium text-[var(--text-muted)]">
                           {new Date(u.createdAt).toLocaleDateString("tr-TR", {
                             day: "numeric",
                             month: "short",
@@ -1328,7 +1327,7 @@ export default function AdminPage() {
                 className={SEARCH_INPUT}
               />
             </div>
-            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="flex items-baseline gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {postsTotal}
               </span>
@@ -1364,7 +1363,7 @@ export default function AdminPage() {
                         >
                           {p.title}
                         </p>
-                        <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-[var(--text-muted)] font-medium">
+                        <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] font-medium text-[var(--text-muted)]">
                           <span>{p.category}</span>
                           {p.user && (
                             <span className="normal-case tracking-normal">{p.user.name}</span>
@@ -1373,7 +1372,7 @@ export default function AdminPage() {
                           {p.rating > 0 && (
                             <span className="inline-flex items-center gap-1 text-[var(--gold)]">
                               <StarIcon size={10} weight="fill" />
-                              {p.rating.toFixed(1)}
+                              {p.rating.toFixed(1).replace(".", ",")}
                             </span>
                           )}
                         </div>
@@ -1458,14 +1457,14 @@ export default function AdminPage() {
                             <span className="text-xs text-[var(--text-muted)]">—</span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-[12.5px] text-[var(--text-muted)] font-medium">
+                        <td className="whitespace-nowrap px-4 py-3 text-[12.5px] font-medium text-[var(--text-muted)]">
                           {fmtShortDate(p.createdAt)}
                         </td>
                         <td className="px-4 py-3">
                           <StatusBadge status={p.status} />
                         </td>
                         <td className="dn-display px-4 py-3 text-center text-lg italic tabular-nums text-[var(--text-primary)]">
-                          {p.rating > 0 ? p.rating.toFixed(1) : "—"}
+                          {p.rating > 0 ? p.rating.toFixed(1).replace(".", ",") : "—"}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1">
@@ -1508,7 +1507,7 @@ export default function AdminPage() {
       {tab === "activity" && (
         <div className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
               Aktivite Periyodu ·{" "}
               <span className="text-[var(--text-primary)]">{RANGE_LABELS[activityRange]}</span>
             </p>
@@ -1579,7 +1578,7 @@ export default function AdminPage() {
                 ))}
               </div>
             </div>
-            <p className="flex items-baseline gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+            <p className="flex items-baseline gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
               <span className="dn-display text-2xl normal-case italic tabular-nums tracking-normal text-[var(--text-primary)]">
                 {logsTotal}
               </span>
@@ -1619,7 +1618,7 @@ export default function AdminPage() {
                         <div className="min-w-0 flex-1">
                           <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
                             <ActionTag meta={meta} />
-                            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
+                            <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
                               {fmtTime(log.createdAt)}
                             </span>
                           </div>
@@ -1694,7 +1693,7 @@ export default function AdminPage() {
                           key={log.id}
                           className="transition-colors duration-200 hover:bg-[var(--bg-raised)]"
                         >
-                          <td className="whitespace-nowrap px-4 py-3 text-[12.5px] text-[var(--text-muted)] font-medium">
+                          <td className="whitespace-nowrap px-4 py-3 text-[12.5px] font-medium text-[var(--text-muted)]">
                             {fmtTime(log.createdAt)}
                           </td>
                           <td className="px-4 py-3">
@@ -1756,9 +1755,7 @@ export default function AdminPage() {
                     <UserPlusIcon size={17} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[12.5px] text-[var(--gold)] font-medium">
-                      (01)
-                    </p>
+                    <p className="text-[12.5px] font-medium text-[var(--gold)]">(01)</p>
                     <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
                       Yeni Kayıt
                     </h3>
@@ -1797,9 +1794,7 @@ export default function AdminPage() {
                     <WrenchIcon size={17} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[12.5px] text-[var(--gold)] font-medium">
-                      (02)
-                    </p>
+                    <p className="text-[12.5px] font-medium text-[var(--gold)]">(02)</p>
                     <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
                       Bakım Modu
                     </h3>
@@ -1834,7 +1829,7 @@ export default function AdminPage() {
                   <div className="space-y-2">
                     <label
                       htmlFor="admin-maintenance-message"
-                      className="block text-[12.5px] text-[var(--text-muted)] font-medium"
+                      className="block text-[12.5px] font-medium text-[var(--text-muted)]"
                     >
                       Bakım Mesajı
                     </label>
@@ -1902,8 +1897,7 @@ export default function AdminPage() {
    Inline sub-components
    ══════════════════════════════════════════════ */
 
-const TH =
-  "px-4 py-3.5 text-left text-[12px] font-normal text-[var(--text-muted)] font-medium";
+const TH = "px-4 py-3.5 text-left text-[12px] font-normal text-[var(--text-muted)] font-medium";
 
 const SEARCH_INPUT =
   "w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-10 pr-4 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm";
@@ -1976,9 +1970,7 @@ function ToggleSwitch({
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-[11px] text-[var(--text-muted)] font-medium">
-        {label}
-      </span>
+      <span className="text-[11px] font-medium text-[var(--text-muted)]">{label}</span>
       <Switch active={active} tone={tone} onClick={onClick} title={label} />
     </div>
   );

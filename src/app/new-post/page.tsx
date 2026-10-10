@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import "react-quill/dist/quill.snow.css";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
-import { PageHeader, Em, Dot } from "@/components/ui/PageHeader";
+import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { StatusSidebar, CoverSidebar, TagsSidebar } from "./composer-sidebar";
 import { CategorySearchSection, FieldsSection, ContentSection } from "./composer-sections";
@@ -458,7 +458,6 @@ export default function NewPostPage() {
           title={
             <>
               Yeni <Em>Not</Em> Ekle
-              <Dot />
             </>
           }
           description={`${categoryLabel} notu ekliyorsun. Önce ara, bilgiler kendiliğinden dolsun; sonra düşüncelerini yaz.`}
