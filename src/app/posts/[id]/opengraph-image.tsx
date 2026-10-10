@@ -4,7 +4,7 @@ import { getCategoryLabel } from "@/lib/categories";
 import { canReadPost } from "@/lib/post-access";
 import { stripHtml, truncateText } from "@/lib/metadata";
 import { loadBrandFonts, OG } from "@/lib/og-fonts";
-import { loadCover, OG_SIZE, toJpegResponse } from "@/lib/og-image";
+import { loadCover, OG_SIZE, ogTimer, toJpegResponse } from "@/lib/og-image";
 import { OgGlow, OgStars, OgWordmark, renderOgNotice } from "@/lib/og-parts";
 
 export const runtime = "nodejs";
@@ -22,6 +22,7 @@ const COVER = { width: 330, height: 495 } as const;
 export default async function PostOpenGraphImage({ params }: { params: { id: string } }) {
   // One query for visibility and content (this route is latency-bound: chat apps give
   // up on slow previews). Same rule as getPostReadAccess for an anonymous viewer.
+  const timer = ogTimer();
   const post = await prisma.post.findUnique({
     where: { id: params.id },
     select: {
@@ -48,12 +49,14 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
     return renderOgNotice("Bu Not Gizli", "Notu yalnızca sahibi görebilir.");
   }
 
+  timer.mark("db");
   const [fonts, cover, avatar] = await Promise.all([
     loadBrandFonts(),
     loadCover(post.image),
     loadCover(post.user?.avatarUrl),
   ]);
 
+  timer.mark("assets");
   const categoryLabel = getCategoryLabel(post.category);
   const meta = [post.creator, post.years].filter((v): v is string => Boolean(v)).join(" · ");
   const note = truncateText(stripHtml(post.excerpt || post.content || ""), 160);
@@ -89,20 +92,32 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
 
         <div style={{ display: "flex", alignItems: "center" }}>
           {cover ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={cover}
-              alt=""
-              width={COVER.width}
-              height={COVER.height}
-              style={{
-                objectFit: "cover",
-                borderRadius: 26,
-                border: `2px solid ${OG.border}`,
-                transform: "rotate(-3deg)",
-                boxShadow: "0 30px 60px rgba(0,0,0,0.55)",
-              }}
-            />
+            <div style={{ display: "flex", position: "relative", transform: "rotate(-3deg)" }}>
+              {/* Offset solid "shadow": a blurred box-shadow cost ~500 ms in resvg. */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 18,
+                  left: 10,
+                  width: COVER.width,
+                  height: COVER.height,
+                  borderRadius: 26,
+                  background: "rgba(0,0,0,0.5)",
+                }}
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={cover}
+                alt=""
+                width={COVER.width}
+                height={COVER.height}
+                style={{
+                  objectFit: "cover",
+                  borderRadius: 26,
+                  border: `2px solid ${OG.border}`,
+                }}
+              />
+            </div>
           ) : (
             <div
               style={{
@@ -248,6 +263,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
         </div>
       </div>,
       { ...OG_SIZE, fonts }
-    )
+    ),
+    { timer }
   );
 }

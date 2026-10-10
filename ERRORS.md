@@ -651,6 +651,7 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 2. `og:image` was the raw TMDB poster (500×750) declared as 1200×630.
 3. The generated card was a ~535 KB PNG that took ~6 s (fonts fetched from Google on every render). WhatsApp drops large/slow images.
 **Fix**: `getSiteUrl()` falls back to `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` and ignores localhost values on Vercel. `og:image` is always our card, `/posts/<id>/opengraph-image?v=<updatedAt>`, re-encoded to JPEG in pure JS (pngjs + jpeg-js), fonts read from `assets/og-fonts/`, and the CDN caches it.
+**Speed** (measured with the card's `Server-Timing` header): Satori/resvg rendering is the cost, not DB or covers. A blurred `boxShadow` cost ~500 ms and a 980 px radial glow ~250 ms per card, so the cards use an unblurred offset layer and a small glow. Cards are also pre-warmed: the share sheet's preview `<img>` and the owner opening their note request the exact og:image URL, so WhatsApp gets a CDN hit. Server-side fire-and-forget warming did not help on Vercel.
 **Prevention**: Check share tags with `curl -A "WhatsApp/2.23.20.0" <url> | grep og:`; the image must be absolute, real size, JPEG/PNG, and under ~300 KB. Fonts must be in `outputFileTracingIncludes` (next.config.js). Do NOT use sharp for the cards: it built locally but the Vercel deployment with it failed (2026-10-10).
 **Files**: `src/lib/{metadata,og-fonts,og-image}.ts`, `src/lib/og-parts.tsx`, `src/app/**/opengraph-image.tsx`, `src/app/posts/[id]/page.tsx`, `next.config.js`
 

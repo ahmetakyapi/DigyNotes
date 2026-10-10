@@ -172,9 +172,10 @@ export default async function ProfileOpenGraphImage({ params }: { params: { user
                 top: FAN[i].y + 60,
                 objectFit: "cover",
                 borderRadius: 20,
-                border: `2px solid ${OG.border}`,
+                // A thick ink rim separates the overlapping covers; a blurred
+                // box-shadow did the same at ~500 ms per cover in resvg.
+                border: `4px solid ${OG.ink}`,
                 transform: `rotate(${FAN[i].r}deg)`,
-                boxShadow: "0 24px 48px rgba(0,0,0,0.6)",
               }}
             />
           ))}

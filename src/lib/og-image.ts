@@ -21,14 +21,36 @@ const CACHE_SHORT = "public, max-age=60, s-maxage=300";
 /** Covers are embedded as-is; anything bigger would slow the card past chat timeouts. */
 const MAX_COVER_BYTES = 3_000_000;
 
-export async function toJpegResponse(image: ImageResponse, opts: { short?: boolean } = {}) {
-  const png = PNG.sync.read(Buffer.from(await image.arrayBuffer()));
+/** Phase timer for the `Server-Timing` header (visible in curl -D - and devtools). */
+export function ogTimer() {
+  const start = performance.now();
+  let last = start;
+  const marks: string[] = [];
+  return {
+    mark(name: string) {
+      const now = performance.now();
+      marks.push(`${name};dur=${Math.round(now - last)}`);
+      last = now;
+    },
+    header: () => [...marks, `total;dur=${Math.round(performance.now() - start)}`].join(", "),
+  };
+}
+
+export async function toJpegResponse(
+  image: ImageResponse,
+  opts: { short?: boolean; timer?: ReturnType<typeof ogTimer> } = {}
+) {
+  const raw = Buffer.from(await image.arrayBuffer());
+  opts.timer?.mark("render");
+  const png = PNG.sync.read(raw);
   const out = jpeg.encode({ data: png.data, width: png.width, height: png.height }, 84).data;
+  opts.timer?.mark("encode");
   return new Response(new Uint8Array(out), {
     headers: {
       "Content-Type": "image/jpeg",
       "Content-Length": String(out.byteLength),
       "Cache-Control": opts.short ? CACHE_SHORT : CACHE_PUBLIC,
+      ...(opts.timer ? { "Server-Timing": opts.timer.header() } : {}),
     },
   });
 }

@@ -193,6 +193,22 @@ export default function PostDetailClient({ params }: { params: { id: string } })
   }, [params.id]);
 
   /* Fetch comments */
+  /* Owners are the ones who share: when they open a shareable note, quietly render its
+     share card so WhatsApp's image request becomes a CDN hit instead of a cold
+     multi-second render (chat apps drop slow previews). Same URL as og:image. */
+  useEffect(() => {
+    if (!post || !currentUserId || post.user?.id !== currentUserId) return;
+    if (post.isDraft || post.user?.isPublic === false) return;
+    const url = `/posts/${post.id}/opengraph-image?v=${new Date(post.updatedAt).getTime().toString(36)}`;
+    const warm = () => {
+      fetch(url, { priority: "low" } as RequestInit).catch(() => {});
+    };
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number })
+      .requestIdleCallback;
+    if (idle) idle(warm);
+    else setTimeout(warm, 1500);
+  }, [post, currentUserId]);
+
   useEffect(() => {
     fetch(`/api/posts/${params.id}/comments`)
       .then((r) => (r.ok ? r.json() : { items: [] }))

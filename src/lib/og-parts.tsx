@@ -49,16 +49,17 @@ export function OgStars({ value, size = 40 }: { value: number; size?: number }) 
   );
 }
 
-/** Soft lavender light from the top-left corner, behind everything else. */
+/** Soft lavender light from the top-left corner, behind everything else. Kept small:
+ *  resvg rasterises gradients per pixel and a 980 px glow cost ~250 ms per card. */
 export function OgGlow() {
   return (
     <div
       style={{
         position: "absolute",
-        top: -320,
-        left: -260,
-        width: 980,
-        height: 980,
+        top: -230,
+        left: -200,
+        width: 620,
+        height: 620,
         borderRadius: 9999,
         background: "radial-gradient(closest-side, rgba(185,168,255,0.22), rgba(185,168,255,0))",
       }}
