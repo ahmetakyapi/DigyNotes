@@ -657,4 +657,15 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-DATA-011: Same tag stored twice ("i̇stanbul" vs "istanbul")
+
+**First seen**: 2026-10-10
+**Symptom**: A tag typed with "İ" could be saved as "i̇…" (i + U+0307) and never match the editor's version; tags saved through the API kept spaces the editor turns into hyphens.
+**Root cause**: `TagInput` normalised with `toLocaleLowerCase("tr-TR")` + hyphens, the API routes with plain `toLowerCase().trim()`.
+**Fix**: One helper, `normalizeTagName` (`src/lib/text.ts`), used by `TagInput`, the post create/update APIs, tag search and every tag filter; covered by `tests/text.test.mjs`.
+**Prevention**: Never lower-case a tag inline — call `normalizeTagName`.
+**Files**: `src/lib/text.ts`, `src/components/TagInput.tsx`, `src/app/api/posts/**`, `src/app/api/tags/route.ts`, `src/app/api/public/posts/route.ts`, `src/app/notes/*`
+
+---
+
 *Last updated: 2026-10-10*

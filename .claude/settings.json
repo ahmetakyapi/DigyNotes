@@ -1,13 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev)",
       "Bash(npm run build)",
       "Bash(npm run lint)",
-      "Bash(npx prisma db push*)",
       "Bash(npx prisma generate)",
-      "Bash(npx prisma studio)",
-      "Bash(npx prisma migrate*)",
       "Bash(git status)",
       "Bash(git diff*)",
       "Bash(git log*)",

@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import NotesPageClient from "./NotesPageClient";
+import { normalizeTagName } from "@/lib/text";
 
 export const metadata: Metadata = {
   title: "Notlarım",
@@ -14,7 +15,7 @@ export default function NotesPage({
   const initialTags = searchParams?.tags
     ? searchParams.tags
         .split(",")
-        .map((tag) => tag.trim().toLowerCase())
+        .map((tag) => normalizeTagName(tag))
         .filter(Boolean)
     : [];
 

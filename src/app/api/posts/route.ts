@@ -8,10 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { buildPostSearchWhere } from "@/lib/search";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { handleApiError } from "@/lib/api-server";
-import {
-  consumeRateLimit,
-  createRateLimitErrorResponse,
-} from "@/lib/rate-limit";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
+import { normalizeTagName } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -64,7 +62,7 @@ export async function GET(request: NextRequest) {
     const tagNames = tagsParam
       ? tagsParam
           .split(",")
-          .map((t) => t.trim().toLowerCase())
+          .map((t) => normalizeTagName(t))
           .filter(Boolean)
       : [];
 
@@ -200,7 +198,7 @@ export async function POST(request: NextRequest) {
 
     const tagNames: string[] = Array.isArray(tags)
       ? tags
-          .map((t: string) => t.toLowerCase().trim())
+          .map((t: string) => normalizeTagName(t))
           .filter(Boolean)
           .slice(0, 10)
       : [];

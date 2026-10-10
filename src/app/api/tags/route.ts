@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-server";
+import { normalizeTagName } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -8,7 +9,8 @@ export const revalidate = 0;
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const q = searchParams.get("q")?.toLowerCase().trim();
+    const rawQ = searchParams.get("q");
+    const q = rawQ ? normalizeTagName(rawQ) : undefined;
     const trending = searchParams.get("trending") === "true";
     const category = searchParams.get("category")?.trim() || undefined;
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "20"), 50);

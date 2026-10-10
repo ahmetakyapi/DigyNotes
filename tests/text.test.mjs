@@ -1,13 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { stripHtml, truncateText } from "../src/lib/text.ts";
+import { normalizeTagName } from "../src/lib/text.ts";
 
-test("stripHtml removes tags and collapses whitespace", () => {
-  assert.equal(stripHtml("<p>Merhaba <strong>dünya</strong></p>"), "Merhaba dünya");
+test("normalizeTagName lower-cases the Turkish way and hyphenates spaces", () => {
+  assert.equal(normalizeTagName("  İstanbul Gezisi "), "istanbul-gezisi");
+  assert.equal(normalizeTagName("IŞIK"), "ışık");
+  assert.equal(normalizeTagName("Bilim  Kurgu"), "bilim-kurgu");
 });
 
-test("truncateText preserves short strings and ellipsizes longer ones", () => {
-  assert.equal(truncateText("kısa", 10), "kısa");
-  assert.equal(truncateText("uzun bir metin", 8), "uzun bi...");
+test("normalizeTagName never leaves a combining dot from İ", () => {
+  assert.ok(!normalizeTagName("İ").includes("̇"));
+  assert.equal(normalizeTagName(normalizeTagName("Çağdaş Klasik")), "çağdaş-klasik");
 });

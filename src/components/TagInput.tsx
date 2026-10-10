@@ -2,10 +2,9 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import TagBadge from "./TagBadge";
+import { normalizeTagName } from "@/lib/text";
 
-function normalizeTag(raw: string): string {
-  return raw.toLocaleLowerCase("tr-TR").trim().replace(/\s+/g, "-");
-}
+const normalizeTag = normalizeTagName;
 
 function isValidTag(tag: string) {
   return /^[a-z0-9çğıöşüâîû-]{1,30}$/.test(tag);

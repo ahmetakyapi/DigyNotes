@@ -7,10 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { handleApiError } from "@/lib/api-server";
-import {
-  consumeRateLimit,
-  createRateLimitErrorResponse,
-} from "@/lib/rate-limit";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
+import { normalizeTagName } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -98,7 +96,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const tagNames: string[] = Array.isArray(tags)
       ? tags
-          .map((t: string) => t.toLowerCase().trim())
+          .map((t: string) => normalizeTagName(t))
           .filter(Boolean)
           .slice(0, 10)
       : [];
@@ -112,7 +110,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     const post = await prisma.post.update({
       where: { id: params.id },
-          data: {
+      data: {
         title: String(title).slice(0, 500),
         category: normalizedCategory,
         image,
@@ -172,7 +170,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     }
 
     const [postToDelete, currentUser] = await Promise.all([
-      prisma.post.findUnique({ where: { id: params.id }, select: { title: true, category: true, userId: true } }),
+      prisma.post.findUnique({
+        where: { id: params.id },
+        select: { title: true, category: true, userId: true },
+      }),
       prisma.user.findUnique({ where: { id: userId }, select: { isAdmin: true } }),
     ]);
     const isAdmin = currentUser?.isAdmin ?? false;
@@ -186,9 +187,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
     }
 
     // Soft-delete: isDeleted flag + deletedAt timestamp
-    const softDeleteWhere = isAdmin
-      ? { id: params.id }
-      : { id: params.id, userId };
+    const softDeleteWhere = isAdmin ? { id: params.id } : { id: params.id, userId };
 
     await prisma.post.updateMany({
       where: softDeleteWhere,

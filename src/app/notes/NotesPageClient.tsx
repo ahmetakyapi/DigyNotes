@@ -7,6 +7,7 @@ import { Post } from "@/types";
 import { PostsList } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { WelcomeHeader } from "@/components/WelcomeHeader";
+import { normalizeTagName } from "@/lib/text";
 
 const PAGE_SIZE = 12;
 
@@ -57,7 +58,7 @@ function buildPostsUrl(query: string, category: string, tags: string[], cursor?:
 
   const trimmedQuery = query.trim();
   const trimmedCategory = category.trim();
-  const normalizedTags = tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean);
+  const normalizedTags = tags.map((tag) => normalizeTagName(tag)).filter(Boolean);
 
   if (trimmedQuery) params.set("q", trimmedQuery);
   if (trimmedCategory) params.set("category", trimmedCategory);

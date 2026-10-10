@@ -10,7 +10,7 @@
 ## Input
 - Validate required fields before DB writes.
 - Quill HTML is sanitized on write (`sanitizePostContent`, sanitize-html); `dangerouslySetInnerHTML` only for content that went through it (or static markup). No `eval()`.
-- Tag names: lowercase + trim before saving.
+- Tag names go through `normalizeTagName` (`src/lib/text.ts`) before saving or filtering.
 - Prefer typed Prisma queries; `$queryRaw` only when unavoidable and never with concatenated user input.
 - User-content writes, register, password and profile changes are rate-limited (`src/lib/rate-limit.ts`; login has its own limiter in `src/lib/auth.ts`); new write endpoints get one too.
 

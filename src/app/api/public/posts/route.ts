@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { normalizeTagName } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -110,7 +111,7 @@ export async function GET(req: NextRequest) {
       ? {
           tags: {
             some: {
-              tag: { name: { equals: tag.toLowerCase(), mode: "insensitive" } },
+              tag: { name: { equals: normalizeTagName(tag), mode: "insensitive" } },
             },
           },
         }
