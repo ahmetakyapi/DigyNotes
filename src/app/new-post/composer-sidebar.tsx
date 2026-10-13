@@ -5,10 +5,9 @@ import Image from "next/image";
 import StarRating from "@/components/StarRating";
 import TagInput from "@/components/TagInput";
 import { customLoader } from "@/lib/image";
-import toast from "react-hot-toast";
+import { OptionalHint } from "./composer-utils";
 
-const labelClass =
-  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
+const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
@@ -65,9 +64,7 @@ export function StatusSidebar({
 
         <div className="mt-4 border-t border-[var(--border)] pt-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[12.5px] text-[var(--text-muted)] font-medium">
-              Puan
-            </span>
+            <span className="text-[12.5px] font-medium text-[var(--text-muted)]">Puan</span>
             {rating > 0 && (
               <button
                 type="button"
@@ -139,6 +136,7 @@ export function CoverSidebar({
     <div className={cardClass}>
       <label htmlFor="cover-image-input" className={labelClass}>
         Kapak Görseli
+        <OptionalHint />
       </label>
       <input
         id="cover-image-input"
@@ -154,8 +152,8 @@ export function CoverSidebar({
         <CoverPreview image={image} imagePosition={imagePosition} isLandscape={isLandscape} />
       ) : (
         <p className="mt-3 text-[11px] leading-5 text-[var(--text-muted)]">
-          Henüz kapak yok. Aramadan bir sonuç seçince gelir ya da bir görsel bağlantısı
-          yapıştırabilirsin.
+          Kapak olmadan da kaydedebilirsin; notun kategori görseliyle görünür. Sonradan da
+          ekleyebilirsin.
         </p>
       )}
     </div>
@@ -249,20 +247,12 @@ function CoverPreview({
 
 interface TagsSidebarProps {
   readonly tags: string[];
-  readonly exampleTags: string[];
+  readonly category: string;
   readonly onTagsChange: (tags: string[]) => void;
+  readonly onPendingChange: (text: string) => void;
 }
 
-export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProps) {
-  const handleAddPopularTag = (tagName: string) => {
-    if (tags.length >= 10) {
-      toast.error("En fazla 10 etiket ekleyebilirsin.");
-      return;
-    }
-    if (tags.includes(tagName)) return;
-    onTagsChange([...tags, tagName]);
-  };
-
+export function TagsSidebar({ tags, category, onTagsChange, onPendingChange }: TagsSidebarProps) {
   return (
     <div className={cardClass}>
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -272,29 +262,15 @@ export function TagsSidebar({ tags, exampleTags, onTagsChange }: TagsSidebarProp
         </span>
       </div>
 
-      <TagInput value={tags} onChange={onTagsChange} />
-      <p className={`${helperTextClass} mt-3`}>Etiketler, notlarını sonra bulmanı kolaylaştırır.</p>
-
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {exampleTags.map((tagName) => {
-          const isAdded = tags.includes(tagName);
-          return (
-            <button
-              key={tagName}
-              type="button"
-              onClick={() => handleAddPopularTag(tagName)}
-              disabled={isAdded || tags.length >= 10}
-              className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 disabled:cursor-default disabled:opacity-40 ${
-                isAdded
-                  ? "border-accent/40 bg-accent/10 text-accent-light"
-                  : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/35 hover:text-accent-light"
-              }`}
-            >
-              #{tagName}
-            </button>
-          );
-        })}
-      </div>
+      <TagInput
+        value={tags}
+        onChange={onTagsChange}
+        category={category}
+        onPendingChange={onPendingChange}
+      />
+      <p className={`${helperTextClass} mt-3`}>
+        Etiketler, notlarını sonra bulmanı kolaylaştırır. Alana tıklayınca öneriler açılır.
+      </p>
     </div>
   );
 }

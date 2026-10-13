@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { XIcon } from "@phosphor-icons/react";
 import { Tag } from "@/types";
 
 interface TagBadgeProps {
@@ -37,17 +38,21 @@ export default function TagBadge({ tag, onClick, onRemove, active, href }: TagBa
             e.stopPropagation();
             onRemove(tag.name);
           }}
-          className="ml-0.5 leading-none text-[var(--text-muted)] transition-colors hover:text-danger"
+          className="-mr-0.5 ml-0.5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           aria-label={`${tag.name} etiketini kaldır`}
         >
-          ×
+          <XIcon size={10} weight="bold" aria-hidden />
         </button>
       </span>
     );
   }
 
   if (href) {
-    return <Link href={href} className={className}>{content}</Link>;
+    return (
+      <Link href={href} className={className}>
+        {content}
+      </Link>
+    );
   }
 
   if (onClick) {

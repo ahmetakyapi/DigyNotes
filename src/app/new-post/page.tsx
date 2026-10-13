@@ -21,19 +21,35 @@ import {
 import type { PlaceResult } from "@/components/PlaceSearch";
 import { ClientApiError, getClientErrorMessage, requestJson } from "@/lib/client-api";
 import {
-  CATEGORY_EXAMPLE_TAGS,
   categorySupportsAutofill,
   categorySupportsSpoiler,
   getPostComposerGuidance,
 } from "@/lib/post-config";
 import {
   detectImagePosition,
+  formatMissingFieldsMessage,
+  getMissingPostFields,
   getPostCategoryFormConfig,
   syncPostCategoryDependentFields,
+  type RequiredPostField,
 } from "@/lib/post-form";
-import { getPostTemplate, getTemplateSignature } from "@/lib/post-templates";
+import {
+  applyTemplateToContent,
+  getPostTemplate,
+  getTemplateSignature,
+  isBlankOrTemplateContent,
+  type TemplateUndo,
+} from "@/lib/post-templates";
+import { mergePendingTagText } from "@/lib/tag-input";
 import { stripHtml } from "@/lib/text";
 import { useAutoSave } from "@/hooks/useAutoSave";
+import { RestoredDraftBanner, focusComposerField, showUndoToast } from "./composer-utils";
+
+const FIELD_ELEMENT_IDS: Record<RequiredPostField, string> = {
+  title: "np-title",
+  category: "np-category",
+  content: "np-content",
+};
 
 const inputBase =
   "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
@@ -67,25 +83,41 @@ export default function NewPostPage() {
   const [submitError, setSubmitError] = useState("");
   const [flashFields, setFlashFields] = useState<Set<string>>(new Set());
   const [autofillDone, setAutofillDone] = useState(false);
-  const [lastAppliedTemplateCategory, setLastAppliedTemplateCategory] = useState<string | null>(
-    initialTemplate ? initialCategory : null
+  /* Set while a template sits in the editor: what "Şablonu Kaldır" restores. The fresh
+     composer starts with the category template, so removing it leaves an empty editor. */
+  const [templateUndo, setTemplateUndo] = useState<TemplateUndo | null>(
+    initialTemplate ? { previousContent: "" } : null
   );
+  const [showRequiredErrors, setShowRequiredErrors] = useState(false);
+  const [restoredDraftAt, setRestoredDraftAt] = useState<number | null>(null);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefillAppliedRef = useRef(false);
-  const draftRestoredRef = useRef(false);
-  const { updateDraft, loadDraft, clearDraft, lastSavedAt, saveDraft } = useAutoSave();
+  const draftCheckedRef = useRef(false);
+  const pendingTagTextRef = useRef("");
+  const {
+    isReady: draftsReady,
+    updateDraft,
+    loadDraft,
+    clearDraft,
+    lastSavedAt,
+    saveDraft,
+  } = useAutoSave();
 
-  // Taslak yükle (ilk açılışta)
+  const handlePendingTagChange = useCallback((text: string) => {
+    pendingTagTextRef.current = text;
+  }, []);
+
+  // Taslak yükle (ilk açılışta, oturumdaki kullanıcı belli olunca)
   useEffect(() => {
-    if (draftRestoredRef.current) return;
+    if (draftCheckedRef.current || !draftsReady) return;
+    draftCheckedRef.current = true;
     const hasPrefill = Boolean(searchParams.get("title") || searchParams.get("category"));
     if (hasPrefill) return;
 
     const draft = loadDraft();
     if (!draft) return;
 
-    draftRestoredRef.current = true;
     setTitle(draft.title);
     setCategory(draft.category);
     setRating(draft.rating);
@@ -101,8 +133,36 @@ export default function NewPostPage() {
     setTags(draft.tags);
     setExternalRating(draft.externalRating);
     setImagePosition(draft.imagePosition);
-    toast.success("Yarım kalan taslağın geri yüklendi");
-  }, [loadDraft, searchParams]);
+    setTemplateUndo(isBlankOrTemplateContent(draft.content) ? { previousContent: "" } : null);
+    setRestoredDraftAt(draft.savedAt);
+  }, [draftsReady, loadDraft, searchParams]);
+
+  /** "Taslağı Sil": forget the stored draft and start over with a fresh composer. */
+  const discardDraft = () => {
+    clearDraft();
+    setTitle("");
+    setCategory(initialCategory);
+    setRating(0);
+    setImage("");
+    setContent(initialTemplate?.html ?? "");
+    setCreator("");
+    setYears("");
+    setStatus(getStatusOptions(initialCategory)[0]);
+    setHasSpoiler(false);
+    setLat(null);
+    setLng(null);
+    setLocationLabel("");
+    setTags([]);
+    setExternalRating(null);
+    setImagePosition("center");
+    setIsLandscape(false);
+    setSubmitError("");
+    setShowRequiredErrors(false);
+    setAutofillDone(false);
+    setTemplateUndo(initialTemplate ? { previousContent: "" } : null);
+    setRestoredDraftAt(null);
+    toast.success("Taslak silindi");
+  };
 
   // Her değişiklikte taslağı güncelle
   useEffect(() => {
@@ -159,33 +219,15 @@ export default function NewPostPage() {
     };
   }, [image]);
 
-  const applyTemplate = useCallback(
-    (nextCategory: string, options?: { force?: boolean }) => {
-      const template = getPostTemplate(nextCategory);
-      if (!template) return false;
-
-      const currentSignature = getTemplateSignature(content);
-      const previousTemplate = lastAppliedTemplateCategory
-        ? getPostTemplate(lastAppliedTemplateCategory)
-        : null;
-      const previousTemplateSignature = previousTemplate
-        ? getTemplateSignature(previousTemplate.html)
-        : "";
-      const shouldReplace =
-        options?.force || currentSignature === "" || currentSignature === previousTemplateSignature;
-
-      if (!shouldReplace) return false;
-
-      setContent(template.html);
-      setLastAppliedTemplateCategory(nextCategory);
-      return true;
-    },
-    [content, lastAppliedTemplateCategory]
-  );
-
+  /* Category switch: an empty editor or an untouched template follows the new category;
+     anything the user wrote stays. */
   const handleCategoryChange = useCallback(
     (nextCategory: string) => {
-      applyTemplate(nextCategory);
+      const swapped = applyTemplateToContent(content, nextCategory, templateUndo);
+      if (swapped) {
+        setContent(swapped.content);
+        setTemplateUndo(swapped.undo);
+      }
 
       const nextFields = syncPostCategoryDependentFields(nextCategory, {
         creator,
@@ -204,8 +246,47 @@ export default function NewPostPage() {
       setLocationLabel(nextFields.locationLabel);
       setAutofillDone(false);
     },
-    [applyTemplate, creator, hasSpoiler, lat, lng, locationLabel]
+    [content, templateUndo, creator, hasSpoiler, lat, lng, locationLabel]
   );
+
+  /** The search excerpt only goes into an editor that holds nothing the user wrote. */
+  const canReplaceContentWithExcerpt =
+    isBlankOrTemplateContent(content) && !templateUndo?.previousContent;
+
+  const handleApplyTemplate = () => {
+    const before = content;
+    const beforeUndo = templateUndo;
+    const applied = applyTemplateToContent(
+      content,
+      category,
+      isBlankOrTemplateContent(content) ? templateUndo : null,
+      { force: true }
+    );
+    if (!applied) return;
+    setContent(applied.content);
+    setTemplateUndo(applied.undo);
+    showUndoToast(
+      isBlankOrTemplateContent(before)
+        ? "Şablon eklendi"
+        : "Şablon eklendi; yazdıkların saklandı, Şablonu Kaldır ile geri gelir",
+      () => {
+        setContent(before);
+        setTemplateUndo(beforeUndo);
+      }
+    );
+  };
+
+  const handleRemoveTemplate = () => {
+    if (!templateUndo) return;
+    const before = content;
+    const beforeUndo = templateUndo;
+    setContent(templateUndo.previousContent);
+    setTemplateUndo(null);
+    showUndoToast("Şablon kaldırıldı", () => {
+      setContent(before);
+      setTemplateUndo(beforeUndo);
+    });
+  };
 
   const handleMediaSelect = (result: {
     title: string;
@@ -230,9 +311,9 @@ export default function NewPostPage() {
     if (!isTravelResult) setCreator(result.creator);
     setYears(result.years || (isTravelResult ? new Date().getFullYear().toString() : ""));
     if (result.image) setImage(result.image);
-    if (result.excerpt && !isTravelResult) {
+    if (result.excerpt && !isTravelResult && canReplaceContentWithExcerpt) {
       setContent(`<p>${result.excerpt}</p>`);
-      setLastAppliedTemplateCategory(null);
+      setTemplateUndo(null);
     }
     setExternalRating(result.externalRating ?? null);
     if (isTravelResult) {
@@ -282,15 +363,15 @@ export default function NewPostPage() {
     if (prefillCreator && !isTravelCategory(nextCategory)) setCreator(prefillCreator);
     if (prefillYears) setYears(prefillYears);
     if (prefillImage) setImage(prefillImage);
-    if (prefillExcerpt && !isTravelCategory(nextCategory)) {
+    if (prefillExcerpt && !isTravelCategory(nextCategory) && canReplaceContentWithExcerpt) {
       setContent(`<p>${prefillExcerpt}</p>`);
-      setLastAppliedTemplateCategory(null);
+      setTemplateUndo(null);
     }
     if (Number.isFinite(prefillExternalRating)) {
       setExternalRating(prefillExternalRating);
     }
     setAutofillDone(true);
-  }, [category, handleCategoryChange, searchParams]);
+  }, [category, handleCategoryChange, searchParams, canReplaceContentWithExcerpt]);
 
   const handlePlaceSelect = (place: PlaceResult) => {
     const main =
@@ -315,13 +396,23 @@ export default function NewPostPage() {
   const lockedSearchTab = getSearchTabForCategory(category) ?? undefined;
   const categoryLabel = getCategoryLabel(category);
   const guidance = getPostComposerGuidance(category);
-  const exampleTags = CATEGORY_EXAMPLE_TAGS[category as keyof typeof CATEGORY_EXAMPLE_TAGS] ?? [];
   const activeTemplate = getPostTemplate(category);
   const plainContent = stripHtml(content).trim();
   const hasLocation = typeof lat === "number" && typeof lng === "number";
   const isTemplateActive = Boolean(
     activeTemplate && getTemplateSignature(content) === getTemplateSignature(activeTemplate.html)
   );
+  /* "Şablonu Kaldır" while the template is untouched or there is earlier text to bring back;
+     once the user has written into a fresh template there is nothing to restore. */
+  const templateApplied = Boolean(
+    templateUndo && (isBlankOrTemplateContent(content) || templateUndo.previousContent)
+  );
+  const missingFields = getMissingPostFields({
+    title,
+    category,
+    hasContent: !isBlankOrTemplateContent(content),
+  });
+  const invalidFields = new Set<string>(showRequiredErrors ? missingFields : []);
   const footerHint = (() => {
     if (title) {
       const ratingStr = rating > 0 ? ` · ${rating}/5` : "";
@@ -358,18 +449,21 @@ export default function NewPostPage() {
   ];
 
   const doSubmit = async () => {
-    const requiredFields: string[] = [title, category, image, plainContent];
-    if (config.creatorRequired) requiredFields.push(creator);
-    if (config.yearsRequired) requiredFields.push(years);
+    // A tag typed without Enter still counts.
+    const finalTags = mergePendingTagText(tags, pendingTagTextRef.current);
+    if (finalTags.length !== tags.length) setTags(finalTags);
 
-    if (requiredFields.some((field) => !field)) {
-      const message = "Zorunlu alanları doldur.";
+    if (missingFields.length > 0) {
+      const message = formatMissingFieldsMessage(missingFields);
       setSubmitError(message);
+      setShowRequiredErrors(true);
       toast.error(message);
+      focusComposerField(FIELD_ELEMENT_IDS[missingFields[0]]);
       return;
     }
     const autoExcerpt = plainContent.slice(0, 300);
     setSubmitError("");
+    setShowRequiredErrors(false);
     setIsSubmitting(true);
     try {
       await requestJson(
@@ -382,16 +476,16 @@ export default function NewPostPage() {
             category,
             rating,
             status,
-            image,
+            image: image.trim(),
             excerpt: autoExcerpt,
             content,
-            creator: config.showCreator ? creator : "",
-            years,
+            creator: config.showCreator ? creator.trim() : "",
+            years: years.trim(),
             hasSpoiler: supportsSpoiler ? hasSpoiler : false,
             lat: isTravelCategory(category) ? lat : null,
             lng: isTravelCategory(category) ? lng : null,
             imagePosition,
-            tags,
+            tags: finalTags,
             externalRating,
           }),
         },
@@ -443,7 +537,12 @@ export default function NewPostPage() {
         imageHint={guidance.imageHint}
         onImageChange={setImage}
       />
-      <TagsSidebar tags={tags} exampleTags={exampleTags} onTagsChange={setTags} />
+      <TagsSidebar
+        tags={tags}
+        category={category}
+        onTagsChange={setTags}
+        onPendingChange={handlePendingTagChange}
+      />
     </>
   );
 
@@ -484,6 +583,14 @@ export default function NewPostPage() {
           }
         />
 
+        {restoredDraftAt !== null && (
+          <RestoredDraftBanner
+            savedAt={restoredDraftAt}
+            onDiscard={discardDraft}
+            onDismiss={() => setRestoredDraftAt(null)}
+          />
+        )}
+
         {submitError && (
           <div className="mb-5">
             <FormStatusMessage message={submitError} />
@@ -501,6 +608,7 @@ export default function NewPostPage() {
               isTravelCat={isTravelCategory(category)}
               title={title}
               flashFields={flashFields}
+              invalidFields={invalidFields}
               completedStepCount={completedStepCount}
               nextActionText={nextActionText}
               onCategoryChange={handleCategoryChange}
@@ -519,6 +627,7 @@ export default function NewPostPage() {
               guidance={guidance}
               statusOptions={statusOptions}
               flashFields={flashFields}
+              invalidFields={invalidFields}
               lat={lat}
               lng={lng}
               locationLabel={locationLabel}
@@ -535,10 +644,12 @@ export default function NewPostPage() {
               plainContent={plainContent}
               activeTemplate={activeTemplate}
               isTemplateActive={isTemplateActive}
-              category={category}
+              templateApplied={templateApplied}
+              invalid={invalidFields.has("content")}
               guidance={guidance}
               onContentChange={setContent}
-              onApplyTemplate={applyTemplate}
+              onApplyTemplate={handleApplyTemplate}
+              onRemoveTemplate={handleRemoveTemplate}
             />
           </div>
 
@@ -593,8 +704,8 @@ export default function NewPostPage() {
             <button
               type="button"
               onClick={() => {
-                saveDraft();
-                toast.success("Taslak kaydedildi");
+                if (saveDraft()) toast.success("Taslak kaydedildi");
+                else toast("Taslağa kaydedilecek bir şey yok henüz.");
               }}
               className="cursor-pointer rounded-full px-2.5 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >

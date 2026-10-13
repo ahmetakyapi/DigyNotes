@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -22,13 +22,25 @@ import toast from "react-hot-toast";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 import { customLoader } from "@/lib/image";
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
-import { CATEGORY_EXAMPLE_TAGS, categorySupportsSpoiler } from "@/lib/post-config";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 import {
   detectImagePosition,
+  formatMissingFieldsMessage,
+  getMissingPostFields,
   getPostCategoryFormConfig,
+  hasMeaningfulContent,
   syncPostCategoryDependentFields,
+  type RequiredPostField,
 } from "@/lib/post-form";
+import { mergePendingTagText } from "@/lib/tag-input";
 import { stripHtml } from "@/lib/text";
+import { OptionalHint, focusComposerField } from "@/app/new-post/composer-utils";
+
+const FIELD_ELEMENT_IDS: Record<RequiredPostField, string> = {
+  title: "ep-title",
+  category: "ep-category",
+  content: "ep-content",
+};
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -87,6 +99,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [isDirty, setIsDirty] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [showRequiredErrors, setShowRequiredErrors] = useState(false);
+  const pendingTagTextRef = useRef("");
+  const handlePendingTagChange = useCallback((text: string) => {
+    pendingTagTextRef.current = text;
+  }, []);
   const config = getPostCategoryFormConfig(category);
   const currentSnapshot = createEditSnapshot({
     title,
@@ -235,21 +252,31 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   };
 
   const supportsSpoiler = categorySupportsSpoiler(category);
-  const exampleTags = CATEGORY_EXAMPLE_TAGS[category as keyof typeof CATEGORY_EXAMPLE_TAGS] ?? [];
+  const missingFields = getMissingPostFields({
+    title,
+    category,
+    hasContent: hasMeaningfulContent(content),
+  });
+  const invalidFields = new Set<string>(showRequiredErrors ? missingFields : []);
+  const invalidInputClass = "border-danger/70 ring-1 ring-danger/30";
 
   const doSubmit = async () => {
-    const plainContent = stripHtml(content);
-    const requiredFields: string[] = [title, category, image, plainContent];
-    if (config.creatorRequired) requiredFields.push(creator);
-    if (config.yearsRequired) requiredFields.push(years);
-    if (requiredFields.some((f) => !f.trim())) {
-      const message = "Zorunlu alanları doldur.";
+    // A tag typed without Enter still counts.
+    const finalTags = mergePendingTagText(tags, pendingTagTextRef.current);
+    if (finalTags.length !== tags.length) setTags(finalTags);
+
+    if (missingFields.length > 0) {
+      const message = formatMissingFieldsMessage(missingFields);
       setSubmitError(message);
+      setShowRequiredErrors(true);
       toast.error(message);
+      focusComposerField(FIELD_ELEMENT_IDS[missingFields[0]]);
       return;
     }
+    const plainContent = stripHtml(content);
     const autoExcerpt = plainContent.slice(0, 300);
     setSubmitError("");
+    setShowRequiredErrors(false);
     setIsSubmitting(true);
     try {
       await requestJson(
@@ -262,16 +289,16 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             category,
             rating,
             status,
-            image,
+            image: image.trim(),
             excerpt: autoExcerpt,
             content,
-            creator: config.showCreator ? creator : "",
-            years,
+            creator: config.showCreator ? creator.trim() : "",
+            years: years.trim(),
             hasSpoiler: supportsSpoiler ? hasSpoiler : false,
             lat: isTravelCategory(category) ? lat : null,
             lng: isTravelCategory(category) ? lng : null,
             imagePosition,
-            tags,
+            tags: finalTags,
             externalRating,
           }),
         },
@@ -407,21 +434,29 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             <div className={sectionClass}>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className={labelClass}>Başlık</label>
+                  <label htmlFor="ep-title" className={labelClass}>
+                    Başlık
+                  </label>
                   <input
+                    id="ep-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={inputClass}
+                    className={`${inputClass} ${invalidFields.has("title") ? invalidInputClass : ""}`}
+                    aria-invalid={invalidFields.has("title") || undefined}
                     required
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Kategori</label>
+                  <label htmlFor="ep-category" className={labelClass}>
+                    Kategori
+                  </label>
                   <select
+                    id="ep-category"
                     value={category}
                     onChange={(e) => handleCategoryChange(e.target.value)}
-                    className={inputClass}
+                    className={`${inputClass} ${invalidFields.has("category") ? invalidInputClass : ""}`}
+                    aria-invalid={invalidFields.has("category") || undefined}
                   >
                     {FIXED_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>
@@ -446,33 +481,43 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 </div>
                 {config.showCreator && (
                   <div>
-                    <label className={labelClass}>
+                    <label htmlFor="ep-creator" className={labelClass}>
                       {config.creatorLabel}
-                      {config.creatorRequired && <span className="ml-1 text-danger">*</span>}
+                      <OptionalHint />
                     </label>
                     <input
+                      id="ep-creator"
                       type="text"
                       value={creator}
                       onChange={(e) => setCreator(e.target.value)}
                       className={inputClass}
                       placeholder="—"
-                      required={config.creatorRequired}
                     />
+                    {!creator.trim() && (
+                      <p className="mt-2 text-[12px] text-[var(--text-muted)]">
+                        Sonradan da ekleyebilirsin.
+                      </p>
+                    )}
                   </div>
                 )}
                 <div className={config.showCreator ? "" : "sm:col-span-2"}>
-                  <label className={labelClass}>
+                  <label htmlFor="ep-years" className={labelClass}>
                     {config.yearsLabel}
-                    {config.yearsRequired && <span className="ml-1 text-danger">*</span>}
+                    <OptionalHint />
                   </label>
                   <input
+                    id="ep-years"
                     type="text"
                     value={years}
                     onChange={(e) => setYears(e.target.value)}
                     className={inputClass}
                     placeholder={config.yearsPlaceholder}
-                    required={config.yearsRequired}
                   />
+                  {!years.trim() && (
+                    <p className="mt-2 text-[12px] text-[var(--text-muted)]">
+                      Sonradan da ekleyebilirsin.
+                    </p>
+                  )}
                 </div>
                 {isTravelCategory(category) && (
                   <div className="rounded-[20px] border border-[var(--border)] bg-[var(--bg-raised)] p-4 sm:col-span-2">
@@ -513,40 +558,33 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   </div>
                 )}
                 <div className="sm:col-span-2">
-                  <label className={labelClass}>Etiketler</label>
-                  <div className="mb-3 flex flex-wrap gap-1.5">
-                    {exampleTags.map((tagName) => {
-                      const isAdded = tags.includes(tagName);
-                      return (
-                        <button
-                          key={tagName}
-                          type="button"
-                          onClick={() => {
-                            if (isAdded || tags.length >= 10) return;
-                            setTags((prev) => [...prev, tagName]);
-                          }}
-                          disabled={isAdded || tags.length >= 10}
-                          className={`cursor-pointer rounded-full border px-2.5 py-1 text-[11.5px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 disabled:cursor-default disabled:opacity-40 ${
-                            isAdded
-                              ? "border-accent/40 bg-accent/10 text-accent"
-                              : "border-[var(--border)] text-[var(--text-secondary)] hover:border-accent/40 hover:text-accent"
-                          }`}
-                        >
-                          #{tagName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <TagInput value={tags} onChange={setTags} />
+                  <p className={labelClass}>Etiketler</p>
+                  <TagInput
+                    value={tags}
+                    onChange={setTags}
+                    category={category}
+                    onPendingChange={handlePendingTagChange}
+                  />
                 </div>
               </div>
             </div>
 
             <div className={sectionClass}>
-              <label className={labelClass}>İçerik</label>
-              <div className="dn-compose-editor overflow-hidden rounded-2xl border border-[var(--border)]">
-                <ReactQuill theme="snow" value={content} onChange={setContent} />
+              <label htmlFor="ep-content" className={labelClass}>
+                İçerik
+              </label>
+              <div
+                className={`dn-compose-editor overflow-hidden rounded-2xl border ${
+                  invalidFields.has("content") ? "border-danger/70" : "border-[var(--border)]"
+                }`}
+              >
+                <ReactQuill id="ep-content" theme="snow" value={content} onChange={setContent} />
               </div>
+              {invalidFields.has("content") && (
+                <p className="mt-2 text-[12px] text-[var(--danger)]">
+                  Not içeriği gerekli; tek bir cümle bile yeter.
+                </p>
+              )}
             </div>
           </div>
 
@@ -577,13 +615,23 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className={sectionClass}>
-              <label className={labelClass}>Kapak Görseli URL</label>
+              <label htmlFor="ep-cover" className={labelClass}>
+                Kapak Görseli URL
+                <OptionalHint />
+              </label>
               <input
+                id="ep-cover"
                 type="url"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 className={inputClass}
+                placeholder="https://..."
               />
+              {!image.trim() && (
+                <p className="mt-2 text-[12px] leading-5 text-[var(--text-muted)]">
+                  Kapak yoksa notun kategori görseliyle görünür. Sonradan da ekleyebilirsin.
+                </p>
+              )}
               {image && (
                 <div className="mt-3 overflow-hidden rounded-[20px] border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--shadow-soft)]">
                   <div className="relative h-36 w-full sm:h-48 lg:h-52 xl:h-56">
@@ -701,13 +749,23 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </summary>
             <div className="mt-3 space-y-4">
               <div className={sectionClass}>
-                <label className={labelClass}>Kapak Görseli URL</label>
+                <label htmlFor="ep-cover-mobile" className={labelClass}>
+                  Kapak Görseli URL
+                  <OptionalHint />
+                </label>
                 <input
+                  id="ep-cover-mobile"
                   type="url"
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
                   className={inputBase}
+                  placeholder="https://..."
                 />
+                {!image.trim() && (
+                  <p className="mt-2 text-[12px] leading-5 text-[var(--text-muted)]">
+                    Kapak yoksa notun kategori görseliyle görünür. Sonradan da ekleyebilirsin.
+                  </p>
+                )}
               </div>
               <div className={sectionClass}>
                 <label className={labelClass}>Puan</label>

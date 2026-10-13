@@ -7,9 +7,15 @@ import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
 import { buildPostSearchWhere } from "@/lib/search";
 import { categorySupportsSpoiler } from "@/lib/post-config";
-import { handleApiError } from "@/lib/api-server";
+import { handleApiError, safeParseBody } from "@/lib/api-server";
+import {
+  formatMissingFieldsMessage,
+  getMissingPostFields,
+  hasMeaningfulContent,
+  optionalString,
+} from "@/lib/post-form";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
-import { normalizeTagName } from "@/lib/text";
+import { normalizeTagName, stripHtml } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -163,8 +169,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const normalizedCategory = normalizeCategory(body.category);
+    const body = await safeParseBody<Record<string, unknown>>(request);
+    if (!body) {
+      return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+    }
+    const normalizedCategory = normalizeCategory(
+      typeof body.category === "string" ? body.category : ""
+    );
     const {
       title,
       image,
@@ -182,8 +193,15 @@ export async function POST(request: NextRequest) {
       externalRating,
     } = body;
 
-    if (!title || !normalizedCategory || !image || !excerpt || !content) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    // Yalnızca başlık, kategori ve içerik zorunlu; kapak, yaratıcı ve yıl sonradan eklenebilir.
+    const sanitizedContent = sanitizePostContent(typeof content === "string" ? content : "");
+    const missing = getMissingPostFields({
+      title: typeof title === "string" ? title : "",
+      category: normalizedCategory,
+      hasContent: hasMeaningfulContent(sanitizedContent),
+    });
+    if (missing.length > 0) {
+      return NextResponse.json({ error: formatMissingFieldsMessage(missing) }, { status: 400 });
     }
 
     // Input uzunluk kontrolleri
@@ -194,11 +212,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Özet çok uzun (max 2000 karakter)" }, { status: 400 });
     }
 
-    const sanitizedContent = sanitizePostContent(content ?? "");
+    const coverImage = typeof image === "string" ? image.trim() : "";
+    const safeExcerpt =
+      typeof excerpt === "string" && excerpt.trim() ? excerpt : stripHtml(sanitizedContent);
 
     const tagNames: string[] = Array.isArray(tags)
       ? tags
-          .map((t: string) => normalizeTagName(t))
+          .filter((t): t is string => typeof t === "string")
+          .map((t) => normalizeTagName(t))
           .filter(Boolean)
           .slice(0, 10)
       : [];
@@ -209,20 +230,20 @@ export async function POST(request: NextRequest) {
 
     const post = await prisma.post.create({
       data: {
-        title: String(title).slice(0, 500),
+        title: String(title).trim().slice(0, 500),
         category: normalizedCategory,
-        image,
-        excerpt: String(excerpt).slice(0, 2000),
+        image: coverImage,
+        excerpt: safeExcerpt.slice(0, 2000),
         content: sanitizedContent,
-        creator: creator || null,
-        years: years || null,
+        creator: optionalString(creator),
+        years: optionalString(years),
         rating: sanitizeRating(rating),
         externalRating: typeof externalRating === "number" ? externalRating : null,
-        status: status || null,
+        status: optionalString(status),
         hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,
         lat: typeof lat === "number" ? lat : null,
         lng: typeof lng === "number" ? lng : null,
-        imagePosition: imagePosition || "center",
+        imagePosition: optionalString(imagePosition) ?? "center",
         date: new Date().toLocaleDateString("tr-TR", {
           year: "numeric",
           month: "long",
