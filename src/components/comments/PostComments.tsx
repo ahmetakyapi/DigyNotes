@@ -321,7 +321,7 @@ export function PostComments({
 
   return (
     /* LAYOUT: Heading + total → composer (or sign-in prompt) → newest threads → "Daha Fazla Yorum". */
-    <section className="mt-10" aria-labelledby="comments-heading">
+    <section id="comments" className="mt-10 scroll-mt-24" aria-labelledby="comments-heading">
       <div className="mb-8 flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
           <ChatCircleIcon size={18} className="text-accent" aria-hidden />
