@@ -198,7 +198,7 @@ export default function NotificationsPage() {
               <Em>Bildirimler</Em>
             </>
           }
-          description="Takip, beğeni ve yorumların hepsi burada."
+          description="Takip, beğeni, yorum ve bahsetmelerin hepsi burada."
         />
         <EmptyState
           icon={<BellIcon size={22} weight="duotone" />}
@@ -245,7 +245,7 @@ export default function NotificationsPage() {
             <Em>Bildirimler</Em>
           </>
         }
-        description="Takip, beğeni ve yorumların hepsi burada."
+        description="Takip, beğeni, yorum ve bahsetmelerin hepsi burada."
         stats={headerStats}
         actions={
           <button
@@ -312,7 +312,7 @@ export default function NotificationsPage() {
               Henüz <Em>Bildirimin</Em> Yok
             </>
           }
-          description="Biri seni takip ettiğinde ya da notunu beğendiğinde burada göreceksin."
+          description="Biri seni takip ettiğinde, notunu beğendiğinde ya da bir yorumda andığında burada göreceksin."
           primary={{ label: "Keşfet", href: "/discover" }}
         />
       ) : (

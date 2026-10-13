@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
@@ -19,8 +19,8 @@ import TagBadge from "@/components/TagBadge";
 import CommunityStatsCard from "@/components/CommunityStatsCard";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import { ActionTooltip } from "@/components/ActionTooltip";
-import { AvatarImage } from "@/components/AvatarImage";
 import ShareButton from "@/components/ShareButton";
+import { PostComments } from "@/components/comments/PostComments";
 import type { SharePreview } from "@/components/ShareSheet";
 import { stripHtml, truncateText } from "@/lib/text";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
@@ -35,25 +35,6 @@ import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib
 import toast from "react-hot-toast";
 
 const SPOILER_OVERLAY_STORAGE_KEY = "dn_spoiler_overlay_seen";
-
-interface CommentUser {
-  id: string;
-  name: string;
-  username: string | null;
-  avatarUrl: string | null;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  parentId: string | null;
-  user: CommentUser;
-}
-
-interface ThreadComment extends Comment {
-  replies: ThreadComment[];
-}
 
 interface LikeData {
   count: number;
@@ -71,45 +52,6 @@ function formatDate(iso: string) {
   });
 }
 
-function buildCommentTree(items: Comment[]): ThreadComment[] {
-  const map = new Map<string, ThreadComment>();
-  const roots: ThreadComment[] = [];
-
-  items.forEach((item) => {
-    map.set(item.id, { ...item, replies: [] });
-  });
-
-  map.forEach((item) => {
-    if (item.parentId) {
-      const parent = map.get(item.parentId);
-      if (parent) {
-        parent.replies.push(item);
-        return;
-      }
-    }
-    roots.push(item);
-  });
-
-  return roots;
-}
-
-function collectCommentBranchIds(items: Comment[], rootId: string) {
-  const ids = new Set<string>([rootId]);
-  let changed = true;
-
-  while (changed) {
-    changed = false;
-    items.forEach((item) => {
-      if (item.parentId && ids.has(item.parentId) && !ids.has(item.id)) {
-        ids.add(item.id);
-        changed = true;
-      }
-    });
-  }
-
-  return ids;
-}
-
 export default function PostDetailClient({
   params,
   initialPost = null,
@@ -119,7 +61,6 @@ export default function PostDetailClient({
   initialPost?: Post | null;
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const currentUserId = session?.user ? (session.user as { id: string }).id : null;
 
@@ -138,20 +79,10 @@ export default function PostDetailClient({
   const [likeData, setLikeData] = useState<LikeData>({ count: 0, liked: false });
   const [isLiking, setIsLiking] = useState(false);
 
-  /* Comment state */
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [commentText, setCommentText] = useState("");
-  const [replyText, setReplyText] = useState("");
-  const [replyingToId, setReplyingToId] = useState<string | null>(null);
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
-  const [highlightedCommentId, setHighlightedCommentId] = useState<string | null>(null);
   const [interactionMessage, setInteractionMessage] = useState<{
     tone: "like" | "comment";
     text: string;
   } | null>(null);
-  const commentInputRef = useRef<HTMLTextAreaElement>(null);
-  const replyInputRef = useRef<HTMLTextAreaElement>(null);
   const interactionTimerRef = useRef<number | null>(null);
 
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -206,7 +137,6 @@ export default function PostDetailClient({
       .catch(() => {});
   }, [params.id]);
 
-  /* Fetch comments */
   /* Owners are the ones who share: when they open a shareable note, quietly render its
      share card so WhatsApp's image request becomes a CDN hit instead of a cold
      multi-second render (chat apps drop slow previews). Same URL as og:image. */
@@ -222,19 +152,6 @@ export default function PostDetailClient({
     if (idle) idle(warm);
     else setTimeout(warm, 1500);
   }, [post, currentUserId]);
-
-  useEffect(() => {
-    fetch(`/api/posts/${params.id}/comments`)
-      .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((data) => setComments(Array.isArray(data) ? data : (data.items ?? [])))
-      .catch(() => {});
-  }, [params.id]);
-
-  useEffect(() => {
-    if (replyingToId) {
-      window.setTimeout(() => replyInputRef.current?.focus(), 0);
-    }
-  }, [replyingToId]);
 
   useEffect(() => {
     return () => {
@@ -285,13 +202,6 @@ export default function PostDetailClient({
     }
   };
 
-  const threadedComments = useMemo(() => buildCommentTree(comments), [comments]);
-  const commentsById = useMemo(
-    () => new Map(comments.map((comment) => [comment.id, comment])),
-    [comments]
-  );
-  const targetCommentId = searchParams.get("comment");
-
   const showInteractionMessage = (tone: "like" | "comment", text: string) => {
     setInteractionMessage({ tone, text });
     if (interactionTimerRef.current) {
@@ -301,22 +211,6 @@ export default function PostDetailClient({
       setInteractionMessage(null);
     }, 2600);
   };
-
-  useEffect(() => {
-    if (!targetCommentId || comments.length === 0) return;
-
-    const element = document.getElementById(`comment-${targetCommentId}`);
-    if (!element) return;
-
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
-    setHighlightedCommentId(targetCommentId);
-
-    const timer = window.setTimeout(() => {
-      setHighlightedCommentId((current) => (current === targetCommentId ? null : current));
-    }, 3200);
-
-    return () => window.clearTimeout(timer);
-  }, [comments.length, targetCommentId]);
 
   const handleConfirmDelete = async () => {
     setIsDeleting(true);
@@ -371,74 +265,6 @@ export default function PostDetailClient({
       }
     } finally {
       setIsLiking(false);
-    }
-  };
-
-  const submitComment = async (parentId?: string | null) => {
-    if (!session?.user) {
-      toast.error("Yorum yapmak için giriş yapman gerekiyor.");
-      router.push("/login");
-      return;
-    }
-    const text = (parentId ? replyText : commentText).trim();
-    if (!text) return;
-
-    setIsSubmittingComment(true);
-    try {
-      const newComment = await requestJson<Comment>(
-        `/api/posts/${params.id}/comments`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: text, parentId: parentId ?? null }),
-        },
-        "Yorum eklenemedi."
-      );
-      setComments((prev) => [...prev, newComment]);
-      if (parentId) {
-        setReplyText("");
-        setReplyingToId(null);
-        showInteractionMessage("comment", "Yanıt konuşmaya eklendi");
-      } else {
-        setCommentText("");
-        showInteractionMessage("comment", "Yorum konuşmaya eklendi");
-      }
-    } catch (error) {
-      toast.error(getClientErrorMessage(error, "Yorum eklenemedi."));
-      if (isAuthenticationError(error)) {
-        router.push("/login");
-      }
-    } finally {
-      setIsSubmittingComment(false);
-    }
-  };
-
-  const deleteComment = async (commentId: string) => {
-    setDeletingCommentId(commentId);
-    try {
-      await requestJson<{ success: boolean }>(
-        `/api/posts/${params.id}/comments/${commentId}`,
-        {
-          method: "DELETE",
-        },
-        "Yorum silinemedi."
-      );
-      setComments((prev) => {
-        const branchIds = collectCommentBranchIds(prev, commentId);
-        if (replyingToId && branchIds.has(replyingToId)) {
-          setReplyingToId(null);
-          setReplyText("");
-        }
-        return prev.filter((comment) => !branchIds.has(comment.id));
-      });
-      toast.success("Yorum silindi");
-    } catch (error) {
-      toast.error(getClientErrorMessage(error, "Yorum silinemedi."));
-      if (isAuthenticationError(error)) {
-        router.push("/login");
-      }
-    } finally {
-      setDeletingCommentId(null);
     }
   };
 
@@ -500,7 +326,6 @@ export default function PostDetailClient({
   }
 
   const isOwnPost = !!currentUserId && currentUserId === post.user?.id;
-  const canCommentOnPost = Boolean(session?.user);
   const supportsSpoiler = categorySupportsSpoiler(post.category);
   const categorySlug = normalizeCategory(post.category);
   const categoryLabel = getCategoryLabel(post.category);
@@ -532,173 +357,6 @@ export default function PostDetailClient({
   const tagCount = post.tags?.length ?? 0;
   const shouldBlurSpoiler = Boolean(supportsSpoiler && post.hasSpoiler && !isSpoilerRevealed);
   const shouldShowSpoilerOverlay = shouldBlurSpoiler && !hasDismissedSpoilerOverlay;
-
-  const toggleReply = (commentId: string) => {
-    if (!session?.user) {
-      router.push("/login");
-      return;
-    }
-
-    setReplyingToId((prev) => {
-      const next = prev === commentId ? null : commentId;
-      if (!next) setReplyText("");
-      return next;
-    });
-  };
-
-  const renderCommentNode = (comment: ThreadComment, depth = 0): React.ReactNode => {
-    const isOwn = comment.user.id === currentUserId;
-    const isReplying = replyingToId === comment.id;
-    const hasReplies = comment.replies.length > 0;
-    const parentComment = comment.parentId ? commentsById.get(comment.parentId) : null;
-    const isPostAuthorComment = comment.user.id === post.user?.id;
-    const isHighlighted = highlightedCommentId === comment.id;
-
-    return (
-      <div
-        key={comment.id}
-        id={`comment-${comment.id}`}
-        className={
-          depth > 0
-            ? "ml-5 scroll-mt-24 border-l-2 border-[var(--surface-strong-border)] pl-5 sm:ml-8 sm:pl-6"
-            : "scroll-mt-24"
-        }
-      >
-        <div
-          className={`rounded-xl p-4 transition-colors ${
-            isHighlighted
-              ? "bg-accent/5 ring-1 ring-accent/30"
-              : "hover:bg-[color-mix(in_srgb,var(--surface-strong)_50%,transparent)]"
-          }`}
-        >
-          {/* Üst satır: Avatar + isim + tarih + aksiyonlar */}
-          <div className="mb-2.5 flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/12 ring-1 ring-accent/20">
-                <AvatarImage
-                  src={comment.user.avatarUrl}
-                  alt={comment.user.name}
-                  name={comment.user.name}
-                  size={32}
-                  className="h-full w-full object-cover"
-                  textClassName="text-[11px] font-bold text-accent"
-                />
-              </div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[13px] font-semibold text-[var(--text-contrast)]">
-                    {comment.user.name}
-                  </span>
-                  {isPostAuthorComment && (
-                    <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[11px] font-semibold text-accent ring-1 ring-accent/20">
-                      Yazar
-                    </span>
-                  )}
-                  {isOwn && !isPostAuthorComment && (
-                    <span className="rounded bg-[var(--surface-strong)] px-1.5 py-0.5 text-[11px] font-medium text-[var(--text-faint)] ring-1 ring-[var(--surface-strong-border)]">
-                      Sen
-                    </span>
-                  )}
-                  <span className="text-[11px] text-[var(--text-faint)]">
-                    · {formatDate(comment.createdAt)}
-                  </span>
-                </div>
-                {parentComment?.user && (
-                  <span className="text-[12px] text-[var(--text-faint)]">
-                    ↳{" "}
-                    {parentComment.user.username
-                      ? `@${parentComment.user.username}`
-                      : parentComment.user.name}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-0.5">
-              {canCommentOnPost && (
-                <button
-                  type="button"
-                  onClick={() => toggleReply(comment.id)}
-                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-[var(--surface-strong)] hover:text-accent"
-                >
-                  {isReplying ? "Vazgeç" : "Yanıtla"}
-                </button>
-              )}
-              {isOwn && (
-                <button
-                  type="button"
-                  onClick={() => deleteComment(comment.id)}
-                  disabled={deletingCommentId === comment.id}
-                  className="rounded-md px-2 py-1 text-[11px] text-[var(--text-faint)] transition-colors duration-150 hover:bg-danger/8 hover:text-danger disabled:opacity-40"
-                >
-                  {deletingCommentId === comment.id ? "..." : "Sil"}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Yorum içeriği */}
-          <p className="whitespace-pre-wrap pl-[42px] text-[13px] leading-relaxed text-[var(--text-dim)] sm:text-sm">
-            {comment.content}
-          </p>
-
-          {/* Inline yanıt alanı */}
-          {isReplying && (
-            <div className="mt-3 pl-[42px]">
-              <div className="flex gap-2.5">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/10">
-                  <AvatarImage
-                    src={null}
-                    alt={session?.user?.name ?? ""}
-                    name={session?.user?.name ?? "?"}
-                    size={28}
-                    className="h-full w-full object-cover"
-                    textClassName="text-[11px] font-bold text-accent"
-                  />
-                </div>
-                <div className="flex-1">
-                  <textarea
-                    ref={replyInputRef}
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Yanıtını yaz..."
-                    rows={2}
-                    maxLength={1000}
-                    className="w-full resize-none rounded-lg border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-[13px]"
-                  />
-                  <div className="mt-2 flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setReplyingToId(null);
-                        setReplyText("");
-                      }}
-                      className="rounded-md px-3 py-1 text-[11px] text-[var(--text-faint)] transition-colors hover:text-[var(--text-dim)]"
-                    >
-                      İptal
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => submitComment(comment.id)}
-                      disabled={isSubmittingComment || !replyText.trim()}
-                      className="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-accent-light active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      {isSubmittingComment ? "..." : "Yanıtla"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {hasReplies && (
-          <div className="mt-1 space-y-1">
-            {comment.replies.map((reply) => renderCommentNode(reply, depth + 1))}
-          </div>
-        )}
-      </div>
-    );
-  };
 
   return (
     <main className="min-h-screen bg-[var(--bg-base)]">
@@ -1176,136 +834,11 @@ export default function PostDetailClient({
         </div>
 
         {/* ─── Yorumlar ─── */}
-        <div className="mt-10">
-          {/* Başlık */}
-          <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 ring-1 ring-accent/20">
-              <svg
-                className="h-4 w-4 text-accent"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-base font-semibold text-[var(--text-contrast)]">Yorumlar</h2>
-              {comments.length > 0 && (
-                <span className="text-sm text-[var(--text-faint)]">({comments.length})</span>
-              )}
-            </div>
-          </div>
-
-          {/* Yorum Yazma Alanı — üstte */}
-          {session?.user ? (
-            <div className="mb-8">
-              {replyingToId && (
-                <div className="mb-3 flex items-center justify-between rounded-lg bg-accent/8 px-3.5 py-2.5 ring-1 ring-accent/20">
-                  <span className="text-xs text-accent">Bir yoruma yanıt yazıyorsun</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setReplyingToId(null);
-                      setReplyText("");
-                    }}
-                    className="text-xs font-medium text-accent transition-colors hover:text-accent-light"
-                  >
-                    İptal
-                  </button>
-                </div>
-              )}
-              <div className="flex gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/12 ring-1 ring-accent/20">
-                  <AvatarImage
-                    src={null}
-                    alt={session.user.name ?? ""}
-                    name={session.user.name ?? "?"}
-                    size={36}
-                    className="h-full w-full object-cover"
-                    textClassName="text-xs font-bold text-accent"
-                  />
-                </div>
-                <div className="flex-1">
-                  <textarea
-                    ref={commentInputRef}
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Düşüncelerini paylaş..."
-                    rows={3}
-                    maxLength={1000}
-                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-all duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-sm sm:leading-relaxed"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && e.metaKey) submitComment();
-                    }}
-                  />
-                  <div className="mt-2.5 flex items-center justify-between">
-                    <span className="text-[12px] text-[var(--text-faint)]">
-                      {commentText.length > 0 && `${commentText.length}/1000`}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => submitComment()}
-                      disabled={isSubmittingComment || !commentText.trim()}
-                      className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-[#0c0c0c] transition-all duration-200 hover:bg-accent-light active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 sm:py-1.5"
-                    >
-                      {isSubmittingComment ? "Gönderiliyor..." : "Gönder"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="mb-8 flex items-center justify-between rounded-xl bg-[var(--surface-strong)] px-5 py-4 ring-1 ring-[var(--surface-strong-border)]">
-              <p className="text-sm text-[var(--text-dim)]">Yorum yapmak için giriş yap</p>
-              <Link
-                href="/login"
-                className="rounded-lg bg-accent/10 px-4 py-1.5 text-xs font-medium text-accent ring-1 ring-accent/20 transition-colors hover:bg-accent/20"
-              >
-                Giriş Yap
-              </Link>
-            </div>
-          )}
-
-          {/* Boş durum */}
-          {comments.length === 0 && (
-            <div className="flex flex-col items-center py-12 text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface-strong)] ring-1 ring-[var(--surface-strong-border)]">
-                <svg
-                  className="h-6 w-6 text-[var(--text-faint)]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm text-[var(--text-dim)]">Henüz yorum yok</p>
-              <p className="mt-1 text-xs text-[var(--text-faint)]">
-                {isOwnPost
-                  ? "Diğer kullanıcıların yorumları burada görünecek"
-                  : "İlk yorumu sen bırak"}
-              </p>
-            </div>
-          )}
-
-          {/* Yorum listesi */}
-          {threadedComments.length > 0 && (
-            <div className="space-y-4">
-              {threadedComments.map((comment) => renderCommentNode(comment))}
-            </div>
-          )}
-        </div>
+        <PostComments
+          postId={params.id}
+          postAuthorId={post.user?.id ?? null}
+          isOwnPost={isOwnPost}
+        />
 
         {/* ─── Başkalarının Notları ─── */}
         {communityPosts.length > 0 && (
