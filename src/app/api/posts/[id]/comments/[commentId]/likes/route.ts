@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
 import { handleApiError, requireAuth } from "@/lib/api-server";
+import { isMissingCommentLikesTable } from "@/lib/comments";
 import {
   applyRateLimitHeaders,
   consumeRateLimit,
@@ -88,6 +89,13 @@ export async function POST(
     const count = await prisma.commentLike.count({ where: { commentId } });
     return applyRateLimitHeaders(NextResponse.json({ count, liked }), rateLimit);
   } catch (error) {
+    if (isMissingCommentLikesTable(error)) {
+      console.error("[comment-likes] comment_likes table missing (run prisma db push)");
+      return NextResponse.json(
+        { error: "Yorum beğenileri şu anda kullanılamıyor." },
+        { status: 503 }
+      );
+    }
     return handleApiError(error, "Beğeni işlemi sırasında bir hata oluştu.");
   }
 }

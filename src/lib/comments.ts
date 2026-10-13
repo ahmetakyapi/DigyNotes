@@ -32,6 +32,35 @@ function commentInclude(viewerId: string | null) {
   };
 }
 
+const COMMENT_INCLUDE_WITHOUT_LIKES = { user: { select: COMMENT_USER_SELECT } };
+
+/* True when the `comment_likes` table is not there yet (code deployed before
+   `prisma db push` on that database, ERR-DB-005). */
+export function isMissingCommentLikesTable(error: unknown) {
+  const code = (error as { code?: unknown } | null)?.code;
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return (
+    code === "P2021" || (/comment_likes/i.test(message) && /does not exist|42P01/i.test(message))
+  );
+}
+
+/* Runs a comment query with likes; if the likes table is missing, runs it again without
+   them so comments keep working (every like count reads 0). */
+async function withLikesFallback<T>(
+  viewerId: string | null,
+  query: (
+    include: ReturnType<typeof commentInclude> | typeof COMMENT_INCLUDE_WITHOUT_LIKES
+  ) => Promise<T>
+): Promise<T> {
+  try {
+    return await query(commentInclude(viewerId));
+  } catch (error) {
+    if (!isMissingCommentLikesTable(error)) throw error;
+    console.error("[comments] comment_likes table missing; serving comments without likes");
+    return query(COMMENT_INCLUDE_WITHOUT_LIKES);
+  }
+}
+
 type CommentRow = {
   id: string;
   content: string;
@@ -40,8 +69,8 @@ type CommentRow = {
   createdAt: Date;
   updatedAt: Date;
   user: { id: string; name: string; username: string | null; avatarUrl: string | null };
-  _count: { likes: number };
-  likes: { userId: string }[];
+  _count?: { likes: number };
+  likes?: { userId: string }[];
 };
 
 export type CommentDTO = {
@@ -84,17 +113,18 @@ export async function serializeComments(rows: CommentRow[]): Promise<CommentDTO[
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     user: row.user,
-    likeCount: row._count.likes,
-    likedByMe: row.likes.length > 0,
+    likeCount: row._count?.likes ?? 0,
+    likedByMe: (row.likes?.length ?? 0) > 0,
     mentions: extractMentions(row.content, MAX_LINKED_MENTIONS).filter((name) => known.has(name)),
   }));
 }
 
 export async function findCommentForResponse(commentId: string, viewerId: string | null) {
-  const row = await prisma.comment.findUnique({
-    where: { id: commentId },
-    include: commentInclude(viewerId),
-  });
+  const row = await withLikesFallback(
+    viewerId,
+    (include) =>
+      prisma.comment.findUnique({ where: { id: commentId }, include }) as Promise<CommentRow | null>
+  );
   if (!row) return null;
   const [comment] = await serializeComments([row]);
   return comment;
@@ -111,9 +141,18 @@ export async function loadCommentPage(
   { cursor, limit }: { cursor?: string | null; limit: number }
 ) {
   const after = decodeCommentCursor(cursor);
-  const include = commentInclude(viewerId);
+  return withLikesFallback(viewerId, (include) =>
+    loadCommentPageWith(postId, include, after, limit)
+  );
+}
 
-  const [roots, total] = await Promise.all([
+async function loadCommentPageWith(
+  postId: string,
+  include: ReturnType<typeof commentInclude> | typeof COMMENT_INCLUDE_WITHOUT_LIKES,
+  after: ReturnType<typeof decodeCommentCursor>,
+  limit: number
+) {
+  const [roots, total]: [CommentRow[], number] = await Promise.all([
     prisma.comment.findMany({
       where: {
         postId,
@@ -144,7 +183,7 @@ export async function loadCommentPage(
   const replies: CommentRow[] = [];
   let frontier = roots.map((root) => root.id);
   for (let depth = 0; depth < MAX_REPLY_DEPTH && frontier.length > 0; depth += 1) {
-    const level = await prisma.comment.findMany({
+    const level: CommentRow[] = await prisma.comment.findMany({
       where: { postId, parentId: { in: frontier } },
       include,
       orderBy: [{ createdAt: "asc" }, { id: "asc" }],

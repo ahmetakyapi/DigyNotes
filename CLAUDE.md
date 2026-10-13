@@ -68,7 +68,7 @@ Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://
 - Tags are global and unique, lowercased + trimmed, max 10 per post; saving = upsert `Tag` + create `PostTag` (ERR-010). APIs include `{ tags: { include: { tag: true } } }` and return flat `tags: Tag[]` via `transformPostTags`.
 - Quill HTML is sanitized on write (`sanitizePostContent`).
 - Post: only title, category and content are required; `image` may be `""` (render through `getPostImageSrc`), `creator`/`years` null.
-- Comments: `CommentLike` (2026-10-13; production needs the table, ERR-DB-005). GET `/api/posts/[id]/comments` pages ROOT comments newest first with all their replies (`{ items, nextCursor, total }`). `@username` mentions are parsed in `src/lib/mentions.ts`.
+- Comments: `CommentLike` (2026-10-13; production needs the table, ERR-DB-005 — until then `src/lib/comments.ts` serves comments without likes and the like API answers 503). GET `/api/posts/[id]/comments` pages ROOT comments newest first with all their replies (`{ items, nextCursor, total }`). `@username` mentions are parsed in `src/lib/mentions.ts`.
 - Notification types and `referenceId`: `follow` (actor id), `like` (`postId:actorId`), `comment` and `mention` (comment id), `comment_like` (`commentId:actorId`).
 - Local composer drafts live under `digynotes-draft:<userId>[:<postId>]` (`src/lib/local-drafts.ts`); sign-out calls `clearAllLocalDrafts()`.
 
