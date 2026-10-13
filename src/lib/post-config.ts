@@ -1,4 +1,4 @@
-import { FixedCategory, isOtherCategory, isTravelCategory } from "@/lib/categories";
+import { type FixedCategory, isOtherCategory, isTravelCategory } from "@/lib/categories";
 
 export const CATEGORY_EXAMPLE_TAGS: Record<FixedCategory, string[]> = {
   movies: ["drama", "bilim-kurgu", "festival", "aksiyon", "senaryo"],

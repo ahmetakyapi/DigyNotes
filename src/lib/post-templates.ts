@@ -1,4 +1,5 @@
 import { normalizeCategory } from "@/lib/categories";
+import { stripHtml } from "@/lib/text";
 
 export interface PostTemplate {
   label: string;
@@ -48,4 +49,44 @@ export function getTemplateSignature(html: string) {
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+const TEMPLATE_SIGNATURES = new Set(
+  Object.values(POST_TEMPLATES).map((template) => getTemplateSignature(template.html))
+);
+
+/** True when the editor holds nothing the user wrote: it is empty or still an untouched template. */
+export function isBlankOrTemplateContent(html: string) {
+  if (/<img\b/i.test(html)) return false;
+  if (!stripHtml(html)) return true;
+  return TEMPLATE_SIGNATURES.has(getTemplateSignature(html));
+}
+
+/** What "Şablonu Kaldır" brings back: the editor content from before the template went in. */
+export interface TemplateUndo {
+  previousContent: string;
+}
+
+/**
+ * Puts the category template into the editor and remembers what was there before, so the
+ * template can be taken out again. Without `force` (category switch) it only replaces an
+ * empty editor or an untouched template; with `force` (the button) it always applies and
+ * the user's text waits in the undo state. An existing undo is kept, so switching between
+ * templates still leads back to the user's own text. Returns null when nothing changes.
+ */
+export function applyTemplateToContent(
+  content: string,
+  category: string,
+  undo: TemplateUndo | null,
+  options?: { force?: boolean }
+): { content: string; undo: TemplateUndo } | null {
+  const template = getPostTemplate(category);
+  if (!template) return null;
+  if (!options?.force && !isBlankOrTemplateContent(content)) return null;
+  if (getTemplateSignature(content) === getTemplateSignature(template.html)) return null;
+
+  return {
+    content: template.html,
+    undo: undo ?? { previousContent: isBlankOrTemplateContent(content) ? "" : content },
+  };
 }

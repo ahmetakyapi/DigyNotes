@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { CaretDownIcon, InfoIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, InfoIcon, XIcon } from "@phosphor-icons/react";
 import { MediaSearch } from "@/components/MediaSearch";
 import PlaceSearch, { PlaceResult } from "@/components/PlaceSearch";
 import {
@@ -14,20 +14,20 @@ import {
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import type { PostComposerGuidance } from "@/lib/post-config";
 import type { PostCategoryFormConfig } from "@/lib/post-form";
+import { OptionalHint } from "./composer-utils";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const inputBase =
   "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";
-const labelClass =
-  "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
+const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
 
 /* LAYOUT: mono step index "01 — Label" with a short hairline, used atop every composer card */
 function StepLabel({ index, label }: { readonly index: string; readonly label: string }) {
   return (
-    <p className="flex items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+    <p className="flex items-center gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
       <span className="text-[var(--gold)]">{index}</span>
       <span className="h-px w-4 bg-[var(--border)]" />
       {label}
@@ -39,7 +39,10 @@ function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-accent/40 border-accent/50" : "";
 }
 
-function ic(flashFields: Set<string>, field: string) {
+const invalidClass = "border-danger/70 ring-1 ring-danger/30";
+
+function ic(flashFields: Set<string>, field: string, invalidFields?: Set<string>) {
+  if (invalidFields?.has(field)) return `${inputBase} ${invalidClass}`;
   return `${inputBase} ${flashClass(flashFields.has(field))}`;
 }
 
@@ -67,6 +70,7 @@ interface CategorySearchSectionProps {
   readonly isTravelCat: boolean;
   readonly title: string;
   readonly flashFields: Set<string>;
+  readonly invalidFields: Set<string>;
   readonly completedStepCount: number;
   readonly nextActionText: string;
   readonly onCategoryChange: (cat: string) => void;
@@ -83,6 +87,7 @@ export function CategorySearchSection({
   isTravelCat,
   title,
   flashFields,
+  invalidFields,
   completedStepCount,
   nextActionText,
   onCategoryChange,
@@ -146,7 +151,8 @@ export function CategorySearchSection({
               id="np-category"
               value={category}
               onChange={(event) => onCategoryChange(event.target.value)}
-              className={ic(flashFields, "category")}
+              className={ic(flashFields, "category", invalidFields)}
+              aria-invalid={invalidFields.has("category") || undefined}
             >
               {FIXED_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -168,11 +174,16 @@ export function CategorySearchSection({
               </>
             ) : (
               <>
+                <label htmlFor="np-title" className={labelClass}>
+                  Başlık
+                </label>
                 <input
+                  id="np-title"
                   type="text"
                   value={title}
                   onChange={(event) => onTitleChange(event.target.value)}
-                  className={ic(flashFields, "title")}
+                  className={ic(flashFields, "title", invalidFields)}
+                  aria-invalid={invalidFields.has("title") || undefined}
                   placeholder={guidance.titlePlaceholder}
                 />
                 <p className={helperTextClass}>
@@ -202,6 +213,7 @@ interface FieldsSectionProps {
   readonly guidance: PostComposerGuidance;
   readonly statusOptions: string[];
   readonly flashFields: Set<string>;
+  readonly invalidFields: Set<string>;
   readonly lat: number | null;
   readonly lng: number | null;
   readonly locationLabel: string;
@@ -224,6 +236,7 @@ export function FieldsSection({
   guidance,
   statusOptions,
   flashFields,
+  invalidFields,
   lat,
   lng,
   locationLabel,
@@ -234,19 +247,13 @@ export function FieldsSection({
   onYearsChange,
   onPlaceSelect,
 }: FieldsSectionProps) {
-  const creatorHelperText = (() => {
-    if (creator) return `${config.creatorLabel} bilgisi notunda görünecek.`;
-    return config.creatorRequired
-      ? `${config.creatorLabel} bilgisi zorunlu.`
-      : `${config.creatorLabel} bilgisi isteğe bağlı.`;
-  })();
+  const creatorHelperText = creator
+    ? `${config.creatorLabel} bilgisi notunda görünecek.`
+    : "Otomatik dolmadıysa boş bırakabilirsin. Sonradan da ekleyebilirsin.";
 
-  const yearsHelperText = (() => {
-    if (years) return `${config.yearsLabel} bilgisi notunda görünecek.`;
-    return config.yearsRequired
-      ? `${config.yearsLabel} bilgisi zorunlu.`
-      : `${config.yearsLabel} bilgisi isteğe bağlı, boş bırakabilirsin.`;
-  })();
+  const yearsHelperText = years
+    ? `${config.yearsLabel} bilgisi notunda görünecek.`
+    : "Boş bırakabilirsin. Sonradan da ekleyebilirsin.";
 
   return (
     <div className={cardClass}>
@@ -267,7 +274,8 @@ export function FieldsSection({
             type="text"
             value={title}
             onChange={(event) => onTitleChange(event.target.value)}
-            className={ic(flashFields, "title")}
+            className={ic(flashFields, "title", invalidFields)}
+            aria-invalid={invalidFields.has("title") || undefined}
             placeholder={guidance.titlePlaceholder}
           />
           <p className={helperTextClass}>
@@ -300,7 +308,7 @@ export function FieldsSection({
           <div>
             <label htmlFor="np-creator" className={labelClass}>
               {config.creatorLabel}
-              {config.creatorRequired && <span className="ml-1 text-[var(--danger)]">*</span>}
+              <OptionalHint />
             </label>
             <input
               id="np-creator"
@@ -317,7 +325,7 @@ export function FieldsSection({
         <div className={config.showCreator ? "" : "lg:col-span-2"}>
           <label htmlFor="np-years" className={labelClass}>
             {config.yearsLabel}
-            {config.yearsRequired && <span className="ml-1 text-[var(--danger)]">*</span>}
+            <OptionalHint />
           </label>
           <input
             id="np-years"
@@ -410,11 +418,15 @@ interface ContentSectionProps {
   readonly content: string;
   readonly plainContent: string;
   readonly activeTemplate: { html: string; description: string } | null;
+  /** The editor still shows the template exactly as it was inserted. */
   readonly isTemplateActive: boolean;
-  readonly category: string;
+  /** A template went in and "Şablonu Kaldır" can bring the previous content back. */
+  readonly templateApplied: boolean;
+  readonly invalid: boolean;
   readonly guidance: PostComposerGuidance;
   readonly onContentChange: (v: string) => void;
-  readonly onApplyTemplate: (cat: string, opts?: { force?: boolean }) => void;
+  readonly onApplyTemplate: () => void;
+  readonly onRemoveTemplate: () => void;
 }
 
 export function ContentSection({
@@ -422,12 +434,15 @@ export function ContentSection({
   plainContent,
   activeTemplate,
   isTemplateActive,
-  category,
+  templateApplied,
+  invalid,
   guidance,
   onContentChange,
   onApplyTemplate,
+  onRemoveTemplate,
 }: ContentSectionProps) {
   const contentHelperText = (() => {
+    if (invalid) return "Not içeriği gerekli; neden not aldığını anlatan tek bir cümle yeter.";
     if (isTemplateActive) return guidance.contentTemplateHint;
     if (plainContent) return guidance.contentHint;
     return "Neden not aldığını anlatan tek bir cümle bile yeterli.";
@@ -451,21 +466,34 @@ export function ContentSection({
         {activeTemplate && (
           <button
             type="button"
-            onClick={() => onApplyTemplate(category, { force: true })}
-            className={`inline-flex shrink-0 cursor-pointer items-center self-start rounded-full border px-3.5 py-1.5 text-[11px] font-medium transition-colors duration-200 ease-out-expo active:scale-95 ${
-              isTemplateActive
-                ? "border-accent/35 bg-accent/10 text-[var(--gold)]"
+            onClick={templateApplied ? onRemoveTemplate : onApplyTemplate}
+            className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 self-start rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition-colors duration-200 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 ${
+              templateApplied
+                ? "border-accent/35 bg-accent/10 text-[var(--gold)] hover:border-danger/40 hover:text-[var(--danger)]"
                 : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"
             }`}
           >
-            {isTemplateActive ? "Şablon Kullanılıyor" : "Şablonu Kullan"}
+            {templateApplied ? (
+              <>
+                <XIcon size={11} weight="bold" aria-hidden />
+                Şablonu Kaldır
+              </>
+            ) : (
+              "Şablonu Kullan"
+            )}
           </button>
         )}
       </div>
-      <div className="dn-compose-editor mt-1 overflow-hidden rounded-[18px] border border-[var(--border)]">
+      <div
+        className={`dn-compose-editor mt-1 overflow-hidden rounded-[18px] border ${
+          invalid ? "border-danger/70" : "border-[var(--border)]"
+        }`}
+      >
         <ReactQuill id="np-content" theme="snow" value={content} onChange={onContentChange} />
       </div>
-      <p className={helperTextClass}>{contentHelperText}</p>
+      <p className={invalid ? `${helperTextClass} text-[var(--danger)]` : helperTextClass}>
+        {contentHelperText}
+      </p>
     </div>
   );
 }

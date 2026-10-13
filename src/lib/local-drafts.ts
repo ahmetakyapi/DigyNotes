@@ -1,22 +1,53 @@
 /**
- * Browser-stored note drafts (`useAutoSave`, keys starting with "digynotes-draft").
- * Minimal version: only what sign-out needs.
+ * Composer drafts in localStorage. Every key starts with `digynotes-draft` and carries the
+ * signed-in user's id, so a draft never shows up for another account on the same browser.
+ * The old unscoped keys (`digynotes-draft`, `digynotes-draft-<postId>`) are dropped.
  */
+export const LOCAL_DRAFT_PREFIX = "digynotes-draft";
 
-const LOCAL_DRAFT_PREFIX = "digynotes-draft";
+type DraftStorage = Pick<Storage, "length" | "key" | "removeItem">;
 
-/** Removes every locally saved draft. No-op on the server or when storage is blocked. */
-export function clearAllLocalDrafts(): void {
-  if (typeof window === "undefined") return;
+function getBrowserStorage(): DraftStorage | null {
   try {
-    const storage = window.localStorage;
-    const keys: string[] = [];
-    for (let i = 0; i < storage.length; i += 1) {
-      const key = storage.key(i);
-      if (key?.startsWith(LOCAL_DRAFT_PREFIX)) keys.push(key);
-    }
-    keys.forEach((key) => storage.removeItem(key));
+    return typeof window === "undefined" ? null : window.localStorage;
   } catch {
-    // Storage unavailable (private mode, blocked site data): nothing to clear.
+    return null;
+  }
+}
+
+export function getLocalDraftKey(userId: string, postId?: string) {
+  return postId ? `${LOCAL_DRAFT_PREFIX}:${userId}:${postId}` : `${LOCAL_DRAFT_PREFIX}:${userId}`;
+}
+
+function removeKeys(storage: DraftStorage, shouldRemove: (key: string) => boolean) {
+  const keys: string[] = [];
+  for (let i = 0; i < storage.length; i += 1) {
+    const key = storage.key(i);
+    if (key && shouldRemove(key)) keys.push(key);
+  }
+  keys.forEach((key) => storage.removeItem(key));
+  return keys.length;
+}
+
+/** Drops drafts saved before keys were scoped per user. Returns how many were removed. */
+export function clearLegacyLocalDrafts(storage: DraftStorage | null = getBrowserStorage()) {
+  if (!storage) return 0;
+  try {
+    return removeKeys(
+      storage,
+      (key) => key === LOCAL_DRAFT_PREFIX || key.startsWith(`${LOCAL_DRAFT_PREFIX}-`)
+    );
+  } catch {
+    return 0;
+  }
+}
+
+/** Removes every composer draft on this browser (called on sign-out). */
+export function clearAllLocalDrafts(storage: DraftStorage | null = getBrowserStorage()) {
+  if (!storage) return 0;
+  try {
+    return removeKeys(storage, (key) => key.startsWith(LOCAL_DRAFT_PREFIX));
+  } catch {
+    return 0;
   }
 }

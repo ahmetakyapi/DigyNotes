@@ -1,9 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+import { clearLegacyLocalDrafts, getLocalDraftKey } from "@/lib/local-drafts";
+import { isBlankOrTemplateContent } from "@/lib/post-templates";
 
-const AUTOSAVE_KEY = "digynotes-draft";
 const AUTOSAVE_INTERVAL_MS = 30_000; // 30 saniye
+const DRAFT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface DraftData {
   title: string;
@@ -24,26 +27,39 @@ export interface DraftData {
   savedAt: number;
 }
 
-function getDraftKey(postId?: string) {
-  return postId ? `${AUTOSAVE_KEY}-${postId}` : AUTOSAVE_KEY;
+/** A draft worth keeping: something the user typed, not just the untouched template. */
+function draftHasUserInput(draft: Omit<DraftData, "savedAt">) {
+  return Boolean(
+    draft.title.trim() ||
+    draft.image.trim() ||
+    draft.creator.trim() ||
+    draft.tags.length > 0 ||
+    !isBlankOrTemplateContent(draft.content)
+  );
 }
 
+/**
+ * Local draft of the composer, scoped to the signed-in user (`digynotes-draft:<userId>`).
+ * Until the session is known nothing is loaded or saved (`isReady` stays false), so one
+ * account's half-written note never opens in another account on the same browser.
+ */
 export function useAutoSave(postId?: string) {
+  const { data: session, status } = useSession();
+  const userId = status === "authenticated" ? (session?.user?.id ?? null) : null;
+  const key = userId ? getLocalDraftKey(userId, postId) : null;
+
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const draftRef = useRef<DraftData | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const key = getDraftKey(postId);
+
+  // Drafts from before the per-user keys can't be attributed to anyone.
+  useEffect(() => {
+    clearLegacyLocalDrafts();
+  }, []);
 
   const saveDraft = useCallback(() => {
-    if (!draftRef.current) return;
-
-    const hasContent =
-      draftRef.current.title.trim() ||
-      draftRef.current.content.trim() ||
-      draftRef.current.image.trim();
-
-    if (!hasContent) return;
+    if (!key || !draftRef.current) return false;
+    if (!draftHasUserInput(draftRef.current)) return false;
 
     const data: DraftData = { ...draftRef.current, savedAt: Date.now() };
 
@@ -51,8 +67,10 @@ export function useAutoSave(postId?: string) {
       localStorage.setItem(key, JSON.stringify(data));
       setLastSavedAt(data.savedAt);
       setHasUnsavedChanges(false);
+      return true;
     } catch {
-      // localStorage dolu olabilir
+      // localStorage dolu ya da kapalı olabilir
+      return false;
     }
   }, [key]);
 
@@ -62,27 +80,29 @@ export function useAutoSave(postId?: string) {
   }, []);
 
   const loadDraft = useCallback((): DraftData | null => {
+    if (!key) return null;
     try {
       const raw = localStorage.getItem(key);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as DraftData;
-      if (!parsed.savedAt) return null;
-      // 7 günden eski taslakları yoksay
-      if (Date.now() - parsed.savedAt > 7 * 24 * 60 * 60 * 1000) {
+      if (!parsed.savedAt || Date.now() - parsed.savedAt > DRAFT_MAX_AGE_MS) {
         localStorage.removeItem(key);
         return null;
       }
-      return parsed;
+      if (!draftHasUserInput(parsed)) return null;
+      return { ...parsed, tags: Array.isArray(parsed.tags) ? parsed.tags : [] };
     } catch {
       return null;
     }
   }, [key]);
 
   const clearDraft = useCallback(() => {
-    try {
-      localStorage.removeItem(key);
-    } catch {
-      // ignore
+    if (key) {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // ignore
+      }
     }
     setLastSavedAt(null);
     setHasUnsavedChanges(false);
@@ -91,23 +111,17 @@ export function useAutoSave(postId?: string) {
 
   // Periyodik kaydetme
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      if (draftRef.current && hasUnsavedChanges) {
-        saveDraft();
-      }
+    if (!hasUnsavedChanges) return;
+    const interval = setInterval(() => {
+      if (draftRef.current) saveDraft();
     }, AUTOSAVE_INTERVAL_MS);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => clearInterval(interval);
   }, [saveDraft, hasUnsavedChanges]);
 
   // Sayfa kapanırken kaydet
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (draftRef.current && hasUnsavedChanges) {
-        saveDraft();
-      }
+      if (draftRef.current && hasUnsavedChanges) saveDraft();
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -115,6 +129,8 @@ export function useAutoSave(postId?: string) {
   }, [saveDraft, hasUnsavedChanges]);
 
   return {
+    /** True once the signed-in user is known; drafts load and save only then. */
+    isReady: key !== null,
     updateDraft,
     saveDraft,
     loadDraft,
