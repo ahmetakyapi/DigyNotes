@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +16,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [showPw, setShowPw] = useState(false);
+
+  // Prefill after a password reset (/login?email=…); read here instead of
+  // useSearchParams so the page needs no Suspense boundary.
+  useEffect(() => {
+    const prefill = new URLSearchParams(window.location.search).get("email");
+    if (prefill) setEmail(prefill);
+  }, []);
 
   const publishError = (message: string) => {
     setError(message);
@@ -78,12 +85,24 @@ export default function LoginPage() {
 
           {/* Password */}
           <div>
-            <label
-              htmlFor="login-password"
-              className="mb-2 block text-[12.5px] font-medium text-[var(--text-muted)]"
-            >
-              Şifre
-            </label>
+            <div className="mb-2 flex items-baseline justify-between gap-3">
+              <label
+                htmlFor="login-password"
+                className="block text-[12.5px] font-medium text-[var(--text-muted)]"
+              >
+                Şifre
+              </label>
+              <Link
+                href={
+                  email.trim()
+                    ? `/forgot-password?email=${encodeURIComponent(email.trim())}`
+                    : "/forgot-password"
+                }
+                className="dn-auth-link text-[12.5px] font-medium transition-colors"
+              >
+                Şifremi Unuttum
+              </Link>
+            </div>
             <div className="relative">
               <input
                 id="login-password"

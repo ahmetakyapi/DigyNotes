@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
  *   H  → Ana sayfa (/notes)
  *   F  → Akış (/feed)
  *   D  → Keşfet (/discover)
+ *   B  → Kaydettiklerim (/saved)
  *   ?  → Kısayol yardımını göster/gizle
  *
  * Input/textarea/contenteditable içindeyken devre dışı kalır.
@@ -76,6 +77,10 @@ export default function KeyboardShortcuts() {
         case "d":
           e.preventDefault();
           router.push("/discover");
+          break;
+        case "b":
+          e.preventDefault();
+          router.push("/saved");
           break;
         case "/":
         case "?":

@@ -18,6 +18,7 @@ const SHORTCUTS: Shortcut[] = [
   { key: "H", label: "Ana Sayfaya Git" },
   { key: "F", label: "Akış Sayfasına Git" },
   { key: "D", label: "Keşfet Sayfasına Git" },
+  { key: "B", label: "Kaydettiklerine Git" },
   { key: "?", label: "Bu Yardımı Göster" },
   { key: "Esc", label: "Modalı Kapat" },
 ];
@@ -76,7 +77,7 @@ export default function ShortcutHelpModal() {
             {/* Başlık */}
             <div className="mb-5 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="bg-accent/10 flex h-9 w-9 items-center justify-center rounded-xl text-[var(--gold)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-[var(--gold)]">
                   <KeyboardIcon size={18} weight="duotone" />
                 </div>
                 <h2

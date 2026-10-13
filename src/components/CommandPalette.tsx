@@ -13,6 +13,7 @@ import {
   PencilSimpleIcon,
   GearIcon,
   BookmarkSimpleIcon,
+  ListChecksIcon,
   HeartIcon,
   SunIcon,
   MoonIcon,
@@ -32,6 +33,9 @@ interface CommandItem {
   action: () => void;
   section: "Notlar" | "Git" | "Eylem";
 }
+
+// Landing and auth screens: no palette there.
+const AUTH_FREE_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
 
 interface NoteHit {
   id: string;
@@ -117,10 +121,19 @@ export default function CommandPalette() {
         section: "Git",
       },
       {
-        id: "watchlist",
-        label: "İzleme Listesi",
-        keywords: "izlenecek kaydet watchlist",
+        id: "saved",
+        label: "Kaydettiklerim",
+        keywords: "kaydet kaydedilen kaydedilenler yer imi bookmark saved",
+        hint: "B",
         icon: <BookmarkSimpleIcon size={16} weight="duotone" />,
+        action: () => router.push("/saved"),
+        section: "Git",
+      },
+      {
+        id: "watchlist",
+        label: "İstek Listesi",
+        keywords: "izleme izlenecek okunacak watchlist istek",
+        icon: <ListChecksIcon size={16} weight="duotone" />,
         action: () => router.push("/watchlist"),
         section: "Git",
       },
@@ -231,7 +244,7 @@ export default function CommandPalette() {
 
   // Cmd+K / Ctrl+K global trigger
   useEffect(() => {
-    const suppressed = pathname === "/" || pathname === "/login" || pathname === "/register";
+    const suppressed = AUTH_FREE_PATHS.includes(pathname);
     if (suppressed) return;
     if (!session?.user) return;
 
@@ -343,7 +356,7 @@ export default function CommandPalette() {
                   <p className="dn-display text-2xl italic text-[var(--text-secondary)]">
                     {searching ? "Arşivde aranıyor…" : "Eşleşen bir şey yok."}
                   </p>
-                  <p className="mt-2 text-[12px] text-[var(--text-muted)] font-medium">
+                  <p className="mt-2 text-[12px] font-medium text-[var(--text-muted)]">
                     Başlık, yönetmen, yazar ya da etiket dene
                   </p>
                 </li>
@@ -353,7 +366,7 @@ export default function CommandPalette() {
                   if (sectionItems.length === 0) return null;
                   return (
                     <li key={section}>
-                      <div className="px-5 pb-1.5 pt-3 text-[12px] text-[var(--text-muted)] font-medium">
+                      <div className="px-5 pb-1.5 pt-3 text-[12px] font-medium text-[var(--text-muted)]">
                         {section}
                       </div>
                       <ul>
@@ -389,7 +402,7 @@ export default function CommandPalette() {
                                 <span className="flex-1">{item.label}</span>
                                 {item.hint &&
                                   (item.section === "Notlar" ? (
-                                    <span className="text-[12px] text-[var(--text-muted)] font-medium">
+                                    <span className="text-[12px] font-medium text-[var(--text-muted)]">
                                       {item.hint}
                                     </span>
                                   ) : (
@@ -411,7 +424,7 @@ export default function CommandPalette() {
               )}
             </ul>
 
-            <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5 text-[12px] text-[var(--text-muted)] font-medium">
+            <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5 text-[12px] font-medium text-[var(--text-muted)]">
               <span>
                 <kbd className="font-mono">↑↓</kbd> gezin · <kbd className="font-mono">↵</kbd> seç
               </span>

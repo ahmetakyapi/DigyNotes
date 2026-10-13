@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { MagnifyingGlassIcon } from "@phosphor-icons/react";
+import Link from "next/link";
+import { BookmarkSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import type { SortFilterState } from "@/components/SortFilterBar";
 import { SortFilterBar } from "@/components/SortFilterBar";
 import TagBadge from "@/components/TagBadge";
@@ -24,6 +25,7 @@ export function PostsTabSwitcher({
   totalSaved,
   totalDrafts = 0,
   totalArchived = 0,
+  hasMoreSaved = false,
   avgRating,
   onTabChange,
 }: {
@@ -32,6 +34,8 @@ export function PostsTabSwitcher({
   readonly totalSaved: number;
   readonly totalDrafts?: number;
   readonly totalArchived?: number;
+  /** More saved notes exist than are loaded, so the count reads "12+". */
+  readonly hasMoreSaved?: boolean;
   readonly avgRating: number;
   readonly onTabChange: (tab: PostsTab) => void;
 }) {
@@ -75,8 +79,11 @@ export function PostsTabSwitcher({
             }`}
           >
             {tab.label}
-            {(tab.key === "taslaklar" || tab.key === "arsiv") && counts[tab.countKey] > 0 && (
-              <span className="ml-1.5 text-[12px] opacity-70">{counts[tab.countKey]}</span>
+            {tab.key !== "notlar" && counts[tab.countKey] > 0 && (
+              <span className="ml-1.5 text-[12px] opacity-70">
+                {counts[tab.countKey]}
+                {tab.key === "kaydedilenler" && hasMoreSaved ? "+" : ""}
+              </span>
             )}
           </button>
         ))}
@@ -238,9 +245,39 @@ export function SavedPostsGuide() {
     <div className="mb-4">
       <OrganizationGuide
         current="bookmarks"
-        title="Kaydettiklerim ne için var?"
+        title="Kaydettiklerim Ne İçin Var?"
         description="Bu alan hızlı geri dönüş içindir. Henüz nota dönüşmeyen şeyleri İstek Listesi'nde beklet, tamamlanmış notları ise Koleksiyonlar altında daha kalıcı biçimde grupla."
       />
+    </div>
+  );
+}
+
+/* ── Saved tab empty state: explains how saving works ── */
+
+export function SavedEmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-accent/25 bg-accent/10 text-accent">
+        <BookmarkSimpleIcon size={20} weight="duotone" />
+      </div>
+      <h3 className="text-base font-bold tracking-[-0.02em] text-[var(--text-primary)]">
+        Henüz Kaydettiğin Not Yok
+      </h3>
+      <p className="mt-2 max-w-sm text-sm leading-6 text-[var(--text-secondary)] [text-wrap:pretty]">
+        Bir notu okurken{" "}
+        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2 py-0.5 align-middle text-[12px] font-medium text-[var(--text-primary)]">
+          <BookmarkSimpleIcon size={12} />
+          Kaydet
+        </span>{" "}
+        düğmesine dokun; kaydettiklerin burada toplanır. Profil menündeki Kaydettiklerim&apos;den
+        her zaman ulaşabilirsin.
+      </p>
+      <Link
+        href="/discover"
+        className="mt-5 rounded-full border border-[var(--border)] px-4 py-2 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+      >
+        Keşfet&apos;e Göz At
+      </Link>
     </div>
   );
 }
@@ -264,6 +301,8 @@ export function PostsEmptyState({
   readonly onClearFilters: () => void;
   readonly onLoadMore?: () => void;
 }) {
+  if (!hasVisiblePosts && activeTab === "kaydedilenler" && !hasMore) return <SavedEmptyState />;
+
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">

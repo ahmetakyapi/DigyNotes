@@ -9,7 +9,14 @@ import ShortcutHelpModal from "./ShortcutHelpModal";
 import ScrollToTop from "./ScrollToTop";
 
 // These paths never get AppShell
-const ALWAYS_PUBLIC = ["/", "/login", "/register", "/offline"];
+const ALWAYS_PUBLIC = [
+  "/",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/offline",
+];
 // These paths are publicly accessible but get AppShell when logged in
 const SEMI_PUBLIC_PREFIXES = ["/discover", "/profile", "/collections"];
 

@@ -37,6 +37,7 @@ export default withAuth(
 export const config = {
   matcher: [
     "/notes/:path*",
+    "/saved",
     "/new-post/:path*",
     "/posts/:path*/edit",
     "/category/:path*",
