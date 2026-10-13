@@ -259,6 +259,7 @@ export function PostsList({
           totalSaved={savedPosts.length}
           totalDrafts={draftPosts.length}
           totalArchived={archivedPosts.length}
+          hasMoreSaved={hasMoreSavedPosts}
           avgRating={stats.avgRating}
           onTabChange={handleTabChange}
         />

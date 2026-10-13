@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { BookmarkSimpleIcon } from "@phosphor-icons/react";
@@ -79,11 +80,25 @@ export function BookmarkButton({
         `${ORGANIZATION_SURFACES.bookmarks.label} işlemi tamamlanamadı.`
       );
 
-      toast.success(
-        nextState
-          ? `${ORGANIZATION_SURFACES.bookmarks.label} alanına eklendi`
-          : `${ORGANIZATION_SURFACES.bookmarks.label} alanından çıkarıldı`
-      );
+      if (nextState) {
+        toast.success(
+          (t) => (
+            <span className="flex items-center gap-3">
+              <span>Kaydettiklerine eklendi</span>
+              <Link
+                href={ORGANIZATION_SURFACES.bookmarks.href}
+                onClick={() => toast.dismiss(t.id)}
+                className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[12.5px] font-semibold text-accent transition-colors hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              >
+                Görüntüle
+              </Link>
+            </span>
+          ),
+          { duration: 5000 }
+        );
+      } else {
+        toast.success("Kaydettiklerinden çıkarıldı");
+      }
     } catch (error) {
       setBookmarked(!nextState);
       const fallbackMessage = `${ORGANIZATION_SURFACES.bookmarks.label} işlemi tamamlanamadı.`;
@@ -96,9 +111,7 @@ export function BookmarkButton({
     }
   };
 
-  const tooltipLabel = bookmarked
-    ? `${ORGANIZATION_SURFACES.bookmarks.label} alanından çıkar`
-    : `${ORGANIZATION_SURFACES.bookmarks.label} alanına ekle`;
+  const tooltipLabel = bookmarked ? "Kaydettiklerinden çıkar" : "Kaydettiklerine ekle";
 
   return (
     <ActionTooltip label={tooltipLabel}>
@@ -107,6 +120,7 @@ export function BookmarkButton({
         onClick={handleToggle}
         disabled={loading}
         aria-label={tooltipLabel}
+        aria-pressed={bookmarked}
         title={tooltipLabel}
         className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 ${
           bookmarked
@@ -115,13 +129,7 @@ export function BookmarkButton({
         } ${className}`}
       >
         <BookmarkSimpleIcon size={16} weight={bookmarked ? "fill" : "regular"} />
-        {showLabel && (
-          <span>
-            {bookmarked
-              ? `${ORGANIZATION_SURFACES.bookmarks.label}de`
-              : ORGANIZATION_SURFACES.bookmarks.label}
-          </span>
-        )}
+        {showLabel && <span>{bookmarked ? "Kaydedildi" : "Kaydet"}</span>}
       </button>
     </ActionTooltip>
   );

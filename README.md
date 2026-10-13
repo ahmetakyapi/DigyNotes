@@ -102,6 +102,10 @@ NEXTAUTH_URL="http://localhost:3000"
 # Medya arama (isteğe bağlı — olmadan form çalışır ama arama devre dışı)
 NEXT_PUBLIC_TMDB_API_KEY="tmdb-api-anahtarin"
 NEXT_PUBLIC_RAWG_API_KEY="rawg-api-anahtarin"
+
+# Şifre sıfırlama e-postası (isteğe bağlı — lokalde yoksa bağlantı sunucu konsoluna yazılır)
+RESEND_API_KEY="resend-api-anahtarin"
+EMAIL_FROM="DigyNotes <noreply@alan-adin.com>"
 ```
 
 > `NEXTAUTH_SECRET` için: `openssl rand -base64 32`
@@ -255,5 +259,7 @@ Ayrıca proje kökünde:
 | `NEXTAUTH_URL` | `https://SENIN-ADRESIN.vercel.app` |
 | `NEXT_PUBLIC_TMDB_API_KEY` | TMDB API anahtarın |
 | `NEXT_PUBLIC_RAWG_API_KEY` | RAWG API anahtarın |
+| `RESEND_API_KEY` | Resend API anahtarın (şifre sıfırlama e-postaları; yoksa e-posta gitmez) |
+| `EMAIL_FROM` | Resend'de doğrulanmış gönderici, ör. `DigyNotes <noreply@alan-adin.com>` |
 
 1. **Deployments → Redeploy** ile yeniden deploy et

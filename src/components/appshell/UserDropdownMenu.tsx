@@ -9,6 +9,7 @@ import {
   CalendarIcon,
   ChartBarIcon,
   GearIcon,
+  ListChecksIcon,
   MoonIcon,
   ShieldStarIcon,
   SignOutIcon,
@@ -16,6 +17,8 @@ import {
   UserIcon,
 } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { clearAllLocalDrafts } from "@/lib/local-drafts";
+import { ORGANIZATION_SURFACES } from "@/lib/organization";
 
 interface UserDropdownMenuProps {
   readonly session: {
@@ -112,10 +115,17 @@ export function UserDropdownMenu({
 
       {/* Nav items continued */}
       <div className="py-1">
+        <DropdownLink
+          href={ORGANIZATION_SURFACES.bookmarks.href}
+          onClose={onClose}
+          icon={<BookmarkSimpleIcon size={14} />}
+        >
+          {ORGANIZATION_SURFACES.bookmarks.label}
+        </DropdownLink>
         <DropdownLink href="/collections" onClose={onClose} icon={<BookOpenIcon size={14} />}>
           Koleksiyonlar
         </DropdownLink>
-        <DropdownLink href="/watchlist" onClose={onClose} icon={<BookmarkSimpleIcon size={14} />}>
+        <DropdownLink href="/watchlist" onClose={onClose} icon={<ListChecksIcon size={14} />}>
           İstek Listesi
         </DropdownLink>
         <DropdownLink href="/stats" onClose={onClose} icon={<ChartBarIcon size={14} />}>
@@ -137,7 +147,7 @@ export function UserDropdownMenu({
             <Link
               href="/admin"
               onClick={onClose}
-              className="bg-accent/8 hover:bg-accent/14 mx-1 flex items-center gap-2.5 rounded-lg border border-accent/25 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-accent/40 hover:text-[var(--gold-light)]"
+              className="mx-1 flex items-center gap-2.5 rounded-lg border border-accent/25 bg-accent/8 px-3 py-2 text-[13px] font-semibold text-[var(--gold)] transition-colors duration-100 hover:border-accent/40 hover:bg-accent/14 hover:text-[var(--gold-light)]"
             >
               <ShieldStarIcon size={14} />
               Admin Paneli
@@ -153,6 +163,8 @@ export function UserDropdownMenu({
         <button
           onClick={() => {
             localStorage.removeItem("dn_username");
+            // Unsent drafts must not survive into the next account on this device.
+            clearAllLocalDrafts();
             signOut({ callbackUrl: "/" });
           }}
           className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] font-medium text-[var(--danger)] transition-colors duration-100 hover:bg-danger/10 hover:text-[var(--danger-light)]"

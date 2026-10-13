@@ -16,7 +16,7 @@ export const ORGANIZATION_SURFACES: Record<OrganizationSurfaceKey, OrganizationS
       label: "Kaydettiklerim",
       shortLabel: "Sonra tekrar bak",
       description: "Tekrar bakmak istediğin notları kaydet, hepsini tek yerde bul.",
-      href: "/notes?tab=kaydedilenler",
+      href: "/saved",
       cta: "Kaydettiklerime Git",
     },
     watchlist: {

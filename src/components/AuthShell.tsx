@@ -40,9 +40,56 @@ const COPY = {
     ),
     subtitle: "Yarım dakikada üye ol, notlarını tutmaya başla.",
   },
+  forgot: {
+    label: "Şifremi Unuttum",
+    title: (
+      <>
+        Şifreni <span className="dn-display font-normal italic">Sıfırla</span>
+      </>
+    ),
+    subtitle: "Hesabının e-posta adresini yaz, sana yeni şifre bağlantısı gönderelim.",
+  },
+  forgotSent: {
+    label: "Şifremi Unuttum",
+    title: (
+      <>
+        E-postanı <span className="dn-display font-normal italic">Kontrol</span> Et
+      </>
+    ),
+    subtitle: "Bağlantı yolda. Gelen kutunu ve gereksiz klasörünü kontrol et.",
+  },
+  reset: {
+    label: "Yeni Şifre",
+    title: (
+      <>
+        Yeni <span className="dn-display font-normal italic">Şifre</span> Belirle
+      </>
+    ),
+    subtitle: "Hesabın için yeni bir şifre seç. En az 8 karakter olsun.",
+  },
+  resetInvalid: {
+    label: "Yeni Şifre",
+    title: (
+      <>
+        Bağlantı <span className="dn-display font-normal italic">Geçersiz</span>
+      </>
+    ),
+    subtitle: "Bu bağlantının süresi dolmuş ya da daha önce kullanılmış.",
+  },
 };
 
-export function AuthShell({ mode, children }: { mode: "login" | "register"; children: ReactNode }) {
+export type AuthShellMode = keyof typeof COPY;
+
+export function AuthShell({
+  mode,
+  subtitle,
+  children,
+}: {
+  mode: AuthShellMode;
+  /** Replaces the mode's default subtitle (e.g. to show the e-mail a link went to). */
+  subtitle?: ReactNode;
+  children: ReactNode;
+}) {
   const copy = COPY[mode];
   return (
     <div className="relative grid min-h-screen bg-[var(--bg-base)] lg:grid-cols-[52%_1fr]">
@@ -117,10 +164,12 @@ export function AuthShell({ mode, children }: { mode: "login" | "register"; chil
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="mt-4 text-[44px] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[52px]">
+          <h1 className="mt-4 text-[44px] font-extrabold leading-[0.95] tracking-[-0.035em] text-[var(--text-primary)] [text-wrap:balance] sm:text-[52px]">
             {copy.title}
           </h1>
-          <p className="mb-9 mt-3 text-[15px] text-[var(--text-secondary)]">{copy.subtitle}</p>
+          <p className="mb-9 mt-3 text-[15px] text-[var(--text-secondary)] [text-wrap:pretty]">
+            {subtitle ?? copy.subtitle}
+          </p>
           {children}
         </motion.div>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/types";
-import { PostsList } from "@/components/posts-list";
+import { PostsList, SavedEmptyState } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { WelcomeHeader } from "@/components/WelcomeHeader";
 import { normalizeTagName } from "@/lib/text";
@@ -216,6 +216,15 @@ export default function NotesPageClient({
     const hasCategory = initialCategory.trim().length > 0;
     const hasTags = initialTags.length > 0;
     const hasFilterPath = hasQuery || hasCategory || hasTags;
+
+    // Arrived via /saved with nothing at all yet: explain saving instead of onboarding.
+    if (initialTab === "kaydedilenler" && !hasFilterPath && !savedError) {
+      return (
+        <div className="mx-auto flex min-h-[60vh] max-w-5xl items-center justify-center px-3 sm:px-6">
+          <SavedEmptyState />
+        </div>
+      );
+    }
 
     if (hasFilterPath) {
       return (

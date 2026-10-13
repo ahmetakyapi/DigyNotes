@@ -42,19 +42,21 @@ npm run db:push | db:generate | db:studio
 brew services start|stop postgresql@16
 ```
 
-Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://localhost:4300`), `NEXTAUTH_SECRET`, `NEXT_PUBLIC_TMDB_API_KEY`, `NEXT_PUBLIC_RAWG_API_KEY`, `NEXT_PUBLIC_SITE_URL`; optional `UPSTASH_REDIS_REST_URL`/`_TOKEN` (rate-limit store, in-memory fallback), `ENABLE_ADMIN_BOOTSTRAP`.
+Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://localhost:4300`), `NEXTAUTH_SECRET`, `NEXT_PUBLIC_TMDB_API_KEY`, `NEXT_PUBLIC_RAWG_API_KEY`, `NEXT_PUBLIC_SITE_URL`; optional `UPSTASH_REDIS_REST_URL`/`_TOKEN` (rate-limit store, in-memory fallback), `ENABLE_ADMIN_BOOTSTRAP`, `RESEND_API_KEY` + `EMAIL_FROM` (password-reset mail via Resend's HTTP API; without the key non-production logs the reset link to the server console).
 
 ## Code Map
 
 - Pages `src/app/**/page.tsx` (heavy client logic in a sibling `*Client.tsx`); APIs `src/app/api/**/route.ts` — list them with `find src/app -name route.ts`, don't keep inventories here.
 - `src/lib/`: `prisma.ts` (the only PrismaClient), `auth.ts`, `api-server.ts` (`requireAuth`, `requireAdmin`, `handleApiError`, `safeParseBody`), `api-utils.ts` (`transformPostTags`, `sanitizePostContent`, field sanitizers), `rate-limit.ts`, `post-access.ts`, `categories.ts`, `metadata.ts` (`getSiteUrl`), `og-*`.
 - `src/types/index.ts` shared types; `src/types/next-auth.d.ts` adds `session.user.id`.
-- `src/components/ConditionalAppShell.tsx` decides the shell: never on `/`, `/login`, `/register`, `/offline`; `/discover`, `/profile`, `/collections` get it only when signed in.
+- `src/components/ConditionalAppShell.tsx` decides the shell: never on `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/offline`; `/discover`, `/profile`, `/collections` get it only when signed in.
 
 ## Auth & Access
 
-- The `matcher` in `src/middleware.ts` is the single source of truth for protected routes; add every new private page or API there. It covers notes, new-post, `posts/*/edit`, category, feed, recommended, collections, watchlist, stats, notifications, profile/settings, admin, and the posts, categories, tags, bookmarks, watchlist, collections, follows, feed, recommendations, notifications, `users/me` and admin APIs.
+- The `matcher` in `src/middleware.ts` is the single source of truth for protected routes; add every new private page or API there. It covers notes, saved, new-post, `posts/*/edit`, category, feed, recommended, collections, watchlist, stats, notifications, profile/settings, admin, and the posts, categories, tags, bookmarks, watchlist, collections, follows, feed, recommendations, notifications, `users/me` and admin APIs.
+- Saved notes ("Kaydettiklerim") live in the saved tab of `/notes` (`?tab=kaydedilenler`); `/saved` redirects there and is the link used everywhere (`ORGANIZATION_SURFACES.bookmarks.href`, user menu, command palette, `B` shortcut).
 - Public: landing, auth pages, `/discover`, `/profile/[username]`, `/tag/[name]`, `/posts/[id]` (visibility via `getPostReadAccess`/`canReadPost`: owner and admin always; others only published — not draft, not deleted — notes of a public author), `/api/public`, `/api/search`, `/api/users/[username]/**`, `/api/users/search`, `/api/community/stats`, `/api/auth/*`. The middleware's `authorized` callback also lets anonymous **GET** through to `/api/posts/[id]`, `…/likes`, `…/comments` and `/api/posts/related` (handlers check access themselves); writes there still need a session.
+- Password reset: `/forgot-password` → `POST /api/auth/forgot-password` (always `{ ok: true }`, no user enumeration; rate-limited per IP and per address) mails a link to `/reset-password?token=…` (`src/lib/email.ts`); `GET|POST /api/auth/reset-password` verifies it. Tokens are stateless (`src/lib/password-reset.ts`, tested): HMAC with `NEXTAUTH_SECRET` over user id, expiry (60 min) and the current password hash, so they die once the password changes. Both pages are noindex, outside the app shell and the sitemap.
 - Admin = `User.isAdmin` + `requireAdmin()`. `/api/admin/setup` bootstraps only outside production unless `ENABLE_ADMIN_BOOTSTRAP=true`.
 - Maintenance mode (`SiteSettings.maintenanceMode`, `MaintenanceGuard`) only applies to middleware-matched routes: it reads the `x-pathname` header the middleware sets.
 
