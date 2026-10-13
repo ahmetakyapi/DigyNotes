@@ -12,6 +12,8 @@ import { ORGANIZATION_SURFACES } from "@/lib/organization";
 interface BookmarkButtonProps {
   postId: string;
   ownerId?: string | null;
+  /** Known state (e.g. from the feed API): skips the per-button status request. */
+  initialBookmarked?: boolean;
   showLabel?: boolean;
   className?: string;
 }
@@ -19,17 +21,23 @@ interface BookmarkButtonProps {
 export function BookmarkButton({
   postId,
   ownerId = null,
+  initialBookmarked,
   showLabel = false,
   className = "",
 }: BookmarkButtonProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const currentUserId = session?.user ? (session.user as { id: string }).id : null;
-  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(initialBookmarked ?? false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status !== "authenticated" || !currentUserId || currentUserId === ownerId) {
+    if (
+      initialBookmarked !== undefined ||
+      status !== "authenticated" ||
+      !currentUserId ||
+      currentUserId === ownerId
+    ) {
       return;
     }
 
@@ -41,7 +49,7 @@ export function BookmarkButton({
         }
       })
       .catch(() => {});
-  }, [currentUserId, ownerId, postId, status]);
+  }, [currentUserId, initialBookmarked, ownerId, postId, status]);
 
   if (currentUserId && ownerId && currentUserId === ownerId) {
     return null;

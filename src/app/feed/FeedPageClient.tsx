@@ -1,133 +1,344 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   ArrowDownIcon,
   ArrowRightIcon,
   CompassIcon,
+  FireIcon,
+  SparkleIcon,
   UsersThreeIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react";
-import { getCategoryLabel } from "@/lib/categories";
-import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
-import { getPostImageSrc } from "@/lib/post-image";
-import { categorySupportsSpoiler } from "@/lib/post-config";
-import { Post } from "@/types";
-import { AvatarImage } from "@/components/AvatarImage";
-import { ResilientImage } from "@/components/ResilientImage";
-import StarRating from "@/components/StarRating";
-import { StatusBadge } from "@/components/StatusBadge";
-import TagBadge from "@/components/TagBadge";
+import { getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { FEED_DEFAULT_LIMIT, parseFeedTab, type FeedPost, type FeedTab } from "@/lib/feed";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FeedCard } from "@/components/feed/FeedCard";
+import { FeedSkeleton } from "@/components/feed/FeedSkeleton";
+import { FeedTabs } from "@/components/feed/FeedTabs";
 
-const FEED_LIMIT = 20;
 const EASE = [0.16, 1, 0.3, 1] as const;
+const OWN_STORAGE_KEY = "dn_feed_own";
+/** Below this many following items the popular preview fills the page. */
+const PREVIEW_THRESHOLD = 5;
+const PREVIEW_COUNT = 3;
+
+type TabStatus = "idle" | "loading" | "ready" | "error" | "unauthorized";
+
+interface TabState {
+  items: FeedPost[];
+  nextCursor: string | null;
+  status: TabStatus;
+  loadingMore: boolean;
+  moreFailed: boolean;
+}
+
+const EMPTY_TAB: TabState = {
+  items: [],
+  nextCursor: null,
+  status: "idle",
+  loadingMore: false,
+  moreFailed: false,
+};
+
+const INITIAL_TABS: Record<FeedTab, TabState> = {
+  following: EMPTY_TAB,
+  popular: EMPTY_TAB,
+  latest: EMPTY_TAB,
+};
+
+class FeedUnauthorizedError extends Error {}
 
 export default function FeedPageClient() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [empty, setEmpty] = useState(false);
-  const [requiresLogin, setRequiresLogin] = useState(false);
-  const [loadFailed, setLoadFailed] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab = parseFeedTab(searchParams.get("tab"));
   const reduce = useReducedMotion();
 
-  const fetchFeed = useCallback(async (cursor?: string | null) => {
-    const params = new URLSearchParams({ limit: String(FEED_LIMIT) });
-    if (cursor) params.set("cursor", cursor);
+  const [tabs, setTabs] = useState(INITIAL_TABS);
+  /** null until localStorage has been read, so the first request uses the saved choice. */
+  const [showOwn, setShowOwn] = useState<boolean | null>(null);
+  /** Authors followed from this page keep their (now "Takipte") button visible. */
+  const [followedHere, setFollowedHere] = useState<Set<string>>(() => new Set());
 
-    const r = await fetch(`/api/feed?${params.toString()}`);
-    if (r.status === 401) {
-      setRequiresLogin(true);
-      return { items: [] as Post[], nextCursor: null };
-    }
-    if (!r.ok) {
-      throw new Error("Feed fetch failed");
-    }
-    const data = await r.json();
-    let items: Post[] = [];
-    let nc: string | null = null;
-    if (Array.isArray(data)) {
-      items = data;
-    } else if (data && Array.isArray(data.items)) {
-      items = data.items;
-      nc = data.nextCursor ?? null;
-    }
-    return { items, nextCursor: nc };
+  const tabsRef = useRef(tabs);
+  tabsRef.current = tabs;
+  const generationRef = useRef<Record<FeedTab, number>>({ following: 0, popular: 0, latest: 0 });
+  const pendingLikesRef = useRef<Set<string>>(new Set());
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const patchTab = useCallback((tab: FeedTab, patch: Partial<TabState>) => {
+    setTabs((prev) => ({ ...prev, [tab]: { ...prev[tab], ...patch } }));
   }, []);
 
-  useEffect(() => {
-    fetchFeed()
-      .then(({ items, nextCursor: nc }) => {
-        setPosts(items);
-        setNextCursor(nc);
-        setEmpty(items.length === 0);
-      })
-      .catch(() => {
-        setLoadFailed(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [fetchFeed]);
+  /** Same note can sit in several tabs; keep them in sync. */
+  const patchPosts = useCallback((match: (post: FeedPost) => boolean, patch: Partial<FeedPost>) => {
+    setTabs((prev) => {
+      const next = { ...prev };
+      for (const tab of Object.keys(prev) as FeedTab[]) {
+        next[tab] = {
+          ...prev[tab],
+          items: prev[tab].items.map((post) => (match(post) ? { ...post, ...patch } : post)),
+        };
+      }
+      return next;
+    });
+  }, []);
 
-  const handleLoadMore = async () => {
-    if (!nextCursor || loadingMore) return;
-    setLoadingMore(true);
+  const fetchPage = useCallback(async (tab: FeedTab, cursor: string | null, own: boolean) => {
+    const params = new URLSearchParams({ tab, limit: String(FEED_DEFAULT_LIMIT) });
+    if (cursor) params.set("cursor", cursor);
+    if (tab === "following") params.set("own", own ? "1" : "0");
+
+    const response = await fetch(`/api/feed?${params.toString()}`);
+    if (response.status === 401) throw new FeedUnauthorizedError();
+    if (!response.ok) throw new Error("Feed fetch failed");
+    const data = (await response.json()) as { items?: FeedPost[]; nextCursor?: string | null };
+    return {
+      items: Array.isArray(data.items) ? data.items : [],
+      nextCursor: data.nextCursor ?? null,
+    };
+  }, []);
+
+  const loadTab = useCallback(
+    async (tab: FeedTab, own: boolean) => {
+      const generation = ++generationRef.current[tab];
+      patchTab(tab, { ...EMPTY_TAB, status: "loading" });
+      try {
+        const { items, nextCursor } = await fetchPage(tab, null, own);
+        if (generationRef.current[tab] !== generation) return;
+        patchTab(tab, { items, nextCursor, status: "ready" });
+      } catch (error) {
+        if (generationRef.current[tab] !== generation) return;
+        patchTab(tab, {
+          status: error instanceof FeedUnauthorizedError ? "unauthorized" : "error",
+        });
+      }
+    },
+    [fetchPage, patchTab]
+  );
+
+  const loadMore = useCallback(async () => {
+    const tab = activeTab;
+    const current = tabsRef.current[tab];
+    if (!current.nextCursor || current.loadingMore || showOwn === null) return;
+
+    const generation = generationRef.current[tab];
+    patchTab(tab, { loadingMore: true, moreFailed: false });
     try {
-      const { items, nextCursor: nc } = await fetchFeed(nextCursor);
-      setPosts((prev) => [...prev, ...items]);
-      setNextCursor(nc);
+      const { items, nextCursor } = await fetchPage(tab, current.nextCursor, showOwn);
+      if (generationRef.current[tab] !== generation) return;
+      setTabs((prev) => {
+        const seen = new Set(prev[tab].items.map((post) => post.id));
+        return {
+          ...prev,
+          [tab]: {
+            ...prev[tab],
+            items: [...prev[tab].items, ...items.filter((post) => !seen.has(post.id))],
+            nextCursor,
+            loadingMore: false,
+          },
+        };
+      });
     } catch {
-      // silently fail, user can retry
+      if (generationRef.current[tab] !== generation) return;
+      patchTab(tab, { loadingMore: false, moreFailed: true });
+    }
+  }, [activeTab, fetchPage, patchTab, showOwn]);
+
+  // Saved own-notes choice (default on).
+  useEffect(() => {
+    let saved = true;
+    try {
+      saved = window.localStorage.getItem(OWN_STORAGE_KEY) !== "0";
+    } catch {
+      // storage blocked: keep the default
+    }
+    setShowOwn(saved);
+  }, []);
+
+  // Each tab loads once and keeps its list when the viewer comes back to it.
+  const activeStatus = tabs[activeTab].status;
+  useEffect(() => {
+    if (showOwn === null || activeStatus !== "idle") return;
+    void loadTab(activeTab, showOwn);
+  }, [activeStatus, activeTab, loadTab, showOwn]);
+
+  // A thin following list gets a popular preview underneath.
+  const following = tabs.following;
+  const needsPreview =
+    activeTab === "following" &&
+    following.status === "ready" &&
+    following.items.length < PREVIEW_THRESHOLD &&
+    !following.nextCursor;
+  const popularStatus = tabs.popular.status;
+  useEffect(() => {
+    if (needsPreview && popularStatus === "idle" && showOwn !== null) {
+      void loadTab("popular", showOwn);
+    }
+  }, [loadTab, needsPreview, popularStatus, showOwn]);
+
+  // Auto-load the next page near the bottom; the button stays as a fallback.
+  const current = tabs[activeTab];
+  const canAutoLoad =
+    current.status === "ready" &&
+    Boolean(current.nextCursor) &&
+    !current.loadingMore &&
+    !current.moreFailed;
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !canAutoLoad || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) void loadMore();
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [canAutoLoad, loadMore]);
+
+  const changeTab = (tab: FeedTab) => {
+    if (tab === activeTab) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === "following") params.delete("tab");
+    else params.set("tab", tab);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
+  const toggleOwn = () => {
+    const next = !(showOwn ?? true);
+    setShowOwn(next);
+    try {
+      window.localStorage.setItem(OWN_STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      // storage blocked: the choice lasts for this visit only
+    }
+    generationRef.current.following++;
+    patchTab("following", EMPTY_TAB);
+  };
+
+  const toggleLike = async (post: FeedPost) => {
+    if (pendingLikesRef.current.has(post.id)) return;
+    pendingLikesRef.current.add(post.id);
+
+    const liked = !post.likedByMe;
+    patchPosts((p) => p.id === post.id, {
+      likedByMe: liked,
+      likeCount: Math.max(0, post.likeCount + (liked ? 1 : -1)),
+    });
+
+    try {
+      const data = await requestJson<{ count: number; liked: boolean }>(
+        `/api/posts/${post.id}/likes`,
+        { method: "POST" },
+        "Beğeni işlemi tamamlanamadı."
+      );
+      patchPosts((p) => p.id === post.id, { likedByMe: data.liked, likeCount: data.count });
+    } catch (error) {
+      patchPosts((p) => p.id === post.id, {
+        likedByMe: post.likedByMe,
+        likeCount: post.likeCount,
+      });
+      toast.error(getClientErrorMessage(error, "Beğeni işlemi tamamlanamadı."));
     } finally {
-      setLoadingMore(false);
+      pendingLikesRef.current.delete(post.id);
     }
   };
 
-  const uniqueAuthors = new Set(posts.map((post) => post.user?.id).filter(Boolean)).size;
-  const thisWeekCount = posts.filter((post) => {
-    const createdAt = new Date(post.createdAt).getTime();
-    return Number.isFinite(createdAt) && Date.now() - createdAt < 1000 * 60 * 60 * 24 * 7;
-  }).length;
+  const handleFollowChange = (authorId: string, isFollowing: boolean) => {
+    setFollowedHere((prev) => new Set(prev).add(authorId));
+    patchPosts((p) => p.user?.id === authorId, { isFollowing });
+    // The following list changes with every follow; refetch it on the next visit.
+    generationRef.current.following++;
+    patchTab("following", EMPTY_TAB);
+  };
 
-  const statsReady = !loading && !requiresLogin && !loadFailed && posts.length > 0;
-  const headerStats = statsReady
-    ? [
-        { value: posts.length, label: "Not" },
-        ...(uniqueAuthors > 0 ? [{ value: uniqueAuthors, label: "Kişi" }] : []),
-        ...(thisWeekCount > 0 ? [{ value: thisWeekCount, label: "Bu Hafta" }] : []),
-      ]
-    : undefined;
+  const renderCard = (post: FeedPost, context: FeedTab) => (
+    <FeedCard
+      post={post}
+      showFollow={
+        context !== "following" &&
+        !post.isOwn &&
+        Boolean(post.user) &&
+        (!post.isFollowing || followedHere.has(post.user?.id ?? ""))
+      }
+      onToggleLike={toggleLike}
+      onFollowChange={handleFollowChange}
+    />
+  );
+
+  const uniqueAuthors = new Set(current.items.map((post) => post.user?.id).filter(Boolean)).size;
+  const headerStats =
+    current.status === "ready" && current.items.length > 0
+      ? [
+          { value: current.items.length, label: "Not" },
+          ...(uniqueAuthors > 0 ? [{ value: uniqueAuthors, label: "Kişi" }] : []),
+        ]
+      : undefined;
+
+  const header = {
+    following: {
+      title: (
+        <>
+          Takip Ettiklerinden <Em>Son Notlar</Em>
+        </>
+      ),
+      description:
+        showOwn === false
+          ? "Takip ettiğin kişilerin yeni notları, en yenisi en üstte."
+          : "Takip ettiğin kişilerin ve senin yeni notların, en yenisi en üstte.",
+    },
+    popular: {
+      title: (
+        <>
+          Toplulukta <Em>Popüler</Em> Olanlar
+        </>
+      ),
+      description:
+        "Son günlerde en çok beğenilen, yorumlanan ve kaydedilen notlar. Takip etmediğin yazarları da burada keşfedebilirsin.",
+    },
+    latest: {
+      title: (
+        <>
+          Topluluktan <Em>Yeni</Em> Notlar
+        </>
+      ),
+      description: "Herkese açık profillerden eklenen en yeni notlar, en yenisi en üstte.",
+    },
+  }[activeTab];
+
+  const followingIds = new Set(following.items.map((post) => post.id));
+  const previewItems = tabs.popular.items
+    .filter((post) => !followingIds.has(post.id))
+    .slice(0, PREVIEW_COUNT);
 
   return (
     <main className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
-      {/* LAYOUT: Editorial masthead (index 07) → state block (skeleton / empty / list). */}
+      {/* LAYOUT: Editorial masthead → tab bar (+ own-notes chip) → state block (skeleton /
+          error / empty / list with load-more) → popular preview under a thin following list. */}
       <PageHeader
         index="07"
-        eyebrow="Takip Ettiklerin"
-        title={
-          <>
-            Takip Ettiklerinden <Em>Son Notlar</Em>
-          </>
-        }
-        description="Takip ettiğin kişilerin yeni notları burada, en yenisi en üstte."
+        title={header.title}
+        description={header.description}
         stats={headerStats}
       />
 
-      {loading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-48 animate-pulse rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
-            />
-          ))}
-        </div>
-      ) : requiresLogin ? (
+      <FeedTabs
+        active={activeTab}
+        onChange={changeTab}
+        showOwn={showOwn ?? true}
+        onToggleOwn={toggleOwn}
+      />
+
+      {current.status === "idle" || current.status === "loading" ? (
+        <FeedSkeleton count={3} />
+      ) : current.status === "unauthorized" ? (
         <EmptyState
           icon={<UsersThreeIcon size={22} weight="duotone" />}
           title={
@@ -135,11 +346,11 @@ export default function FeedPageClient() {
               Akışı Görmek İçin <Em>Giriş Yap</Em>
             </>
           }
-          description="Takip ettiğin kişilerin son notlarını görmek için giriş yapman gerekiyor."
+          description="Akışını görmek için giriş yapman gerekiyor."
           primary={{ label: "Giriş Yap", href: "/login" }}
           secondary={{ label: "Keşfet", href: "/discover" }}
         />
-      ) : loadFailed ? (
+      ) : current.status === "error" ? (
         <EmptyState
           icon={<WarningCircleIcon size={22} weight="duotone" />}
           title={
@@ -147,54 +358,53 @@ export default function FeedPageClient() {
               Akış <Em>Yüklenemedi</Em>
             </>
           }
-          description="Bir sorun oldu. Biraz sonra tekrar dene ya da bu arada Keşfet sayfasına göz at."
-          primary={{ label: "Keşfet", href: "/discover" }}
+          description="Bir sorun oldu. Tekrar deneyebilir ya da bu arada Keşfet sayfasına göz atabilirsin."
+          primary={{
+            label: "Tekrar Dene",
+            onClick: () => showOwn !== null && void loadTab(activeTab, showOwn),
+          }}
+          secondary={{ label: "Keşfet", href: "/discover" }}
         />
-      ) : empty ? (
-        <EmptyState
-          icon={<CompassIcon size={22} weight="duotone" />}
-          title={
-            <>
-              Henüz <Em>Not</Em> Yok
-            </>
-          }
-          description="Henüz kimseyi takip etmiyorsun ya da takip ettiklerin yeni not eklemedi. Keşfet sayfasından takip edecek kişiler bulabilirsin."
-          primary={{ label: "Keşfet", href: "/discover" }}
-          secondary={{ label: "Önerilere Bak", href: "/recommended" }}
-        />
+      ) : current.items.length === 0 ? (
+        <EmptyTab tab={activeTab} onSwitch={changeTab} />
       ) : (
         <section className="space-y-4">
           {/* LAYOUT: Single-column stack of feed cards, staggered entrance. */}
-          <div className="space-y-4">
-            {posts.map((post, i) => (
-              <motion.div
-                key={post.id}
-                initial={reduce ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.7,
-                  ease: EASE,
-                  delay: Math.min(i % FEED_LIMIT, 8) * 0.05,
-                }}
-              >
-                <FeedCard post={post} />
-              </motion.div>
-            ))}
-          </div>
+          {current.items.map((post, i) => (
+            <motion.div
+              key={post.id}
+              initial={reduce ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                ease: EASE,
+                delay: Math.min(i % FEED_DEFAULT_LIMIT, 8) * 0.05,
+              }}
+            >
+              {renderCard(post, activeTab)}
+            </motion.div>
+          ))}
 
-          {nextCursor && (
-            <div className="flex justify-center pt-4">
+          {current.nextCursor && (
+            <div ref={sentinelRef} className="flex flex-col items-center gap-2 pt-4">
+              {current.moreFailed && (
+                <p className="text-[13px] font-medium text-[var(--text-muted)]">
+                  Daha fazla not yüklenemedi.
+                </p>
+              )}
               <button
                 type="button"
-                onClick={handleLoadMore}
-                disabled={loadingMore}
-                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-6 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => void loadMore()}
+                disabled={current.loadingMore}
+                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-6 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loadingMore ? (
+                {current.loadingMore ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-accent/30 border-t-accent" />
                     Yükleniyor…
                   </>
+                ) : current.moreFailed ? (
+                  "Tekrar Dene"
                 ) : (
                   <>
                     <ArrowDownIcon size={16} weight="bold" />
@@ -206,108 +416,93 @@ export default function FeedPageClient() {
           )}
         </section>
       )}
-    </main>
-  );
-}
 
-function FeedCard({ post }: Readonly<{ post: Post }>) {
-  const displayTitle = formatDisplayTitle(post.title);
-  const displayCreator = formatDisplayTitle(post.creator);
-  const displayExcerpt = formatDisplaySentence(post.excerpt);
-
-  return (
-    /* LAYOUT: Author strip (avatar · name · mono date) over a cover + text grid. */
-    <article className="group overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-300 ease-out-expo hover:border-[var(--text-faint)]">
-      {post.user && (
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/15 text-sm font-bold text-accent">
-            <AvatarImage
-              src={post.user.avatarUrl}
-              alt={post.user.name}
-              name={post.user.name}
-              size={36}
-              className="h-full w-full object-cover"
-              textClassName="text-sm font-bold text-accent"
-            />
-          </div>
-          <div className="min-w-0">
-            <span className="block truncate text-sm font-semibold text-[var(--text-primary)]">
-              {post.user.name}
-            </span>
-            {post.user.username && (
-              <Link
-                href={`/profile/${post.user.username}`}
-                className="text-[12px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--gold)]"
+      {needsPreview &&
+        (tabs.popular.status === "loading" ||
+          (tabs.popular.status === "ready" && previewItems.length > 0)) && (
+          <section className="mt-12">
+            {/* LAYOUT: Section heading + "see all" pill → up to three popular cards. */}
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="text-2xl font-extrabold tracking-[-0.035em] text-[var(--text-primary)] sm:text-[28px]">
+                  Popüler <Em>Notlar</Em>
+                </h2>
+                <p className="mt-1.5 text-sm text-[var(--text-secondary)]">
+                  Toplulukta öne çıkanlar; beğendiğin yazarları buradan takip edebilirsin.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => changeTab("popular")}
+                className="group inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
               >
-                @{post.user.username}
-              </Link>
-            )}
-          </div>
-          <span className="ml-auto shrink-0 text-[12px] font-medium text-[var(--text-muted)]">
-            {post.date}
-          </span>
-        </div>
-      )}
-
-      <Link href={`/posts/${post.id}`} className="block p-5">
-        <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
-          <div className="relative h-52 overflow-hidden rounded-[18px] bg-[var(--bg-raised)]">
-            <ResilientImage
-              src={getPostImageSrc(post.image, post.category)}
-              alt={displayTitle}
-              fill
-              className="object-cover transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.06]"
-              style={{ objectPosition: post.imagePosition ?? "center" }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--ink-rgb)/0.82)] via-transparent to-transparent" />
-            <div className="absolute left-3 top-3 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-accent/20 bg-ink/70 px-2.5 py-1 text-[12px] font-medium text-[var(--gold)]">
-                {getCategoryLabel(post.category)}
-              </span>
-              {post.status && <StatusBadge status={post.status} />}
-            </div>
-          </div>
-
-          <div className="min-w-0">
-            <h3 className="line-clamp-2 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-xl">
-              {displayTitle}
-            </h3>
-            {post.creator && (
-              <p className="mt-2 text-[12px] font-medium text-[var(--text-muted)]">
-                {displayCreator}
-              </p>
-            )}
-            {post.excerpt && !(post.hasSpoiler && categorySupportsSpoiler(post.category)) && (
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {displayExcerpt}
-              </p>
-            )}
-
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              {post.rating > 0 && <StarRating rating={post.rating} size={12} />}
-              {post.tags && post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {post.tags.slice(0, 3).map((tag) => (
-                    <TagBadge key={tag.id} tag={tag} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
-              <p className="text-[12px] font-medium text-[var(--text-muted)]">Takip Ettiğin Kişi</p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--gold)]">
-                Notu Aç
+                Tümünü Gör
                 <ArrowRightIcon
                   size={12}
                   weight="bold"
                   className="transition-transform duration-300 ease-out-expo group-hover:translate-x-1"
                 />
-              </span>
+              </button>
             </div>
-          </div>
-        </div>
-      </Link>
-    </article>
+            {tabs.popular.status === "loading" ? (
+              <FeedSkeleton count={2} />
+            ) : (
+              <div className="space-y-4">
+                {previewItems.map((post) => (
+                  <div key={post.id}>{renderCard(post, "popular")}</div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+    </main>
+  );
+}
+
+function EmptyTab({ tab, onSwitch }: Readonly<{ tab: FeedTab; onSwitch: (tab: FeedTab) => void }>) {
+  if (tab === "popular") {
+    return (
+      <EmptyState
+        icon={<FireIcon size={22} weight="duotone" />}
+        title={
+          <>
+            Henüz <Em>Popüler</Em> Not Yok
+          </>
+        }
+        description="Topluluğun notları beğenildikçe, yorumlandıkça ve kaydedildikçe burada sıralanır."
+        primary={{ label: "Yeni Notlara Bak", onClick: () => onSwitch("latest") }}
+        secondary={{ label: "Keşfet", href: "/discover" }}
+      />
+    );
+  }
+
+  if (tab === "latest") {
+    return (
+      <EmptyState
+        icon={<SparkleIcon size={22} weight="duotone" />}
+        title={
+          <>
+            Henüz <Em>Yeni</Em> Not Yok
+          </>
+        }
+        description="Topluluktan henüz herkese açık bir not eklenmedi. İlk notu sen ekleyebilirsin."
+        primary={{ label: "Not Ekle", href: "/new-post" }}
+        secondary={{ label: "Keşfet", href: "/discover" }}
+      />
+    );
+  }
+
+  return (
+    <EmptyState
+      icon={<CompassIcon size={22} weight="duotone" />}
+      title={
+        <>
+          Akışın Henüz <Em>Sessiz</Em>
+        </>
+      }
+      description="Takip ettiğin kişilerin yeni notları burada görünür. Popüler notlara göz at, beğendiğin yazarları takip et; akışın dolmaya başlasın."
+      primary={{ label: "Popüler Notlara Bak", onClick: () => onSwitch("popular") }}
+      secondary={{ label: "Keşfet", href: "/discover" }}
+    />
   );
 }
