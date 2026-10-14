@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { UsersThreeIcon, StarIcon } from "@phosphor-icons/react";
+import { formatRating } from "@/lib/number-format";
 
 interface Props {
   readonly title: string;
@@ -37,7 +38,9 @@ export default function CommunityStatsCard({ title, creator }: Props) {
             <span className="text-[var(--border)]">•</span>
             <span className="flex items-center gap-1 text-[var(--text-secondary)]">
               <StarIcon size={14} weight="fill" className="text-accent" />
-              <span className="font-semibold text-[var(--text-primary)]">{stats.avgRating}</span>
+              <span className="font-semibold text-[var(--text-primary)]">
+                {formatRating(stats.avgRating)}
+              </span>
               <span className="text-[var(--text-muted)]">/ 5 ort.</span>
             </span>
           </>

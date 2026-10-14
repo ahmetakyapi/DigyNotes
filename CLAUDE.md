@@ -71,6 +71,9 @@ Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://
 - Comments: `CommentLike` (2026-10-13; production needs the table, ERR-DB-005 — until then `src/lib/comments.ts` serves comments without likes and the like API answers 503). GET `/api/posts/[id]/comments` pages ROOT comments newest first with all their replies (`{ items, nextCursor, total }`). `@username` mentions are parsed in `src/lib/mentions.ts`.
 - Notification types and `referenceId`: `follow` (actor id), `like` (`postId:actorId`), `comment` and `mention` (comment id), `comment_like` (`commentId:actorId`).
 - Local composer drafts live under `digynotes-draft:<userId>[:<postId>]` (`src/lib/local-drafts.ts`); sign-out calls `clearAllLocalDrafts()`.
+- `/notes` lists page with a cursor, so numbers never come from the loaded slice (ERR-DATA-013): first pages ask `/api/posts?…&summary=1` (`{ total, avgRating, thisMonth }`, month in Istanbul time) and the main list adds `pinned=first` (all pinned matches on page one, the cursor stream skips them; `applySortFilter(…, { pinnedFirst })` keeps them on top in the default order). Drafts and archive page the same way.
+- Profiles: first 30 notes from `getProfilePageData`, the rest from `GET /api/users/[username]/posts?offset=` (same visibility). Public surfaces (profile, Keşfet cards) never show `lastLoginAt`; they show `lastNoteAt` (newest published note, relative). Counts and stats (`/api/users/me/stats`, year in review, community stats, Keşfet) cover published notes only (`isDeleted: false, isDraft: false`).
+- Recommendations: `src/lib/recommendations.ts` (tested) scores other people's public notes by weighted tag overlap + category share, skips titles you already noted, caps 4 per author, and returns a `recommendationReason` line per note.
 
 ## Design System — "Cinémathèque" (2026-10)
 
@@ -95,7 +98,8 @@ Tokens: `src/styles/theme-variables.css`. Dark (default) = warm ink; light = bon
   - **No eyebrows/kickers above headings** (2026-10-09) — the heading carries the section. `.dn-eyebrow` only for functional labels (notification groups, settings sections), never with `(01)` indexes. `PageHeader`'s `eyebrow` prop is ignored; don't pass it.
   - **No trailing period/dot** on headings or the wordmark (2026-10-10); question marks stay.
   - **Readable labels** (2026-10-09): no tiny uppercase mono labels. Labels/meta/chips are sans, normal case, `font-medium`, min 11px (12–12.5px typical), `--text-muted` or stronger.
-  - **Decimal comma** (`4,5` — `toFixed(1).replace(".", ",")`); relative times spelled out ("3 saat önce", not "3 sa").
+  - **Decimal comma** (`4,5` — `formatRating` / `formatRatingFixed` in `src/lib/number-format.ts`); relative times spelled out ("3 saat önce", not "3 sa"); sentences use full month names ("Ekim"), chart axes the short ones.
+  - In-page search folds Turkish case with `foldSearchText` (`src/lib/text.ts`): "İstanbul", "ISTANBUL" and "istanbul" match.
   - **No custom cursor** (2026-10-10); normal mouse everywhere, no `data-cursor` labels.
 - Wordmark: `src/components/Wordmark.tsx` — grotesk "Digy" + italic "Notes" (always capital N, no dot). The PNG logo is not used in the UI.
 - Copy: all UI text Turkish. Headings, subtitles, buttons, tabs and greetings use Turkish Title Case ("Arşivini Başlat", "Giriş Yap", "İyi Geceler"); ve, ile, da/de, ki stay lowercase. Toasts, placeholders and body copy stay sentence case.

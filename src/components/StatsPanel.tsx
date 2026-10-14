@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { Post } from "@/types";
 import { getCategoryLabel } from "@/lib/categories";
+import { formatRating } from "@/lib/number-format";
 import { getPostImageSrc } from "@/lib/post-image";
 import StarRating from "@/components/StarRating";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -549,7 +550,9 @@ export function StatsPanel({ posts }: { posts: Post[] }) {
                 {/* Rating */}
                 <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
                   <StarRating rating={post.rating} size={11} />
-                  <span className="dn-mono text-[12px] text-accent">{post.rating}/5</span>
+                  <span className="dn-mono text-[12px] text-accent">
+                    {formatRating(post.rating)}/5
+                  </span>
                 </div>
               </Link>
             ))}

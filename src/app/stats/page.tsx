@@ -3,10 +3,11 @@
 /*
   LAYOUT: Personal stats — editorial, single column (max-w-6xl).
   ROW 1: shared PageHeader (14) with headline stats + "Yılın Özeti" pill.
-  ROW 2: "Arşiv Okuması" pull-quote — accent left rule, large statement, three hairline insights.
+  ROW 2: pull-quote — accent left rule, large statement, three hairline insights.
   ROW 3: KPI strip — four cells divided by hairlines, enormous serif-italic numbers.
-  ROW 4: three highlight cells (category / month / rated share).
-  ROW 5: 2×2 chart grid in hairline cards; lavender primary, apricot secondary.
+  ROW 4: 2×2 chart grid in hairline cards; lavender primary, apricot secondary.
+  (A third row of category / month / rated-share cards repeated the insights word for
+  word and was dropped; so was the "(i) Kısaca" kicker above the statement.)
   MOTION: sections fade/rise in sequence (framer-motion), disabled with reduced motion.
 */
 import Link from "next/link";
@@ -22,6 +23,7 @@ import {
   getTopItem,
 } from "@/lib/stats-insights";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
+import { formatRating } from "@/lib/number-format";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -45,7 +47,7 @@ interface StatsData {
     postsThisYear: number;
     uniqueTags: number;
   };
-  monthlySeries: { month: string; count: number }[];
+  monthlySeries: { month: string; monthLong?: string; count: number }[];
   categories: { name: string; count: number }[];
   statuses: { name: string; count: number }[];
   topTags: { name: string; count: number }[];
@@ -74,10 +76,11 @@ const TOOLTIP_STYLE = {
   boxShadow: "var(--shadow-soft)",
 };
 
+/* Readable axis labels (owner rule): sans, 12px, muted — not tiny mono. */
 const TICK_STYLE = {
-  fontSize: 10.5,
+  fontSize: 12,
   fill: "var(--text-muted)",
-  fontFamily: "var(--font-mono), ui-monospace, monospace",
+  fontFamily: "var(--font-sans), ui-sans-serif, system-ui, sans-serif",
 };
 
 const monoLabel = "text-[12.5px] text-[var(--text-muted)] font-medium";
@@ -106,12 +109,10 @@ function Reveal({
 }
 
 function ChartCard({
-  index,
   title,
   aside,
   children,
 }: {
-  index: string;
   title: string;
   aside?: ReactNode;
   children: ReactNode;
@@ -119,12 +120,9 @@ function ChartCard({
   return (
     <section className="h-full rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30 sm:p-7">
       <div className="mb-6 flex items-baseline justify-between gap-3">
-        <div>
-          <p className={monoLabel}></p>
-          <h2 className="mt-1.5 text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
-            {title}
-          </h2>
-        </div>
+        <h2 className="text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+          {title}
+        </h2>
         {aside}
       </div>
       {children}
@@ -271,14 +269,11 @@ export default function PersonalStatsPage() {
       {/* LAYOUT: editorial pull-quote — accent left rule, statement + supporting line, 3 hairline insights */}
       <Reveal order={0} className="mb-12">
         <blockquote className="border-l-2 border-accent pl-5 sm:pl-8">
-          <p className={monoLabel}>
-            <span className="text-[var(--gold)]">(i)</span> Kısaca
-          </p>
-          <p className="mt-4 max-w-4xl text-[clamp(1.6rem,3.6vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--text-primary)]">
+          <p className="max-w-4xl text-[clamp(1.6rem,3.6vw,2.75rem)] font-bold leading-[1.08] tracking-[-0.035em] text-[var(--text-primary)] [text-wrap:balance]">
             {topCategory ? (
               <>
-                En çok <Em>{getCategoryLabel(topCategory.name).toLowerCase()}</Em> kategorisinde not
-                tutuyorsun
+                En çok <Em>{getCategoryLabel(topCategory.name).toLocaleLowerCase("tr-TR")}</Em>{" "}
+                kategorisinde not tutuyorsun
               </>
             ) : (
               <>
@@ -288,7 +283,7 @@ export default function PersonalStatsPage() {
           </p>
           <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
             {strongestMonth
-              ? `En çok not aldığın ay ${strongestMonth.month}: ${strongestMonth.count} not.`
+              ? `En çok not aldığın ay ${strongestMonth.monthLong ?? strongestMonth.month}: ${strongestMonth.count} not.`
               : "Aylık durumu görmek için biraz daha not gerekiyor."}{" "}
             {topTag
               ? `En sık kullandığın etiket #${topTag.name}.`
@@ -322,7 +317,7 @@ export default function PersonalStatsPage() {
             value={`%${ratedShare} puanlı`}
             detail={
               topStatus
-                ? `En sık durum: ${topStatus.name.toLowerCase()}.`
+                ? `En sık durum: ${topStatus.name.toLocaleLowerCase("tr-TR")}.`
                 : "Puan verdikçe burada görünecek."
             }
           />
@@ -341,42 +336,18 @@ export default function PersonalStatsPage() {
           <KpiCell label="Toplam Not" value={data.kpis.totalPosts} accent />
           <KpiCell
             label="Ortalama Puan"
-            value={data.kpis.avgRating > 0 ? data.kpis.avgRating : "—"}
+            value={data.kpis.avgRating > 0 ? formatRating(data.kpis.avgRating) : "—"}
           />
           <KpiCell label="Bu Yıl" value={data.kpis.postsThisYear} />
           <KpiCell label="Farklı Etiket" value={data.kpis.uniqueTags} />
         </div>
       </Reveal>
 
-      {/* LAYOUT: highlight trio — label / bold value / muted detail, top accent tick */}
-      <Reveal order={2} className="mb-10">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <HighlightCell
-            index="A"
-            label="Öne Çıkan Kategori"
-            value={topCategory ? getCategoryLabel(topCategory.name) : "-"}
-            detail={topCategory ? `${topCategory.count} not` : "Henüz yeterli not yok"}
-          />
-          <HighlightCell
-            index="B"
-            label="En Yoğun Ay"
-            value={strongestMonth?.month ?? "-"}
-            detail={strongestMonth ? `${strongestMonth.count} not` : "Henüz yeterli not yok"}
-          />
-          <HighlightCell
-            index="C"
-            label="Puanlı Notlar"
-            value={`%${ratedShare}`}
-            detail={topStatus ? `En sık durum: ${topStatus.name}` : "Henüz durum seçilmemiş"}
-          />
-        </div>
-      </Reveal>
-
       {/* ═══ Charts Grid ═══ */}
       <div className="grid gap-5 lg:grid-cols-2">
         {/* Monthly Production */}
-        <Reveal order={3}>
-          <ChartCard index="01" title="Aylara Göre Notlar">
+        <Reveal order={2}>
+          <ChartCard title="Aylara Göre Notlar">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -423,8 +394,8 @@ export default function PersonalStatsPage() {
         </Reveal>
 
         {/* Category Distribution */}
-        <Reveal order={4}>
-          <ChartCard index="02" title="Kategorilere Göre Notlar">
+        <Reveal order={3}>
+          <ChartCard title="Kategorilere Göre Notlar">
             <div className="flex h-72 items-center">
               <div className="relative w-1/2">
                 <ResponsiveContainer width="100%" height={200}>
@@ -449,7 +420,7 @@ export default function PersonalStatsPage() {
                   <span className="dn-display text-4xl italic leading-none text-[var(--text-primary)]">
                     {data.kpis.totalPosts}
                   </span>
-                  <span className="mt-1 text-[11px] font-medium text-[var(--text-muted)]">Not</span>
+                  <span className="mt-1 text-[12px] font-medium text-[var(--text-muted)]">Not</span>
                 </div>
               </div>
               <div className="flex-1 space-y-3 pl-4">
@@ -482,8 +453,8 @@ export default function PersonalStatsPage() {
         </Reveal>
 
         {/* Rating Distribution */}
-        <Reveal order={5}>
-          <ChartCard index="03" title="Verdiğin Puanlar">
+        <Reveal order={4}>
+          <ChartCard title="Verdiğin Puanlar">
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -510,8 +481,8 @@ export default function PersonalStatsPage() {
         </Reveal>
 
         {/* Status & Tags */}
-        <Reveal order={6}>
-          <ChartCard index="04" title="Durumlar ve Etiketler">
+        <Reveal order={5}>
+          <ChartCard title="Durumlar ve Etiketler">
             <div className="grid gap-8 sm:grid-cols-2">
               {/* Statuses */}
               <div>
@@ -610,28 +581,6 @@ function KpiCell({
       >
         {value}
       </p>
-    </div>
-  );
-}
-
-function HighlightCell({
-  index,
-  label,
-  value,
-  detail,
-}: {
-  index: string;
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-300 ease-out-expo hover:border-accent/30">
-      <p className={monoLabel}>{label}</p>
-      <p className="mt-3 text-2xl font-bold tracking-[-0.03em] text-[var(--text-primary)]">
-        {value}
-      </p>
-      <p className="mt-1 text-xs text-[var(--text-muted)]">{detail}</p>
     </div>
   );
 }

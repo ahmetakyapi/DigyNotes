@@ -12,10 +12,11 @@ const SURFACE_ORDER: OrganizationSurfaceKey[] = ["bookmarks", "watchlist", "coll
 
 /*
   LAYOUT: Calm editorial explainer — no boxed panel.
-  TOP: hairline, then mono eyebrow "Organizasyon" + optional "Şu an" marker on the right,
-       Title Case heading and a one-paragraph description.
+  TOP: hairline, Title Case heading + one-paragraph description, optional "Şu an" marker
+       on the right. No kicker above the heading (owner rule).
   ROWS: one row per surface separated by hairlines —
-        [mono index + short label] [label + description] [CTA link | "Buradasın" marker].
+        [short label] [label + description] [CTA link | "Buradasın" marker].
+        No "(01)" indexes: the order carries no meaning.
 */
 export function OrganizationGuide({
   current,
@@ -35,16 +36,13 @@ export function OrganizationGuide({
     <section className="border-t border-[var(--border)] pt-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
-          <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
-            Düzenleme
-          </p>
-          <h2 className="mt-3 text-xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] sm:text-2xl">
+          <h2 className="text-xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] [text-wrap:balance] sm:text-2xl">
             {title}
           </h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
         </div>
         {currentSurface && (
-          <span className="inline-flex w-fit items-center gap-2 text-[12.5px] text-[var(--text-muted)] font-medium">
+          <span className="inline-flex w-fit items-center gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             Şu an: {currentSurface.label}
           </span>
@@ -52,7 +50,7 @@ export function OrganizationGuide({
       </div>
 
       <ul className="mt-6 divide-y divide-[var(--border)] border-y border-[var(--border)]">
-        {surfaces.map((surface, index) => {
+        {surfaces.map((surface) => {
           const isCurrent = current === surface.key;
 
           return (
@@ -60,10 +58,11 @@ export function OrganizationGuide({
               key={surface.key}
               className="grid gap-2 py-5 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-baseline sm:gap-6"
             >
-              <p className="text-[12.5px] text-[var(--text-muted)] font-medium">
-                <span className={isCurrent ? "text-[var(--gold)]" : ""}>
-                  ({String(index + 1).padStart(2, "0")})
-                </span>{" "}
+              <p
+                className={`text-[12.5px] font-medium ${
+                  isCurrent ? "text-[var(--gold)]" : "text-[var(--text-muted)]"
+                }`}
+              >
                 {surface.shortLabel}
               </p>
               <div className="min-w-0">
@@ -80,9 +79,7 @@ export function OrganizationGuide({
               </div>
               <div className="flex items-center sm:justify-end">
                 {isCurrent ? (
-                  <span className="text-[12.5px] text-[var(--gold)] font-medium">
-                    Buradasın
-                  </span>
+                  <span className="text-[12.5px] font-medium text-[var(--gold)]">Buradasın</span>
                 ) : (
                   <Link
                     href={surface.href}

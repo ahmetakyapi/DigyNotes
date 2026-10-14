@@ -275,10 +275,10 @@ export default function WatchlistPage() {
               {getCategoryLabel(category)}
               <span
                 className={`dn-mono text-[12px] ${
-                  activeCategory === category ? "opacity-60" : "text-[var(--text-faint)]"
+                  activeCategory === category ? "opacity-70" : "text-[var(--text-muted)]"
                 }`}
               >
-                {String(countsByCategory[category] ?? 0).padStart(2, "0")}
+                {countsByCategory[category] ?? 0}
               </span>
             </button>
           ))}
@@ -347,15 +347,17 @@ export default function WatchlistPage() {
 
       {/* ── Liste ── */}
       <section>
-        {/* LAYOUT: Section heading (mono count + grotesk title) left, search + sort pills right; 1/2/3 col poster cards. */}
+        {/* LAYOUT: Section heading (grotesk title, count beneath it) left, search + sort pills right; 1/2/3 col poster cards. */}
         <div className="mb-5 mt-12 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-[12.5px] font-medium text-[var(--text-muted)]">
-              {filteredItems.length}/{countsByCategory[activeCategory] ?? 0} kayıt
-            </p>
-            <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
+            <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)]">
               {getCategoryLabel(activeCategory)} <Em>Listesi</Em>
             </h2>
+            <p className="mt-1.5 text-[12.5px] font-medium text-[var(--text-muted)]">
+              {filteredItems.length === (countsByCategory[activeCategory] ?? 0)
+                ? `${filteredItems.length} kayıt`
+                : `${filteredItems.length}/${countsByCategory[activeCategory] ?? 0} kayıt`}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <label className="relative block">

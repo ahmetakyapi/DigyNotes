@@ -24,6 +24,7 @@ import { PostComments } from "@/components/comments/PostComments";
 import type { SharePreview } from "@/components/ShareSheet";
 import { stripHtml, truncateText } from "@/lib/text";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
+import { formatRating } from "@/lib/number-format";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { buildOpenStreetMapEmbedUrl, buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { getPostImageSrc } from "@/lib/post-image";
@@ -31,6 +32,7 @@ import { categorySupportsSpoiler } from "@/lib/post-config";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { addRecentView } from "@/components/RecentlyViewed";
 import { ResilientImage } from "@/components/ResilientImage";
+import { ReadingProgress } from "@/components/ReadingProgress";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 import toast from "react-hot-toast";
 
@@ -357,6 +359,7 @@ export default function PostDetailClient({
   const tagCount = post.tags?.length ?? 0;
   const shouldBlurSpoiler = Boolean(supportsSpoiler && post.hasSpoiler && !isSpoilerRevealed);
   const shouldShowSpoilerOverlay = shouldBlurSpoiler && !hasDismissedSpoilerOverlay;
+  const readingMinutes = post.content ? estimateReadingTime(post.content) : 0;
 
   return (
     <main className="min-h-screen bg-[var(--bg-base)]">
@@ -444,7 +447,13 @@ export default function PostDetailClient({
                       });
                       if (res.ok) {
                         setPinned(!pinned);
-                        toast.success(!pinned ? "Not sabitlendi" : "Sabitleme kaldırıldı");
+                        toast.success(
+                          !pinned
+                            ? "Not sabitlendi, notlarının en üstünde duracak"
+                            : "Sabitleme kaldırıldı"
+                        );
+                      } else {
+                        toast.error("Sabitleme değiştirilemedi. Tekrar dene.");
                       }
                     }}
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
@@ -481,11 +490,13 @@ export default function PostDetailClient({
                       if (res.ok) {
                         setArchived(!archived);
                         toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
+                      } else {
+                        toast.error("Arşiv durumu değiştirilemedi. Tekrar dene.");
                       }
                     }}
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
                       archived
-                        ? "border-[#f59e0b]/50 bg-[#f59e0b]/15 text-[#f59e0b]"
+                        ? "border-[#ffb088]/50 bg-[#ffb088]/15 text-[#ffb088]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     }`}
                     style={
@@ -566,38 +577,31 @@ export default function PostDetailClient({
               <h1 className="dn-display mb-4 text-[44px] italic leading-[0.9] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl lg:text-[88px]">
                 {displayTitle}
               </h1>
-              <div className="flex flex-wrap items-center gap-2 text-sm text-[var(--media-text-secondary)] sm:gap-3">
-                {post.creator &&
-                  (authorProfileHref ? (
-                    <Link
-                      href={authorProfileHref}
-                      className="transition-colors hover:text-[#b9a8ff]"
-                    >
-                      {displayCreator}
-                    </Link>
-                  ) : (
-                    <span>{displayCreator}</span>
-                  ))}
-                {post.years && (
-                  <>
-                    <span className="text-white/35">•</span>
-                    <span>{post.years}</span>
-                  </>
-                )}
-                {post.rating > 0 && (
-                  <>
-                    <span className="text-white/35">•</span>
-                    <StarRating rating={post.rating} size={13} tone="onMedia" />
-                    <span className="text-xs text-[var(--media-text-secondary)] opacity-90">
-                      ({post.rating}/5)
+              {/* Meta: every item carries its own leading dot; the row is shifted left by one
+                  dot and clipped, so a line never starts or ends on a stray separator. */}
+              <div className="overflow-hidden text-sm text-[var(--media-text-secondary)]">
+                <div className="-ml-5 flex flex-wrap items-center gap-y-2 [&>*]:inline-flex [&>*]:items-center [&>*]:before:w-5 [&>*]:before:shrink-0 [&>*]:before:text-center [&>*]:before:text-[var(--media-text-secondary)] [&>*]:before:opacity-50 [&>*]:before:content-['•']">
+                  {post.creator &&
+                    (authorProfileHref ? (
+                      <Link
+                        href={authorProfileHref}
+                        className="transition-colors hover:text-[#b9a8ff]"
+                      >
+                        {displayCreator}
+                      </Link>
+                    ) : (
+                      <span>{displayCreator}</span>
+                    ))}
+                  {post.years && <span>{post.years}</span>}
+                  {post.rating > 0 && (
+                    <span className="gap-1.5">
+                      <StarRating rating={post.rating} size={13} tone="onMedia" />
+                      <span className="text-xs opacity-90">({formatRating(post.rating)}/5)</span>
                     </span>
-                  </>
-                )}
-                {post.externalRating && post.externalRating > 0 && (
-                  <>
-                    <span className="text-white/35">•</span>
-                    <span className="flex items-center gap-1 text-xs font-medium text-[#b9a8ff]">
-                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                  )}
+                  {post.externalRating && post.externalRating > 0 && (
+                    <span className="gap-1 text-xs font-medium text-[#b9a8ff]">
+                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" />
                       </svg>
                       TMDB {post.externalRating.toFixed(1).replace(".", ",")}
@@ -605,22 +609,12 @@ export default function PostDetailClient({
                         /10
                       </span>
                     </span>
-                  </>
-                )}
-                {post.date && (
-                  <>
-                    <span className="text-white/35">•</span>
-                    <span className="text-xs">{post.date}</span>
-                  </>
-                )}
-                {post.content && estimateReadingTime(post.content) > 0 && (
-                  <>
-                    <span className="text-white/35">•</span>
-                    <span className="text-xs opacity-75">
-                      {formatReadingTime(estimateReadingTime(post.content))}
-                    </span>
-                  </>
-                )}
+                  )}
+                  {post.date && <span className="text-xs">{post.date}</span>}
+                  {readingMinutes > 0 && (
+                    <span className="text-xs opacity-80">{formatReadingTime(readingMinutes)}</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -739,7 +733,7 @@ export default function PostDetailClient({
               <div
                 className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   shouldBlurSpoiler
-                    ? "border border-danger/25 bg-danger/10 text-[#ffb2b2]"
+                    ? "border border-danger/25 bg-danger/10 text-[var(--danger)]"
                     : "border border-accent/25 bg-accent/10 text-[var(--gold)]"
                 }`}
               >
@@ -780,16 +774,16 @@ export default function PostDetailClient({
               </div>
               <div className="min-w-0 flex-1">
                 <p
-                  className={`text-[13px] font-semibold ${shouldBlurSpoiler ? "text-[#ffb2b2]" : "text-[var(--gold)]"}`}
+                  className={`text-[13px] font-semibold ${shouldBlurSpoiler ? "text-[var(--danger)]" : "text-[var(--gold)]"}`}
                 >
                   {shouldBlurSpoiler ? "Spoiler içerik gizlendi" : "İçerik gösteriliyor"}
                 </p>
-                <p className="mt-0.5 text-[11px] leading-4 text-[var(--text-muted)]">
+                <p className="mt-0.5 text-[12px] leading-4 text-[var(--text-muted)]">
                   {shouldBlurSpoiler
                     ? "Bu not açık detaylar içerebilir."
                     : "Spoiler içeriği görebiliyorsun."}
                 </p>
-                <p className="mt-1 text-[11px] leading-4 text-[var(--text-faint)]">
+                <p className="mt-1 text-[12px] leading-4 text-[var(--text-muted)]">
                   Etiketler, kategori ve topluluk bağlamı görünür kalır; yalnızca metin gizlenir.
                 </p>
               </div>
@@ -811,16 +805,18 @@ export default function PostDetailClient({
           </div>
         )}
 
-        <div className="relative">
-          <article
-            aria-hidden={shouldBlurSpoiler}
-            className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
-              shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
-            }`}
-          >
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          </article>
-        </div>
+        <ReadingProgress enabled={readingMinutes >= 2 && !shouldBlurSpoiler}>
+          <div className="relative">
+            <article
+              aria-hidden={shouldBlurSpoiler}
+              className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
+                shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
+              }`}
+            >
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            </article>
+          </div>
+        </ReadingProgress>
 
         {/* ─── Ayırıcı ─── */}
         <div className="mt-14 flex items-center gap-4">
@@ -868,8 +864,7 @@ export default function PostDetailClient({
               </span>
             </div>
             <p className="mb-4 text-sm leading-6 text-[var(--text-muted)]">
-              Aynı başlık etrafında oluşan diğer yorum yolları. Buradan farklı kullanıcıların aynı
-              içerik için nasıl hafıza izleri bıraktığına dönebilirsin.
+              Aynı film, dizi, kitap ya da yer için başka kişilerin yazdığı notlar.
             </p>
             <div className="space-y-3">
               {communityPosts.map((cp) => (
@@ -890,7 +885,7 @@ export default function PostDetailClient({
                         <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                        {cp.rating}/5
+                        {formatRating(cp.rating)}/5
                       </span>
                     )}
                   </div>

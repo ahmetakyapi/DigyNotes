@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
       where: {
         title: { equals: title, mode: "insensitive" },
         ...(creator ? { creator: { equals: creator, mode: "insensitive" } } : {}),
+        // Only published notes count; drafts and trashed notes stay private.
+        isDeleted: false,
+        isDraft: false,
         user: { isPublic: true },
       },
       select: { rating: true },

@@ -18,8 +18,9 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Published notes only: trashed notes and drafts used to count towards every number.
   const posts = await prisma.post.findMany({
-    where: { userId },
+    where: { userId, isDeleted: false, isDraft: false },
     select: {
       id: true,
       category: true,
@@ -57,6 +58,8 @@ export async function GET() {
     return {
       key: getMonthKey(date),
       month: date.toLocaleDateString("tr-TR", { month: "short" }),
+      // Sentences use the full name ("En çok not aldığın ay Ekim"), axes the short one.
+      monthLong: date.toLocaleDateString("tr-TR", { month: "long" }),
       count: 0,
     };
   });

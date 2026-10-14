@@ -24,10 +24,10 @@ export function fmtNumber(n: number) {
   return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
 }
 
-/** Shared recharts axis tick style (mono, muted). */
+/** Shared recharts axis tick style (muted, readable 12px). */
 export const AXIS_TICK = {
   fill: "var(--text-muted)",
-  fontSize: 10,
+  fontSize: 12,
 } as const;
 
 /* ─────────────────────────── sub-components ────────────────── */

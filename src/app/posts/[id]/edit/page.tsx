@@ -21,6 +21,7 @@ import { ArrowLeftIcon, ArrowUpRightIcon, CaretRightIcon } from "@phosphor-icons
 import toast from "react-hot-toast";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 import { customLoader } from "@/lib/image";
+import { formatRating } from "@/lib/number-format";
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import {
@@ -743,7 +744,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               Kapak, Puan ve Ayarlar
               {rating > 0 && (
                 <span className="ml-auto text-[12.5px] font-medium text-[var(--gold)]">
-                  {rating}/5
+                  {formatRating(rating)}/5
                 </span>
               )}
             </summary>

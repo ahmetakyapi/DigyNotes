@@ -12,6 +12,24 @@ function getMonthLabel(month: number) {
   ];
 }
 
+/** Full month name for sentences ("En çok not aldığın ay Ekim"); axes keep the short one. */
+function getMonthLongLabel(month: number) {
+  return [
+    "Ocak",
+    "Şubat",
+    "Mart",
+    "Nisan",
+    "Mayıs",
+    "Haziran",
+    "Temmuz",
+    "Ağustos",
+    "Eylül",
+    "Ekim",
+    "Kasım",
+    "Aralık",
+  ][month];
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string })?.id;
@@ -29,6 +47,8 @@ export async function GET(request: NextRequest) {
   const posts = await prisma.post.findMany({
     where: {
       userId,
+      isDeleted: false,
+      isDraft: false,
       createdAt: { gte: startDate, lt: endDate },
     },
     select: {
@@ -77,6 +97,7 @@ export async function GET(request: NextRequest) {
   // Aylık seri
   const monthlySeries = Array.from({ length: 12 }, (_, i) => ({
     month: getMonthLabel(i),
+    monthLong: getMonthLongLabel(i),
     count: 0,
   }));
   posts.forEach((p) => {

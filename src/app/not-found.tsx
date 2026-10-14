@@ -56,7 +56,7 @@ export default function NotFound() {
       </div>
 
       <p className="relative mt-12 text-[12px] font-medium text-[var(--text-muted)]">
-        HTTP 404 · Not Found · DigyNotes
+        Hata 404 · Sayfa bulunamadı
       </p>
     </div>
   );

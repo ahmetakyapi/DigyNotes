@@ -410,13 +410,13 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     <CartesianGrid strokeDasharray="2 4" stroke="var(--border)" vertical={false} />
                     <XAxis
                       dataKey="label"
-                      tick={{ fill: "var(--text-muted)", fontSize: 9 }}
+                      tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
                       interval={Math.floor(chartData.length / 8)}
                     />
                     <YAxis
-                      tick={{ fill: "var(--text-muted)", fontSize: 9 }}
+                      tick={{ fill: "var(--text-muted)", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
                       allowDecimals={false}

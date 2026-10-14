@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect, Suspense } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Toaster } from "react-hot-toast";
@@ -19,7 +19,6 @@ import { WelcomeReveal } from "@/components/intro/Welcome";
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
 export default function AppShell({ children }: { readonly children: React.ReactNode }) {
-  const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
@@ -177,6 +176,12 @@ export default function AppShell({ children }: { readonly children: React.ReactN
               <Link
                 href="/notifications"
                 title="Bildirimler"
+                aria-label={
+                  notificationCount > 0
+                    ? `Bildirimler, ${notificationCount} okunmamış`
+                    : "Bildirimler"
+                }
+                aria-current={isNotifications ? "page" : undefined}
                 className={`relative hidden h-10 w-10 items-center justify-center rounded-lg border-transparent bg-transparent text-[var(--text-secondary)] shadow-none transition-colors duration-200 hover:text-accent-light sm:flex ${
                   isNotifications ? "text-accent-light" : ""
                 }`}
@@ -207,7 +212,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 {showNewNoteHint && (
                   <div
                     id="new-note-mobile-hint"
-                    className="absolute right-0 top-full z-50 mt-2 w-[182px] rounded-lg border border-accent/40 bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] px-2.5 py-2 text-[11px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
+                    className="absolute right-0 top-full z-50 mt-2 w-[196px] rounded-lg border border-accent/40 bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)] px-2.5 py-2 text-[12px] leading-relaxed text-[var(--text-secondary)] shadow-[0_10px_28px_rgb(var(--ink-rgb)/0.4)] backdrop-blur-md sm:hidden"
                   >
                     Yeni not eklemek için + düğmesine dokun.
                     <div className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 border-l border-t border-accent/40 bg-[color-mix(in_srgb,var(--bg-card)_95%,transparent)]" />
@@ -284,30 +289,33 @@ export default function AppShell({ children }: { readonly children: React.ReactN
           {(pathname === "/notes" || pathname.startsWith("/category/")) && (
             <div className="pb-3 pt-2.5 sm:hidden">
               <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto px-2 py-0.5">
-                <button
-                  onClick={() => router.push("/notes")}
-                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-4 text-[13px] font-medium transition-all duration-200 active:scale-95 ${
+                {/* Real links: prefetched, open in a new tab, announced as the current page. */}
+                <Link
+                  href="/notes"
+                  aria-current={activeCategory === "all" ? "page" : undefined}
+                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-4 text-[13px] font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
                     activeCategory === "all"
                       ? "bg-accent text-[var(--text-on-accent)]"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                   }`}
                 >
                   Son Notlar
-                </button>
+                </Link>
                 {FIXED_CATEGORIES.map((cat) => {
                   const isActive = activeCategory === cat;
                   return (
-                    <button
+                    <Link
                       key={cat}
-                      onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
-                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 active:scale-95 ${
+                      href={`/category/${encodeURIComponent(cat)}`}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
                         isActive
                           ? "bg-accent text-[var(--text-on-accent)]"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
                       }`}
                     >
                       {getCategoryLabel(cat)}
-                    </button>
+                    </Link>
                   );
                 })}
               </div>
@@ -319,14 +327,14 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             ref={scrollRef}
             className="scrollbar-hide hidden items-center overflow-x-auto sm:flex"
           >
-            <NavTab active={activeCategory === "all"} onClick={() => router.push("/notes")}>
+            <NavTab active={activeCategory === "all"} href="/notes">
               Son Notlar
             </NavTab>
             {FIXED_CATEGORIES.map((cat) => (
               <NavTab
                 key={cat}
                 active={activeCategory === cat}
-                onClick={() => router.push(`/category/${encodeURIComponent(cat)}`)}
+                href={`/category/${encodeURIComponent(cat)}`}
               >
                 {getCategoryLabel(cat)}
               </NavTab>
@@ -389,21 +397,21 @@ export default function AppShell({ children }: { readonly children: React.ReactN
   );
 }
 
-/* ── Reusable nav tab ── */
+/* ── Reusable nav tab: a link, so categories prefetch and open in a new tab ── */
 function NavTab({
   active,
-  onClick,
+  href,
   children,
 }: {
   readonly active: boolean;
-  readonly onClick: () => void;
+  readonly href: string;
   readonly children: React.ReactNode;
 }) {
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={href}
       aria-current={active ? "page" : undefined}
-      className={`group relative flex flex-shrink-0 cursor-pointer items-baseline gap-1.5 whitespace-nowrap px-3 pb-[12px] pt-[9px] text-[13px] font-medium transition-colors duration-200 first:pl-0 ${
+      className={`group relative flex flex-shrink-0 cursor-pointer items-baseline gap-1.5 whitespace-nowrap rounded-sm px-3 pb-[12px] pt-[9px] text-[13px] font-medium transition-colors duration-200 first:pl-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--gold)] ${
         active
           ? "text-[var(--text-primary)]"
           : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -417,6 +425,6 @@ function NavTab({
           transition={{ type: "spring", stiffness: 420, damping: 36 }}
         />
       )}
-    </button>
+    </Link>
   );
 }

@@ -44,6 +44,7 @@ import {
 } from "@/lib/stats-insights";
 import { ResilientImage } from "@/components/ResilientImage";
 import { Em } from "@/components/ui/PageHeader";
+import { formatRating } from "@/lib/number-format";
 
 /* ── Types ── */
 interface YearData {
@@ -53,9 +54,9 @@ interface YearData {
   avgRating: number;
   uniqueTagCount: number;
   maxStreak: number;
-  busiestMonth: { month: string; count: number } | null;
+  busiestMonth: { month: string; monthLong?: string; count: number } | null;
   categories: { name: string; count: number }[];
-  monthlySeries: { month: string; count: number }[];
+  monthlySeries: { month: string; monthLong?: string; count: number }[];
   topTags: { name: string; count: number }[];
   topRated: {
     id: string;
@@ -82,10 +83,11 @@ const TOOLTIP_STYLE = {
   boxShadow: "var(--shadow-soft)",
 };
 
+/* Readable axis labels (owner rule): sans, 12px, muted — not tiny mono. */
 const TICK_STYLE = {
-  fontSize: 10.5,
+  fontSize: 12,
   fill: "var(--text-muted)",
-  fontFamily: "var(--font-mono), ui-monospace, monospace",
+  fontFamily: "var(--font-sans), ui-sans-serif, system-ui, sans-serif",
 };
 
 /* Verb that completes "Bu yıl en çok <Kategori> ..." — null falls back to a neutral phrasing. */
@@ -203,10 +205,10 @@ export default function YearInReviewPage() {
       <YearHero year={year} onYearChange={setYear} max={currentYear}>
         <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
           {favoriteCategory
-            ? `${year} yılında en çok ${getCategoryLabel(favoriteCategory.name).toLowerCase()} notu almışsın.`
+            ? `${year} yılında en çok ${getCategoryLabel(favoriteCategory.name).toLocaleLowerCase("tr-TR")} notu almışsın.`
             : `${year} yılında aldığın notların özeti.`}{" "}
           {data.busiestMonth
-            ? `En çok not aldığın ay ${data.busiestMonth.month}.`
+            ? `En çok not aldığın ay ${data.busiestMonth.monthLong ?? data.busiestMonth.month}.`
             : "Aylara göre görmek için birkaç ay daha not eklemen gerekiyor."}
         </p>
       </YearHero>
@@ -223,7 +225,10 @@ export default function YearInReviewPage() {
       >
         <div className="grid grid-cols-2 border-y border-[var(--border)] md:grid-cols-4">
           <BigNumber label="Toplam Not" value={data.totalPosts} accent />
-          <BigNumber label="Ort. Puan" value={data.avgRating > 0 ? data.avgRating : "—"} />
+          <BigNumber
+            label="Ort. Puan"
+            value={data.avgRating > 0 ? formatRating(data.avgRating) : "—"}
+          />
           <BigNumber label="Etiket" value={data.uniqueTagCount} />
           <BigNumber label="En Uzun Seri" value={data.maxStreak} unit="gün" />
         </div>
@@ -306,7 +311,8 @@ export default function YearInReviewPage() {
         statement={
           data.busiestMonth ? (
             <>
-              En çok not aldığın ay <Em>{data.busiestMonth.month}</Em>
+              En çok not aldığın ay{" "}
+              <Em>{data.busiestMonth.monthLong ?? data.busiestMonth.month}</Em>
             </>
           ) : (
             <>
@@ -364,7 +370,7 @@ export default function YearInReviewPage() {
             <StatLine
               label="En Yoğun Ay"
               value={data.busiestMonth ? `${data.busiestMonth.count} not` : "-"}
-              detail={data.busiestMonth?.month}
+              detail={data.busiestMonth?.monthLong ?? data.busiestMonth?.month}
             />
             <StatLine
               label="Not Aldığın Aylar"
@@ -438,7 +444,7 @@ export default function YearInReviewPage() {
                   <div className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-3 py-1">
                     <StarIcon size={12} weight="fill" className="text-[var(--accent-2)]" />
                     <span className="text-sm font-bold tabular-nums text-[var(--accent-2)]">
-                      {post.rating}
+                      {formatRating(post.rating)}
                     </span>
                   </div>
                 </Link>
@@ -502,7 +508,7 @@ export default function YearInReviewPage() {
         statement={
           data.avgRating > 0 ? (
             <>
-              Ortalama puanın <Em>{data.avgRating}</Em> oldu
+              Ortalama puanın <Em>{formatRating(data.avgRating)}</Em> oldu
             </>
           ) : (
             <>

@@ -42,6 +42,7 @@ import {
 } from "@/lib/post-templates";
 import { mergePendingTagText } from "@/lib/tag-input";
 import { stripHtml } from "@/lib/text";
+import { formatRating } from "@/lib/number-format";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { RestoredDraftBanner, focusComposerField, showUndoToast } from "./composer-utils";
 
@@ -415,7 +416,7 @@ export default function NewPostPage() {
   const invalidFields = new Set<string>(showRequiredErrors ? missingFields : []);
   const footerHint = (() => {
     if (title) {
-      const ratingStr = rating > 0 ? ` · ${rating}/5` : "";
+      const ratingStr = rating > 0 ? ` · ${formatRating(rating)}/5` : "";
       return `${status}${ratingStr}`;
     }
     if (supportsAutofill) return "Önce ara ya da başlığı kendin yaz.";
@@ -672,7 +673,9 @@ export default function NewPostPage() {
                 <path d="M9 18l6-6-6-6" />
               </svg>
               Puan, Kapak ve Etiketler
-              {rating > 0 && <span className="ml-auto text-xs text-[var(--gold)]">{rating}/5</span>}
+              {rating > 0 && (
+                <span className="ml-auto text-xs text-[var(--gold)]">{formatRating(rating)}/5</span>
+              )}
             </summary>
             <div className="mt-3 space-y-4">{sidebarCards}</div>
           </details>

@@ -195,7 +195,7 @@ const FLOATERS = [
   {
     src: `${MEDIA}/perfect-days.webp`,
     title: "Perfect Days",
-    rating: "5.0",
+    rating: "5,0",
     cls: "right-[5%] top-[20%] w-[150px] rotate-[6deg] xl:w-[176px]",
     depth: 1.4,
     fly: [-120, -520, 18],
@@ -203,7 +203,7 @@ const FLOATERS = [
   {
     src: `${MEDIA}/outer-wilds.webp`,
     title: "Outer Wilds",
-    rating: "5.0",
+    rating: "5,0",
     cls: "right-[19%] top-[40%] w-[124px] -rotate-[8deg] xl:top-[44%] xl:w-[146px]",
     depth: 0.8,
     fly: [-260, -380, -24],
@@ -211,7 +211,7 @@ const FLOATERS = [
   {
     src: `${MEDIA}/kyoto.webp`,
     title: "Kyoto",
-    rating: "4.5",
+    rating: "4,5",
     cls: "right-[4%] top-[58%] hidden w-[124px] rotate-[3deg] xl:block",
     depth: 1.9,
     fly: [160, -300, 30],
