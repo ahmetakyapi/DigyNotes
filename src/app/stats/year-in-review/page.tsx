@@ -4,7 +4,7 @@
   LAYOUT: "Wrapped"-style year in review — one tall editorial column (max-w-6xl).
   HERO: mono eyebrow · the year set enormous in serif italic with a lavender dot · mono year pills
         · intro sentence + back pill.
-  CHAPTERS: full-width rows split by hairlines. Left rail = "Bölüm 0X" + kicker (sticky on md+),
+  CHAPTERS: full-width rows split by hairlines. Left rail = topic label (sticky, md+ only),
             right = one big statement sentence (bold grotesk + serif-italic accent word) followed by
             the supporting number / chart / list.
   MOTION: hero animates on mount (re-keys per year); every chapter reveals on scroll (once),
@@ -196,9 +196,6 @@ export default function YearInReviewPage() {
     : null;
   const favoriteVerb = favoriteKey ? (CATEGORY_VERBS[favoriteKey] ?? null) : null;
 
-  let chapterCount = 0;
-  const nextChapter = () => String(++chapterCount).padStart(2, "0");
-
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       {/* ═══ Hero ═══ */}
@@ -215,7 +212,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: Hacim ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="Not Sayısı"
         statement={
           <>
@@ -236,7 +232,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: Odak ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="Kategoriler"
         statement={
           favoriteCategory ? (
@@ -306,7 +301,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: Ritim ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="Aylar"
         statement={
           data.busiestMonth ? (
@@ -393,7 +387,6 @@ export default function YearInReviewPage() {
       {/* ═══ Chapter: En İyiler ═══ */}
       {data.topRated.length > 0 && (
         <Chapter
-          index={nextChapter()}
           kicker="En Yüksek Puanlılar"
           statement={
             <>
@@ -456,7 +449,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: İz ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="Etiketler"
         statement={
           topTag ? (
@@ -503,7 +495,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: Puanlar ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="Puanlar"
         statement={
           data.avgRating > 0 ? (
@@ -540,7 +531,6 @@ export default function YearInReviewPage() {
 
       {/* ═══ Chapter: Başlangıç ve Son ═══ */}
       <Chapter
-        index={nextChapter()}
         kicker="İlk ve Son"
         statement={
           <>
@@ -615,7 +605,10 @@ function YearHero({
         </Link>
       </div>
 
-      <h1 className="mt-6 overflow-hidden pb-[0.04em] pt-[0.1em]">
+      {/* The size sits on the h1 too, so its em padding scales with the numerals: at
+          leading 0.8 the italic digits rise ~0.11em above the line box, and the old
+          0.1em of a 16px h1 (1.6px) cut their tops off. */}
+      <h1 className="mt-6 overflow-hidden pb-[0.02em] pt-[0.15em] text-[clamp(7rem,22vw,18rem)] leading-[0.8]">
         <motion.span
           key={year}
           className="dn-display block text-[clamp(7rem,22vw,18rem)] italic leading-[0.8] tracking-[-0.035em] text-[var(--text-primary)]"
@@ -671,14 +664,14 @@ function YearSelector({
   );
 }
 
-/* LAYOUT: chapter row — hairline on top, left rail (Bölüm 0X + kicker), right statement + body */
+/* LAYOUT: chapter row — hairline on top, left rail (topic label, md+ only), right statement
+   + body. No "Bölüm 0X" index and no label above the heading on phones: the statement
+   carries the chapter (owner rule: no kickers, no (01) indexes). */
 function Chapter({
-  index,
   kicker,
   statement,
   children,
 }: {
-  index: string;
   kicker: string;
   statement: ReactNode;
   children: ReactNode;
@@ -692,9 +685,8 @@ function Chapter({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.9, ease: EASE }}
     >
-      <div className="md:sticky md:top-24 md:self-start">
-        <p className="text-[12.5px] font-medium text-[var(--gold)]">Bölüm {index}</p>
-        <p className="mt-1.5 text-[12.5px] font-medium text-[var(--text-muted)]">{kicker}</p>
+      <div className="hidden md:sticky md:top-24 md:block md:self-start">
+        <p className="text-[12.5px] font-medium text-[var(--text-muted)]">{kicker}</p>
       </div>
       <div className="min-w-0">
         <h2 className={statementClass}>{statement}</h2>

@@ -279,12 +279,16 @@ select option {
   .dn-dot-pulse,
   .dn-cta-ghost,
   .dn-new-note-animate,
-  .dn-grain,
   .dn-marquee-track {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+  }
+  /* The grain is static and keeps its own 6–7.5% opacity: in the list above,
+     `opacity: 1` turned it into a full-strength noise layer over every page. */
+  .dn-grain {
+    animation: none !important;
   }
 }
 

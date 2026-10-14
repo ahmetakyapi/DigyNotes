@@ -627,6 +627,17 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
+## ERR-UI-007: With reduced motion every page is covered in heavy noise
+
+**First seen**: 2026-10-14
+**Symptom**: With `prefers-reduced-motion: reduce` (OS setting, or Playwright `reducedMotion: "reduce"`) the whole app looks like TV static; text is hard to read. Without the setting the grain is barely visible.
+**Root cause**: The reduced-motion block in `globals.css` resets a list of animated classes with `opacity: 1 !important` so hidden entrances become visible. `.dn-grain` (the fixed film-grain layer, normally `opacity: 0.06`) was in that list, so it rendered at full strength.
+**Fix**: Keep `.dn-grain` out of the opacity reset; it only gets `animation: none` under reduced motion.
+**Prevention**: The reduced-motion reset is for elements that start hidden. Decorative layers with their own low opacity (grain, glows, scrims) never go in an `opacity: 1` list. Check reduced-motion screenshots, not only motion ones.
+**Files**: `src/app/globals.css`, `src/components/GradientMesh.tsx`
+
+---
+
 ## ERR-PERF-001: Scrolling feels janky (20–30 fps) across the app
 
 **First seen**: 2026-10-09
