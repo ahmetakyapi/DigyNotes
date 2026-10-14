@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { formatFullDateTime, formatRelativeTime } from "@/lib/relative-time";
 
 interface UserCardProps {
   user: {
@@ -8,7 +12,8 @@ interface UserCardProps {
     username: string | null;
     bio: string | null;
     avatarUrl: string | null;
-    lastSeenAt: string | null;
+    /** Newest published note; replaces the exact last sign-in the card used to show. */
+    lastNoteAt: string | null;
     postCount: number;
   };
 }
@@ -16,17 +21,6 @@ interface UserCardProps {
 export default function UserCard({ user }: UserCardProps) {
   const href = user.username ? `/profile/${user.username}` : "#";
   const hasProfile = Boolean(user.username);
-  const lastSeenLabel = user.lastSeenAt
-    ? new Date(user.lastSeenAt).toLocaleString("tr-TR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        // Fixed zone: /discover renders this on the server first (hydration).
-        timeZone: "Europe/Istanbul",
-      })
-    : null;
   const content = (
     <>
       <div className="flex items-start gap-4">
@@ -55,25 +49,29 @@ export default function UserCard({ user }: UserCardProps) {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col items-start gap-2 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        <span className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
+      {/* LAYOUT: one meta row — note count pill · last note (relative) · arrow. */}
+      <div className="mt-4 flex items-center gap-3 border-t border-[var(--border)] pt-4">
+        <span className="inline-flex shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)]">
           <span className="mr-1 text-[var(--gold)]">{user.postCount}</span>
           Not
         </span>
-        {lastSeenLabel && (
-          <span className="inline-flex overflow-hidden rounded-full border border-accent/20 bg-accent/8 text-[11px]">
-            <span className="border-r border-accent/18 px-2.5 py-1.5 font-medium text-[var(--text-faint)]">
-              Son Giriş
-            </span>
-            <span suppressHydrationWarning className="px-3 py-1.5 font-medium text-[var(--gold)]">
-              {lastSeenLabel}
-            </span>
-          </span>
+        <span
+          suppressHydrationWarning
+          title={user.lastNoteAt ? formatFullDateTime(user.lastNoteAt) : undefined}
+          className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-[var(--text-muted)]"
+        >
+          {user.lastNoteAt
+            ? `Son not ${formatRelativeTime(user.lastNoteAt).toLocaleLowerCase("tr-TR")}`
+            : "Henüz not yok"}
+        </span>
+        {hasProfile && (
+          <ArrowRightIcon
+            size={15}
+            weight="bold"
+            aria-hidden
+            className="shrink-0 text-[var(--text-muted)] transition-all duration-300 ease-out-expo group-hover:translate-x-1 group-hover:text-[var(--gold)]"
+          />
         )}
-      </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-[var(--text-faint)]">
-        <span>Profili açıp arşivi incele</span>
-        <span className="font-medium text-[var(--gold)]">Git →</span>
       </div>
     </>
   );
@@ -82,7 +80,7 @@ export default function UserCard({ user }: UserCardProps) {
     return (
       <Link
         href={href}
-        className="group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-accent/24 hover:shadow-[var(--shadow-card)]"
+        className="group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-accent/24 hover:shadow-[var(--shadow-card)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
       >
         {content}
       </Link>

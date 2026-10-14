@@ -704,4 +704,15 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
-*Last updated: 2026-10-10*
+## ERR-DATA-013: Header numbers count only the loaded page ("12 Not" for 34 notes)
+
+**First seen**: 2026-10-14
+**Symptom**: The `/notes` greeting showed "12 Not · 12 Bu Ay" for an archive of 34 notes; the profile said "30 Herkese Açık Not" and "30 / 30 not" next to "34 Not"; Taslaklar/Arşiv stopped at 12; a pinned note was not on top.
+**Root cause**: The list pages with a cursor (12 per page, profile 30), and the stats were computed from the loaded array. Drafts/archive had a cursor that nothing used. The cursor stream is ordered by date only, so `isPinned` was ignored.
+**Fix**: `/api/posts?summary=1` returns `{ total, avgRating, thisMonth }` for the whole filtered list; `pinned=first` puts every pinned match on page one and excludes them from the cursor stream; drafts/archive and profiles got "load more" (`/api/users/[username]/posts?offset=`).
+**Prevention**: Never derive a total, average or "this month" count from a paginated array — ask the API for it. Any order that a button promises (pin) must hold in the paginated query too.
+**Files**: `src/app/api/posts/route.ts`, `src/app/notes/NotesPageClient.tsx`, `src/components/WelcomeHeader.tsx`, `src/components/posts-list/*`, `src/lib/profile-data.ts`, `src/app/api/users/[username]/posts/route.ts`
+
+---
+
+*Last updated: 2026-10-14*

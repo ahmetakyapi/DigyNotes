@@ -2,15 +2,17 @@ import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { collectionWithPostsInclude, serializeCollection } from "@/lib/collections";
 
-const POST_LIMIT = 30;
+/** First page of notes on a profile; the rest come from `/api/users/[username]/posts`. */
+export const PROFILE_POST_PAGE = 30;
 
-/**
- * Everything a profile page shows, behind its visibility rule: public profiles for
- * everyone, private ones only for their owner and admins (others get the name card).
- * Shared by `/api/users/[username]` and the server-rendered profile page; `cache`
- * lets generateMetadata and the page share one read.
- */
-export const getProfilePageData = cache(async (username: string, viewerId: string | null) => {
+const profilePostOrder = [
+  { isPinned: "desc" as const },
+  { createdAt: "desc" as const },
+  { id: "desc" as const },
+];
+
+/** A profile's owner row plus whether `viewerId` may see its notes. */
+async function resolveProfileAccess(username: string, viewerId: string | null) {
   const user = await prisma.user.findUnique({
     where: { username },
     select: {
@@ -21,11 +23,9 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
       avatarUrl: true,
       isPublic: true,
       createdAt: true,
-      lastLoginAt: true,
     },
   });
-
-  if (!user) return { kind: "not-found" as const };
+  if (!user) return null;
 
   const viewer = viewerId
     ? await prisma.user.findUnique({
@@ -34,6 +34,34 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
       })
     : null;
   const canView = user.isPublic || viewer?.id === user.id || viewer?.isAdmin === true;
+  return { user, canView };
+}
+
+function serializeProfilePost<
+  T extends { createdAt: Date; updatedAt: Date; tags: { tag: unknown }[] },
+>(post: T) {
+  const { tags, ...rest } = post;
+  return {
+    ...rest,
+    createdAt: rest.createdAt.toISOString(),
+    updatedAt: rest.updatedAt.toISOString(),
+    tags: tags.map((pt) => pt.tag),
+  };
+}
+
+/**
+ * Everything a profile page shows, behind its visibility rule: public profiles for
+ * everyone, private ones only for their owner and admins (others get the name card).
+ * Shared by `/api/users/[username]` and the server-rendered profile page; `cache`
+ * lets generateMetadata and the page share one read.
+ *
+ * The exact last sign-in time is not part of a public profile (it used to be shown to
+ * anyone); `lastNoteAt`, the newest published note, says how active the archive is.
+ */
+export const getProfilePageData = cache(async (username: string, viewerId: string | null) => {
+  const access = await resolveProfileAccess(username, viewerId);
+  if (!access) return { kind: "not-found" as const };
+  const { user, canView } = access;
 
   if (!canView) {
     return {
@@ -51,11 +79,12 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
     postCount,
     avgRatingResult,
     lastPost,
+    newestPost,
   ] = await Promise.all([
     prisma.post.findMany({
       where: { userId: user.id, isDeleted: false, isDraft: false },
-      orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-      take: POST_LIMIT,
+      orderBy: profilePostOrder,
+      take: PROFILE_POST_PAGE,
       include: { tags: { include: { tag: true } } },
     }),
     prisma.collection.findMany({
@@ -80,6 +109,11 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
+    prisma.post.findFirst({
+      where: { userId: user.id, isDeleted: false, isDraft: false },
+      orderBy: { createdAt: "desc" },
+      select: { createdAt: true },
+    }),
   ]);
 
   const avgRating = avgRatingResult._avg.rating ?? 0;
@@ -97,22 +131,46 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
         avatarUrl: user.avatarUrl,
         isPublic: user.isPublic,
         createdAt: user.createdAt.toISOString(),
-        lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
+        lastNoteAt: newestPost?.createdAt.toISOString() ?? null,
         postCount,
         avgRating: Math.round(avgRating * 10) / 10,
         followerCount,
         followingCount,
         isFollowing: !!followRow,
       },
-      posts: rawPosts.map(({ tags, ...rest }) => ({
-        ...rest,
-        createdAt: rest.createdAt.toISOString(),
-        updatedAt: rest.updatedAt.toISOString(),
-        tags: tags.map((pt) => pt.tag),
-      })),
+      posts: rawPosts.map(serializeProfilePost),
       collections: rawCollections.map(serializeCollection),
     },
   };
 });
 
 export type ProfilePageResult = Awaited<ReturnType<typeof getProfilePageData>>;
+
+/**
+ * Later pages of a profile's notes, same order and visibility as the first page.
+ * Offset paging: the pinned-first order has no single cursor column.
+ */
+export async function getProfilePostsPage(
+  username: string,
+  viewerId: string | null,
+  offset: number,
+  limit: number
+) {
+  const access = await resolveProfileAccess(username, viewerId);
+  if (!access) return { kind: "not-found" as const };
+  if (!access.canView) return { kind: "private" as const };
+
+  const rows = await prisma.post.findMany({
+    where: { userId: access.user.id, isDeleted: false, isDraft: false },
+    orderBy: profilePostOrder,
+    skip: offset,
+    take: limit + 1,
+    include: { tags: { include: { tag: true } } },
+  });
+
+  return {
+    kind: "ok" as const,
+    posts: rows.slice(0, limit).map(serializeProfilePost),
+    hasMore: rows.length > limit,
+  };
+}

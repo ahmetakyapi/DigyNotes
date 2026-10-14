@@ -17,8 +17,11 @@ import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/** A suggestion carries the one-line reason it was picked (`src/lib/recommendations.ts`). */
+type RecommendedPost = Post & { recommendationReason?: string };
+
 export default function RecommendedPageClient() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<RecommendedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [requiresLogin, setRequiresLogin] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
@@ -76,7 +79,7 @@ export default function RecommendedPageClient() {
             Sana <Em>Önerilenler</Em>
           </>
         }
-        description="Notlarına ve etiketlerine bakarak seçtiklerimiz."
+        description="Etiketlerine, puanlarına ve en çok not aldığın kategorilere bakarak seçtiklerimiz."
         stats={headerStats}
       />
 
@@ -146,7 +149,7 @@ export default function RecommendedPageClient() {
   );
 }
 
-function RecommendedCard({ post }: { post: Post }) {
+function RecommendedCard({ post }: { post: RecommendedPost }) {
   const displayTitle = formatDisplayTitle(post.title);
   const displayCreator = formatDisplayTitle(post.creator);
   const displayExcerpt = formatDisplaySentence(post.excerpt);
@@ -173,10 +176,10 @@ function RecommendedCard({ post }: { post: Post }) {
         </div>
 
         <div className="flex flex-1 flex-col gap-3 p-5">
-          {post.user?.username && (
-            <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--gold)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-              Benzer Zevk
+          {post.recommendationReason && (
+            <span className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--gold)]">
+              <SparkleIcon size={13} weight="fill" aria-hidden className="shrink-0" />
+              <span className="line-clamp-1">{post.recommendationReason}</span>
             </span>
           )}
           <div>

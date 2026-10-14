@@ -10,8 +10,11 @@ import TagBadge from "@/components/TagBadge";
 import FollowButton from "@/components/FollowButton";
 import FollowListModal from "@/components/FollowListModal";
 import CollectionCard from "@/components/CollectionCard";
-import { getCategoryLabel } from "@/lib/categories";
+import { getCategoryLabel, isOtherCategory } from "@/lib/categories";
 import { formatDisplayTitle } from "@/lib/display-text";
+import { formatRating } from "@/lib/number-format";
+import { formatFullDateTime, formatRelativeTime } from "@/lib/relative-time";
+import { foldSearchText } from "@/lib/text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { ResilientImage } from "@/components/ResilientImage";
 import { AvatarImage } from "@/components/AvatarImage";
@@ -25,7 +28,8 @@ interface PublicUser {
   avatarUrl: string | null;
   isPublic: boolean;
   createdAt: string;
-  lastLoginAt: string | null;
+  /** Newest published note; the exact last sign-in is no longer public. */
+  lastNoteAt: string | null;
   postCount: number;
   avgRating: number;
   followerCount: number;
@@ -44,14 +48,11 @@ export type ProfileInitialData =
   | { kind: "ok"; data: { user: PublicUser; posts: Post[]; collections: Collection[] } }
   | { kind: "private"; profile: PrivateProfile };
 
-/* Joined / last-login stamps: fixed zone so the server's first render and the
-   browser agree (hydration). */
-const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
-  day: "numeric",
+/* Joined stamp: month and year are enough; fixed zone so the server's first render
+   and the browser agree (hydration). */
+const JOINED_FORMAT: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
-  hour: "2-digit",
-  minute: "2-digit",
   timeZone: "Europe/Istanbul",
 };
 
@@ -81,6 +82,8 @@ export default function ProfilePageClient({
   const [likedPosts, setLikedPosts] = useState<Post[]>([]);
   const [likedLoading, setLikedLoading] = useState(false);
   const [likedLoaded, setLikedLoaded] = useState(false);
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false);
+  const [morePostsFailed, setMorePostsFailed] = useState(false);
 
   useEffect(() => {
     // Server already supplied this profile (page.tsx); no second round trip.
@@ -139,13 +142,38 @@ export default function ProfilePageClient({
       .finally(() => setLikedLoading(false));
   }, [activeTab, username, likedLoaded]);
 
-  const joinedDate = user ? new Date(user.createdAt).toLocaleString("tr-TR", DATE_TIME_FORMAT) : "";
-  const lastLoginDate = user?.lastLoginAt
-    ? new Date(user.lastLoginAt).toLocaleString("tr-TR", DATE_TIME_FORMAT)
-    : "Henüz yok";
+  const joinedDate = user ? new Date(user.createdAt).toLocaleString("tr-TR", JOINED_FORMAT) : "";
+  // The first page holds 30 notes; the profile used to stop there ("30 / 30 not" of 34).
+  const hasMorePosts = Boolean(user && posts.length < user.postCount && !morePostsFailed);
+
+  const loadMorePosts = async () => {
+    if (loadingMorePosts) return;
+    setLoadingMorePosts(true);
+    try {
+      const res = await fetch(
+        `/api/users/${encodeURIComponent(username)}/posts?offset=${posts.length}`
+      );
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = (await res.json()) as { posts?: Post[]; hasMore?: boolean };
+      const incoming = Array.isArray(data.posts) ? data.posts : [];
+      setPosts((prev) => {
+        const ids = new Set(prev.map((post) => post.id));
+        return [...prev, ...incoming.filter((post) => !ids.has(post.id))];
+      });
+      if (incoming.length === 0 || data.hasMore === false) {
+        setUser((prev) => (prev ? { ...prev, postCount: posts.length + incoming.length } : prev));
+      }
+    } catch {
+      setMorePostsFailed(true);
+    } finally {
+      setLoadingMorePosts(false);
+    }
+  };
   const topCategory = useMemo(() => {
     const counts = new Map<string, number>();
     posts.forEach((post) => {
+      // "En çok diğer notu" reads oddly; the catch-all category doesn't describe anyone.
+      if (isOtherCategory(post.category)) return;
       const label = getCategoryLabel(post.category);
       counts.set(label, (counts.get(label) ?? 0) + 1);
     });
@@ -160,20 +188,9 @@ export default function ProfilePageClient({
         .slice(0, 8),
     [posts]
   );
-  const normalizedProfileQuery = searchQuery.trim().toLowerCase();
+  const normalizedProfileQuery = foldSearchText(searchQuery.trim());
   const filteredPosts = useMemo(
-    () =>
-      posts.filter((post) => {
-        if (!normalizedProfileQuery) return true;
-        return (
-          post.title.toLowerCase().includes(normalizedProfileQuery) ||
-          (post.creator?.toLowerCase().includes(normalizedProfileQuery) ?? false) ||
-          post.category.toLowerCase().includes(normalizedProfileQuery) ||
-          getCategoryLabel(post.category).toLowerCase().includes(normalizedProfileQuery) ||
-          (post.tags?.some((tag) => tag.name.toLowerCase().includes(normalizedProfileQuery)) ??
-            false)
-        );
-      }),
+    () => posts.filter((post) => postMatchesProfileQuery(post, normalizedProfileQuery)),
     [normalizedProfileQuery, posts]
   );
   const filteredCollections = useMemo(
@@ -181,27 +198,18 @@ export default function ProfilePageClient({
       collections.filter((collection) => {
         if (!normalizedProfileQuery) return true;
         return (
-          collection.title.toLowerCase().includes(normalizedProfileQuery) ||
-          (collection.description?.toLowerCase().includes(normalizedProfileQuery) ?? false) ||
-          collection.posts.some((post) => post.title.toLowerCase().includes(normalizedProfileQuery))
+          foldSearchText(collection.title).includes(normalizedProfileQuery) ||
+          foldSearchText(collection.description).includes(normalizedProfileQuery) ||
+          collection.posts.some((post) =>
+            foldSearchText(post.title).includes(normalizedProfileQuery)
+          )
         );
       }),
     [collections, normalizedProfileQuery]
   );
 
   const filteredLikedPosts = useMemo(
-    () =>
-      likedPosts.filter((post) => {
-        if (!normalizedProfileQuery) return true;
-        return (
-          post.title.toLowerCase().includes(normalizedProfileQuery) ||
-          (post.creator?.toLowerCase().includes(normalizedProfileQuery) ?? false) ||
-          post.category.toLowerCase().includes(normalizedProfileQuery) ||
-          getCategoryLabel(post.category).toLowerCase().includes(normalizedProfileQuery) ||
-          (post.tags?.some((tag) => tag.name.toLowerCase().includes(normalizedProfileQuery)) ??
-            false)
-        );
-      }),
+    () => likedPosts.filter((post) => postMatchesProfileQuery(post, normalizedProfileQuery)),
     [likedPosts, normalizedProfileQuery]
   );
 
@@ -210,7 +218,9 @@ export default function ProfilePageClient({
     if (activeTab === "posts") {
       return {
         label: "Notlar",
-        count: `${filteredPosts.length} / ${posts.length} not`,
+        count: normalizedProfileQuery
+          ? `${filteredPosts.length} / ${posts.length} not`
+          : `${user?.postCount ?? posts.length} not`,
         placeholder: "Not, kategori ya da etiket ara...",
       };
     }
@@ -230,6 +240,8 @@ export default function ProfilePageClient({
     };
   }, [
     activeTab,
+    normalizedProfileQuery,
+    user?.postCount,
     filteredPosts.length,
     posts.length,
     filteredCollections.length,
@@ -391,15 +403,19 @@ export default function ProfilePageClient({
             )}
           </div>
 
-          <p className="dn-eyebrow mt-6">
-            @{user.username}
-            {topCategory && (
-              <span className="text-[var(--text-faint)]"> · En Çok: {topCategory}</span>
-            )}
-          </p>
-          <h1 className="mt-2 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)]">
+          <h1 className="mt-6 text-[clamp(2.6rem,7vw,4.8rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[var(--text-primary)] [text-wrap:balance]">
             {user.name}
           </h1>
+          {/* Handle and focus sit under the name: no kicker line above a heading. */}
+          <p className="mt-3 text-[13.5px] font-medium text-[var(--text-secondary)]">
+            @{user.username}
+            {topCategory && (
+              <span className="text-[var(--text-muted)]">
+                {" "}
+                · En çok {topCategory.toLocaleLowerCase("tr-TR")} notu
+              </span>
+            )}
+          </p>
           {user.bio && (
             <p className="dn-display mt-4 max-w-xl text-xl italic leading-snug text-[var(--text-secondary)] sm:text-2xl">
               “{user.bio}”
@@ -422,16 +438,22 @@ export default function ProfilePageClient({
             >
               <ProfileStat value={user.followingCount} label="Takip" />
             </button>
-            {user.avgRating > 0 && <ProfileStat value={user.avgRating} label="Ort. Puan" accent />}
-            <div className="ml-auto flex flex-col gap-1 text-right text-[12px] font-medium text-[var(--text-muted)]">
+            {user.avgRating > 0 && (
+              <ProfileStat value={formatRating(user.avgRating)} label="Ort. Puan" accent />
+            )}
+            <div className="ml-auto flex flex-col gap-1 text-right text-[12.5px] font-medium text-[var(--text-muted)]">
               <span suppressHydrationWarning>Katıldı · {joinedDate}</span>
-              <span suppressHydrationWarning>Son Giriş · {lastLoginDate}</span>
+              {user.lastNoteAt && (
+                <span suppressHydrationWarning title={formatFullDateTime(user.lastNoteAt)}>
+                  Son not · {formatRelativeTime(user.lastNoteAt).toLocaleLowerCase("tr-TR")}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[12.5px] font-medium text-[var(--text-muted)]">
-              {posts.length} Herkese Açık Not
+              {user.postCount} Herkese Açık Not
             </span>
             <span className="rounded-full border border-[var(--border)] px-3 py-1 text-[12.5px] font-medium text-[var(--text-muted)]">
               {collections.length} Koleksiyon
@@ -605,7 +627,32 @@ export default function ProfilePageClient({
               ))}
             </div>
           )
-        ) : activeTab === "collections" ? (
+        ) : null}
+
+        {activeTab === "posts" && (hasMorePosts || morePostsFailed) && (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            {hasMorePosts && (
+              <button
+                type="button"
+                onClick={() => void loadMorePosts()}
+                disabled={loadingMorePosts}
+                aria-busy={loadingMorePosts}
+                className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
+              >
+                {loadingMorePosts
+                  ? "Yükleniyor…"
+                  : `Daha Fazla Not (${(user.postCount - posts.length).toLocaleString("tr-TR")})`}
+              </button>
+            )}
+            {morePostsFailed && (
+              <p className="text-[12.5px] text-[var(--text-muted)]">
+                Notların devamı yüklenemedi. Sayfayı yenileyip tekrar dene.
+              </p>
+            )}
+          </div>
+        )}
+
+        {activeTab === "posts" ? null : activeTab === "collections" ? (
           collections.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10">
@@ -680,7 +727,9 @@ export default function ProfilePageClient({
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {filteredLikedPosts.map((post) => (
-              <Link key={post.id} href={`/posts/${post.id}`} className="group block">
+              /* Stretched link: the whole card opens the note, the author chip stays its own
+                 link (a link inside a link was invalid HTML and broke hydration). */
+              <div key={post.id} className="group relative block">
                 <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 sm:flex-row">
                   {/* Cover */}
                   <div
@@ -710,8 +759,7 @@ export default function ProfilePageClient({
                         {post.user && (
                           <Link
                             href={`/profile/${post.user.username}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                            className="relative z-10 ml-auto flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-raised)] px-2 py-0.5 text-[12px] text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
                           >
                             <AvatarImage
                               src={post.user.avatarUrl}
@@ -726,7 +774,12 @@ export default function ProfilePageClient({
                         )}
                       </div>
                       <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-accent">
-                        {formatDisplayTitle(post.title)}
+                        <Link
+                          href={`/posts/${post.id}`}
+                          className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-[var(--gold)]"
+                        >
+                          {formatDisplayTitle(post.title)}
+                        </Link>
                       </h2>
                       {post.creator && (
                         <p className="mb-1.5 text-xs text-[var(--text-muted)]">
@@ -752,7 +805,7 @@ export default function ProfilePageClient({
                     </div>
                   </div>
                 </article>
-              </Link>
+              </div>
             ))}
           </div>
         )}
@@ -766,7 +819,7 @@ function ProfileStat({
   label,
   accent = false,
 }: {
-  value: number;
+  value: number | string;
   label: string;
   accent?: boolean;
 }) {
@@ -781,5 +834,17 @@ function ProfileStat({
       </span>
       <span className="mt-1 text-[12px] font-medium text-[var(--text-muted)]">{label}</span>
     </span>
+  );
+}
+
+/** In-page search over a note card: title, creator, category and tags, Turkish-folded. */
+function postMatchesProfileQuery(post: Post, foldedQuery: string) {
+  if (!foldedQuery) return true;
+  return (
+    foldSearchText(post.title).includes(foldedQuery) ||
+    foldSearchText(post.creator).includes(foldedQuery) ||
+    foldSearchText(post.category).includes(foldedQuery) ||
+    foldSearchText(getCategoryLabel(post.category)).includes(foldedQuery) ||
+    (post.tags?.some((tag) => foldSearchText(tag.name).includes(foldedQuery)) ?? false)
   );
 }

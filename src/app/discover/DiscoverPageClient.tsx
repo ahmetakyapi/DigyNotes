@@ -13,6 +13,7 @@ import StarRating from "@/components/StarRating";
 import { ResilientImage } from "@/components/ResilientImage";
 import { StatusBadge } from "@/components/StatusBadge";
 import { getCategoryLabel } from "@/lib/categories";
+import { formatRating } from "@/lib/number-format";
 import { formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import type { Post } from "@/types";
@@ -27,7 +28,7 @@ export interface PublicUser {
   username: string | null;
   bio: string | null;
   avatarUrl: string | null;
-  lastSeenAt: string | null;
+  lastNoteAt: string | null;
   postCount: number;
 }
 
@@ -269,7 +270,7 @@ export default function DiscoverPageClient({
                             <StarRating rating={post.rating} size={11} />
                             {post.rating > 0 && (
                               <span className="dn-mono text-[12px] text-[var(--text-muted)]">
-                                {post.rating}/5
+                                {formatRating(post.rating)}/5
                               </span>
                             )}
                           </div>
