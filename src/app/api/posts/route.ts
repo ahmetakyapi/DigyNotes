@@ -16,6 +16,7 @@ import {
 } from "@/lib/post-form";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 import { normalizeTagName, stripHtml } from "@/lib/text";
+import { getIstanbulMonthStart } from "@/lib/number-format";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -107,11 +108,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(posts.map(transformPostTags));
     }
 
+    /* Pinned notes lead the main list, as the "Sabitle" button promises (?pinned=first):
+       the first page carries every pinned match, the date-ordered cursor stream skips them. */
+    const pinnedFirst = !draftsOnly && !archivedOnly && searchParams.get("pinned") === "first";
+    const streamWhere: Prisma.PostWhereInput = pinnedFirst
+      ? { AND: [where, { isPinned: false }] }
+      : where;
+
     const decodedCursor = decodePostsCursor(cursor);
     const paginatedWhere: Prisma.PostWhereInput = decodedCursor
       ? {
           AND: [
-            where,
+            streamWhere,
             {
               OR: [
                 { createdAt: { lt: decodedCursor.createdAt } },
@@ -122,14 +130,43 @@ export async function GET(request: NextRequest) {
             },
           ],
         }
-      : where;
+      : streamWhere;
 
-    const posts = await prisma.post.findMany({
-      where: paginatedWhere,
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: limit + 1,
-      include,
-    });
+    // The header numbers describe the whole list, not the loaded page (?summary=1, first page).
+    const wantsSummary = !decodedCursor && searchParams.get("summary") === "1";
+
+    const [pinned, posts, summary] = await Promise.all([
+      pinnedFirst && !decodedCursor
+        ? prisma.post.findMany({
+            where: { AND: [where, { isPinned: true }] },
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+            take: 24,
+            include,
+          })
+        : Promise.resolve([]),
+      prisma.post.findMany({
+        where: paginatedWhere,
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: limit + 1,
+        include,
+      }),
+      wantsSummary
+        ? Promise.all([
+            prisma.post.count({ where }),
+            prisma.post.aggregate({
+              where: { AND: [where, { rating: { gt: 0 } }] },
+              _avg: { rating: true },
+            }),
+            prisma.post.count({
+              where: { AND: [where, { createdAt: { gte: getIstanbulMonthStart() } }] },
+            }),
+          ]).then(([total, ratingAggregate, thisMonth]) => ({
+            total,
+            avgRating: Math.round((ratingAggregate._avg.rating ?? 0) * 10) / 10,
+            thisMonth,
+          }))
+        : Promise.resolve(null),
+    ]);
 
     let nextCursor: string | null = null;
     if (posts.length > limit) {
@@ -138,8 +175,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      items: posts.map(transformPostTags),
+      items: [...pinned, ...posts].map(transformPostTags),
       nextCursor,
+      ...(summary ? { summary } : {}),
     });
   } catch (error) {
     return handleApiError(error, "Notlar yüklenirken bir hata oluştu.");

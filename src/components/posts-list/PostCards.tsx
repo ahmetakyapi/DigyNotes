@@ -9,6 +9,7 @@ import TagBadge from "@/components/TagBadge";
 import { ResilientImage } from "@/components/ResilientImage";
 import { PushPin } from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
+import { formatRating } from "@/lib/number-format";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
@@ -69,7 +70,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-7 lg:p-9">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="rounded-full border border-white/25 bg-ink/35 px-2.5 py-1 text-[12px] text-white/85 font-medium">
+            <span className="rounded-full border border-white/25 bg-ink/35 px-2.5 py-1 text-[12px] font-medium text-white/85">
               {getCategoryLabel(post.category)}
               {post.years ? ` · ${post.years}` : ""}
             </span>
@@ -85,13 +86,22 @@ export const FeaturedCard = React.memo(function FeaturedCard({
           <div className="flex items-center gap-3">
             <StarRating rating={post.rating} size={14} tone="onMedia" />
             {post.rating > 0 && (
-              <span className="text-xs text-[var(--media-text-secondary)]">{post.rating}/5</span>
+              <span className="text-xs text-[var(--media-text-secondary)]">
+                {formatRating(post.rating)}/5
+              </span>
             )}
-            <span className="ml-auto hidden text-[12.5px] text-[var(--media-text-secondary)] sm:inline font-medium">
+            <span className="ml-auto hidden text-[12.5px] font-medium text-[var(--media-text-secondary)] sm:inline">
               {post.date}
             </span>
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#f2efe8] text-[#0b0b0a] transition-transform duration-700 ease-out-expo group-hover:rotate-45 sm:ml-4">
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden>
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                aria-hidden
+              >
                 <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>

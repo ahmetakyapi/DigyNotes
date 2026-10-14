@@ -41,3 +41,12 @@ export function truncateText(text: string, maxLength: number) {
 export function normalizeTagName(raw: string) {
   return raw.toLocaleLowerCase("tr-TR").trim().replace(/\s+/g, "-");
 }
+
+/**
+ * Case-folding for in-page search: Turkish lower-casing, then dotted and dotless i
+ * count as the same letter. "İstanbul", "ISTANBUL" and "istanbul" all match, and
+ * "IMDb" still matches "imdb" (tr-TR alone would turn it into "ımdb").
+ */
+export function foldSearchText(value?: string | null) {
+  return (value ?? "").toLocaleLowerCase("tr-TR").replaceAll("ı", "i").replaceAll("̇", "");
+}

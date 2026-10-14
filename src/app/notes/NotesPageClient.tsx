@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Post } from "@/types";
 import { PostsList, SavedEmptyState } from "@/components/posts-list";
+import type { NotesSummary } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { WelcomeHeader } from "@/components/WelcomeHeader";
 import { normalizeTagName } from "@/lib/text";
@@ -14,6 +15,7 @@ const PAGE_SIZE = 12;
 interface PaginatedPostsResponse {
   items: Post[];
   nextCursor: string | null;
+  summary: NotesSummary | null;
 }
 
 function mergePosts(current: Post[], incoming: Post[]) {
@@ -29,18 +31,38 @@ function mergePosts(current: Post[], incoming: Post[]) {
   return merged;
 }
 
+function readSummary(value: unknown): NotesSummary | null {
+  if (!value || typeof value !== "object") return null;
+  const { total, avgRating, thisMonth } = value as Record<string, unknown>;
+  if (typeof total !== "number") return null;
+  return {
+    total,
+    avgRating: typeof avgRating === "number" ? avgRating : 0,
+    thisMonth: typeof thisMonth === "number" ? thisMonth : 0,
+  };
+}
+
 async function fetchPaginated(url: string): Promise<PaginatedPostsResponse> {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) {
     throw new Error("Pagination fetch failed");
   }
 
-  const data = (await res.json()) as PaginatedPostsResponse;
+  const data = (await res.json()) as Partial<PaginatedPostsResponse>;
 
   return {
     items: Array.isArray(data.items) ? data.items : [],
     nextCursor: typeof data.nextCursor === "string" ? data.nextCursor : null,
+    summary: readSummary(data.summary),
   };
+}
+
+/** Drafts and archive page the same way as the main list; the first page asks for totals. */
+function buildListUrl(kind: "drafts" | "archived", cursor?: string | null) {
+  const params = new URLSearchParams({ paginate: "1", limit: String(PAGE_SIZE), [kind]: "1" });
+  if (cursor) params.set("cursor", cursor);
+  else params.set("summary", "1");
+  return `/api/posts?${params.toString()}`;
 }
 
 interface NotesPageClientProps {
@@ -54,6 +76,7 @@ function buildPostsUrl(query: string, category: string, tags: string[], cursor?:
   const params = new URLSearchParams({
     paginate: "1",
     limit: String(PAGE_SIZE),
+    pinned: "first",
   });
 
   const trimmedQuery = query.trim();
@@ -64,6 +87,7 @@ function buildPostsUrl(query: string, category: string, tags: string[], cursor?:
   if (trimmedCategory) params.set("category", trimmedCategory);
   if (normalizedTags.length > 0) params.set("tags", normalizedTags.join(","));
   if (cursor) params.set("cursor", cursor);
+  else params.set("summary", "1");
 
   return `/api/posts?${params.toString()}`;
 }
@@ -87,8 +111,12 @@ export default function NotesPageClient({
   const [loading, setLoading] = useState(true);
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [loadingMoreSaved, setLoadingMoreSaved] = useState(false);
-  const [draftsLoaded, setDraftsLoaded] = useState(false);
-  const [archivedLoaded, setArchivedLoaded] = useState(false);
+  const [loadingMoreDrafts, setLoadingMoreDrafts] = useState(false);
+  const [loadingMoreArchived, setLoadingMoreArchived] = useState(false);
+  /* Totals for the whole list; the arrays only hold the pages loaded so far. */
+  const [notesSummary, setNotesSummary] = useState<NotesSummary | null>(null);
+  const [draftsTotal, setDraftsTotal] = useState<number | null>(null);
+  const [archivedTotal, setArchivedTotal] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,14 +125,16 @@ export default function NotesPageClient({
       setLoading(true);
       setLoadingMorePosts(false);
       setLoadingMoreSaved(false);
+      setLoadingMoreDrafts(false);
+      setLoadingMoreArchived(false);
       setPostsError(null);
       setSavedError(null);
 
       const [postsResult, savedResult, draftsResult, archivedResult] = await Promise.allSettled([
         fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags)),
         fetchPaginated(`/api/bookmarks?paginate=1&limit=${PAGE_SIZE}`),
-        fetchPaginated(`/api/posts?paginate=1&limit=${PAGE_SIZE}&drafts=1`),
-        fetchPaginated(`/api/posts?paginate=1&limit=${PAGE_SIZE}&archived=1`),
+        fetchPaginated(buildListUrl("drafts")),
+        fetchPaginated(buildListUrl("archived")),
       ]);
 
       if (cancelled) return;
@@ -112,9 +142,11 @@ export default function NotesPageClient({
       if (postsResult.status === "fulfilled") {
         setPosts(postsResult.value.items);
         setPostsCursor(postsResult.value.nextCursor);
+        setNotesSummary(postsResult.value.summary);
       } else {
         setPosts([]);
         setPostsCursor(null);
+        setNotesSummary(null);
         setPostsError("Notlar şu anda yüklenemedi.");
       }
 
@@ -130,13 +162,13 @@ export default function NotesPageClient({
       if (draftsResult.status === "fulfilled") {
         setDraftPosts(draftsResult.value.items);
         setDraftsCursor(draftsResult.value.nextCursor);
-        setDraftsLoaded(true);
+        setDraftsTotal(draftsResult.value.summary?.total ?? null);
       }
 
       if (archivedResult.status === "fulfilled") {
         setArchivedPosts(archivedResult.value.items);
         setArchivedCursor(archivedResult.value.nextCursor);
-        setArchivedLoaded(true);
+        setArchivedTotal(archivedResult.value.summary?.total ?? null);
       }
 
       if (!cancelled) {
@@ -189,6 +221,37 @@ export default function NotesPageClient({
       setLoadingMoreSaved(false);
     }
   };
+
+  /* Drafts and archive used to stop at the first 12; they page like the main list now. */
+  const loadMoreDrafts = useCallback(async () => {
+    if (!draftsCursor || loadingMoreDrafts) return;
+    setLoadingMoreDrafts(true);
+    try {
+      const data = await fetchPaginated(buildListUrl("drafts", draftsCursor));
+      setDraftPosts((prev) => mergePosts(prev, data.items));
+      setDraftsCursor(data.nextCursor);
+    } catch {
+      setDraftsCursor(null);
+      setPostsError("Taslakların devamı yüklenemedi.");
+    } finally {
+      setLoadingMoreDrafts(false);
+    }
+  }, [draftsCursor, loadingMoreDrafts]);
+
+  const loadMoreArchived = useCallback(async () => {
+    if (!archivedCursor || loadingMoreArchived) return;
+    setLoadingMoreArchived(true);
+    try {
+      const data = await fetchPaginated(buildListUrl("archived", archivedCursor));
+      setArchivedPosts((prev) => mergePosts(prev, data.items));
+      setArchivedCursor(data.nextCursor);
+    } catch {
+      setArchivedCursor(null);
+      setPostsError("Arşivin devamı yüklenemedi.");
+    } finally {
+      setLoadingMoreArchived(false);
+    }
+  }, [archivedCursor, loadingMoreArchived]);
 
   if (loading) {
     return (
@@ -376,6 +439,10 @@ export default function NotesPageClient({
     );
   }
 
+  // The greeting's numbers describe the whole archive; a filtered list keeps its own count.
+  const hasFilter =
+    initialQuery.trim() !== "" || initialCategory.trim() !== "" || initialTags.length > 0;
+
   return (
     <>
       {(postsError || savedError) && (
@@ -386,7 +453,7 @@ export default function NotesPageClient({
         </div>
       )}
 
-      <WelcomeHeader posts={posts} />
+      <WelcomeHeader posts={posts} summary={hasFilter ? null : notesSummary} />
 
       <div className="mx-auto max-w-5xl px-3 pt-2 sm:px-6 sm:pt-4">
         <RecentlyViewed />
@@ -401,12 +468,21 @@ export default function NotesPageClient({
         savedPosts={savedPosts}
         draftPosts={draftPosts}
         archivedPosts={archivedPosts}
+        notesSummary={notesSummary}
+        draftsTotal={draftsTotal}
+        archivedTotal={archivedTotal}
         hasMorePosts={postsCursor !== null}
         hasMoreSavedPosts={savedCursor !== null}
+        hasMoreDrafts={draftsCursor !== null}
+        hasMoreArchived={archivedCursor !== null}
         isLoadingMorePosts={loadingMorePosts}
         isLoadingMoreSavedPosts={loadingMoreSaved}
+        isLoadingMoreDrafts={loadingMoreDrafts}
+        isLoadingMoreArchived={loadingMoreArchived}
         onLoadMorePosts={loadMorePosts}
         onLoadMoreSavedPosts={loadMoreSavedPosts}
+        onLoadMoreDrafts={loadMoreDrafts}
+        onLoadMoreArchived={loadMoreArchived}
       />
     </>
   );

@@ -23,6 +23,7 @@ import {
   normalizeCategory,
 } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
+import { foldSearchText } from "@/lib/text";
 import { ResilientImage } from "@/components/ResilientImage";
 import { getPostImageSrc } from "@/lib/post-image";
 import { categorySupportsSpoiler } from "@/lib/post-config";
@@ -71,16 +72,16 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   }, [categoryName]);
 
   const filtered = useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
+    const q = foldSearchText(searchQuery.trim());
     const searched = q
       ? posts.filter(
-          (p) =>
-            p.title.toLowerCase().includes(q) || (p.creator?.toLowerCase().includes(q) ?? false)
+          (p) => foldSearchText(p.title).includes(q) || foldSearchText(p.creator).includes(q)
         )
       : posts;
     return applySortFilter(
       searched.filter((post) => matchesAdvancedFilters(post, sortFilter)),
-      sortFilter
+      sortFilter,
+      { pinnedFirst: true }
     );
   }, [posts, searchQuery, sortFilter]);
 

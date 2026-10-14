@@ -58,12 +58,21 @@ export function PostsList({
   savedPosts = [],
   draftPosts = [],
   archivedPosts = [],
+  notesSummary = null,
+  draftsTotal = null,
+  archivedTotal = null,
   hasMorePosts = false,
   hasMoreSavedPosts = false,
+  hasMoreDrafts = false,
+  hasMoreArchived = false,
   isLoadingMorePosts = false,
   isLoadingMoreSavedPosts = false,
+  isLoadingMoreDrafts = false,
+  isLoadingMoreArchived = false,
   onLoadMorePosts,
   onLoadMoreSavedPosts,
+  onLoadMoreDrafts,
+  onLoadMoreArchived,
 }: PostsListProps) {
   const reduceMotion = useReducedMotion();
   const router = useRouter();
@@ -135,24 +144,30 @@ export function PostsList({
         : activeTab === "arsiv"
           ? archivedPosts
           : allPosts;
-  const currentHasMore =
-    activeTab === "kaydedilenler"
-      ? hasMoreSavedPosts
-      : activeTab === "notlar"
-        ? hasMorePosts
-        : false;
-  const currentIsLoadingMore =
-    activeTab === "kaydedilenler"
-      ? isLoadingMoreSavedPosts
-      : activeTab === "notlar"
-        ? isLoadingMorePosts
-        : false;
-  const currentLoadMore =
-    activeTab === "kaydedilenler"
-      ? onLoadMoreSavedPosts
-      : activeTab === "notlar"
-        ? onLoadMorePosts
-        : undefined;
+  const paging: Record<
+    PostsTab,
+    { hasMore: boolean; isLoadingMore: boolean; loadMore?: () => void | Promise<void> }
+  > = {
+    notlar: { hasMore: hasMorePosts, isLoadingMore: isLoadingMorePosts, loadMore: onLoadMorePosts },
+    kaydedilenler: {
+      hasMore: hasMoreSavedPosts,
+      isLoadingMore: isLoadingMoreSavedPosts,
+      loadMore: onLoadMoreSavedPosts,
+    },
+    taslaklar: {
+      hasMore: hasMoreDrafts,
+      isLoadingMore: isLoadingMoreDrafts,
+      loadMore: onLoadMoreDrafts,
+    },
+    arsiv: {
+      hasMore: hasMoreArchived,
+      isLoadingMore: isLoadingMoreArchived,
+      loadMore: onLoadMoreArchived,
+    },
+  };
+  const currentHasMore = paging[activeTab].hasMore;
+  const currentIsLoadingMore = paging[activeTab].isLoadingMore;
+  const currentLoadMore = paging[activeTab].loadMore;
 
   const availableStatuses = useMemo(
     () =>
@@ -178,14 +193,16 @@ export function PostsList({
     }
     result = result.filter((p) => matchesAdvancedFilters(p, sortFilter));
     result = result.filter((p) => postMatchesTags(p, activeTags));
-    return applySortFilter(result, sortFilter);
-  }, [visiblePosts, localQuery, activeCategory, activeTags, sortFilter]);
+    // Your own pinned notes stay on top in the default order; a saved note's pin is its author's.
+    return applySortFilter(result, sortFilter, { pinnedFirst: activeTab === "notlar" });
+  }, [visiblePosts, localQuery, activeCategory, activeTags, sortFilter, activeTab]);
 
   const stats = useMemo(() => {
+    if (notesSummary) return { total: notesSummary.total, avgRating: notesSummary.avgRating };
     const rated = allPosts.filter((p) => p.rating > 0);
     const avgRating = rated.length > 0 ? rated.reduce((s, p) => s + p.rating, 0) / rated.length : 0;
     return { total: allPosts.length, avgRating };
-  }, [allPosts]);
+  }, [allPosts, notesSummary]);
 
   const [featured, ...rest] = filtered;
   const hasSearch =
@@ -257,8 +274,8 @@ export function PostsList({
           activeTab={activeTab}
           totalNotes={stats.total}
           totalSaved={savedPosts.length}
-          totalDrafts={draftPosts.length}
-          totalArchived={archivedPosts.length}
+          totalDrafts={draftsTotal ?? draftPosts.length}
+          totalArchived={archivedTotal ?? archivedPosts.length}
           hasMoreSaved={hasMoreSavedPosts}
           avgRating={stats.avgRating}
           onTabChange={handleTabChange}

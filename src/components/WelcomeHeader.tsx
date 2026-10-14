@@ -6,9 +6,15 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Post } from "@/types";
 import { normalizeCategory } from "@/lib/categories";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import type { NotesSummary } from "@/components/posts-list";
+import { formatRatingFixed } from "@/lib/number-format";
 
 interface WelcomeHeaderProps {
+  /** Loaded notes: only used to pick the first rotating verb. */
   posts: Post[];
+  /** Whole-archive numbers from the API; without them the stats stay hidden rather than
+      counting just the loaded page (the header used to say "12 Not" for 34 notes). */
+  summary: NotesSummary | null;
 }
 
 function greetingFor(hour: number): string {
@@ -64,7 +70,7 @@ function RotatingVerb({ start }: { start: number }) {
   );
 }
 
-export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
+export function WelcomeHeader({ posts, summary }: WelcomeHeaderProps) {
   const { data: session, status } = useSession();
   const name = session?.user?.name ?? null;
 
@@ -77,23 +83,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
     return VERB_FOR[normalizeCategory(latest?.category)] ?? 0;
   }, [posts]);
 
-  const stats = useMemo(() => {
-    const total = posts.length;
-
-    const ratings = posts
-      .map((p) => p.rating)
-      .filter((r): r is number => typeof r === "number" && r > 0);
-    const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
-
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-    const thisMonth = posts.filter((p) => {
-      const created = p.createdAt ? new Date(p.createdAt).getTime() : 0;
-      return created >= monthStart;
-    }).length;
-
-    return { total, avgRating, thisMonth };
-  }, [posts]);
+  const stats = summary ?? { total: 0, avgRating: 0, thisMonth: 0 };
 
   if (status === "loading") return null;
 
@@ -134,12 +124,7 @@ export function WelcomeHeader({ posts }: WelcomeHeaderProps) {
             <Stat value={<AnimatedCounter value={stats.total} />} label="Not" />
             {stats.avgRating > 0 && (
               <Stat
-                value={
-                  <AnimatedCounter
-                    value={stats.avgRating}
-                    format={(n) => n.toFixed(1).replace(".", ",")}
-                  />
-                }
+                value={<AnimatedCounter value={stats.avgRating} format={formatRatingFixed} />}
                 label="Ort. Puan"
               />
             )}

@@ -1,22 +1,20 @@
 import type { Post } from "@/types";
 import { getCategoryLabel } from "@/lib/categories";
 import { categorySupportsSpoiler } from "@/lib/post-config";
+import { foldSearchText } from "@/lib/text";
 
 /**
  * Arama metni normalize eder — HTML strip, lowercase, whitespace collapse.
  */
 export function normalizeSearchText(value?: string | null): string {
-  return (value ?? "")
-    .replaceAll(/<[^>]*>/g, " ")
-    .replaceAll(/\s+/g, " ")
-    .toLowerCase();
+  return foldSearchText((value ?? "").replaceAll(/<[^>]*>/g, " ").replaceAll(/\s+/g, " "));
 }
 
 /**
  * Post'un arama sorgusuna uyup uymadığını kontrol eder.
  */
 export function matchesQuery(post: Post, query: string): boolean {
-  const q = query.trim().toLowerCase();
+  const q = foldSearchText(query.trim());
   if (!q) return true;
 
   const haystacks = [

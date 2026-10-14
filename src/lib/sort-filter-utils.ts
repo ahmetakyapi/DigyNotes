@@ -85,15 +85,20 @@ export function matchesAdvancedFilters<
   return true;
 }
 
-export function applySortFilter<T extends { rating: number; title: string; createdAt: string }>(
-  posts: T[],
-  state: SortFilterState
-): T[] {
+export function applySortFilter<
+  T extends { rating: number; title: string; createdAt: string; isPinned?: boolean },
+>(posts: T[], state: SortFilterState, options: { pinnedFirst?: boolean } = {}): T[] {
   const filtered = [...posts];
 
   switch (state.sort) {
     case "newest":
-      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      filtered.sort((a, b) => {
+        // Default order only: pinned notes lead, as the pin button promises.
+        if (options.pinnedFirst && Boolean(a.isPinned) !== Boolean(b.isPinned)) {
+          return a.isPinned ? -1 : 1;
+        }
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
       break;
     case "oldest":
       filtered.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
