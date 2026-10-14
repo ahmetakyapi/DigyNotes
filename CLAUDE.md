@@ -73,7 +73,7 @@ Env names (values never in docs): `DATABASE_URL`, `NEXTAUTH_URL` (local `http://
 - Local composer drafts live under `digynotes-draft:<userId>[:<postId>]` (`src/lib/local-drafts.ts`); sign-out calls `clearAllLocalDrafts()`.
 - `/notes` lists page with a cursor, so numbers never come from the loaded slice (ERR-DATA-013): first pages ask `/api/posts?…&summary=1` (`{ total, avgRating, thisMonth }`, month in Istanbul time) and the main list adds `pinned=first` (all pinned matches on page one, the cursor stream skips them; `applySortFilter(…, { pinnedFirst })` keeps them on top in the default order). Drafts and archive page the same way.
 - Profiles: first 30 notes from `getProfilePageData`, the rest from `GET /api/users/[username]/posts?offset=` (same visibility). Public surfaces (profile, Keşfet cards) never show `lastLoginAt`; they show `lastNoteAt` (newest published note, relative). Counts and stats (`/api/users/me/stats`, year in review, community stats, Keşfet) cover published notes only (`isDeleted: false, isDraft: false`).
-- Recommendations: `src/lib/recommendations.ts` (tested) scores other people's public notes by weighted tag overlap + category share, skips titles you already noted, caps 4 per author, and returns a `recommendationReason` line per note.
+- Recommendations: `src/lib/recommendations.ts` (tested) scores other people's public notes (two candidate pools: up to 200 sharing a tag, 100 sharing only a category) by weighted tag overlap + category share, skips titles you already noted, caps 4 per author, and returns a `recommendationReason` line per note.
 
 ## Design System — "Cinémathèque" (2026-10)
 

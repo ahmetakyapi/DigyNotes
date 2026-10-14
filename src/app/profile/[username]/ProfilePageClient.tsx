@@ -10,7 +10,7 @@ import TagBadge from "@/components/TagBadge";
 import FollowButton from "@/components/FollowButton";
 import FollowListModal from "@/components/FollowListModal";
 import CollectionCard from "@/components/CollectionCard";
-import { getCategoryLabel, isOtherCategory } from "@/lib/categories";
+import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplayTitle } from "@/lib/display-text";
 import { formatRating } from "@/lib/number-format";
 import { formatFullDateTime, formatRelativeTime } from "@/lib/relative-time";
@@ -30,6 +30,8 @@ interface PublicUser {
   createdAt: string;
   /** Newest published note; the exact last sign-in is no longer public. */
   lastNoteAt: string | null;
+  /** Label of the category with the most published notes ("Diğer" skipped). */
+  topCategory?: string | null;
   postCount: number;
   avgRating: number;
   followerCount: number;
@@ -169,16 +171,8 @@ export default function ProfilePageClient({
       setLoadingMorePosts(false);
     }
   };
-  const topCategory = useMemo(() => {
-    const counts = new Map<string, number>();
-    posts.forEach((post) => {
-      // "En çok diğer notu" reads oddly; the catch-all category doesn't describe anyone.
-      if (isOtherCategory(post.category)) return;
-      const label = getCategoryLabel(post.category);
-      counts.set(label, (counts.get(label) ?? 0) + 1);
-    });
-    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
-  }, [posts]);
+  // Counted on the server over every published note, not over the loaded page.
+  const topCategory = user?.topCategory ?? null;
 
   const coverImages = useMemo(
     () =>

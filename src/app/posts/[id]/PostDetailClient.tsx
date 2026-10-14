@@ -496,7 +496,7 @@ export default function PostDetailClient({
                     }}
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
                       archived
-                        ? "border-[#ffb088]/50 bg-[#ffb088]/15 text-[#ffb088]"
+                        ? "border-accent-2 bg-accent-2 text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--accent-2-rgb)/0.3)]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     }`}
                     style={

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -13,7 +14,9 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const CANDIDATE_POOL = 200;
+/* Candidate pools the ranking picks 12 from: tag matches first, category-only matches after. */
+const TAG_POOL = 200;
+const CATEGORY_POOL = 100;
 
 export async function GET() {
   try {
@@ -51,25 +54,48 @@ export async function GET() {
       new Set(ownNotes.flatMap((note) => getCategoryVariants(note.category)))
     );
 
-    // Published notes by other public, non-banned authors that share a tag or a category.
-    const candidates = await prisma.post.findMany({
-      where: {
-        userId: { not: userId },
-        user: { isPublic: true, isBanned: false },
-        isDeleted: false,
-        isDraft: false,
-        OR: [
-          ...(ownTagIds.length > 0 ? [{ tags: { some: { tagId: { in: ownTagIds } } } }] : []),
-          { category: { in: ownCategories } },
-        ],
-      },
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: CANDIDATE_POOL,
-      include: {
-        tags: { include: { tag: true } },
-        user: { select: { id: true, name: true, username: true, avatarUrl: true } },
-      },
-    });
+    /* Published notes by other public, non-banned authors. Two pools: notes that share a
+       tag, and notes that only share a category. One OR query ordered by date was in
+       effect "the newest notes of the site" (almost every note shares a category), so an
+       older note with your exact tags never reached the ranking. */
+    const candidateBase = {
+      userId: { not: userId },
+      user: { isPublic: true, isBanned: false },
+      isDeleted: false,
+      isDraft: false,
+    } satisfies Prisma.PostWhereInput;
+    const candidateInclude = {
+      tags: { include: { tag: true } },
+      user: { select: { id: true, name: true, username: true, avatarUrl: true } },
+    } satisfies Prisma.PostInclude;
+    const candidateOrder: Prisma.PostOrderByWithRelationInput[] = [
+      { createdAt: "desc" },
+      { id: "desc" },
+    ];
+
+    const [tagPool, categoryPool] = await Promise.all([
+      ownTagIds.length > 0
+        ? prisma.post.findMany({
+            where: { ...candidateBase, tags: { some: { tagId: { in: ownTagIds } } } },
+            orderBy: candidateOrder,
+            take: TAG_POOL,
+            include: candidateInclude,
+          })
+        : Promise.resolve([]),
+      prisma.post.findMany({
+        where: {
+          ...candidateBase,
+          category: { in: ownCategories },
+          ...(ownTagIds.length > 0
+            ? { NOT: { tags: { some: { tagId: { in: ownTagIds } } } } }
+            : {}),
+        },
+        orderBy: candidateOrder,
+        take: CATEGORY_POOL,
+        include: candidateInclude,
+      }),
+    ]);
+    const candidates = [...tagPool, ...categoryPool];
 
     const ranked = rankRecommendations(
       candidates.map((post) => ({

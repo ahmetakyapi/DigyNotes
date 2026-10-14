@@ -109,7 +109,9 @@ export async function GET(request: NextRequest) {
     }
 
     /* Pinned notes lead the main list, as the "Sabitle" button promises (?pinned=first):
-       the first page carries every pinned match, the date-ordered cursor stream skips them. */
+       the first page carries every pinned match, the date-ordered cursor stream skips them.
+       The pinned read has no `take`: the stream never returns a pinned note, so a cap
+       would hide every pinned note past it from /notes for good. */
     const pinnedFirst = !draftsOnly && !archivedOnly && searchParams.get("pinned") === "first";
     const streamWhere: Prisma.PostWhereInput = pinnedFirst
       ? { AND: [where, { isPinned: false }] }
@@ -140,7 +142,6 @@ export async function GET(request: NextRequest) {
         ? prisma.post.findMany({
             where: { AND: [where, { isPinned: true }] },
             orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-            take: 24,
             include,
           })
         : Promise.resolve([]),

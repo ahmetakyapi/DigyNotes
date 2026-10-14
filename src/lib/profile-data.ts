@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { collectionWithPostsInclude, serializeCollection } from "@/lib/collections";
+import { getCategoryLabel, isOtherCategory } from "@/lib/categories";
 
 /** First page of notes on a profile; the rest come from `/api/users/[username]/posts`. */
 export const PROFILE_POST_PAGE = 30;
@@ -10,6 +11,25 @@ const profilePostOrder = [
   { createdAt: "desc" as const },
   { id: "desc" as const },
 ];
+
+/**
+ * Label of the category with the most published notes ("Film"), or null. Counted over the
+ * whole archive: the client only holds the first page, so a count there could name a
+ * different category than the stats and change after "Daha Fazla Not". The catch-all
+ * "Diğer" never describes anyone; ties go to the first label alphabetically.
+ */
+function pickTopCategory(groups: { category: string; _count: { _all: number } }[]) {
+  const counts = new Map<string, number>();
+  for (const group of groups) {
+    if (isOtherCategory(group.category)) continue;
+    const label = getCategoryLabel(group.category);
+    counts.set(label, (counts.get(label) ?? 0) + group._count._all);
+  }
+  const ranked = Array.from(counts.entries()).sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "tr")
+  );
+  return ranked[0]?.[0] ?? null;
+}
 
 /** A profile's owner row plus whether `viewerId` may see its notes. */
 async function resolveProfileAccess(username: string, viewerId: string | null) {
@@ -80,6 +100,7 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
     avgRatingResult,
     lastPost,
     newestPost,
+    categoryGroups,
   ] = await Promise.all([
     prisma.post.findMany({
       where: { userId: user.id, isDeleted: false, isDraft: false },
@@ -114,6 +135,11 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
       orderBy: { createdAt: "desc" },
       select: { createdAt: true },
     }),
+    prisma.post.groupBy({
+      by: ["category"],
+      where: { userId: user.id, isDeleted: false, isDraft: false },
+      _count: { _all: true },
+    }),
   ]);
 
   const avgRating = avgRatingResult._avg.rating ?? 0;
@@ -132,6 +158,7 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
         isPublic: user.isPublic,
         createdAt: user.createdAt.toISOString(),
         lastNoteAt: newestPost?.createdAt.toISOString() ?? null,
+        topCategory: pickTopCategory(categoryGroups),
         postCount,
         avgRating: Math.round(avgRating * 10) / 10,
         followerCount,
