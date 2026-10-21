@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image, { ImageProps } from "next/image";
-import { customLoader } from "@/lib/image";
+import { cdnImageLoader, customLoader, isResizableImage } from "@/lib/image";
 import { DEFAULT_POST_IMAGE_WIDE } from "@/lib/post-image";
 
 interface ResilientImageProps extends Omit<ImageProps, "src" | "loader"> {
@@ -13,12 +13,18 @@ interface ResilientImageProps extends Omit<ImageProps, "src" | "loader"> {
    * 'tall'  → dikey poster alanlarında dikey placeholder SVG kullanılır
    */
   variant?: "wide" | "tall";
+  /**
+   * List and card covers: a TMDB/RAWG image comes from its CDN at the size `sizes` asks for.
+   * Leave it off for heroes, which keep the stored file.
+   */
+  responsive?: boolean;
 }
 
 export function ResilientImage({
   src,
   fallbackSrc,
   variant = "wide",
+  responsive = false,
   onError,
   alt = "",
   ...props
@@ -27,6 +33,7 @@ export function ResilientImage({
     fallbackSrc ?? (variant === "tall" ? "/default-post-cover.svg" : DEFAULT_POST_IMAGE_WIDE);
 
   const [activeSrc, setActiveSrc] = useState(src);
+  const resize = responsive && isResizableImage(activeSrc);
 
   useEffect(() => {
     setActiveSrc(src);
@@ -36,7 +43,7 @@ export function ResilientImage({
     <Image
       alt={alt}
       {...props}
-      loader={customLoader}
+      loader={resize ? cdnImageLoader : customLoader}
       src={activeSrc}
       onError={(event) => {
         if (activeSrc !== resolvedFallback) {
@@ -44,7 +51,7 @@ export function ResilientImage({
         }
         onError?.(event);
       }}
-      unoptimized
+      unoptimized={!resize}
     />
   );
 }

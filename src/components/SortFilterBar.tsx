@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 export type { SortOption, SortFilterState } from "@/lib/sort-filter-utils";
 export {
@@ -37,12 +38,12 @@ const MIN_RATING_OPTIONS = [
   { value: 2, label: "2+" },
   { value: 3, label: "3+" },
   { value: 4, label: "4+" },
-  { value: 4.5, label: "4.5+" },
+  { value: 4.5, label: "4,5+" },
 ];
 
 const MAX_RATING_OPTIONS = [
   { value: 0, label: "Maks. puan" },
-  { value: 2.5, label: "2.5" },
+  { value: 2.5, label: "2,5" },
   { value: 3, label: "3" },
   { value: 4, label: "4" },
   { value: 5, label: "5" },
@@ -58,6 +59,7 @@ export function SortFilterBar({
   inlineContent,
 }: SortFilterBarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const trapRef = useFocusTrap(showAdvanced);
   const selectClass =
     "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-accent/30 focus:border-accent/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
   const inputClass =
@@ -114,6 +116,7 @@ export function SortFilterBar({
           <select
             value={value.sort}
             onChange={(e) => onChange({ ...value, sort: e.target.value as SortOption })}
+            aria-label="Sıralama"
             className={selectClass}
           >
             {SORT_OPTIONS.map((option) => (
@@ -148,6 +151,7 @@ export function SortFilterBar({
         >
           <div className="flex min-h-full items-end justify-center sm:items-center">
             <div
+              ref={trapRef}
               className="w-full max-w-3xl rounded-[30px] border border-[var(--border)] bg-[var(--bg-card)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34)] sm:p-6"
               onClick={(event) => event.stopPropagation()}
             >
@@ -178,6 +182,7 @@ export function SortFilterBar({
                 <select
                   value={value.minRating}
                   onChange={(e) => onChange({ ...value, minRating: Number(e.target.value) })}
+                  aria-label="En az puan"
                   className={selectClass}
                 >
                   {MIN_RATING_OPTIONS.map((option) => (
@@ -189,6 +194,7 @@ export function SortFilterBar({
                 <select
                   value={value.maxRating}
                   onChange={(e) => onChange({ ...value, maxRating: Number(e.target.value) })}
+                  aria-label="En çok puan"
                   className={selectClass}
                 >
                   {MAX_RATING_OPTIONS.map((option) => (
@@ -204,6 +210,7 @@ export function SortFilterBar({
                   max={2099}
                   value={value.yearFrom}
                   onChange={(e) => onChange({ ...value, yearFrom: e.target.value })}
+                  aria-label="Başlangıç yılı"
                   placeholder="Yıl (en az)"
                   className={inputClass}
                 />
@@ -214,6 +221,7 @@ export function SortFilterBar({
                   max={2099}
                   value={value.yearTo}
                   onChange={(e) => onChange({ ...value, yearTo: e.target.value })}
+                  aria-label="Bitiş yılı"
                   placeholder="Yıl (en çok)"
                   className={inputClass}
                 />

@@ -71,7 +71,9 @@ export function PostsTabSwitcher({
         {visibleTabs.map((tab) => (
           <button
             key={tab.key}
+            type="button"
             onClick={() => onTabChange(tab.key)}
+            aria-pressed={activeTab === tab.key}
             className={`shrink-0 cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:px-4 sm:py-1.5 sm:text-sm ${
               activeTab === tab.key
                 ? "bg-accent text-[var(--text-on-accent)]"
@@ -142,8 +144,10 @@ export function PostsToolbar({
         inlineContent={
           <div className="inline-flex h-9 items-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 sm:h-10 sm:p-1">
             <button
+              type="button"
               onClick={() => onViewModeChange("grid")}
-              aria-label="Grid görünüm"
+              aria-label="Tablo görünümü"
+              aria-pressed={viewMode === "grid"}
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "grid"
                   ? "bg-accent text-[var(--text-on-accent)]"
@@ -153,8 +157,10 @@ export function PostsToolbar({
               Tablo
             </button>
             <button
+              type="button"
               onClick={() => onViewModeChange("list")}
               aria-label="Liste görünümü"
+              aria-pressed={viewMode === "list"}
               className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs ${
                 viewMode === "list"
                   ? "bg-accent text-[var(--text-on-accent)]"
@@ -191,6 +197,7 @@ export function CategoryPills({
       <button
         type="button"
         onClick={() => onCategoryChange("")}
+        aria-pressed={activeCategory.trim() === ""}
         className={pillClass(activeCategory.trim() === "")}
       >
         Tümü
@@ -200,6 +207,7 @@ export function CategoryPills({
           key={key}
           type="button"
           onClick={() => onCategoryChange(key)}
+          aria-pressed={activeCategory === key}
           className={pillClass(activeCategory === key)}
         >
           {getCategoryLabel(key)}

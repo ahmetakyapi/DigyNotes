@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { getSearchTabForCategory, SearchTabKey } from "@/lib/categories";
+import { resizeImageUrl } from "@/lib/image";
 
 export interface MediaSearchResult {
   title: string;
@@ -540,7 +541,7 @@ export function MediaSearch({
                 {item.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={item.image}
+                    src={resizeImageUrl(item.image, 96)}
                     alt={item.title}
                     className={`flex-shrink-0 rounded object-cover ${imgClass}`}
                   />

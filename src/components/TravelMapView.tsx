@@ -111,6 +111,8 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                   key={post.id}
                   type="button"
                   onClick={() => setSelectedPostId(post.id)}
+                  aria-label={`${index + 1}. ${post.title}`}
+                  aria-pressed={isSelected}
                   className={`absolute -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 ${
                     isSelected ? "z-20 scale-110" : "z-10 hover:scale-105"
                   }`}
@@ -120,7 +122,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                     className={`flex h-11 w-11 items-center justify-center rounded-full border text-xs font-bold shadow-[0_10px_30px_rgba(0,0,0,0.35)] ${
                       isSelected
                         ? "border-accent-light bg-accent text-[var(--text-on-accent)]"
-                        : "border-white/15 bg-white/10 text-white backdrop-blur-md"
+                        : "border-white/15 bg-white/10 text-white"
                     }`}
                   >
                     {index + 1}
@@ -185,6 +187,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
               key={post.id}
               type="button"
               onClick={() => setSelectedPostId(post.id)}
+              aria-pressed={isSelected}
               className={`w-full rounded-2xl border p-3 text-left transition-all ${
                 isSelected
                   ? "border-accent/35 bg-accent/10"
@@ -195,7 +198,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
                 <div className="relative h-16 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
                   <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
-                    alt={post.title}
+                    alt=""
                     fill
                     variant="tall"
                     className="object-cover"
