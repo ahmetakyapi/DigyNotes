@@ -191,7 +191,11 @@ export const PostGridCard = React.memo(function PostGridCard({
 
             {post.tags && post.tags.length > 0 && (
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
-              <div className="mb-1.5 flex flex-wrap gap-1" onClick={(e) => e.preventDefault()}>
+              <div
+                className="mb-1.5 flex flex-wrap gap-1"
+                data-no-route-progress
+                onClick={(e) => e.preventDefault()}
+              >
                 {post.tags.slice(0, 3).map((tag) => (
                   <TagBadge
                     key={tag.id}

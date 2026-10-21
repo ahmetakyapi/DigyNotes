@@ -74,6 +74,9 @@ export function RouteProgressBar() {
       // Link içindeki butonlar (kartlardaki etiket çipleri vb.) gezinmez
       const nestedButton = target.closest("button");
       if (nestedButton && anchor.contains(nestedButton)) return;
+      // Link içinde gezinmeyi engelleyen alanlar (kart etiket satırı vb.)
+      const noProgress = target.closest("[data-no-route-progress]");
+      if (noProgress && anchor.contains(noProgress)) return;
       if (anchor.hasAttribute("download")) return;
 
       const href = anchor.getAttribute("href");

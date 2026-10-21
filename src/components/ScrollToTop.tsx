@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpIcon } from "@phosphor-icons/react";
 
 /**
@@ -8,10 +8,17 @@ import { ArrowUpIcon } from "@phosphor-icons/react";
  */
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setVisible(window.scrollY > 400);
+      const next = window.scrollY > 400;
+      // Gizlenince buton aria-hidden olur; odak görünmez bir kontrolde kalmasın.
+      // Buton atlama bağlantısından önce geldiği için sonraki Tab sayfanın başından sürer.
+      if (!next && buttonRef.current && document.activeElement === buttonRef.current) {
+        buttonRef.current.blur();
+      }
+      setVisible(next);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -25,6 +32,7 @@ export default function ScrollToTop() {
 
   return (
     <button
+      ref={buttonRef}
       onClick={scrollUp}
       aria-label="Yukarı Dön"
       tabIndex={visible ? 0 : -1}
