@@ -1,6 +1,8 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { isProtectedPagePath } from "@/lib/protected-routes";
 import AppShell from "./AppShell";
 import { FullScreenLoader } from "./FullScreenLoader";
 import { RouteProgressBar } from "./RouteProgressBar";
@@ -22,7 +24,31 @@ const SEMI_PUBLIC_PREFIXES = ["/discover", "/profile", "/collections"];
 
 export default function ConditionalAppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { status } = useSession();
+
+  /* The middleware lets a page it protects through on any token that carries `pwv`, so
+     one revoked since (password changed or reset elsewhere, user banned or deleted) lands
+     here without a session, in a shell whose every request fails. Send it to /login, but
+     only once /api/auth/session itself answers "no session": a failed session refetch
+     (offline, flaky network) also leaves the status "unauthenticated" and must not sign
+     anyone out. /login is outside the matcher, so this cannot loop. */
+  useEffect(() => {
+    if (status !== "unauthenticated" || !isProtectedPagePath(pathname)) return;
+    let cancelled = false;
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : undefined))
+      .then((data: unknown) => {
+        if (cancelled || data === undefined) return;
+        if (!data || (typeof data === "object" && Object.keys(data).length === 0)) {
+          router.replace("/login");
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname, status, router]);
 
   const isAlwaysPublic = ALWAYS_PUBLIC.includes(pathname);
   const isSemiPublic = SEMI_PUBLIC_PREFIXES.some(
