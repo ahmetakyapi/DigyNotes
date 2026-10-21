@@ -10,6 +10,9 @@ export class ClientApiError extends Error {
   }
 }
 
+const SESSION_EXPIRED_MESSAGE = "Oturumunuz sona ermiş olabilir. Lütfen tekrar giriş yapın.";
+const NETWORK_ERROR_MESSAGE = "Bağlantı kurulamadı. İnternet bağlantını kontrol edip tekrar dene.";
+
 function isStatusMatch(status: number, expected: number | number[]) {
   return Array.isArray(expected) ? expected.includes(status) : status === expected;
 }
@@ -19,7 +22,7 @@ function normalizeApiMessage(message: string, status: number, fallbackMessage: s
   if (!trimmed) return fallbackMessage;
 
   if (trimmed === "Unauthorized" || trimmed === "Giriş yapmanız gerekiyor") {
-    return "Oturumunuz sona ermiş olabilir. Lütfen tekrar giriş yapın.";
+    return SESSION_EXPIRED_MESSAGE;
   }
 
   if (trimmed === "Forbidden") {
@@ -31,6 +34,7 @@ function normalizeApiMessage(message: string, status: number, fallbackMessage: s
   }
 
   if (
+    trimmed === "Not found" ||
     trimmed === "Post not found" ||
     trimmed === "Profile not found" ||
     trimmed === "User not found" ||
@@ -69,22 +73,43 @@ function getPayloadMessage(payload: unknown) {
   return null;
 }
 
+/* Without a session the middleware answers a protected API call with a 307 to /login;
+   fetch follows it and gets the login page (200 HTML) instead of JSON (ERR-RT-002). */
+function isLoginRedirect(response: Response) {
+  if (!response.redirected || !response.url) return false;
+  try {
+    return new URL(response.url).pathname === "/login";
+  } catch {
+    return false;
+  }
+}
+
 export async function requestJson<T>(
   input: RequestInfo | URL,
   init?: RequestInit,
   fallbackMessage = "Bir hata oluştu."
 ): Promise<T> {
   const response = await fetch(input, init);
+  if (isLoginRedirect(response)) {
+    throw new ClientApiError(SESSION_EXPIRED_MESSAGE, 401, null);
+  }
+
+  const isJson = (response.headers.get("content-type") ?? "").includes("application/json");
   const payload = await readResponsePayload(response);
 
   if (!response.ok) {
+    // Only our JSON errors are meant for people; an HTML or text body (a 504 page) is not.
     const message = normalizeApiMessage(
-      getPayloadMessage(payload) ?? response.statusText ?? fallbackMessage,
+      (isJson ? getPayloadMessage(payload) : null) ?? "",
       response.status,
       fallbackMessage
     );
 
     throw new ClientApiError(message, response.status, payload);
+  }
+
+  if (payload !== null && !isJson) {
+    throw new ClientApiError(fallbackMessage, response.status, payload);
   }
 
   return payload as T;
@@ -110,8 +135,10 @@ export function getClientErrorMessage(error: unknown, fallbackMessage = "Bir hat
     return error.message;
   }
 
-  if (error instanceof Error && error.message.trim()) {
-    return error.message;
+  // fetch rejects with a TypeError on a network failure ("Failed to fetch", "Load failed").
+  // Any other error text is English or internal, so it never reaches the screen.
+  if (error instanceof TypeError) {
+    return NETWORK_ERROR_MESSAGE;
   }
 
   return fallbackMessage;

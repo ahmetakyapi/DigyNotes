@@ -864,7 +864,7 @@ export default function AdminPage() {
                             {i + 1}
                           </span>
                           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-[11px] font-semibold text-[var(--text-secondary)]">
-                            {u.name.charAt(0).toUpperCase()}
+                            {u.name.charAt(0).toLocaleUpperCase("tr-TR")}
                           </span>
                           <span className="w-24 shrink-0 truncate text-[13px] text-[var(--text-secondary)] transition-colors duration-200 group-hover:text-[var(--text-primary)]">
                             {u.name}
@@ -1983,7 +1983,7 @@ function Avatar({ name, size }: { name: string; size: "xs" | "sm" | "md" }) {
     <span
       className={`flex shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-raised)] font-semibold text-[var(--text-secondary)] ${dim}`}
     >
-      {name.charAt(0).toUpperCase()}
+      {name.charAt(0).toLocaleUpperCase("tr-TR")}
     </span>
   );
 }

@@ -30,7 +30,7 @@ export function AvatarImage({
   if (!src || failed) {
     return (
       <span className={textClassName}>
-        {name.trim().charAt(0).toUpperCase() || "?"}
+        {name.trim().charAt(0).toLocaleUpperCase("tr-TR") || "?"}
       </span>
     );
   }

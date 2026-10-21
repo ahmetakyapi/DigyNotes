@@ -10,8 +10,9 @@ import {
   useSpring,
   type MotionValue,
 } from "framer-motion";
+import { EASE_OUT_EXPO } from "@/lib/variants";
 
-export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+export { EASE_OUT_EXPO };
 
 /* ── Lenis smooth scroll (landing only) ── */
 export function SmoothScroll() {

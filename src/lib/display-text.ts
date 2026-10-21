@@ -1,6 +1,8 @@
-const LETTER_REGEX = /[A-Za-zÇĞİÖŞÜçğıöşü]/;
-const LOWER_REGEX = /[a-zçğıöşü]/;
-const UPPER_REGEX = /[A-ZÇĞİÖŞÜ]/;
+/* Any Unicode letter, so "élite" and "Ólafur" are capitalised at the first letter, not the
+   second. Built with `new RegExp`: the TS target (es5) rejects the `u` flag in a literal. */
+const LETTER_REGEX = new RegExp("\\p{L}", "u");
+const LOWER_REGEX = new RegExp("\\p{Ll}", "u");
+const UPPER_REGEX = new RegExp("\\p{Lu}", "u");
 
 /**
  * Connectors that stay lowercase inside a Title Case heading (owner rule: "ve, ile, da/de,

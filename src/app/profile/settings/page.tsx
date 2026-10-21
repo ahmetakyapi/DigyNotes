@@ -405,7 +405,7 @@ export default function ProfileSettingsPage() {
                   />
                 ) : (
                   <span className="dn-display text-3xl italic text-[var(--gold)]">
-                    {profile?.name.charAt(0).toUpperCase()}
+                    {profile?.name.charAt(0).toLocaleUpperCase("tr-TR")}
                   </span>
                 )}
               </div>
