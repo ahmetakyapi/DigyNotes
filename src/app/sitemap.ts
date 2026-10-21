@@ -4,7 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/metadata";
 import { publicPostsWhere } from "@/lib/public-posts";
 
-export const dynamic = "force-dynamic";
+/* Crawlers fetch this often and every render runs several large reads; content changes
+   slowly, so it is regenerated at most hourly instead of on every request. A failed read
+   (no DB at build time) caches the static entries until the next regeneration. */
+export const revalidate = 3600;
 
 const siteUrl = getSiteUrl();
 
@@ -20,7 +23,7 @@ const MAX_TAGS = 4_000;
 const PUBLIC_NOTE: Prisma.PostWhereInput = {
   isDraft: false,
   isDeleted: false,
-  OR: [{ userId: null }, { user: { isPublic: true } }],
+  OR: [{ userId: null }, { user: { isPublic: true, isBanned: false } }],
 };
 
 function staticEntries(lastModified: Date): MetadataRoute.Sitemap {
@@ -40,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         take: MAX_NOTES,
       }),
       prisma.user.findMany({
-        where: { isPublic: true },
+        where: { isPublic: true, isBanned: false },
         select: {
           username: true,
           createdAt: true,

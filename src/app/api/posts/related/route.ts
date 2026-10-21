@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const posts = await prisma.post.findMany({
       where: {
         title: { equals: title, mode: "insensitive" },
-        user: { isPublic: true },
+        user: { isPublic: true, isBanned: false },
         isDraft: false,
         isDeleted: false,
         ...(userId ? { userId: { not: userId } } : {}),

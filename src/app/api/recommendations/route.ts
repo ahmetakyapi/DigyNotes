@@ -64,6 +64,7 @@ export async function GET() {
       isDeleted: false,
       isDraft: false,
     } satisfies Prisma.PostWhereInput;
+    // Up to 300 rows are ranked to return 12; none of them needs the note body.
     const candidateInclude = {
       tags: { include: { tag: true } },
       user: { select: { id: true, name: true, username: true, avatarUrl: true } },
@@ -79,6 +80,7 @@ export async function GET() {
             where: { ...candidateBase, tags: { some: { tagId: { in: ownTagIds } } } },
             orderBy: candidateOrder,
             take: TAG_POOL,
+            omit: { content: true },
             include: candidateInclude,
           })
         : Promise.resolve([]),
@@ -92,6 +94,7 @@ export async function GET() {
         },
         orderBy: candidateOrder,
         take: CATEGORY_POOL,
+        omit: { content: true },
         include: candidateInclude,
       }),
     ]);

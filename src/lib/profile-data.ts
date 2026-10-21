@@ -42,6 +42,7 @@ async function resolveProfileAccess(username: string, viewerId: string | null) {
       bio: true,
       avatarUrl: true,
       isPublic: true,
+      isBanned: true,
       createdAt: true,
     },
   });
@@ -53,7 +54,9 @@ async function resolveProfileAccess(username: string, viewerId: string | null) {
         select: { id: true, isAdmin: true },
       })
     : null;
-  const canView = user.isPublic || viewer?.id === user.id || viewer?.isAdmin === true;
+  // A banned account reads as private to everyone but its owner and admins.
+  const canView =
+    (user.isPublic && !user.isBanned) || viewer?.id === user.id || viewer?.isAdmin === true;
   return { user, canView };
 }
 
@@ -106,6 +109,7 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
       where: { userId: user.id, isDeleted: false, isDraft: false },
       orderBy: profilePostOrder,
       take: PROFILE_POST_PAGE,
+      omit: { content: true },
       include: { tags: { include: { tag: true } } },
     }),
     prisma.collection.findMany({
@@ -192,6 +196,7 @@ export async function getProfilePostsPage(
     orderBy: profilePostOrder,
     skip: offset,
     take: limit + 1,
+    omit: { content: true },
     include: { tags: { include: { tag: true } } },
   });
 
