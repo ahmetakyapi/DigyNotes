@@ -15,7 +15,13 @@ import {
 } from "@/components/SortFilterBar";
 import toast from "react-hot-toast";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeftIcon, FolderOpenIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import {
+  ArrowLeftIcon,
+  FolderOpenIcon,
+  MagnifyingGlassIcon,
+  WarningCircleIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
   getCategoryLabel,
@@ -47,6 +53,8 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"cards" | "map">(travelCategory ? "map" : "cards");
   const defaultSortFilter = useMemo(() => createSortFilterState(), []);
@@ -55,6 +63,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
+      setLoadError(false);
       try {
         const res = await fetch(`/api/posts?category=${encodeURIComponent(categoryName)}`);
         if (!res.ok) {
@@ -63,13 +72,15 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
         const postsData = await res.json();
         setPosts(Array.isArray(postsData) ? postsData : []);
       } catch {
+        setPosts([]);
+        setLoadError(true);
         toast.error("Veriler yüklenemedi");
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [categoryName]);
+  }, [categoryName, reloadKey]);
 
   const filtered = useMemo(() => {
     const q = foldSearchText(searchQuery.trim());
@@ -162,11 +173,15 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
           </>
         }
         description={`${categoryLabel} kategorisindeki tüm notların burada. Ara, sırala ya da filtrele.`}
-        stats={[
-          { value: posts.length, label: "Not" },
-          ...(travelCategory ? [{ value: mappedPosts.length, label: "Konum" }] : []),
-          ...(averageRating ? [{ value: averageRating, label: "Ort. Puan" }] : []),
-        ]}
+        stats={
+          loadError
+            ? undefined
+            : [
+                { value: posts.length, label: "Not" },
+                ...(travelCategory ? [{ value: mappedPosts.length, label: "Konum" }] : []),
+                ...(averageRating ? [{ value: averageRating, label: "Ort. Puan" }] : []),
+              ]
+        }
         actions={
           <Link
             href="/notes"
@@ -243,7 +258,18 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
       </div>
 
       {/* ── İçerik ── */}
-      {filtered.length === 0 ? (
+      {loadError ? (
+        <EmptyState
+          icon={<WarningCircleIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Notlar <Em>Yüklenemedi</Em>
+            </>
+          }
+          description="Bağlantını kontrol edip tekrar dene."
+          primary={{ label: "Tekrar Dene", onClick: () => setReloadKey((key) => key + 1) }}
+        />
+      ) : filtered.length === 0 ? (
         searchQuery || hasActiveSortFilters(sortFilter, defaultSortFilter) ? (
           <EmptyState
             compact

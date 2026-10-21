@@ -1,23 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { collectionWithPostsInclude, serializeCollection } from "@/lib/collections";
+import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-async function getOwnedCollection(id: string, userId: string) {
+/** 404 when the collection is missing, 403 when it isn't the caller's, otherwise null. */
+async function checkCollectionOwnership(id: string, userId: string) {
   const collection = await prisma.collection.findUnique({
     where: { id },
-    select: { id: true, userId: true },
+    select: { userId: true },
   });
 
-  if (!collection || collection.userId !== userId) {
-    return null;
+  if (!collection) {
+    return NextResponse.json({ error: "Koleksiyon bulunamadı" }, { status: 404 });
   }
 
-  return collection;
+  if (collection.userId !== userId) {
+    return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
+  }
+
+  return null;
 }
 
 async function getSerializedCollection(id: string) {
@@ -29,96 +34,130 @@ async function getSerializedCollection(id: string) {
   return collection ? serializeCollection(collection) : null;
 }
 
+/** Adding or removing notes counts as an update: bump `updatedAt` and return the fresh collection. */
+async function touchSerializedCollection(id: string) {
+  const collection = await prisma.collection.update({
+    where: { id },
+    data: { updatedAt: new Date() },
+    include: collectionWithPostsInclude,
+  });
+
+  return serializeCollection(collection);
+}
+
+async function consumeCollectionPostsRateLimit(req: NextRequest, userId: string) {
+  const rateLimit = await consumeRateLimit({
+    action: "collection-posts",
+    req,
+    userId,
+    limit: 60,
+    windowMs: 60_000,
+  });
+
+  return rateLimit.success
+    ? null
+    : createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla koleksiyon işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+      );
+}
+
+async function readPostId(req: NextRequest) {
+  const body = await safeParseBody<{ postId?: unknown }>(req);
+  return typeof body?.postId === "string" ? body.postId.trim() : "";
+}
+
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+    const rateLimitError = await consumeCollectionPostsRateLimit(req, userId);
+    if (rateLimitError) return rateLimitError;
 
-  const collection = await getOwnedCollection(params.id, userId);
+    const ownershipError = await checkCollectionOwnership(params.id, userId);
+    if (ownershipError) return ownershipError;
 
-  if (!collection) {
-    return NextResponse.json({ error: "Koleksiyon bulunamadı" }, { status: 404 });
-  }
+    const postId = await readPostId(req);
 
-  const body = await req.json();
-  const postId = typeof body.postId === "string" ? body.postId.trim() : "";
+    if (!postId) {
+      return NextResponse.json({ error: "Not seçilmedi" }, { status: 400 });
+    }
 
-  if (!postId) {
-    return NextResponse.json({ error: "Not seçilmedi" }, { status: 400 });
-  }
+    const post = await prisma.post.findFirst({
+      where: {
+        id: postId,
+        userId,
+        isDeleted: false,
+        isDraft: false,
+      },
+      select: { id: true },
+    });
 
-  const post = await prisma.post.findFirst({
-    where: {
-      id: postId,
-      userId,
-    },
-    select: { id: true },
-  });
+    if (!post) {
+      return NextResponse.json(
+        { error: "Koleksiyona sadece kendi notlarınızı ekleyebilirsiniz" },
+        { status: 400 }
+      );
+    }
 
-  if (!post) {
-    return NextResponse.json(
-      { error: "Koleksiyona sadece kendi notlarınızı ekleyebilirsiniz" },
-      { status: 400 }
-    );
-  }
+    const currentMax = await prisma.collectionPost.aggregate({
+      where: { collectionId: params.id },
+      _max: { position: true },
+    });
 
-  const currentMax = await prisma.collectionPost.aggregate({
-    where: { collectionId: params.id },
-    _max: { position: true },
-  });
-
-  await prisma.collectionPost.upsert({
-    where: {
-      collectionId_postId: {
+    await prisma.collectionPost.upsert({
+      where: {
+        collectionId_postId: {
+          collectionId: params.id,
+          postId,
+        },
+      },
+      create: {
         collectionId: params.id,
         postId,
+        position: (currentMax._max.position ?? -1) + 1,
       },
-    },
-    create: {
-      collectionId: params.id,
-      postId,
-      position: (currentMax._max.position ?? -1) + 1,
-    },
-    update: {},
-  });
+      update: {},
+    });
 
-  const serialized = await getSerializedCollection(params.id);
-
-  return NextResponse.json(serialized);
+    return NextResponse.json(await touchSerializedCollection(params.id));
+  } catch (error) {
+    return handleApiError(error, "Koleksiyon güncellenemedi.");
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
-  const userId = (session?.user as { id?: string })?.id;
+  try {
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rateLimitError = await consumeCollectionPostsRateLimit(req, userId);
+    if (rateLimitError) return rateLimitError;
+
+    const ownershipError = await checkCollectionOwnership(params.id, userId);
+    if (ownershipError) return ownershipError;
+
+    const postId = await readPostId(req);
+
+    if (!postId) {
+      return NextResponse.json({ error: "Not seçilmedi" }, { status: 400 });
+    }
+
+    const { count } = await prisma.collectionPost.deleteMany({
+      where: {
+        collectionId: params.id,
+        postId,
+      },
+    });
+
+    const serialized =
+      count > 0
+        ? await touchSerializedCollection(params.id)
+        : await getSerializedCollection(params.id);
+
+    return NextResponse.json(serialized);
+  } catch (error) {
+    return handleApiError(error, "Koleksiyon güncellenemedi.");
   }
-
-  const collection = await getOwnedCollection(params.id, userId);
-
-  if (!collection) {
-    return NextResponse.json({ error: "Koleksiyon bulunamadı" }, { status: 404 });
-  }
-
-  const body = await req.json();
-  const postId = typeof body.postId === "string" ? body.postId.trim() : "";
-
-  if (!postId) {
-    return NextResponse.json({ error: "Not seçilmedi" }, { status: 400 });
-  }
-
-  await prisma.collectionPost.deleteMany({
-    where: {
-      collectionId: params.id,
-      postId,
-    },
-  });
-
-  const serialized = await getSerializedCollection(params.id);
-
-  return NextResponse.json(serialized);
 }

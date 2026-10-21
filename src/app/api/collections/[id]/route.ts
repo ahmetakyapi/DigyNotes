@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { collectionWithPostsInclude, serializeCollection } from "@/lib/collections";
 import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -53,6 +54,20 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const [userId, authError] = await requireAuth();
     if (authError) return authError;
 
+    const rateLimit = await consumeRateLimit({
+      action: "collection-update",
+      req,
+      userId,
+      limit: 30,
+      windowMs: 60_000,
+    });
+    if (!rateLimit.success) {
+      return createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla koleksiyon işlemi yaptınız. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
+
     const existing = await prisma.collection.findUnique({
       where: { id: params.id },
       select: { id: true, userId: true },
@@ -100,10 +115,24 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;
+
+    const rateLimit = await consumeRateLimit({
+      action: "collection-delete",
+      req,
+      userId,
+      limit: 30,
+      windowMs: 10 * 60_000,
+    });
+    if (!rateLimit.success) {
+      return createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla koleksiyon sildiniz. Lütfen biraz sonra tekrar deneyin."
+      );
+    }
 
     const existing = await prisma.collection.findUnique({
       where: { id: params.id },
