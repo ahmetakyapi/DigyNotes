@@ -24,17 +24,17 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
     }
 
-    const count = await prisma.postLike.count({ where: { postId } });
+    const [count, existing] = await Promise.all([
+      prisma.postLike.count({ where: { postId } }),
+      userId
+        ? prisma.postLike.findUnique({
+            where: { postId_userId: { postId, userId } },
+            select: { userId: true },
+          })
+        : Promise.resolve(null),
+    ]);
 
-    let liked = false;
-    if (userId) {
-      const existing = await prisma.postLike.findUnique({
-        where: { postId_userId: { postId, userId } },
-      });
-      liked = !!existing;
-    }
-
-    return NextResponse.json({ count, liked });
+    return NextResponse.json({ count, liked: !!existing });
   } catch (error) {
     return handleApiError(error, "Beğeni bilgisi yüklenirken bir hata oluştu.");
   }
@@ -70,30 +70,42 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
     }
 
-    const existing = await prisma.postLike.findUnique({
-      where: { postId_userId: { postId, userId } },
-    });
+    /* Same pattern as comment likes: the author gets one `like` notification per actor
+       (referenceId "<postId>:<actorId>"), an unlike removes it, so liking again never
+       stacks duplicates; upsert/deleteMany keep a toggle racing itself from failing. */
+    const key = { postId_userId: { postId, userId } };
+    const ownerId = access.post.userId;
+    const notifyAuthor = !!ownerId && ownerId !== userId;
+    const notification = {
+      userId: ownerId ?? "",
+      type: "like",
+      referenceId: `${postId}:${userId}`,
+    };
+    const existing = await prisma.postLike.findUnique({ where: key, select: { userId: true } });
 
+    let liked: boolean;
     if (existing) {
-      await prisma.postLike.delete({ where: { postId_userId: { postId, userId } } });
-      const count = await prisma.postLike.count({ where: { postId } });
-      return applyRateLimitHeaders(NextResponse.json({ liked: false, count }), rateLimit);
-    } else {
-      await prisma.postLike.create({ data: { postId, userId } });
-
-      if (access.post.userId && access.post.userId !== userId) {
-        await prisma.notification.create({
-          data: {
-            userId: access.post.userId,
-            type: "like",
-            referenceId: `${postId}:${userId}`,
-          },
-        });
+      await prisma.postLike.deleteMany({ where: { postId, userId } });
+      if (notifyAuthor) {
+        await prisma.notification.deleteMany({ where: notification });
       }
-
-      const count = await prisma.postLike.count({ where: { postId } });
-      return applyRateLimitHeaders(NextResponse.json({ liked: true, count }), rateLimit);
+      liked = false;
+    } else {
+      await prisma.postLike.upsert({ where: key, create: { postId, userId }, update: {} });
+      if (notifyAuthor) {
+        const alreadyNotified = await prisma.notification.findFirst({
+          where: notification,
+          select: { id: true },
+        });
+        if (!alreadyNotified) {
+          await prisma.notification.create({ data: notification });
+        }
+      }
+      liked = true;
     }
+
+    const count = await prisma.postLike.count({ where: { postId } });
+    return applyRateLimitHeaders(NextResponse.json({ liked, count }), rateLimit);
   } catch (error) {
     return handleApiError(error, "Beğeni işlemi sırasında bir hata oluştu.");
   }

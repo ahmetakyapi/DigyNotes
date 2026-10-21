@@ -75,6 +75,34 @@ export function optionalString(value: unknown) {
   return trimmed ? trimmed : null;
 }
 
+/* Upper bounds the post APIs enforce: list responses (feed, discover, profile, tag) carry
+   every note's fields, so one oversized note would slow those pages for everyone. */
+export const POST_CONTENT_MAX_LENGTH = 200_000;
+export const POST_CATEGORY_MAX_LENGTH = 60;
+export const POST_COVER_URL_MAX_LENGTH = 2000;
+
+/** Cover image as stored: "" = no cover, null = invalid. Allows http(s) URLs and same-origin paths. */
+export function parseCoverImage(value: unknown): string | null {
+  if (typeof value !== "string") return "";
+  const url = value.trim();
+  if (!url) return "";
+  if (url.length > POST_COVER_URL_MAX_LENGTH) return null;
+  if (url.startsWith("/") && !url.startsWith("//")) return url;
+  try {
+    const { protocol } = new URL(url);
+    return protocol === "https:" || protocol === "http:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The number when it is finite and within [min, max], otherwise null. */
+export function boundedNumber(value: unknown, min: number, max: number) {
+  return typeof value === "number" && Number.isFinite(value) && value >= min && value <= max
+    ? value
+    : null;
+}
+
 /** Required fields that are still empty, in on-screen order. */
 export function getMissingPostFields(input: {
   title: string;

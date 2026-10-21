@@ -90,8 +90,18 @@ export const POST_SANITIZE_CONFIG: sanitizeHtml.IOptions = {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2"]),
   allowedAttributes: {
     ...sanitizeHtml.defaults.allowedAttributes,
+    a: ["href", "name", "target", "rel"],
     img: ["src", "alt", "width", "height"],
-    "*": ["class"],
+  },
+  // Quill only emits ql-* classes (align, indent, size, syntax…); any other class would let a
+  // note use app utilities such as `fixed inset-0 z-50` and draw over the note page.
+  allowedClasses: { "*": ["ql-*"] },
+  // User links are user-generated content: no ranking credit, no opener or referrer.
+  transformTags: {
+    a: (tagName, attribs) => ({
+      tagName,
+      attribs: { ...attribs, rel: "nofollow ugc noopener noreferrer" },
+    }),
   },
 };
 

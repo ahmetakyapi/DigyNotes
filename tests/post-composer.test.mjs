@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  boundedNumber,
   formatMissingFieldsMessage,
   getMissingPostFields,
   getPostCategoryFormConfig,
   hasMeaningfulContent,
   optionalString,
+  parseCoverImage,
 } from "../src/lib/post-form.ts";
 import {
   applyTemplateToContent,
@@ -53,6 +55,33 @@ test("hasMeaningfulContent and optionalString", () => {
   assert.equal(optionalString("  "), null);
   assert.equal(optionalString(" Nolan "), "Nolan");
   assert.equal(optionalString(42), null);
+});
+
+test("parseCoverImage keeps http(s) URLs and site paths, rejects other schemes", () => {
+  assert.equal(parseCoverImage(undefined), "");
+  assert.equal(parseCoverImage("   "), "");
+  assert.equal(
+    parseCoverImage(" https://image.tmdb.org/t/p/w500/a.jpg "),
+    "https://image.tmdb.org/t/p/w500/a.jpg"
+  );
+  assert.equal(parseCoverImage("http://example.com/a.png"), "http://example.com/a.png");
+  assert.equal(parseCoverImage("/defaults/movies.svg"), "/defaults/movies.svg");
+  assert.equal(parseCoverImage("//evil.example/a.png"), null);
+  assert.equal(parseCoverImage("data:image/png;base64,AAAA"), null);
+  assert.equal(parseCoverImage("javascript:alert(1)"), null);
+  assert.equal(parseCoverImage("not a url"), null);
+  assert.equal(parseCoverImage(`https://example.com/${"a".repeat(2000)}`), null);
+});
+
+test("boundedNumber keeps finite numbers inside the range only", () => {
+  assert.equal(boundedNumber(7.4, 0, 10), 7.4);
+  assert.equal(boundedNumber(0, 0, 10), 0);
+  assert.equal(boundedNumber(-90, -90, 90), -90);
+  assert.equal(boundedNumber(1e300, 0, 10), null);
+  assert.equal(boundedNumber(5000, -90, 90), null);
+  assert.equal(boundedNumber(Number.NaN, 0, 10), null);
+  assert.equal(boundedNumber("5", 0, 10), null);
+  assert.equal(boundedNumber(null, 0, 10), null);
 });
 
 test("isBlankOrTemplateContent: empty or untouched template, never the user's text", () => {

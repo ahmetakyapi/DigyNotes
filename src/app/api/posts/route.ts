@@ -2,20 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { transformPostTags, sanitizeRating, sanitizePostContent } from "@/lib/api-utils";
+import {
+  transformPostTags,
+  sanitizeRating,
+  sanitizePostContent,
+  sanitizeStringField,
+} from "@/lib/api-utils";
 import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
 import { buildPostSearchWhere } from "@/lib/search";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { handleApiError, safeParseBody } from "@/lib/api-server";
 import {
+  boundedNumber,
   formatMissingFieldsMessage,
   getMissingPostFields,
   hasMeaningfulContent,
-  optionalString,
+  parseCoverImage,
+  POST_CATEGORY_MAX_LENGTH,
+  POST_CONTENT_MAX_LENGTH,
 } from "@/lib/post-form";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 import { normalizeTagName, stripHtml } from "@/lib/text";
+import { cleanTagName, TAG_LIMIT } from "@/lib/tag-input";
 import { getIstanbulMonthStart } from "@/lib/number-format";
 
 export const dynamic = "force-dynamic";
@@ -103,6 +112,8 @@ export async function GET(request: NextRequest) {
         where,
         orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }, { id: "desc" }],
         include,
+        // Unpaged callers (category page, collection picker) never read the note HTML.
+        omit: { content: true },
       });
 
       return NextResponse.json(posts.map(transformPostTags));
@@ -250,17 +261,33 @@ export async function POST(request: NextRequest) {
     if (typeof excerpt === "string" && excerpt.length > 2000) {
       return NextResponse.json({ error: "Özet çok uzun (max 2000 karakter)" }, { status: 400 });
     }
+    if (sanitizedContent.length > POST_CONTENT_MAX_LENGTH) {
+      return NextResponse.json({ error: "Not içeriği çok uzun." }, { status: 400 });
+    }
+    if (normalizedCategory.length > POST_CATEGORY_MAX_LENGTH) {
+      return NextResponse.json({ error: "Kategori adı çok uzun." }, { status: 400 });
+    }
 
-    const coverImage = typeof image === "string" ? image.trim() : "";
+    const coverImage = parseCoverImage(image);
+    if (coverImage === null) {
+      return NextResponse.json(
+        { error: "Kapak görseli geçerli bir bağlantı olmalı." },
+        { status: 400 }
+      );
+    }
     const safeExcerpt =
       typeof excerpt === "string" && excerpt.trim() ? excerpt : stripHtml(sanitizedContent);
 
+    // Same cleaning as TagInput; de-duplicated so two spellings of one tag can't hit post_tags' key.
     const tagNames: string[] = Array.isArray(tags)
-      ? tags
-          .filter((t): t is string => typeof t === "string")
-          .map((t) => normalizeTagName(t))
-          .filter(Boolean)
-          .slice(0, 10)
+      ? Array.from(
+          new Set(
+            tags
+              .filter((t): t is string => typeof t === "string")
+              .map(cleanTagName)
+              .filter(Boolean)
+          )
+        ).slice(0, TAG_LIMIT)
       : [];
 
     const upsertedTags = await Promise.all(
@@ -274,15 +301,15 @@ export async function POST(request: NextRequest) {
         image: coverImage,
         excerpt: safeExcerpt.slice(0, 2000),
         content: sanitizedContent,
-        creator: optionalString(creator),
-        years: optionalString(years),
+        creator: sanitizeStringField(creator, 200),
+        years: sanitizeStringField(years, 40),
         rating: sanitizeRating(rating),
-        externalRating: typeof externalRating === "number" ? externalRating : null,
-        status: optionalString(status),
+        externalRating: boundedNumber(externalRating, 0, 10),
+        status: sanitizeStringField(status, 40),
         hasSpoiler: categorySupportsSpoiler(normalizedCategory) ? Boolean(hasSpoiler) : false,
-        lat: typeof lat === "number" ? lat : null,
-        lng: typeof lng === "number" ? lng : null,
-        imagePosition: optionalString(imagePosition) ?? "center",
+        lat: boundedNumber(lat, -90, 90),
+        lng: boundedNumber(lng, -180, 180),
+        imagePosition: sanitizeStringField(imagePosition, 40) ?? "center",
         date: new Date().toLocaleDateString("tr-TR", {
           year: "numeric",
           month: "long",
