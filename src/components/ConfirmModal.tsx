@@ -14,7 +14,7 @@ interface ConfirmModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: "danger" | "default";
-  /** While the confirmed action runs: the confirm button is disabled and the modal stays open. */
+  /** While the confirmed action runs: both buttons are disabled and the modal stays open. */
   isLoading?: boolean;
 }
 
@@ -76,7 +76,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className="flex justify-end gap-3">
               <button
                 onClick={onClose}
-                className="rounded-lg px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+                disabled={isLoading}
+                className="rounded-lg px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {cancelLabel}
               </button>
