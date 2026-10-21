@@ -38,14 +38,22 @@ export default function TagPageClient({
   useEffect(() => {
     if (skipSeededFetch.current && sort === "newest") return;
     skipSeededFetch.current = false;
+    // A newer sort replaces this request; its late response must not overwrite the list
+    let cancelled = false;
     setLoading(true);
     fetch(`/api/public/posts?tag=${encodeURIComponent(tagName)}&sort=${sort}&limit=50`)
       .then((r) => r.json())
       .then((data) => {
+        if (cancelled) return;
         setPosts(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [tagName, sort]);
 
   return (

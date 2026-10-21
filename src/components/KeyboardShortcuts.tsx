@@ -23,6 +23,9 @@ export function dispatchShortcutHelp() {
   window.dispatchEvent(new CustomEvent(SHORTCUT_HELP_EVENT));
 }
 
+/** SearchBar listens for this: it opens the header search and focuses the visible input. */
+export const OPEN_SEARCH_EVENT = "dn:open-search";
+
 export default function KeyboardShortcuts() {
   const router = useRouter();
   const pathname = usePathname();
@@ -53,19 +56,11 @@ export default function KeyboardShortcuts() {
           e.preventDefault();
           router.push("/new-post");
           break;
-        case "s": {
+        case "s":
           e.preventDefault();
-          // Arama kutusuna odaklan
-          const searchInput =
-            document.querySelector<HTMLInputElement>('[data-search-input="true"]') ??
-            document.querySelector<HTMLInputElement>('input[type="search"]') ??
-            document.querySelector<HTMLInputElement>('input[placeholder*="Ara"]');
-          if (searchInput) {
-            searchInput.focus();
-            searchInput.select();
-          }
+          // Arama kutusunu aç ve odaklan (kapalıyken input DOM'da yok)
+          window.dispatchEvent(new CustomEvent(OPEN_SEARCH_EVENT));
           break;
-        }
         case "h":
           e.preventDefault();
           router.push("/notes");

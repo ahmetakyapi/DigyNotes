@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MagnifyingGlassIcon, XIcon, ArrowLeftIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { OPEN_SEARCH_EVENT } from "@/components/KeyboardShortcuts";
 
 interface UserResult {
   id: string;
@@ -24,41 +25,62 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const [userResults, setUserResults] = useState<UserResult[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const desktopInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userSearchIdRef = useRef(0);
+
+  // Only one input is visible: the mobile overlay below sm, the inline one from sm up
+  const focusVisibleInput = useCallback((select = false) => {
+    const desktop = window.matchMedia("(min-width: 640px)").matches;
+    const input = desktop ? desktopInputRef.current : inputRef.current;
+    input?.focus();
+    if (select) input?.select();
+  }, []);
+
+  // Drops a pending or in-flight @user search so a late response can't refill the list
+  const cancelUserSearch = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    userSearchIdRef.current++;
+    setUserResults([]);
+    setLoadingUsers(false);
+  }, []);
 
   useEffect(() => {
     if (open) {
       // Slight delay so the overlay renders first
-      requestAnimationFrame(() => inputRef.current?.focus());
+      requestAnimationFrame(() => focusVisibleInput());
     }
-  }, [open]);
+  }, [open, focusVisibleInput]);
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
   }, [searchParams]);
 
-  // Open search when keyboard shortcut triggers focus on search input
+  // "S" shortcut (KeyboardShortcuts): open the search and focus the visible input
   useEffect(() => {
-    const handleFocusIn = () => {
-      if (!open) setOpen(true);
+    const openSearch = () => {
+      setOpen(true);
+      // Also covers the already-open case, where the open effect doesn't re-run
+      requestAnimationFrame(() => focusVisibleInput(true));
     };
-    const input = inputRef.current;
-    input?.addEventListener("focus", handleFocusIn);
-    return () => input?.removeEventListener("focus", handleFocusIn);
-  }, [open]);
+    window.addEventListener(OPEN_SEARCH_EVENT, openSearch);
+    return () => window.removeEventListener(OPEN_SEARCH_EVENT, openSearch);
+  }, [focusVisibleInput]);
 
-  // Desktop: close on outside click
+  // Close on outside click (desktop inline + mobile overlay both count as inside)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setUserResults([]);
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      if (!containerRef.current || containerRef.current.contains(target)) return;
+      if (overlayRef.current?.contains(target)) return;
+      cancelUserSearch();
+      setOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [cancelUserSearch]);
 
   // Lock body scroll on mobile when overlay is open
   useEffect(() => {
@@ -86,8 +108,11 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   }, []);
 
   const searchUsers = useCallback(async (q: string) => {
+    // Only the newest request may write results; older responses are dropped
+    const id = ++userSearchIdRef.current;
     if (!q) {
       setUserResults([]);
+      setLoadingUsers(false);
       return;
     }
     setLoadingUsers(true);
@@ -95,12 +120,14 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       const res = await fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
       if (res.ok) {
         const data = await res.json();
-        setUserResults(Array.isArray(data) ? data.slice(0, 6) : []);
+        if (id === userSearchIdRef.current) {
+          setUserResults(Array.isArray(data) ? data.slice(0, 6) : []);
+        }
       }
     } catch {
-      setUserResults([]);
+      if (id === userSearchIdRef.current) setUserResults([]);
     } finally {
-      setLoadingUsers(false);
+      if (id === userSearchIdRef.current) setLoadingUsers(false);
     }
   }, []);
 
@@ -113,14 +140,13 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => searchUsers(userQuery), 300);
     } else {
-      setUserResults([]);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      cancelUserSearch();
     }
   };
 
   const closeSearch = () => {
     setOpen(false);
-    setUserResults([]);
+    cancelUserSearch();
   };
 
   const buildNotesHref = useCallback(
@@ -164,7 +190,8 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
   const clear = () => {
     setQuery("");
     setUserResults([]);
-    router.push(buildNotesHref(""));
+    // Only an applied notes search needs a navigation; elsewhere clearing stays on the page
+    if (pathname === "/notes" && searchParams.has("q")) router.push(buildNotesHref(""));
     closeSearch();
   };
 
@@ -256,6 +283,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
     <>
       {/* ▸ Mobile fullscreen overlay */}
       <div
+        ref={overlayRef}
         className="fixed inset-0 z-[60] flex flex-col bg-[var(--bg-base)] sm:hidden"
         style={{ height: "100dvh" }}
         role="dialog"
@@ -270,6 +298,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
           <button
             type="button"
             onClick={closeSearch}
+            aria-label="Aramayı Kapat"
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
             <ArrowLeftIcon size={20} weight="bold" />
@@ -302,8 +331,9 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                 type="button"
                 onClick={() => {
                   setQuery("");
-                  setUserResults([]);
+                  cancelUserSearch();
                 }}
+                aria-label="Aramayı Temizle"
                 className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
               >
                 <XIcon size={12} />
@@ -338,6 +368,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             <MagnifyingGlassIcon size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
           )}
           <input
+            ref={desktopInputRef}
             type="text"
             value={query}
             onChange={handleChange}
@@ -352,6 +383,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             <button
               type="button"
               onClick={clear}
+              aria-label="Aramayı Temizle"
               className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
             >
               <XIcon size={11} />

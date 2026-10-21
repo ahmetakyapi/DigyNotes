@@ -23,6 +23,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useTheme } from "@/components/ThemeProvider";
 import { modalBackdrop, modalPanel } from "@/lib/variants";
 import { getCategoryLabel } from "@/lib/categories";
+import { foldSearchText } from "@/lib/text";
 
 interface CommandItem {
   id: string;
@@ -187,7 +188,10 @@ export default function CommandPalette() {
           setNoteHits(Array.isArray(data.items) ? data.items : [])
         )
         .catch(() => {})
-        .finally(() => setSearching(false));
+        .finally(() => {
+          // An aborted request belongs to an older query; the newer one is still pending
+          if (!ctrl.signal.aborted) setSearching(false);
+        });
     }, 180);
     return () => {
       ctrl.abort();
@@ -215,10 +219,10 @@ export default function CommandPalette() {
   );
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = foldSearchText(query.trim());
     if (!q) return items;
     return items.filter((item) => {
-      const haystack = `${item.label} ${item.keywords ?? ""}`.toLowerCase();
+      const haystack = foldSearchText(`${item.label} ${item.keywords ?? ""}`);
       return haystack.includes(q);
     });
   }, [items, query]);
@@ -249,6 +253,10 @@ export default function CommandPalette() {
     if (!session?.user) return;
 
     const handler = (e: KeyboardEvent) => {
+      // Quill binds Cmd/Ctrl+K to its link tooltip (preventDefault, no stopPropagation);
+      // .ql-container also holds that tooltip's URL input.
+      if (e.defaultPrevented) return;
+      if ((e.target as HTMLElement | null)?.closest?.(".ql-container")) return;
       const key = e.key.toLowerCase();
       if ((e.metaKey || e.ctrlKey) && key === "k") {
         e.preventDefault();
