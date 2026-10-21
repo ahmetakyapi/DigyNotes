@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Lenis from "lenis";
 import {
   motion,
@@ -11,6 +11,7 @@ import {
   useSpring,
   type MotionValue,
 } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useReducedMotion";
 
 export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -48,24 +49,9 @@ export function setSmoothScrollPaused(paused: boolean) {
   else activeLenis?.start();
 }
 
-/* ── Reduced motion that hydrates cleanly ──
-   framer's useReducedMotion is null on the server but already true on the client's
-   hydration render, so markup that branches on it failed hydration and React rebuilt
-   the whole landing. This one reads false during SSR + hydration (markup matches) and
-   React re-renders with the real value right after. */
-const RM_QUERY = "(prefers-reduced-motion: reduce)";
-const subscribeReducedMotion = (onChange: () => void) => {
-  const mq = window.matchMedia(RM_QUERY);
-  mq.addEventListener("change", onChange);
-  return () => mq.removeEventListener("change", onChange);
-};
-export function useHydratedReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    () => window.matchMedia(RM_QUERY).matches,
-    () => false
-  );
-}
+/* Reduced motion that hydrates cleanly (framer's hook fails hydration when markup
+   branches on it); lives in src/hooks, re-exported for the landing sections. */
+export { useHydratedReducedMotion };
 
 /* Wraps the landing: reveals that mounted with their `initial` state before the
    post-hydration re-render finish without movement for reduced-motion visitors. */

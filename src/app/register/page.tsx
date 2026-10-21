@@ -21,6 +21,8 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  // Account created but auto sign-in failed: on the way to /login, without the WelcomeCover.
+  const [leaving, setLeaving] = useState(false);
 
   const publishError = (message: string) => {
     setError(message);
@@ -29,7 +31,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading || redirecting) return;
+    if (loading || redirecting || leaving) return;
     setError("");
 
     if (password !== confirmPw) {
@@ -62,6 +64,7 @@ export default function RegisterPage() {
 
       if (loginResult?.error) {
         toast.success("Hesabın oluşturuldu. Devam etmek için giriş yapabilirsin.");
+        setLeaving(true);
         router.push("/login");
         return;
       }
@@ -251,7 +254,7 @@ export default function RegisterPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || redirecting}
+            disabled={loading || redirecting || leaving}
             className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (

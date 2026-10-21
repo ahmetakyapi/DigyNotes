@@ -1,11 +1,14 @@
 /**
  * Where to send a user after signing in. The middleware adds `?callbackUrl=<path+search>`
- * when it bounces an anonymous request to /login; only a same-origin page path is
- * honoured, everything else falls back (no open redirect).
+ * when it bounces an anonymous request to /login; next-auth's bare `signIn()` passes the
+ * absolute `window.location.href` instead. Only a same-origin page is honoured and the
+ * result is always a path (pathname+search+hash); everything else falls back (no open
+ * redirect).
  *
  * Rejected: other origins (`https://evil.com`, `//evil.com`, `/\evil.com`), non-http
- * schemes (`javascript:`), paths that normalise to a protocol-relative URL
- * (`/..//evil.com` → `//evil.com`), API routes (raw JSON) and the auth pages themselves.
+ * schemes (`javascript:`), bare relative values (`evil.com`), paths that normalise to a
+ * protocol-relative URL (`/..//evil.com` → `//evil.com`), API routes (raw JSON) and the
+ * auth pages themselves.
  */
 export function getSafeCallbackPath(
   raw: string | null | undefined,
@@ -14,7 +17,11 @@ export function getSafeCallbackPath(
 ): string {
   if (!raw) return fallback;
   const value = raw.trim();
-  if (!value.startsWith("/") || value.startsWith("//") || value.startsWith("/\\")) return fallback;
+  if (value.startsWith("/")) {
+    if (value.startsWith("//") || value.startsWith("/\\")) return fallback;
+  } else if (!/^https?:\/\//i.test(value)) {
+    return fallback;
+  }
 
   let url: URL;
   try {

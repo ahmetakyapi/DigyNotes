@@ -34,10 +34,33 @@ test("getSafeCallbackPath blocks open redirects", () => {
     "/.//evil.com",
     "/a/..//evil.com",
     "/\t/evil.com",
-    "https://digynotes.com/notes",
+    "http://digynotes.com/notifications",
+    "https://digynotes.com.evil.com/notifications",
+    "https://digynotes.com@evil.com/notifications",
+    "https://evil.com/https://digynotes.com/notifications",
+    "https://digynotes.com//evil.com",
+    "https://digynotes.com/..//evil.com",
+    "https:evil.com",
+    "ftp://digynotes.com/notifications",
   ]) {
     assert.equal(getSafeCallbackPath(raw, ORIGIN), "/notes", raw);
   }
+});
+
+test("getSafeCallbackPath accepts absolute same-origin URLs (next-auth's bare signIn())", () => {
+  assert.equal(getSafeCallbackPath("https://digynotes.com/notes", ORIGIN), "/notes");
+  assert.equal(
+    getSafeCallbackPath("https://digynotes.com/notifications?tab=all#top", ORIGIN),
+    "/notifications?tab=all#top"
+  );
+  assert.equal(getSafeCallbackPath("HTTPS://DIGYNOTES.COM/stats", ORIGIN), "/stats");
+  assert.equal(getSafeCallbackPath("https://digynotes.com:443/feed", ORIGIN), "/feed");
+  assert.equal(
+    getSafeCallbackPath("http://localhost:4300/notifications", "http://localhost:4300"),
+    "/notifications"
+  );
+  assert.equal(getSafeCallbackPath("https://digynotes.com/api/posts", ORIGIN), "/notes");
+  assert.equal(getSafeCallbackPath("https://digynotes.com/login", ORIGIN), "/notes");
 });
 
 test("getSafeCallbackPath skips API routes and the auth pages", () => {
