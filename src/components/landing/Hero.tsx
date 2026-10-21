@@ -4,7 +4,7 @@
   LAYOUT: Pinned scroll-cinema hero (section 340vh, sticky 100svh stage).
   ACT 1 (0 → .3)   — Editorial headline (3 lines desktop / 4 mobile) with inline poster reels,
                      meta row, floating posters, bottom row (blurb · CTAs · facts).
-                     On scroll the lines drift apart, blur and fade; posters fly off.
+                     On scroll the lines drift apart and fade; posters fly off.
   ACT 2 (.1 → .5)  — A capsule "aperture" opens from the centre to full-bleed, revealing a
                      tilted wall of covers that slowly de-zooms.
   ACT 3 (.46 → .85) — Over the wall: "İzle. Oku. Oyna. Gez." word by word, then "Hepsini Not Al.",
@@ -21,14 +21,13 @@ import {
   useMotionValue,
   useMotionValueEvent,
   useInView,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
-import { EASE_OUT_EXPO, Magnetic, MaskLine } from "./Motion";
+import { EASE_OUT_EXPO, Magnetic, MaskLine, useHydratedReducedMotion } from "./Motion";
 import { IntroFilm } from "@/components/intro/IntroFilm";
 import { MEDIA, REEL, REEL_B, type ReelItem } from "./data";
 
@@ -46,7 +45,7 @@ function Reel({
   width?: string;
 }) {
   const [i, setI] = useState(0);
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
   /* Only tick while on screen: three reels used to keep animating (and
      re-rendering) long after the hero had scrolled away. */
@@ -227,7 +226,7 @@ const VERBS = ["İzle", "Oku", "Oyna", "Gez"];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
   /* ACT 1 — headline breakup */
@@ -236,7 +235,6 @@ export function Hero() {
   const l3x = useTransform(p, [0, 0.3], ["0%", "-18%"]);
   const headScale = useTransform(p, [0, 0.3], [1, 1.12]);
   const headOpacity = useTransform(p, [0.08, 0.28], [1, 0]);
-  const headBlur = useTransform(p, [0.05, 0.28], ["blur(0px)", "blur(10px)"]);
   const chromeOpacity = useTransform(p, [0, 0.1], [1, 0]);
   const chromeY = useTransform(p, [0, 0.1], [0, 30]);
 
@@ -301,7 +299,6 @@ export function Hero() {
                 : {
                     scale: headScale,
                     opacity: headOpacity,
-                    filter: headBlur,
                     transformOrigin: "30% 50%",
                   }
             }

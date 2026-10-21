@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { AuthShell } from "@/components/AuthShell";
 import { WelcomeCover, queueWelcome } from "@/components/intro/Welcome";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
+import { getSafeCallbackPath } from "@/lib/safe-redirect";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || redirecting) return;
     setError("");
     setLoading(true);
 
@@ -52,9 +54,17 @@ export default function LoginPage() {
       }
 
       const session = await getSession().catch(() => null);
-      queueWelcome(session?.user?.name);
+      if (!session?.user) {
+        publishError(
+          "Oturum açılamadı. Tarayıcının çerezlere izin verdiğinden emin olup tekrar dene."
+        );
+        return;
+      }
+      queueWelcome(session.user.name);
       setRedirecting(true);
-      router.push("/notes");
+      // Back to the page the middleware bounced here (?callbackUrl=), validated same-origin.
+      const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
+      router.push(getSafeCallbackPath(callbackUrl, window.location.origin));
       router.refresh();
     } catch {
       publishError("Giriş şu anda tamamlanamadı. Lütfen tekrar deneyin.");
@@ -82,7 +92,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
               placeholder="ornek@mail.com"
               className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
@@ -164,7 +174,7 @@ export default function LoginPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || redirecting}
             className="dn-btn-primary-auth h-[52px] w-full cursor-pointer rounded-full text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (

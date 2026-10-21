@@ -8,10 +8,10 @@
 */
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Wordmark } from "@/components/Wordmark";
 import { MEDIA } from "./data";
-import { FadeUp, MaskLine } from "./Motion";
+import { FadeUp, MaskLine, useHydratedReducedMotion } from "./Motion";
 
 const ROWS = [
   {
@@ -191,7 +191,7 @@ const NOTES = [
 
 export function Showcase() {
   const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
   const rotateX = useTransform(scrollYProgress, [0, 1], [28, 0]);
   const scale = useTransform(scrollYProgress, [0, 1], [0.82, 1]);

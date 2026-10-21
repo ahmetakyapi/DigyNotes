@@ -5,7 +5,6 @@
 ═══════════════════════════════════════════ */
 
 @import "../styles/theme-variables.css";
-@import "../styles/landing-animations.css";
 @import "../styles/editor.css";
 @import "../styles/auth.css";
 
@@ -269,15 +268,6 @@ select option {
 /* ─────────────── Reduced motion ─────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .dn-reveal,
-  .dn-line-reveal,
-  .dn-aurora-float-1,
-  .dn-aurora-float-2,
-  .dn-aurora-float-3,
-  .dn-aurora-core,
-  .dn-badge-sheen::after,
-  .dn-dot-pulse,
-  .dn-cta-ghost,
   .dn-new-note-animate,
   .dn-marquee-track {
     animation: none !important;

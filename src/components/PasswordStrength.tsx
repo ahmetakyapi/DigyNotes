@@ -33,10 +33,10 @@ function evaluateStrength(password: string): StrengthResult {
 
   const map: Record<number, { label: string; color: string }> = {
     0: { label: "Çok zayıf", color: "var(--danger)" },
-    1: { label: "Zayıf", color: "#e57e3e" },
+    1: { label: "Zayıf", color: "var(--accent-2)" },
     2: { label: "Orta", color: "var(--gold)" },
-    3: { label: "Güçlü", color: "#5dba72" },
-    4: { label: "Çok güçlü", color: "#38a169" },
+    3: { label: "Güçlü", color: "var(--gold)" },
+    4: { label: "Çok güçlü", color: "var(--gold)" },
   };
 
   return { score: normalizedScore, ...map[normalizedScore] };
@@ -61,10 +61,8 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
           />
         ))}
       </div>
-      {/* Etiket */}
-      <p className="text-[11px] font-medium transition-colors duration-200" style={{ color }}>
-        {label}
-      </p>
+      {/* Etiket: only the bars take the colour, the text stays readable on both themes */}
+      <p className="text-[11px] font-medium text-[var(--text-secondary)]">{label}</p>
     </div>
   );
 }

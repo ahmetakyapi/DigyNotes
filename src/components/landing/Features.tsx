@@ -9,9 +9,10 @@
 */
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { formatRatingFixed } from "@/lib/number-format";
 import { MEDIA } from "./data";
-import { EASE_OUT_EXPO, FadeUp, MaskLine } from "./Motion";
+import { EASE_OUT_EXPO, FadeUp, MaskLine, useHydratedReducedMotion } from "./Motion";
 
 function Tile({
   index,
@@ -66,13 +67,20 @@ function RatingPlayground() {
           aria-valuemin={0.5}
           aria-valuemax={5}
           aria-valuenow={value}
-          className="flex cursor-pointer gap-1.5 outline-none"
+          aria-valuetext={`${formatRatingFixed(value)} / 5`}
+          className="flex cursor-pointer gap-1.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--bg-card)]"
           onPointerMove={(e) => setHover(pick(e.clientX))}
           onPointerLeave={() => setHover(null)}
           onClick={(e) => setValue(pick(e.clientX))}
           onKeyDown={(e) => {
-            if (e.key === "ArrowRight") setValue((v) => Math.min(5, v + 0.5));
-            if (e.key === "ArrowLeft") setValue((v) => Math.max(0.5, v - 0.5));
+            const up = e.key === "ArrowRight" || e.key === "ArrowUp";
+            const down = e.key === "ArrowLeft" || e.key === "ArrowDown";
+            if (!up && !down && e.key !== "Home" && e.key !== "End") return;
+            e.preventDefault();
+            if (up) setValue((v) => Math.min(5, v + 0.5));
+            if (down) setValue((v) => Math.max(0.5, v - 0.5));
+            if (e.key === "Home") setValue(0.5);
+            if (e.key === "End") setValue(5);
           }}
         >
           {[1, 2, 3, 4, 5].map((n) => {
@@ -126,11 +134,15 @@ const SEARCHES = [
 function SearchTyping() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: "-20% 0px" });
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const [idx, setIdx] = useState(0);
-  const [len, setLen] = useState(reduce ? SEARCHES[0].q.length : 0);
+  const [len, setLen] = useState(0);
   useEffect(() => {
-    if (!inView || reduce) return;
+    if (reduce) {
+      setLen(SEARCHES[idx].q.length);
+      return;
+    }
+    if (!inView) return;
     const target = SEARCHES[idx].q;
     if (len < target.length) {
       const t = setTimeout(() => setLen((l) => l + 1), 85);
@@ -333,10 +345,12 @@ function YearStrip() {
       <div className="flex h-[150px] items-end gap-1.5 sm:gap-2.5">
         {vals.map((v, i) => (
           <div key={i} className="flex flex-1 flex-col items-center gap-2">
+            {/* Final height is static; the bar grows with scaleY (no per-frame layout). */}
             <motion.div
-              className={`w-full rounded-t-md ${i === 6 ? "bg-[var(--gold)]" : "bg-[var(--bg-raised)]"}`}
-              initial={{ height: 0 }}
-              animate={inView ? { height: `${(v / 12) * 120}px` } : undefined}
+              className={`w-full origin-bottom rounded-t-md ${i === 6 ? "bg-[var(--gold)]" : "bg-[var(--bg-raised)]"}`}
+              style={{ height: `${(v / 12) * 120}px` }}
+              initial={{ scaleY: 0 }}
+              animate={inView ? { scaleY: 1 } : undefined}
               transition={{ duration: 1.1, ease: EASE_OUT_EXPO, delay: i * 0.05 }}
             />
             <span className="dn-mono text-[11px] text-[var(--text-muted)]">{months[i]}</span>
@@ -346,7 +360,7 @@ function YearStrip() {
       <div className="grid grid-cols-3 gap-6 md:gap-10">
         {[
           ["88", "Not"],
-          ["4.3", "Ort. Puan"],
+          ["4,3", "Ort. Puan"],
           ["Tem", "En Dolu Ay"],
         ].map(([n, l]) => (
           <div key={l}>

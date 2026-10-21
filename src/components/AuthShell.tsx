@@ -80,6 +80,13 @@ const COPY = {
 
 export type AuthShellMode = keyof typeof COPY;
 
+/* Same zone on the server (UTC) and in the browser, or the © year mismatches on hydration
+   in the first hours of 1 January. */
+const currentYearIstanbul = () =>
+  new Intl.DateTimeFormat("tr-TR", { year: "numeric", timeZone: "Europe/Istanbul" }).format(
+    new Date()
+  );
+
 export function AuthShell({
   mode,
   subtitle,
@@ -174,7 +181,7 @@ export function AuthShell({
         </motion.div>
 
         <p className="text-center text-[12px] font-medium text-[var(--text-muted)]">
-          © {new Date().getFullYear()} DigyNotes · Kişisel kullanım için
+          © {currentYearIstanbul()} DigyNotes · Kişisel kullanım için
         </p>
       </div>
     </div>

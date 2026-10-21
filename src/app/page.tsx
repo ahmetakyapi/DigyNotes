@@ -7,7 +7,7 @@ import { Archives } from "@/components/landing/Archives";
 import { Showcase } from "@/components/landing/Showcase";
 import { Features } from "@/components/landing/Features";
 import { FinalCta, LandingFooter, Steps } from "@/components/landing/Outro";
-import { SmoothScroll } from "@/components/landing/Motion";
+import { LandingMotion, SmoothScroll } from "@/components/landing/Motion";
 import { JsonLd } from "@/components/JsonLd";
 import { buildPageMetadata, getSiteUrl } from "@/lib/metadata";
 import { buildSiteJsonLd } from "@/lib/structured-data";
@@ -29,19 +29,21 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-[var(--bg-base)] text-[var(--text-primary)]">
       <JsonLd data={buildSiteJsonLd(getSiteUrl())} />
-      <SmoothScroll />
-      <LandingNav />
-      <main>
-        <Hero />
-        <Marquee />
-        <Manifesto />
-        <Archives />
-        <Showcase />
-        <Features />
-        <Steps />
-        <FinalCta />
-      </main>
-      <LandingFooter />
+      <LandingMotion>
+        <SmoothScroll />
+        <LandingNav />
+        <main>
+          <Hero />
+          <Marquee />
+          <Manifesto />
+          <Archives />
+          <Showcase />
+          <Features />
+          <Steps />
+          <FinalCta />
+        </main>
+        <LandingFooter />
+      </LandingMotion>
     </div>
   );
 }

@@ -17,6 +17,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { setSmoothScrollPaused } from "@/components/landing/Motion";
 
 const M = "/landing/media";
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -277,6 +278,15 @@ export function IntroFilm() {
     return () => list.current.forEach(clearTimeout);
   }, [reduce, schedule]);
 
+  /* No scrolling behind the curtain: visitors who scrolled during the film landed
+     mid-cinema with the nav hidden. Released as soon as the curtain splits. */
+  const locking = phase !== "off" && phase !== "split";
+  useEffect(() => {
+    if (!locking) return;
+    setSmoothScrollPaused(true);
+    return () => setSmoothScrollPaused(false);
+  }, [locking]);
+
   const skip = () => {
     if (phase === "split" || phase === "off" || startedAt === null) return;
     startedAt = performance.now() - SPLIT_AT;
@@ -318,19 +328,25 @@ export function IntroFilm() {
   return (
     <div
       key="stage"
-      className="fixed inset-0 z-[110] cursor-pointer overflow-hidden bg-[#0b0b0a]"
+      className="fixed inset-0 z-[110] cursor-pointer overflow-hidden bg-[#0b0b0a] [touch-action:none]"
       onClick={skip}
       role="presentation"
     >
-      {/* scene tint */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[38%] h-[90vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-        animate={{
-          background: `radial-gradient(closest-side, rgba(${SCENES[scene].glow},0.22), transparent)`,
-        }}
-        transition={{ duration: 0.8 }}
-      />
+      {/* scene tint: one static glow per colour, cross-faded with opacity (no blur
+          filter, no per-frame gradient repaint) */}
+      {(["185,168,255", "255,176,136"] as const).map((g) => (
+        <motion.div
+          key={g}
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-[38%] h-[90vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            background: `radial-gradient(closest-side, rgba(${g},0.22), transparent)`,
+          }}
+          initial={false}
+          animate={{ opacity: SCENES[scene].glow === g ? 1 : 0 }}
+          transition={{ duration: 0.8 }}
+        />
+      ))}
 
       {/* story bars */}
       <div className="absolute inset-x-5 top-5 flex gap-1.5 sm:inset-x-10 sm:top-8">
@@ -340,9 +356,9 @@ export function IntroFilm() {
             <span key={i} className="h-[2px] flex-1 overflow-hidden rounded-full bg-white/15">
               <motion.span
                 key={`${i}-${i < scene ? "past" : i === scene ? "now" : "next"}`}
-                className="block h-full bg-[#f2efe8]"
-                initial={{ width: i < scene ? "100%" : "0%" }}
-                animate={{ width: i <= scene ? "100%" : "0%" }}
+                className="block h-full origin-left bg-[#f2efe8]"
+                initial={{ scaleX: i < scene ? 1 : 0 }}
+                animate={{ scaleX: i <= scene ? 1 : 0 }}
                 transition={i === scene ? { duration: dur, ease: "linear" } : { duration: 0 }}
               />
             </span>

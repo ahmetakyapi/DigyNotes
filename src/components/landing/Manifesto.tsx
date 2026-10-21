@@ -6,7 +6,8 @@
   Words wrapped in *…* render in serif italic, _…_ in the accent colour.
 */
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { useHydratedReducedMotion } from "./Motion";
 
 const TEXT =
   "İzlediğin bir *film,* bitirdiğin bir *kitap,* gezdiğin bir *şehir…* Hepsi sende bir iz bırakır. Ama zamanla yenileri gelir, eskiler unutulur. _DigyNotes,_ bu izleri kendi cümlelerinle saklayabilmen için var.";
@@ -38,7 +39,7 @@ function Word({
 
 export function Manifesto() {
   const ref = useRef<HTMLParagraphElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.9", "end 0.7"] });
   const words = TEXT.split(" ");
 
