@@ -39,7 +39,9 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
       years: true,
       rating: true,
       status: true,
-      user: { select: { isPublic: true, name: true, username: true, avatarUrl: true } },
+      user: {
+        select: { isPublic: true, isBanned: true, name: true, username: true, avatarUrl: true },
+      },
     },
   });
   if (!post || post.isDraft || post.isDeleted) {

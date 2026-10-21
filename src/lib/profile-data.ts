@@ -159,7 +159,8 @@ export const getProfilePageData = cache(async (username: string, viewerId: strin
         username: user.username,
         bio: user.bio,
         avatarUrl: user.avatarUrl,
-        isPublic: user.isPublic,
+        // Open to anyone (robots, JSON-LD): a banned account counts as private here too.
+        isPublic: user.isPublic && !user.isBanned,
         createdAt: user.createdAt.toISOString(),
         lastNoteAt: newestPost?.createdAt.toISOString() ?? null,
         topCategory: pickTopCategory(categoryGroups),

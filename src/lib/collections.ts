@@ -8,6 +8,8 @@ export const collectionWithPostsInclude = Prisma.validator<Prisma.CollectionIncl
       username: true,
       avatarUrl: true,
       isPublic: true,
+      // For the read check only: serializeCollection never hands it out.
+      isBanned: true,
     },
   },
   posts: {
@@ -58,7 +60,13 @@ export function serializeCollection(collection: CollectionWithPosts) {
     createdAt: collection.createdAt.toISOString(),
     updatedAt: collection.updatedAt.toISOString(),
     postCount: collection.posts.length,
-    owner: collection.user,
+    owner: {
+      id: collection.user.id,
+      name: collection.user.name,
+      username: collection.user.username,
+      avatarUrl: collection.user.avatarUrl,
+      isPublic: collection.user.isPublic,
+    },
     posts: collection.posts.map((entry) => serializePost(entry.post)),
   };
 }
