@@ -45,6 +45,7 @@ model Follow {
   following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
+  @@index([followingId, createdAt])
   @@map("follows")
 }
 
@@ -114,6 +115,7 @@ model PostTag {
   tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([postId, tagId])
+  @@index([tagId])
   @@map("post_tags")
 }
 
@@ -156,6 +158,7 @@ model PostLike {
   createdAt DateTime @default(now())
 
   @@id([postId, userId])
+  @@index([userId, createdAt])
   @@map("post_likes")
 }
 
@@ -167,6 +170,8 @@ model Bookmark {
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
+  @@index([userId, createdAt])
+  @@index([postId])
   @@map("bookmarks")
 }
 
@@ -238,6 +243,8 @@ model ActivityLog {
   metadata  Json?
   createdAt DateTime @default(now())
 
+  @@index([createdAt])
+  @@index([userId, createdAt])
   @@map("activity_logs")
 }
 

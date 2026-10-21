@@ -102,7 +102,8 @@ export function getPaginationConfig(sort: SortOption, cursor: PublicPostsCursor 
 
 export function publicPostsWhere(tag?: string | null): Prisma.PostWhereInput {
   return {
-    user: { isPublic: true },
+    // A banned author counts as private: their notes leave every public list.
+    user: { isPublic: true, isBanned: false },
     isDeleted: false,
     isDraft: false,
     ...(tag
@@ -122,8 +123,11 @@ export const publicPostInclude = {
   user: { select: { id: true, name: true, username: true, avatarUrl: true } },
 } satisfies Prisma.PostInclude;
 
+/** List cards never render the note body; leaving its HTML out keeps payloads small. */
+export const publicPostOmit = { content: true } satisfies Prisma.PostOmit;
+
 export function serializePublicPost(
-  post: Prisma.PostGetPayload<{ include: typeof publicPostInclude }>
+  post: Prisma.PostGetPayload<{ include: typeof publicPostInclude; omit: typeof publicPostOmit }>
 ) {
   const { tags, ...rest } = post;
   return {
@@ -145,6 +149,7 @@ export async function listPublicPosts(options: {
     where: publicPostsWhere(options.tag),
     orderBy,
     take: options.limit,
+    omit: publicPostOmit,
     include: publicPostInclude,
   });
   return posts.map(serializePublicPost);

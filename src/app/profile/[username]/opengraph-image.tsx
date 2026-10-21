@@ -23,10 +23,19 @@ const FAN = [
 export default async function ProfileOpenGraphImage({ params }: { params: { username: string } }) {
   const user = await prisma.user.findUnique({
     where: { username: params.username },
-    select: { id: true, name: true, username: true, bio: true, avatarUrl: true, isPublic: true },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      bio: true,
+      avatarUrl: true,
+      isPublic: true,
+      isBanned: true,
+    },
   });
   if (!user) return renderOgNotice("Profil Bulunamadı", "Bu kullanıcı adıyla bir hesap yok.");
-  if (!user.isPublic) {
+  // A banned account reads as private, like its profile page.
+  if (!user.isPublic || user.isBanned) {
     return renderOgNotice(
       "Bu Profil Gizli",
       `@${user.username} notlarını yalnızca kendine tutuyor.`

@@ -43,7 +43,13 @@ function feedInclude(userId: string) {
   } satisfies Prisma.PostInclude;
 }
 
-type FeedRow = Prisma.PostGetPayload<{ include: ReturnType<typeof feedInclude> }>;
+/* Cards never render the note body, so its HTML stays out of the feed. */
+const FEED_OMIT = { content: true } satisfies Prisma.PostOmit;
+
+type FeedRow = Prisma.PostGetPayload<{
+  include: ReturnType<typeof feedInclude>;
+  omit: typeof FEED_OMIT;
+}>;
 
 function serializeFeedPost(post: FeedRow, userId: string) {
   const { tags, user, likes, bookmarks, _count, ...rest } = post;
@@ -89,6 +95,7 @@ async function listByTime(
     where: { AND: [where, timeCursorWhere(cursor)] },
     orderBy: NEWEST_FIRST,
     take: limit + 1,
+    omit: FEED_OMIT,
     include: feedInclude(userId),
   });
 
@@ -142,6 +149,7 @@ async function listPopular(cursor: string | null, limit: number, userId: string)
 
   const posts = await prisma.post.findMany({
     where: { id: { in: pageIds } },
+    omit: FEED_OMIT,
     include: feedInclude(userId),
   });
   const byId = new Map(posts.map((post) => [post.id, post]));
@@ -175,9 +183,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ tab, ...(await listByTime(where, cursor, limit, userId)) });
     }
 
-    // Followed authors only while their profile is public, matching canReadPost.
+    // Followed authors only while their profile is public (and not banned), matching canReadPost.
     const sources: Prisma.PostWhereInput[] = [
-      { user: { isPublic: true, followers: { some: { followerId: userId } } } },
+      { user: { isPublic: true, isBanned: false, followers: { some: { followerId: userId } } } },
     ];
     if (parseFeedOwn(searchParams.get("own"))) sources.push({ userId });
 

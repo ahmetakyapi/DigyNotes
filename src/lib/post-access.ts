@@ -8,6 +8,8 @@ interface PostVisibilityRecord {
   isDeleted?: boolean;
   user: {
     isPublic: boolean;
+    /* Optional for callers whose row doesn't carry it; a banned author reads as private. */
+    isBanned?: boolean;
   } | null;
 }
 
@@ -20,7 +22,8 @@ export interface PostReadAccess {
 
 /**
  * Who may open a note: its owner and admins always; everyone else only when it is
- * published (not a draft, not in the trash) and its author's profile is public.
+ * published (not a draft, not in the trash) and its author's profile is public (and
+ * the author isn't banned).
  * Drafts used to be readable by anyone with the link, although the share sheet
  * promised the opposite.
  */
@@ -34,7 +37,7 @@ export function canReadPost(
   if (viewerId && post.userId === viewerId) return true;
   if (post.isDraft || post.isDeleted) return false;
   if (!post.userId) return true;
-  return post.user?.isPublic === true;
+  return post.user?.isPublic === true && post.user.isBanned !== true;
 }
 
 /** True when the note is readable by anyone, signed in or not (indexable, shareable). */
@@ -54,7 +57,7 @@ export async function getPostReadAccess(
         userId: true,
         isDraft: true,
         isDeleted: true,
-        user: { select: { isPublic: true } },
+        user: { select: { isPublic: true, isBanned: true } },
       },
     }),
     viewerId

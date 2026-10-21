@@ -85,6 +85,8 @@ export async function POST(req: NextRequest) {
           where: {
             id: { in: postIds },
             userId,
+            isDeleted: false,
+            isDraft: false,
           },
           select: { id: true },
         })

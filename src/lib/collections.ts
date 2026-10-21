@@ -11,9 +11,14 @@ export const collectionWithPostsInclude = Prisma.validator<Prisma.CollectionIncl
     },
   },
   posts: {
+    /* Collections show on public profiles: trashed and draft notes stay linked (restoring
+       a note brings it back) but are never listed or counted (ERR-DATA-012). Cards never
+       render the note body, so its HTML stays out of every payload. */
+    where: { post: { isDeleted: false, isDraft: false } },
     orderBy: [{ position: "asc" }, { addedAt: "asc" }],
     include: {
       post: {
+        omit: { content: true },
         include: {
           tags: { include: { tag: true } },
           user: {
