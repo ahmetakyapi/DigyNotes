@@ -287,6 +287,7 @@ export async function POST(request: NextRequest) {
           year: "numeric",
           month: "long",
           day: "numeric",
+          timeZone: "Europe/Istanbul",
         }),
         userId,
         tags: {

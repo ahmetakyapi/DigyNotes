@@ -4,7 +4,11 @@ import test from "node:test";
 import {
   formatRating,
   formatRatingFixed,
+  getIstanbulDateKey,
+  getIstanbulDateParts,
+  getIstanbulDayStart,
   getIstanbulMonthStart,
+  getIstanbulYearStart,
 } from "../src/lib/number-format.ts";
 import { applySortFilter, createSortFilterState } from "../src/lib/sort-filter-utils.ts";
 import { foldSearchText } from "../src/lib/text.ts";
@@ -37,6 +41,31 @@ test("getIstanbulMonthStart follows the Istanbul calendar, not UTC", () => {
     getIstanbulMonthStart(new Date("2026-01-01T00:00:00.000Z")).toISOString(),
     "2025-12-31T21:00:00.000Z"
   );
+});
+
+test("getIstanbulDayStart and getIstanbulDateKey cut days at Istanbul midnight", () => {
+  // 19 Oct 22:30 UTC is already 20 October 01:30 in Istanbul.
+  assert.equal(
+    getIstanbulDayStart(new Date("2026-10-19T22:30:00.000Z")).toISOString(),
+    "2026-10-19T21:00:00.000Z"
+  );
+  assert.equal(getIstanbulDateKey(new Date("2026-10-19T22:30:00.000Z")), "2026-10-20");
+  assert.equal(getIstanbulDateKey(new Date("2026-10-20T20:59:00.000Z")), "2026-10-20");
+  assert.equal(getIstanbulDateKey(new Date("2026-10-20T21:00:00.000Z")), "2026-10-21");
+});
+
+test("getIstanbulYearStart and getIstanbulDateParts follow the Istanbul calendar", () => {
+  assert.equal(getIstanbulYearStart(2026).toISOString(), "2025-12-31T21:00:00.000Z");
+  assert.deepEqual(getIstanbulDateParts(new Date("2025-12-31T22:30:00.000Z")), {
+    year: 2026,
+    month: 0,
+    day: 1,
+  });
+  assert.deepEqual(getIstanbulDateParts(new Date("2026-10-14T12:00:00.000Z")), {
+    year: 2026,
+    month: 9,
+    day: 14,
+  });
 });
 
 test("applySortFilter keeps pinned notes first only when asked, in the default order", () => {

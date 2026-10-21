@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
+import { buildActivityBuckets } from "@/lib/admin-buckets";
 
 type RangeKey = "24h" | "7d" | "30d" | "90d" | "365d";
 const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
@@ -15,61 +16,6 @@ function getRangeStart(range: RangeKey): Date {
     "365d": 365 * 24 * 60 * 60 * 1000,
   };
   return new Date(now.getTime() - ms[range]);
-}
-
-function buildBuckets(range: RangeKey, logs: { createdAt: Date }[]) {
-  const now = new Date();
-  const buckets: { label: string; key: string; count: number }[] = [];
-
-  if (range === "24h") {
-    for (let i = 23; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 60 * 60 * 1000);
-      d.setMinutes(0, 0, 0);
-      buckets.push({ key: d.toISOString(), label: `${String(d.getHours()).padStart(2, "0")}:00`, count: 0 });
-    }
-    logs.forEach((log) => {
-      const h = new Date(log.createdAt);
-      h.setMinutes(0, 0, 0);
-      const b = buckets.find((x) => x.key === h.toISOString());
-      if (b) b.count++;
-    });
-  } else if (range === "7d" || range === "30d" || range === "90d") {
-    const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
-    for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      d.setHours(0, 0, 0, 0);
-      buckets.push({
-        key: d.toISOString(),
-        label: d.toLocaleDateString("tr-TR", { day: "numeric", month: "short" }),
-        count: 0,
-      });
-    }
-    logs.forEach((log) => {
-      const d = new Date(log.createdAt);
-      d.setHours(0, 0, 0, 0);
-      const b = buckets.find((x) => x.key === d.toISOString());
-      if (b) b.count++;
-    });
-  } else {
-    // 365d → monthly
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      buckets.push({
-        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-        label: d.toLocaleDateString("tr-TR", { month: "short", year: "2-digit" }),
-        count: 0,
-      });
-    }
-    logs.forEach((log) => {
-      const d = new Date(log.createdAt);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      const b = buckets.find((x) => x.key === key);
-      if (b) b.count++;
-    });
-  }
-
-  return buckets;
 }
 
 export async function GET(request: NextRequest) {
@@ -113,7 +59,7 @@ export async function GET(request: NextRequest) {
       total,
       page,
       totalPages: Math.ceil(total / limit),
-      chartData: buildBuckets(range, chartLogs),
+      chartData: buildActivityBuckets(range, chartLogs),
       range,
     });
   } catch (error) {
