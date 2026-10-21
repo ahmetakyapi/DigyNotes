@@ -44,6 +44,12 @@ export function LandingNav() {
       className="fixed inset-x-0 top-0 z-50"
       animate={{ y: hidden ? "-110%" : "0%" }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      // Keyboard focus inside a fixed bar never scrolls the page, so reveal it here.
+      onFocusCapture={() => {
+        if (!flags.current.hidden) return;
+        flags.current.hidden = false;
+        setHidden(false);
+      }}
     >
       <div
         className={`mx-auto flex max-w-[1600px] items-center justify-between px-5 py-4 transition-all duration-500 sm:px-10 ${

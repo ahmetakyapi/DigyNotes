@@ -5,18 +5,12 @@
   The drift is a CSS keyframe on transform (compositor-only, zero JS per frame);
   scroll velocity only adds a skew, which settles to 0 when the page is still.
 */
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from "framer-motion";
+import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { useHydratedReducedMotion } from "./Motion";
 
 /* 4 copies, loop over one copy (25%). ~11.4s per copy ≈ the old 2.2%/s drift. */
 function Row({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) {
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });

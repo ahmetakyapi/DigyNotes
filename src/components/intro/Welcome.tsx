@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const KEY = "dn_welcome_name";
+const FIRST_KEY = "dn_welcome_first";
 const EASE = [0.83, 0, 0.17, 1] as const;
 const M = "/landing/media";
 const COLS = [
@@ -21,10 +22,13 @@ const COLS = [
   ["past-lives", "disco-elysium", "kapadokya", "dark"],
 ];
 
-/** Call right before navigating into the app after a successful sign-in. */
-export function queueWelcome(name: string | null | undefined) {
+/** Call right before navigating into the app after a successful sign-in.
+    `firstVisit` (right after sign-up) drops the "Tekrar Merhaba" line. */
+export function queueWelcome(name: string | null | undefined, firstVisit = false) {
   try {
     sessionStorage.setItem(KEY, (name ?? "").trim() || "1");
+    if (firstVisit) sessionStorage.setItem(FIRST_KEY, "1");
+    else sessionStorage.removeItem(FIRST_KEY);
   } catch {
     /* storage blocked: the app simply opens without the reveal */
   }
@@ -86,7 +90,7 @@ export function WelcomeCover({ show }: { show: boolean }) {
 }
 
 /* Module-level handoff state: survives StrictMode double effects and remounts. */
-let reveal: { name: string; startedAt: number } | null = null;
+let reveal: { name: string; first: boolean; startedAt: number } | null = null;
 let revealDone = false;
 const OPEN_AT = 1250;
 const DONE_AT = 2400;
@@ -94,24 +98,35 @@ const DONE_AT = 2400;
 export function WelcomeReveal() {
   const reduce = useReducedMotion();
   const [name, setName] = useState<string | null>(null);
+  const [first, setFirst] = useState(false);
   const [phase, setPhase] = useState<"cover" | "open" | "done">("done");
 
   useEffect(() => {
     if (!reveal) {
       let value: string | null = null;
+      let firstVisit = false;
       try {
         value = sessionStorage.getItem(KEY);
-        if (value) sessionStorage.removeItem(KEY);
+        if (value) {
+          sessionStorage.removeItem(KEY);
+          firstVisit = sessionStorage.getItem(FIRST_KEY) === "1";
+          sessionStorage.removeItem(FIRST_KEY);
+        }
       } catch {
         value = null;
       }
       if (!value) return;
       revealDone = false;
-      reveal = { name: value === "1" ? "" : value.split(" ")[0], startedAt: performance.now() };
+      reveal = {
+        name: value === "1" ? "" : value.split(" ")[0],
+        first: firstVisit,
+        startedAt: performance.now(),
+      };
     }
     if (revealDone || reduce) return;
     const current = reveal;
     setName(current.name);
+    setFirst(current.first);
     const elapsed = performance.now() - current.startedAt;
     const finish = () => {
       revealDone = true;
@@ -142,8 +157,10 @@ export function WelcomeReveal() {
     >
       <div className={`absolute inset-x-0 h-[100vh] ${top ? "top-0" : "bottom-0"}`}>
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <p className="text-[13px] font-medium text-[#77726a]">Tekrar Merhaba</p>
-          <p className="mt-5 text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[#f2efe8]">
+          {!first && <p className="text-[13px] font-medium text-[#77726a]">Tekrar Merhaba</p>}
+          <p
+            className={`text-[clamp(3rem,11vw,9rem)] font-extrabold leading-[0.9] tracking-[-0.04em] text-[#f2efe8] ${first ? "" : "mt-5"}`}
+          >
             Hoş Geldin{name ? "," : ""}
             {name && (
               <>

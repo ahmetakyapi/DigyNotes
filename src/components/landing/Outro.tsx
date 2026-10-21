@@ -109,6 +109,13 @@ export function FinalCta() {
   );
 }
 
+/* Same zone on the server (UTC) and in the browser, or the © year mismatches on hydration
+   in the first hours of 1 January. */
+const currentYearIstanbul = () =>
+  new Intl.DateTimeFormat("tr-TR", { year: "numeric", timeZone: "Europe/Istanbul" }).format(
+    new Date()
+  );
+
 export function LandingFooter() {
   const cols = [
     {
@@ -181,7 +188,7 @@ export function LandingFooter() {
       </div>
 
       <div className="mx-auto mt-10 flex max-w-[1600px] flex-wrap justify-between gap-2 px-5 text-[12.5px] font-medium text-[var(--text-muted)] sm:px-10">
-        <span>© {new Date().getFullYear()} DigyNotes</span>
+        <span>© {currentYearIstanbul()} DigyNotes</span>
         <span>Kişisel Kullanım İçin</span>
       </div>
 

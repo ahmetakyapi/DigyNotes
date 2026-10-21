@@ -137,7 +137,7 @@ export function Archives() {
         <h2 className="mt-4 text-[clamp(2.6rem,6vw,6rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)]">
           <MaskLine>
             Her Biri İçin Ayrı Bir{" "}
-            <span className="dn-display font-normal italic tracking-[-0.02em]">Sayfa</span>.
+            <span className="dn-display font-normal italic tracking-[-0.02em]">Sayfa</span>
           </MaskLine>
         </h2>
       </div>

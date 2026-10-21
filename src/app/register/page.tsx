@@ -29,6 +29,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || redirecting) return;
     setError("");
 
     if (password !== confirmPw) {
@@ -65,7 +66,7 @@ export default function RegisterPage() {
         return;
       }
 
-      queueWelcome(name);
+      queueWelcome(name, true);
       setRedirecting(true);
       router.push("/notes");
       router.refresh();
@@ -121,7 +122,11 @@ export default function RegisterPage() {
                   setUsername(e.target.value.toLowerCase().replaceAll(/[^a-z0-9_]/g, ""))
                 }
                 required
-                autoComplete="username"
+                // Not "username": password managers would save the handle as the login,
+                // but sign-in takes the e-mail.
+                autoComplete="off"
+                autoCapitalize="none"
+                spellCheck={false}
                 placeholder="kullanici_adin"
                 minLength={3}
                 maxLength={30}
@@ -147,7 +152,7 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
               placeholder="ornek@mail.com"
               className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
@@ -246,7 +251,7 @@ export default function RegisterPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || redirecting}
             className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (

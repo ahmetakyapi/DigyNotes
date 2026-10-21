@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import Lenis from "lenis";
 import {
   motion,
+  MotionConfig,
   useInView,
   useMotionValue,
   useReducedMotion,
@@ -19,6 +20,8 @@ export function SmoothScroll() {
   useEffect(() => {
     if (reduce) return;
     const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1, smoothWheel: true });
+    activeLenis = lenis;
+    if (scrollPaused) lenis.stop();
     let raf = 0;
     const loop = (t: number) => {
       lenis.raf(t);
@@ -27,10 +30,47 @@ export function SmoothScroll() {
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
+      if (activeLenis === lenis) activeLenis = null;
       lenis.destroy();
     };
   }, [reduce]);
   return null;
+}
+
+/* Pauses page scrolling while the intro film plays. lenis.stop() swallows wheel events
+   and adds .lenis-stopped (overflow: hidden in globals.css), which also stops keys and
+   touch. Module-level so the order in which SmoothScroll and IntroFilm mount is moot. */
+let activeLenis: Lenis | null = null;
+let scrollPaused = false;
+export function setSmoothScrollPaused(paused: boolean) {
+  scrollPaused = paused;
+  if (paused) activeLenis?.stop();
+  else activeLenis?.start();
+}
+
+/* ── Reduced motion that hydrates cleanly ──
+   framer's useReducedMotion is null on the server but already true on the client's
+   hydration render, so markup that branches on it failed hydration and React rebuilt
+   the whole landing. This one reads false during SSR + hydration (markup matches) and
+   React re-renders with the real value right after. */
+const RM_QUERY = "(prefers-reduced-motion: reduce)";
+const subscribeReducedMotion = (onChange: () => void) => {
+  const mq = window.matchMedia(RM_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+};
+export function useHydratedReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReducedMotion,
+    () => window.matchMedia(RM_QUERY).matches,
+    () => false
+  );
+}
+
+/* Wraps the landing: reveals that mounted with their `initial` state before the
+   post-hydration re-render finish without movement for reduced-motion visitors. */
+export function LandingMotion({ children }: { children: ReactNode }) {
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
 /* ── Masked line reveal: text slides up from behind an overflow mask ── */
@@ -47,7 +87,7 @@ export function MaskLine({
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once, margin: "0px 0px -10% 0px" });
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   return (
     <span
       ref={ref}
@@ -77,7 +117,7 @@ export function FadeUp({
   className?: string;
   y?: number;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   return (
     <motion.div
       className={className}

@@ -110,6 +110,7 @@ function ResetPasswordForm() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -137,6 +138,7 @@ function ResetPasswordForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || done) return;
     setError("");
 
     if (password.length < 8) {
@@ -164,6 +166,7 @@ function ResetPasswordForm() {
         "Şifre güncellenemedi."
       );
       toast.success("Şifren güncellendi, yeni şifrenle giriş yapabilirsin.");
+      setDone(true);
       router.replace(data?.email ? `/login?email=${encodeURIComponent(data.email)}` : "/login");
     } catch (err) {
       const message = getClientErrorMessage(err, "Şifre güncellenemedi.");
@@ -250,7 +253,7 @@ function ResetPasswordForm() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || done}
           className="dn-btn-primary-auth h-[52px] w-full cursor-pointer rounded-full text-[15px] font-semibold transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
