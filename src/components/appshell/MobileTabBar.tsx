@@ -55,6 +55,9 @@ export function MobileTabBar({
         />
         <Link
           href={userUsername ? `/profile/${userUsername}` : "/profile/settings"}
+          // No username yet (anonymous, or /api/users/me pending): don't prefetch the
+          // protected fallback, it would only render the /login redirect.
+          prefetch={userUsername ? undefined : false}
           aria-current={isProfile ? "page" : undefined}
           className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 transition-all duration-300 ease-out-expo ${
             isProfile
