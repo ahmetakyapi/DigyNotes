@@ -225,7 +225,6 @@ export default function RecentlyViewed() {
         <div
           ref={scrollRef}
           className="scrollbar-hide -mx-1 flex cursor-grab gap-2.5 overflow-x-auto px-1 pb-1 sm:gap-3"
-          style={{ touchAction: "pan-x" }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUpOrLeave}
@@ -246,11 +245,11 @@ export default function RecentlyViewed() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between gap-1">
-                    <span className="rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                    <span className="rounded-full bg-ink/70 px-2 py-0.5 text-[11px] font-semibold text-white">
                       {getCategoryLabel(item.category)}
                     </span>
                     {item.rating > 0 && (
-                      <span className="flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                      <span className="flex items-center gap-1 rounded-full bg-ink/70 px-2 py-0.5 text-[11px] font-semibold text-white">
                         <span className="text-[#b9a8ff]">★</span>
                         {item.rating.toFixed(1).replace(".", ",")}
                       </span>

@@ -43,7 +43,9 @@ function buildSearchParams(
   else params.delete("category");
   if (tags.length > 0) params.set("tags", tags.join(","));
   else params.delete("tags");
-  if (tab === "kaydedilenler") params.set("tab", tab);
+  // Every non-default tab goes in the URL; otherwise the server re-render after a tab or
+  // filter change hands back "notlar" and the sync effect below jumps there.
+  if (tab !== "notlar") params.set("tab", tab);
   else params.delete("tab");
 
   return params.toString();
@@ -229,6 +231,22 @@ export function PostsList({
     return () => observer.disconnect();
   }, [activeTab, currentHasMore, currentIsLoadingMore, currentLoadMore, filtered.length]);
 
+  /* ── Whole list for browser-side sorting ── */
+
+  // Sort and the advanced filters run here, not in the paged query (outside "notlar" so do
+  // category, tag and search), so they must see the whole list, not the pages loaded so far
+  // (ERR-DATA-013). The loaders clear their cursor on error, which ends the loop.
+  const needsWholeList =
+    hasActiveSortFilters(sortFilter, defaultSortFilter) ||
+    (activeTab !== "notlar" &&
+      (localQuery.trim() !== "" || activeCategory.trim() !== "" || activeTags.length > 0));
+  const wholeListPending = needsWholeList && currentHasMore;
+
+  useEffect(() => {
+    if (!needsWholeList || !currentHasMore || currentIsLoadingMore || !currentLoadMore) return;
+    void currentLoadMore();
+  }, [needsWholeList, currentHasMore, currentIsLoadingMore, currentLoadMore]);
+
   /* ── Early return ── */
 
   if (
@@ -285,7 +303,8 @@ export function PostsList({
           onSortFilterChange={setSortFilter}
           defaultSortFilter={defaultSortFilter}
           totalCount={visiblePosts.length}
-          filteredCount={filtered.length}
+          // No "3/12" from a partial list: the counter waits until every page is in.
+          filteredCount={wholeListPending ? visiblePosts.length : filtered.length}
           availableStatuses={availableStatuses}
           viewMode={viewMode}
           onViewModeChange={setViewMode}

@@ -148,7 +148,8 @@ export const PostGridCard = React.memo(function PostGridCard({
             alt={displayTitle}
             fill
             variant="wide"
-            sizes="(max-width: 768px) 36vw, 200px"
+            responsive
+            sizes="(max-width: 639px) 100vw, (max-width: 768px) 36vw, 200px"
             className="object-cover transition-transform duration-[1200ms] ease-out-expo group-hover:scale-[1.06]"
           />
           <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--image-edge-fade)] to-transparent sm:inset-y-0 sm:left-auto sm:right-0 sm:h-auto sm:w-8 sm:bg-gradient-to-l" />
@@ -249,6 +250,7 @@ export const PostListCard = React.memo(function PostListCard({
             alt={displayTitle}
             fill
             variant="tall"
+            responsive
             sizes="64px"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />

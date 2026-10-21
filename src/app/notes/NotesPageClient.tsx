@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { WarningCircleIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import { PostsList, SavedEmptyState } from "@/components/posts-list";
 import type { NotesSummary } from "@/components/posts-list";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { WelcomeHeader } from "@/components/WelcomeHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Em } from "@/components/ui/PageHeader";
 import { normalizeTagName } from "@/lib/text";
 
 const PAGE_SIZE = 12;
@@ -108,7 +111,16 @@ export default function NotesPageClient({
   const [archivedPosts, setArchivedPosts] = useState<Post[]>([]);
   const [draftsCursor, setDraftsCursor] = useState<string | null>(null);
   const [archivedCursor, setArchivedCursor] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  /* The skeleton covers only the first load of all four lists. A tab, category, tag or search
+     change later refetches just the main list and keeps PostsList (sort, tab, scroll) mounted. */
+  const [listsLoaded, setListsLoaded] = useState(false);
+  const [postsLoaded, setPostsLoaded] = useState(false);
+  const loading = !listsLoaded || !postsLoaded;
+  const [reloadKey, setReloadKey] = useState(0);
+  const postsKey = buildPostsUrl(initialQuery, initialCategory, initialTags);
+  /* The filters the loaded posts and their cursor belong to, set when a first page lands.
+     Until it matches postsKey the cursor is the old list's, so nothing pages with it. */
+  const postsKeyRef = useRef<string | null>(null);
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [loadingMoreSaved, setLoadingMoreSaved] = useState(false);
   const [loadingMoreDrafts, setLoadingMoreDrafts] = useState(false);
@@ -118,37 +130,55 @@ export default function NotesPageClient({
   const [draftsTotal, setDraftsTotal] = useState<number | null>(null);
   const [archivedTotal, setArchivedTotal] = useState<number | null>(null);
 
+  /* Main list: refetched when the filters change, behind the skeleton only the first time. */
+  useEffect(() => {
+    let cancelled = false;
+    setPostsCursor(null); // the old filters' cursor must not page the new list
+    setLoadingMorePosts(false);
+    setPostsError(null);
+
+    fetchPaginated(postsKey)
+      .then((page) => {
+        if (cancelled) return;
+        postsKeyRef.current = postsKey;
+        setPosts(page.items);
+        setPostsCursor(page.nextCursor);
+        setNotesSummary(page.summary);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        postsKeyRef.current = postsKey;
+        setPosts([]);
+        setPostsCursor(null);
+        setNotesSummary(null);
+        setPostsError("Notlar şu anda yüklenemedi.");
+      })
+      .finally(() => {
+        if (!cancelled) setPostsLoaded(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [postsKey, reloadKey]);
+
+  /* Saved, drafts and archive ignore the filters; PostsList filters them in the browser. */
   useEffect(() => {
     let cancelled = false;
 
-    const fetchInitial = async () => {
-      setLoading(true);
-      setLoadingMorePosts(false);
+    const fetchLists = async () => {
       setLoadingMoreSaved(false);
       setLoadingMoreDrafts(false);
       setLoadingMoreArchived(false);
-      setPostsError(null);
       setSavedError(null);
 
-      const [postsResult, savedResult, draftsResult, archivedResult] = await Promise.allSettled([
-        fetchPaginated(buildPostsUrl(initialQuery, initialCategory, initialTags)),
+      const [savedResult, draftsResult, archivedResult] = await Promise.allSettled([
         fetchPaginated(`/api/bookmarks?paginate=1&limit=${PAGE_SIZE}`),
         fetchPaginated(buildListUrl("drafts")),
         fetchPaginated(buildListUrl("archived")),
       ]);
 
       if (cancelled) return;
-
-      if (postsResult.status === "fulfilled") {
-        setPosts(postsResult.value.items);
-        setPostsCursor(postsResult.value.nextCursor);
-        setNotesSummary(postsResult.value.summary);
-      } else {
-        setPosts([]);
-        setPostsCursor(null);
-        setNotesSummary(null);
-        setPostsError("Notlar şu anda yüklenemedi.");
-      }
 
       if (savedResult.status === "fulfilled") {
         setSavedPosts(savedResult.value.items);
@@ -171,39 +201,46 @@ export default function NotesPageClient({
         setArchivedTotal(archivedResult.value.summary?.total ?? null);
       }
 
-      if (!cancelled) {
-        setLoading(false);
-      }
+      setListsLoaded(true);
     };
 
-    void fetchInitial();
+    void fetchLists();
 
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialQuery, initialCategory, initialTags.join(",")]);
+  }, [reloadKey]);
 
-  const loadMorePosts = async () => {
-    if (!postsCursor || loadingMorePosts) return;
+  const retryInitialLoad = () => {
+    setListsLoaded(false);
+    setPostsLoaded(false);
+    setReloadKey((key) => key + 1);
+  };
 
+  /* Memoized like the drafts/archive loaders: PostsList re-runs its paging effects on identity. */
+  const loadMorePosts = useCallback(async () => {
+    if (!postsCursor || loadingMorePosts || postsKeyRef.current !== postsKey) return;
+
+    const key = postsKey;
     setLoadingMorePosts(true);
     try {
       const data = await fetchPaginated(
         buildPostsUrl(initialQuery, initialCategory, initialTags, postsCursor)
       );
+      if (postsKeyRef.current !== key) return; // the filters changed while this page loaded
 
       setPosts((prev) => mergePosts(prev, data.items));
       setPostsCursor(data.nextCursor);
     } catch {
+      if (postsKeyRef.current !== key) return;
       setPostsCursor(null);
       setPostsError("Daha fazla not yüklenemedi.");
     } finally {
-      setLoadingMorePosts(false);
+      if (postsKeyRef.current === key) setLoadingMorePosts(false);
     }
-  };
+  }, [postsCursor, loadingMorePosts, postsKey, initialQuery, initialCategory, initialTags]);
 
-  const loadMoreSavedPosts = async () => {
+  const loadMoreSavedPosts = useCallback(async () => {
     if (!savedCursor || loadingMoreSaved) return;
 
     setLoadingMoreSaved(true);
@@ -220,7 +257,7 @@ export default function NotesPageClient({
     } finally {
       setLoadingMoreSaved(false);
     }
-  };
+  }, [savedCursor, loadingMoreSaved]);
 
   /* Drafts and archive used to stop at the first 12; they page like the main list now. */
   const loadMoreDrafts = useCallback(async () => {
@@ -279,6 +316,24 @@ export default function NotesPageClient({
     const hasCategory = initialCategory.trim().length > 0;
     const hasTags = initialTags.length > 0;
     const hasFilterPath = hasQuery || hasCategory || hasTags;
+
+    // A failed request leaves the lists empty: say so instead of onboarding an empty archive.
+    if (postsError || savedError) {
+      return (
+        <div className="mx-auto flex min-h-[60vh] max-w-5xl items-center justify-center px-3 sm:px-6">
+          <EmptyState
+            icon={<WarningCircleIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Notlar <Em>Yüklenemedi</Em>
+              </>
+            }
+            description={[postsError, savedError].filter(Boolean).join(" ")}
+            primary={{ label: "Tekrar Dene", onClick: retryInitialLoad }}
+          />
+        </div>
+      );
+    }
 
     // Arrived via /saved with nothing at all yet: explain saving instead of onboarding.
     if (initialTab === "kaydedilenler" && !hasFilterPath && !savedError) {
