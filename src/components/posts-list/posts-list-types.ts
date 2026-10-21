@@ -29,6 +29,8 @@ export interface PostsListProps {
   readonly hasMoreDrafts?: boolean;
   readonly hasMoreArchived?: boolean;
   readonly isLoadingMorePosts?: boolean;
+  /** The main list is being refetched for new filters (the previous one is still shown). */
+  readonly isRefreshingPosts?: boolean;
   readonly isLoadingMoreSavedPosts?: boolean;
   readonly isLoadingMoreDrafts?: boolean;
   readonly isLoadingMoreArchived?: boolean;

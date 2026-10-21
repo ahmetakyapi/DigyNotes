@@ -6,6 +6,7 @@
  */
 
 import { getSiteUrl } from "@/lib/metadata";
+import { escapeHtml } from "@/lib/text";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const DEFAULT_FROM = "DigyNotes <onboarding@resend.dev>";
@@ -16,15 +17,6 @@ type EmailMessage = {
   html: string;
   text: string;
 };
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 async function sendEmail(message: EmailMessage, devLogLine: string): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY?.trim();

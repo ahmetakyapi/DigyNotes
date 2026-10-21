@@ -27,8 +27,11 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
       select: { id: true, userId: true },
     });
 
-    if (!item || item.userId !== userId) {
+    if (!item) {
       return NextResponse.json({ error: "Watchlist kaydı bulunamadı" }, { status: 404 });
+    }
+    if (item.userId !== userId) {
+      return NextResponse.json({ error: "Bu işlem için yetkiniz yok" }, { status: 403 });
     }
 
     await prisma.wishlist.delete({ where: { id: params.id } });

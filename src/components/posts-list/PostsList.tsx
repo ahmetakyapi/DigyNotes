@@ -68,6 +68,7 @@ export function PostsList({
   hasMoreDrafts = false,
   hasMoreArchived = false,
   isLoadingMorePosts = false,
+  isRefreshingPosts = false,
   isLoadingMoreSavedPosts = false,
   isLoadingMoreDrafts = false,
   isLoadingMoreArchived = false,
@@ -326,7 +327,17 @@ export function PostsList({
       />
 
       {/* Content */}
-      {filtered.length === 0 ? (
+      {filtered.length === 0 && isRefreshingPosts && activeTab === "notlar" ? (
+        // New filters are loading: a skeleton, not "Sonuç bulunamadı." for the old list
+        <div className="space-y-4" aria-busy="true">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="h-40 animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]"
+            />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <PostsEmptyState
           hasVisiblePosts={visiblePosts.length > 0}
           activeTab={activeTab}

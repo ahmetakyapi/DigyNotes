@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       // Only published notes count; drafts and trashed notes stay private.
       isDeleted: false,
       isDraft: false,
-      user: { isPublic: true },
+      user: { isPublic: true, isBanned: false },
     };
 
     const [authors, rated] = await Promise.all([

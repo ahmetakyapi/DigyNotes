@@ -15,10 +15,14 @@ export async function MaintenanceGuard({ children }: { children: React.ReactNode
 
   /* The middleware only checks that a token exists. A token can outlive its session —
      signed in before a password change or reset (pwv mismatch), banned or deleted
-     account — and would otherwise get an empty shell where every API answers 401. */
+     account — and would otherwise get an empty shell where every API answers 401. A DB
+     error in the session lookup still yields a session (src/lib/auth.ts), so null here
+     means revoked; the catch only covers next-auth config errors. ConditionalAppShell
+     handles the same case client-side, for a tab that stays open. */
   const session = await getServerAuthSession().catch(() => undefined);
   if (session === null) {
-    redirect(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+    const returnTo = pathname + (headersList.get("x-search") ?? "");
+    redirect(`/login?callbackUrl=${encodeURIComponent(returnTo)}`);
   }
 
   const maintenanceMode = await getSiteSetting("maintenanceMode");

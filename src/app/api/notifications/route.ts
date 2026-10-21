@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
                   userId: true,
                   isDraft: true,
                   isDeleted: true,
-                  user: { select: { isPublic: true } },
+                  user: { select: { isPublic: true, isBanned: true } },
                 },
               },
               parent: {

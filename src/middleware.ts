@@ -14,6 +14,7 @@ export default withAuth(
     const res = NextResponse.next();
     // Inject pathname header so server components (MaintenanceGuard) can read it
     res.headers.set("x-pathname", req.nextUrl.pathname);
+    if (req.nextUrl.search) res.headers.set("x-search", req.nextUrl.search);
     /* Everything matched here is private: keep it out of search indexes even if a
        crawler ever gets a response (robots.txt leaves these pages crawlable on
        purpose so the noindex can be seen; anonymous crawlers are sent to /login,

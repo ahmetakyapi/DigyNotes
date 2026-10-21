@@ -194,6 +194,8 @@ export default function RecentlyViewed() {
           {(canScrollLeft || canScrollRight) && (
             <div className="mr-1 hidden items-center gap-0.5 sm:flex">
               <button
+                type="button"
+                aria-label="Sola kaydır"
                 onClick={() => scroll("left")}
                 disabled={!canScrollLeft}
                 className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-secondary)] disabled:pointer-events-none disabled:opacity-0"
@@ -201,6 +203,8 @@ export default function RecentlyViewed() {
                 <CaretLeftIcon size={12} weight="bold" />
               </button>
               <button
+                type="button"
+                aria-label="Sağa kaydır"
                 onClick={() => scroll("right")}
                 disabled={!canScrollRight}
                 className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-secondary)] disabled:pointer-events-none disabled:opacity-0"
@@ -211,8 +215,10 @@ export default function RecentlyViewed() {
           )}
 
           <button
+            type="button"
             onClick={handleClearAll}
             title="Geçmişi Temizle"
+            aria-label="Geçmişi Temizle"
             className="flex h-6 w-6 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--danger,var(--danger))]"
           >
             <XIcon size={12} weight="bold" />

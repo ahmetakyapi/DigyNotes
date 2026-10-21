@@ -92,10 +92,19 @@ export const authOptions: NextAuthOptions = {
         // Banlanmış ya da silinmiş kullanıcıyı ve son şifre değişikliğinden (sıfırlama ya da
         // ayarlar) önce açılmış oturumları düşür + avatar bilgisini session'a ekle.
         // The hash is only compared here, never copied onto the session.
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { isBanned: true, avatarUrl: true, password: true },
-        });
+        let dbUser;
+        try {
+          dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { isBanned: true, avatarUrl: true, password: true },
+          });
+        } catch (error) {
+          // A DB blip is not a revoked session: next-auth would turn a throw into "no
+          // session" and clear the cookie. The data APIs fail on their own meanwhile.
+          console.error("[auth] session lookup failed", error);
+          userWithId.avatarUrl = null;
+          return session;
+        }
         if (!dbUser || dbUser.isBanned || !isCurrentPasswordVersion(token.pwv, dbUser.password)) {
           return null as unknown as typeof session;
         }

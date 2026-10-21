@@ -59,7 +59,9 @@ export async function GET(request: NextRequest) {
     // Kategori bazlı popüler tag'ler: herkese açık yayınlanmış notlar + kendi notların
     if (category && !q && !trending) {
       const userId = await getSessionUserId();
-      const visible: Prisma.PostWhereInput[] = [{ isDraft: false, user: { isPublic: true } }];
+      const visible: Prisma.PostWhereInput[] = [
+        { isDraft: false, user: { isPublic: true, isBanned: false } },
+      ];
       if (userId) visible.push({ userId });
 
       const rows = await prisma.postTag.groupBy({
@@ -85,7 +87,7 @@ export async function GET(request: NextRequest) {
             createdAt: { gte: since },
             isDeleted: false,
             isDraft: false,
-            user: { isPublic: true },
+            user: { isPublic: true, isBanned: false },
           },
         },
         _count: { tagId: true },
@@ -99,7 +101,9 @@ export async function GET(request: NextRequest) {
     // Autocomplete: counts only notes the caller may see (published public notes + their own),
     // so tags living only on drafts, trashed notes or private profiles are never suggested.
     const userId = await getSessionUserId();
-    const visible: Prisma.PostWhereInput[] = [{ isDraft: false, user: { isPublic: true } }];
+    const visible: Prisma.PostWhereInput[] = [
+      { isDraft: false, user: { isPublic: true, isBanned: false } },
+    ];
     if (userId) visible.push({ userId });
 
     const rows = await prisma.postTag.groupBy({

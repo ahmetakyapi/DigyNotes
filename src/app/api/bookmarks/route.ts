@@ -71,14 +71,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ bookmarked: !!bookmark });
     }
 
-    // Same rule as canReadPost for a non-owner: the bookmark row outlives a soft delete,
-    // so trashed or draft notes (and notes of private authors) drop out of the list here.
+    // Same rule as canReadPost: the bookmark row outlives a soft delete, so trashed or
+    // draft notes (and notes of private or banned authors) drop out of the list here.
+    // The owner's own published notes always stay, even on a private profile.
     const where: Prisma.BookmarkWhereInput = {
       userId,
       post: {
         isDeleted: false,
         isDraft: false,
-        OR: [{ userId: null }, { user: { isPublic: true } }],
+        OR: [{ userId: null }, { userId }, { user: { isPublic: true, isBanned: false } }],
       },
     };
 

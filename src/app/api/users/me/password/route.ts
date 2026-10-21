@@ -2,11 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { handleApiError } from "@/lib/api-server";
 import bcrypt from "bcryptjs";
-import {
-  consumeRateLimit,
-  createRateLimitErrorResponse,
-} from "@/lib/rate-limit";
+import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -39,17 +37,11 @@ export async function PUT(request: NextRequest) {
     };
 
     if (!currentPassword || !newPassword) {
-      return NextResponse.json(
-        { error: "Mevcut şifre ve yeni şifre gereklidir" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Mevcut şifre ve yeni şifre gereklidir" }, { status: 400 });
     }
 
     if (newPassword.length < 8) {
-      return NextResponse.json(
-        { error: "Yeni şifre en az 8 karakter olmalıdır" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Yeni şifre en az 8 karakter olmalıdır" }, { status: 400 });
     }
 
     if (newPassword.length > 128) {
@@ -90,9 +82,6 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[PUT /api/users/me/password] error:", error);
-    }
-    return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
+    return handleApiError(error, "Şifre değiştirilemedi. Lütfen tekrar deneyin.");
   }
 }

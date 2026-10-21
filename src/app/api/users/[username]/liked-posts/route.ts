@@ -16,14 +16,14 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
     // Hedef kullanıcıyı bul
     const targetUser = await prisma.user.findUnique({
       where: { username: params.username },
-      select: { id: true, isPublic: true },
+      select: { id: true, isPublic: true, isBanned: true },
     });
 
     if (!targetUser) {
       return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
     }
 
-    // Gizli profil kontrolü: sadece kendi profilini veya admin görebilir
+    // Gizli (ya da banlanmış) profil: sadece kendi profilini veya admin görebilir (resolveProfileAccess)
     const currentUserRecord = currentUserId
       ? await prisma.user.findUnique({
           where: { id: currentUserId },
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       : null;
 
     const canView =
-      targetUser.isPublic ||
+      (targetUser.isPublic && !targetUser.isBanned) ||
       currentUserRecord?.id === targetUser.id ||
       currentUserRecord?.isAdmin === true;
 
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
 
     /* Visibility lives in the query (so hasMore and the cursor stay right) and mirrors
        canReadPost: a like outlives its note being trashed, turned back into a draft or
-       its author going private, and the tab must not keep showing it. Drafts and
+       its author going private or being banned, and the tab must not keep showing it. Drafts and
        trashed notes never appear on this public tab, not even for admins. */
     const visiblePost: Prisma.PostWhereInput = {
       isDeleted: false,
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
         : {
             OR: [
               { userId: null },
-              { user: { isPublic: true } },
+              { user: { isPublic: true, isBanned: false } },
               ...(currentUserId ? [{ userId: currentUserId }] : []),
             ],
           }),

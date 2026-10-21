@@ -121,6 +121,9 @@ export default function NotesPageClient({
   /* The filters the loaded posts and their cursor belong to, set when a first page lands.
      Until it matches postsKey the cursor is the old list's, so nothing pages with it. */
   const postsKeyRef = useRef<string | null>(null);
+  /* Same key as state, so the list can tell "refetching for new filters" from "empty". */
+  const [loadedPostsKey, setLoadedPostsKey] = useState<string | null>(null);
+  const postsRefreshing = postsLoaded && loadedPostsKey !== postsKey;
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [loadingMoreSaved, setLoadingMoreSaved] = useState(false);
   const [loadingMoreDrafts, setLoadingMoreDrafts] = useState(false);
@@ -141,6 +144,7 @@ export default function NotesPageClient({
       .then((page) => {
         if (cancelled) return;
         postsKeyRef.current = postsKey;
+        setLoadedPostsKey(postsKey);
         setPosts(page.items);
         setPostsCursor(page.nextCursor);
         setNotesSummary(page.summary);
@@ -148,6 +152,7 @@ export default function NotesPageClient({
       .catch(() => {
         if (cancelled) return;
         postsKeyRef.current = postsKey;
+        setLoadedPostsKey(postsKey);
         setPosts([]);
         setPostsCursor(null);
         setNotesSummary(null);
@@ -508,7 +513,7 @@ export default function NotesPageClient({
         </div>
       )}
 
-      <WelcomeHeader posts={posts} summary={hasFilter ? null : notesSummary} />
+      <WelcomeHeader posts={posts} summary={hasFilter || postsRefreshing ? null : notesSummary} />
 
       <div className="mx-auto max-w-5xl px-3 pt-2 sm:px-6 sm:pt-4">
         <RecentlyViewed />
@@ -531,6 +536,7 @@ export default function NotesPageClient({
         hasMoreDrafts={draftsCursor !== null}
         hasMoreArchived={archivedCursor !== null}
         isLoadingMorePosts={loadingMorePosts}
+        isRefreshingPosts={postsRefreshing}
         isLoadingMoreSavedPosts={loadingMoreSaved}
         isLoadingMoreDrafts={loadingMoreDrafts}
         isLoadingMoreArchived={loadingMoreArchived}

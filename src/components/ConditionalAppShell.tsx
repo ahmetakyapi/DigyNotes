@@ -42,7 +42,8 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
       .then((data: unknown) => {
         if (cancelled || data === undefined) return;
         if (!data || (typeof data === "object" && Object.keys(data).length === 0)) {
-          router.replace("/login");
+          const returnTo = window.location.pathname + window.location.search;
+          router.replace(`/login?callbackUrl=${encodeURIComponent(returnTo)}`);
         }
       })
       .catch(() => {});

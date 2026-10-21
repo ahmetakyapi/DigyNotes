@@ -236,8 +236,16 @@ export default function DiscoverPageClient({
 
             <div className="mt-4 text-center text-[12px] font-medium text-[var(--text-muted)]">
               <span className="text-[var(--text-secondary)]">
-                {users.length}
-                {users.length >= USER_RESULT_CAP ? "+" : ""}
+                {/* Without a search the server total is exact (same figure as the header);
+                    a search is capped, so a full page may hide more. */}
+                {!query.trim() && initialTotal != null ? (
+                  initialTotal
+                ) : (
+                  <>
+                    {users.length}
+                    {users.length >= USER_RESULT_CAP ? "+" : ""}
+                  </>
+                )}
               </span>{" "}
               profil
               {query.trim() && <span className="text-[var(--text-faint)]"> · arama: {query}</span>}

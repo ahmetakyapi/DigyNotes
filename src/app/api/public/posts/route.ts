@@ -6,6 +6,7 @@ import {
   encodeCursor,
   getPaginationConfig,
   publicPostInclude,
+  publicPostOmit,
   publicPostsWhere,
   serializePublicPost,
   type SortOption,
@@ -38,6 +39,7 @@ export async function GET(req: NextRequest) {
         take: limit,
         skip: offset,
         include: publicPostInclude,
+        omit: publicPostOmit,
       });
 
       return NextResponse.json(posts.map(serializePublicPost));
@@ -48,6 +50,7 @@ export async function GET(req: NextRequest) {
       orderBy,
       take: limit + 1,
       include: publicPostInclude,
+      omit: publicPostOmit,
     });
 
     let nextCursor: string | null = null;

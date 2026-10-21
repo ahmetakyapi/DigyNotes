@@ -98,7 +98,12 @@ const statementClass =
 
 /* ── Helpers ── */
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  // Same calendar as the API's Istanbul year/month buckets, whatever the browser's zone.
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    day: "numeric",
+    month: "long",
+    timeZone: "Europe/Istanbul",
+  });
 }
 
 /* ── Main Page ── */

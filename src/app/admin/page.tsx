@@ -96,6 +96,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [usersTotal, setUsersTotal] = useState(0);
   const [usersPage, setUsersPage] = useState(1);
+  const [usersReload, setUsersReload] = useState(0);
   const [usersTotalPages, setUsersTotalPages] = useState(1);
   const [userSearch, setUserSearch] = useState("");
   const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
@@ -109,6 +110,7 @@ export default function AdminPage() {
   const [posts, setPosts] = useState<PostRow[]>([]);
   const [postsTotal, setPostsTotal] = useState(0);
   const [postsPage, setPostsPage] = useState(1);
+  const [postsReload, setPostsReload] = useState(0);
   const [postsTotalPages, setPostsTotalPages] = useState(1);
   const [postSearch, setPostSearch] = useState("");
   const [debouncedPostSearch, setDebouncedPostSearch] = useState("");
@@ -155,7 +157,9 @@ export default function AdminPage() {
 
   /* ── fetch users ── */
   /* Searches wait for a typing pause, and every effect aborts the request it started, so a
-     slower earlier response can never overwrite the table for a newer query. */
+     slower earlier response can never overwrite the table for a newer query. Actions
+     reload through the effect too (usersReload / postsReload) rather than calling the
+     fetcher directly, so a reload can't land after a newer search. */
   const fetchUsers = useCallback(async (page: number, search: string, signal?: AbortSignal) => {
     setLoadingUsers(true);
     const p = new URLSearchParams({ page: String(page) });
@@ -189,7 +193,7 @@ export default function AdminPage() {
     const controller = new AbortController();
     void fetchUsers(usersPage, debouncedUserSearch, controller.signal);
     return () => controller.abort();
-  }, [tab, usersPage, debouncedUserSearch, fetchUsers]);
+  }, [tab, usersPage, debouncedUserSearch, usersReload, fetchUsers]);
 
   /* A selection only covers the rows on screen: another page or query starts empty. */
   useEffect(() => {
@@ -231,7 +235,7 @@ export default function AdminPage() {
     const controller = new AbortController();
     void fetchPosts(postsPage, debouncedPostSearch, controller.signal);
     return () => controller.abort();
-  }, [tab, postsPage, debouncedPostSearch, fetchPosts]);
+  }, [tab, postsPage, debouncedPostSearch, postsReload, fetchPosts]);
 
   /* ── fetch activity ── */
   const fetchActivity = useCallback(
@@ -322,7 +326,7 @@ export default function AdminPage() {
           : `${updated.name} artık admin işlemleri yapamaz.`,
         followUp: "Gerekirse kullanıcı detayına gidip son aktivitelerini kontrol et.",
       });
-      await fetchUsers(usersPage, debouncedUserSearch);
+      setUsersReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Rol güncellenemedi.");
       toast.error(message);
@@ -360,7 +364,7 @@ export default function AdminPage() {
           ? "Gerekirse ilgili notları içerik sekmesinden ayrıca gözden geçir."
           : "Kullanıcının profil görünürlüğünü ve son hareketlerini doğrula.",
       });
-      await fetchUsers(usersPage, debouncedUserSearch);
+      setUsersReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Kullanıcı durumu güncellenemedi.");
       toast.error(message);
@@ -398,7 +402,7 @@ export default function AdminPage() {
           : `${updated.name} profili yalnızca kendisi ve adminler tarafından görüntülenebilir.`,
         followUp: "Değişiklik anında uygulanır; gerekirse profil sayfasını yenile.",
       });
-      await fetchUsers(usersPage, debouncedUserSearch);
+      setUsersReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Profil görünürlüğü güncellenemedi.");
       toast.error(message);
@@ -423,7 +427,7 @@ export default function AdminPage() {
         detail: "Hesap ve ilişkili içerikleri kalıcı olarak kaldırıldı.",
         followUp: "Arama sonucundan düştüğünü ve gerekirse aktivite geçmişini gözden geçir.",
       });
-      await fetchUsers(usersPage, debouncedUserSearch);
+      setUsersReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Kullanıcı silinemedi.");
       toast.error(message);
@@ -457,7 +461,7 @@ export default function AdminPage() {
         detail: "Not kalıcı olarak silindi ve admin log'una işlendi.",
         followUp: "Gerekirse not sahibini kullanıcı sekmesinden ayrıca incele.",
       });
-      await fetchPosts(postsPage, debouncedPostSearch);
+      setPostsReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Not silinemedi.");
       toast.error(message);
@@ -502,8 +506,8 @@ export default function AdminPage() {
               : "Seçili kullanıcıları tekrar filtreleyip kalan istisnaları kontrol et.",
         });
       }
-      await fetchUsers(1, debouncedUserSearch);
       setUsersPage(1);
+      setUsersReload((k) => k + 1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Toplu işlem uygulanamadı.");
       toast.error(message);
