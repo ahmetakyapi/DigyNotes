@@ -248,7 +248,7 @@ export default function PostDetailClient({
   };
 
   const toggleLike = async () => {
-    if (!session?.user) {
+    if (!currentUserId) {
       toast.error("Beğenmek için giriş yapman gerekiyor.");
       router.push("/login");
       return;

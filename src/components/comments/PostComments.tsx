@@ -166,7 +166,7 @@ export function PostComments({
   );
 
   const requireSession = (message: string) => {
-    if (session?.user) return true;
+    if (currentUserId) return true;
     toast.error(message);
     router.push("/login");
     return false;
@@ -334,7 +334,7 @@ export function PostComments({
         </div>
       </div>
 
-      {session?.user ? (
+      {currentUserId ? (
         <div className="mb-8 flex gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/10 ring-1 ring-accent/20">
             <AvatarImage

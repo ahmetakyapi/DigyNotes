@@ -105,9 +105,10 @@ export const authOptions: NextAuthOptions = {
           try {
             dbUser = await lookup();
           } catch (error) {
-            // Unknown is not revoked, but not verified either: keep the cookie (a throw or
-            // null would make next-auth clear it and MaintenanceGuard send the user to
-            // /login) and drop the identity, so this request counts as signed out.
+            // Unknown is not revoked, but not verified either. A throw would make next-auth
+            // clear the cookie and null would send the user to /login (MaintenanceGuard,
+            // ConditionalAppShell); instead keep a session without an identity, so this one
+            // request counts as signed out and the next lookup decides.
             console.error("[auth] session lookup failed", error);
             return {
               ...session,
