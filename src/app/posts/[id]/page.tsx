@@ -1,18 +1,16 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getSessionUserId } from "@/lib/api-server";
 import { isPostPublic } from "@/lib/post-access";
+import { hidesSpoilerText, SPOILER_SHARE_TEXT } from "@/lib/post-config";
 import { getPostDetail, type PostDetail } from "@/lib/post-detail";
 import { getCategoryLabel } from "@/lib/categories";
 import {
   buildPostMetadataDescription,
   getSiteUrl,
-  isPreviewBot,
   stripHtml,
   toAbsoluteUrl,
   truncateText,
-  warmShareImage,
 } from "@/lib/metadata";
 import { buildBreadcrumbJsonLd, buildNoteJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/JsonLd";
@@ -36,16 +34,17 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const categoryLabel = getCategoryLabel(post.category);
     const canonicalPath = `/posts/${post.id}`;
     const canonicalUrl = toAbsoluteUrl(canonicalPath);
-    const isShareable = !post.isDraft && !post.isDeleted;
     const isIndexable = isPostPublic(post);
     const authorName = post.user?.name || post.creator || "DigyNotes";
     const tagNames = post.tags.map((tag) => tag.name);
 
     /* What a chat app prints under the title (WhatsApp shows ~2 lines): who wrote it
-       and the score first, then the note itself. */
+       and the score first, then the note itself (never a spoiler note's text). */
     const rating = post.rating > 0 ? `★ ${post.rating.toFixed(1).replace(".", ",")}/5` : null;
     const lead = [authorName, rating, post.status].filter(Boolean).join(" · ");
-    const noteText = stripHtml(post.excerpt || post.content || "").trim();
+    const noteText = hidesSpoilerText(post)
+      ? SPOILER_SHARE_TEXT
+      : stripHtml(post.excerpt || post.content || "").trim();
     const description = truncateText(
       `${lead} — ${
         noteText ||
@@ -67,7 +66,6 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
        declared as 1200×630 was cropped to a sliver, or dropped, by chat apps.
        `v` changes when the note is edited, so caches pick up the new card. */
     const cardUrl = cardUrlFor(post);
-    if (isShareable && isPreviewBot(headers().get("user-agent"))) warmShareImage(cardUrl);
     const cardImage = {
       url: cardUrl,
       secureUrl: cardUrl,
@@ -152,7 +150,14 @@ export default async function PostPage({ params }: { params: { id: string } }) {
       {isPublic && (
         <JsonLd
           data={[
-            buildNoteJsonLd({ ...post, imageUrl: cardUrlFor(post) }, siteUrl),
+            buildNoteJsonLd(
+              {
+                ...post,
+                ...(hidesSpoilerText(post) ? { excerpt: null, content: null } : {}),
+                imageUrl: cardUrlFor(post),
+              },
+              siteUrl
+            ),
             buildBreadcrumbJsonLd([
               { name: "DigyNotes", url: toAbsoluteUrl("/") },
               ...(author?.username

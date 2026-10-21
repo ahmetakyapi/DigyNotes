@@ -28,7 +28,7 @@ import { formatRating } from "@/lib/number-format";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { buildOpenStreetMapEmbedUrl, buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { getPostImageSrc } from "@/lib/post-image";
-import { categorySupportsSpoiler } from "@/lib/post-config";
+import { categorySupportsSpoiler, SPOILER_SHARE_TEXT } from "@/lib/post-config";
 import { estimateReadingTime, formatReadingTime } from "@/lib/reading-time";
 import { addRecentView } from "@/components/RecentlyViewed";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -344,7 +344,10 @@ export default function PostDetailClient({
   ]
     .filter(Boolean)
     .join(" · ");
-  const shareText = stripHtml(post.excerpt || post.content || "").trim();
+  const shareText =
+    supportsSpoiler && post.hasSpoiler
+      ? SPOILER_SHARE_TEXT
+      : stripHtml(post.excerpt || post.content || "").trim();
   const sharePreview: SharePreview = {
     image: `/posts/${post.id}/opengraph-image?v=${new Date(post.updatedAt).getTime().toString(36)}`,
     description: truncateText(shareText ? `${shareLead} — ${shareText}` : shareLead, 160),

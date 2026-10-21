@@ -1,14 +1,7 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getSessionUserId } from "@/lib/api-server";
-import {
-  getSiteUrl,
-  isPreviewBot,
-  toAbsoluteUrl,
-  truncateText,
-  warmShareImage,
-} from "@/lib/metadata";
+import { getSiteUrl, toAbsoluteUrl, truncateText } from "@/lib/metadata";
 import { getProfilePageData } from "@/lib/profile-data";
 import { buildBreadcrumbJsonLd, buildProfileJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/JsonLd";
@@ -44,7 +37,6 @@ export async function generateMetadata({
        no updatedAt, so the cache key turns over daily to pick up new covers. */
     const day = Math.floor(Date.now() / 86_400_000).toString(36);
     const cardUrl = toAbsoluteUrl(`${path}/opengraph-image?v=${day}`);
-    if (isPreviewBot(headers().get("user-agent"))) warmShareImage(cardUrl);
     const card = {
       url: cardUrl,
       secureUrl: cardUrl,

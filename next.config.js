@@ -24,12 +24,8 @@ const nextConfig = {
         protocol: "https",
         hostname: "*.gravatar.com",
       },
-      // Genel fallback — kullanıcı gönderilen URL'ler için
-      // Not: Üretimde bunu kısıtlamayı düşün
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      // No catch-all host: it turned /_next/image into an open proxy. User-supplied
+      // covers/avatars render via customLoader/unoptimized (ERR-006), never the optimizer.
     ],
   },
   experimental: {
@@ -60,6 +56,12 @@ const nextConfig = {
           {
             key: "X-Frame-Options",
             value: "DENY",
+          },
+          // Baseline only: no script/style/img/connect limits (inline Next scripts,
+          // JSON-LD, Quill and covers from any host must keep working).
+          {
+            key: "Content-Security-Policy",
+            value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'",
           },
           {
             key: "Referrer-Policy",

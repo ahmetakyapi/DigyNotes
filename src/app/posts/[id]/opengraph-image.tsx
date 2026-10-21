@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
 import { getCategoryLabel } from "@/lib/categories";
 import { canReadPost } from "@/lib/post-access";
+import { hidesSpoilerText, SPOILER_SHARE_TEXT } from "@/lib/post-config";
 import { stripHtml, truncateText } from "@/lib/metadata";
 import { loadBrandFonts, OG } from "@/lib/og-fonts";
 import { loadCover, OG_SIZE, ogTimer, toJpegResponse } from "@/lib/og-image";
@@ -35,6 +36,7 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
       excerpt: true,
       content: true,
       category: true,
+      hasSpoiler: true,
       creator: true,
       years: true,
       rating: true,
@@ -59,7 +61,10 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
   timer.mark("assets");
   const categoryLabel = getCategoryLabel(post.category);
   const meta = [post.creator, post.years].filter((v): v is string => Boolean(v)).join(" · ");
-  const note = truncateText(stripHtml(post.excerpt || post.content || ""), 160);
+  // A spoiler note's text stays hidden here too: the card is seen before anyone opens it.
+  const note = hidesSpoilerText(post)
+    ? SPOILER_SHARE_TEXT
+    : truncateText(stripHtml(post.excerpt || post.content || ""), 160);
   const rating = typeof post.rating === "number" && post.rating > 0 ? post.rating : null;
   const author = post.user?.name || post.user?.username || "DigyNotes";
   const title = truncateText(post.title, 56);

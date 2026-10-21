@@ -13,6 +13,17 @@ export function categorySupportsSpoiler(category: string) {
   return !isTravelCategory(category) && !isOtherCategory(category);
 }
 
+/**
+ * True when the note's text must stay hidden until the reader asks for it: the same rule
+ * as the blurred body, used by share cards, og:description and JSON-LD too.
+ */
+export function hidesSpoilerText(post: { hasSpoiler?: boolean | null; category: string }) {
+  return Boolean(post.hasSpoiler && categorySupportsSpoiler(post.category));
+}
+
+/** Shown in place of a spoiler note's text wherever it would be read before opening it. */
+export const SPOILER_SHARE_TEXT = "Bu not spoiler içeriyor.";
+
 export function categorySupportsAutofill(category: string) {
   return !isOtherCategory(category);
 }
