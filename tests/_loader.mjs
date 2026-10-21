@@ -23,7 +23,6 @@ const STUBBED_MODULES = new Set([
   "next/server.js",
   "next-auth",
   "next-auth/providers/credentials",
-  "sanitize-html",
 ]);
 
 const STUB_URL = "test:stub";

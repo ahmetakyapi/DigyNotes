@@ -6,6 +6,7 @@ import {
   sanitizeRating,
   sanitizeStringField,
   requireStringField,
+  sanitizePostContent,
 } from "../src/lib/api-utils.ts";
 
 // ── transformPostTags ───────────────────────────────────────────────
@@ -93,4 +94,27 @@ test("requireStringField returns null for empty or non-string", () => {
   assert.equal(requireStringField("   ", 10), null);
   assert.equal(requireStringField(42, 10), null);
   assert.equal(requireStringField(null, 10), null);
+});
+
+// ── sanitizePostContent ─────────────────────────────────────────────
+
+test("sanitizePostContent keeps only Quill's ql-* classes", () => {
+  assert.equal(
+    sanitizePostContent('<p class="ql-align-center fixed inset-0">x</p>'),
+    '<p class="ql-align-center">x</p>'
+  );
+  assert.equal(
+    sanitizePostContent('<pre class="ql-syntax">kod</pre><li class="ql-indent-1">a</li>'),
+    '<pre class="ql-syntax">kod</pre><li class="ql-indent-1">a</li>'
+  );
+  assert.equal(sanitizePostContent('<span class="hidden">h</span>'), "<span>h</span>");
+});
+
+test("sanitizePostContent strips app classes from links and marks them as user content", () => {
+  const html = sanitizePostContent(
+    '<a class="fixed inset-0 z-50" href="https://x.example" target="_blank" rel="opener">y</a>'
+  );
+  assert.ok(!html.includes("class="));
+  assert.ok(html.includes('href="https://x.example"'));
+  assert.ok(html.includes('rel="nofollow ugc noopener noreferrer"'));
 });

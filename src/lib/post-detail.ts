@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
-import { transformPostTags } from "@/lib/api-utils";
+import { sanitizePostContent, transformPostTags } from "@/lib/api-utils";
 import { getPostReadAccess } from "@/lib/post-access";
 
 /**
@@ -20,7 +20,11 @@ export const getPostDetail = cache(async (postId: string, viewerId: string | nul
     },
   });
 
-  return { access, post: post ? transformPostTags(post) : null };
+  // Sanitized again on read: rows saved under older, looser rules (any class) get today's.
+  return {
+    access,
+    post: post ? transformPostTags({ ...post, content: sanitizePostContent(post.content) }) : null,
+  };
 });
 
 export type PostDetail = NonNullable<Awaited<ReturnType<typeof getPostDetail>>["post"]>;

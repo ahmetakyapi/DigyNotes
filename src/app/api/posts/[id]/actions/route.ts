@@ -1,25 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { handleApiError, requireAuth, safeParseBody } from "@/lib/api-server";
+import {
+  applyRateLimitHeaders,
+  consumeRateLimit,
+  createRateLimitErrorResponse,
+} from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 const ALLOWED_ACTIONS = ["pin", "unpin", "archive", "unarchive", "restore"] as const;
 type PostAction = (typeof ALLOWED_ACTIONS)[number];
 
+function isPostAction(value: unknown): value is PostAction {
+  return typeof value === "string" && (ALLOWED_ACTIONS as readonly string[]).includes(value);
+}
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const [userId, authError] = await requireAuth();
+    if (authError) return authError;
+
+    const rateLimit = await consumeRateLimit({
+      action: "post-action",
+      req: request,
+      userId,
+      limit: 60,
+      windowMs: 60_000,
+    });
+    if (!rateLimit.success) {
+      return createRateLimitErrorResponse(
+        rateLimit,
+        "Çok fazla işlem yaptınız. Lütfen biraz sonra tekrar deneyin."
+      );
     }
-    const userId = (session.user as { id: string }).id;
 
-    const body = await request.json();
-    const action = body.action as PostAction;
+    const body = await safeParseBody<{ action?: unknown }>(request);
+    const action = body?.action;
 
-    if (!ALLOWED_ACTIONS.includes(action)) {
+    if (!isPostAction(action)) {
       return NextResponse.json({ error: "Geçersiz işlem" }, { status: 400 });
     }
 
@@ -49,11 +68,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       data: dataMap[action],
     });
 
-    return NextResponse.json({ success: true, action });
+    return applyRateLimitHeaders(NextResponse.json({ success: true, action }), rateLimit);
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[POST /api/posts/[id]/actions] error:", error);
-    }
-    return NextResponse.json({ error: "Bir hata oluştu" }, { status: 500 });
+    return handleApiError(error, "İşlem sırasında bir hata oluştu.");
   }
 }

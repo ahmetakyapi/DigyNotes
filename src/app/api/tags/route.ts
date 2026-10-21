@@ -83,6 +83,8 @@ export async function GET(request: NextRequest) {
         where: {
           post: {
             createdAt: { gte: since },
+            isDeleted: false,
+            isDraft: false,
             user: { isPublic: true },
           },
         },
@@ -94,16 +96,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(await withTagNames(rows));
     }
 
-    const tags = await prisma.tag.findMany({
-      where: q ? { name: { contains: q } } : undefined,
-      include: {
-        _count: { select: { posts: true } },
+    // Autocomplete: counts only notes the caller may see (published public notes + their own),
+    // so tags living only on drafts, trashed notes or private profiles are never suggested.
+    const userId = await getSessionUserId();
+    const visible: Prisma.PostWhereInput[] = [{ isDraft: false, user: { isPublic: true } }];
+    if (userId) visible.push({ userId });
+
+    const rows = await prisma.postTag.groupBy({
+      by: ["tagId"],
+      where: {
+        ...(q ? { tag: { name: { contains: q } } } : {}),
+        post: { isDeleted: false, OR: visible },
       },
-      orderBy: { posts: { _count: "desc" } },
+      _count: { tagId: true },
+      orderBy: { _count: { tagId: "desc" } },
       take: limit,
     });
 
-    return NextResponse.json(tags.map((t) => ({ id: t.id, name: t.name, count: t._count.posts })));
+    return NextResponse.json(await withTagNames(rows));
   } catch (error) {
     return handleApiError(error, "Etiketler yüklenirken bir hata oluştu.");
   }
