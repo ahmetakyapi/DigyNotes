@@ -128,7 +128,7 @@ export async function GET(request: Request) {
           .join(",")
       );
 
-      return new NextResponse(`﻿${[header.join(","), ...rows].join("\n")}`, {
+      return new NextResponse(`\uFEFF${[header.join(","), ...rows].join("\n")}`, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": `attachment; filename="digynotes-export-${safeUsername}.csv"`,
