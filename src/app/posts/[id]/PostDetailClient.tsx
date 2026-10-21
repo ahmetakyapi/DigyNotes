@@ -325,7 +325,7 @@ export default function PostDetailClient({
           </div>
           <div
             className="w-full animate-pulse rounded-2xl bg-[var(--bg-raised)]"
-            style={{ height: "52vh" }}
+            style={{ height: "60vh", minHeight: 420 }}
           />
         </div>
         <div className="mx-auto max-w-3xl space-y-4 px-4 py-10 sm:px-6">
