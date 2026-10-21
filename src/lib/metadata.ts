@@ -10,6 +10,8 @@ export { stripHtml, truncateText };
  * (WhatsApp, iMessage, X) need it to be the real public domain: when neither env var
  * was set on Vercel, every shared note advertised `http://localhost:3000` and its
  * preview image could not be fetched. Vercel's own system variables are the fallback.
+ * Returned without a trailing slash: sitemap.ts and robots.ts append paths to it, and a
+ * `https://site.com/` value turned every entry into a redirecting `//posts/…` URL.
  */
 export function getSiteUrl() {
   const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
@@ -17,7 +19,7 @@ export function getSiteUrl() {
     process.env.NEXT_PUBLIC_SITE_URL,
     vercelHost ? `https://${vercelHost}` : undefined,
     process.env.NEXTAUTH_URL,
-  ];
+  ].map((url) => url?.trim().replace(/\/+$/, ""));
   // On Vercel a localhost value is always a leftover from a copied .env, never the site.
   const usable = candidates.find(
     (url): url is string => Boolean(url) && !(process.env.VERCEL && url!.includes("localhost"))
@@ -93,22 +95,4 @@ export function buildPostMetadataDescription(input: {
   }
 
   return context ? `${context} • ${summary}` : summary;
-}
-
-/* Link-preview crawlers fetch the page, then the og:image a moment later, and give up
-   on a slow image (WhatsApp shows the link bare). Matches the ones that matter. */
-const PREVIEW_BOT =
-  /whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|slackbot|discordbot|linkedinbot|skypeuripreview|applebot|pinterest|redditbot|embedly|vkshare/i;
-
-export function isPreviewBot(userAgent: string | null | undefined) {
-  return Boolean(userAgent && PREVIEW_BOT.test(userAgent));
-}
-
-/**
- * Starts rendering a share card while the crawler is still reading the page, so the
- * image request that follows is a CDN hit instead of a cold 3–8 s render. Fire and
- * forget: a failure here only means the crawler renders it itself.
- */
-export function warmShareImage(url: string) {
-  fetch(url, { headers: { "User-Agent": "DigyNotesWarm/1.0" } }).catch(() => {});
 }

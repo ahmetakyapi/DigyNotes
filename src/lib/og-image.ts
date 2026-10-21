@@ -1,3 +1,5 @@
+import { lookup } from "node:dns/promises";
+import { isIP } from "node:net";
 import { PNG } from "pngjs";
 import jpeg from "jpeg-js";
 import type { ImageResponse } from "next/og";
@@ -57,17 +59,63 @@ export async function toJpegResponse(
 
 /**
  * Covers are user-supplied URLs fetched by the server, so keep the fetch to public
- * hosts: http(s) only, no IP literals, no localhost / internal names — checked again on
- * every redirect hop.
+ * hosts: http(s) on the default ports only, no IP literals, no localhost / internal
+ * names (a trailing dot doesn't get around it) — checked again on every redirect hop,
+ * together with `resolvesToPublicHost`.
  */
-function isPublicImageUrl(src: string) {
+export function isPublicImageUrl(src: string) {
   try {
-    const { protocol, hostname } = new URL(src);
+    const { protocol, hostname, port } = new URL(src);
     if (protocol !== "https:" && protocol !== "http:") return false;
-    const host = hostname.toLowerCase();
+    if (port && port !== "80" && port !== "443") return false;
+    const host = hostname.toLowerCase().replace(/\.+$/, "");
     if (host === "localhost" || !host.includes(".")) return false;
     if (/^[\d.]+$/.test(host) || host.includes(":") || host.startsWith("[")) return false;
     return !/\.(local|internal|localhost)$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
+/** Loopback, private, link-local, CGNAT, benchmark, multicast and reserved ranges. */
+export function isPrivateAddress(ip: string): boolean {
+  const v = ip.toLowerCase();
+  if (v.startsWith("::ffff:")) {
+    const mapped = v.slice(7);
+    return isIP(mapped) === 4 ? isPrivateAddress(mapped) : true;
+  }
+  // IPv6: only global unicast (2000::/3) counts as public.
+  if (isIP(v) === 6) return !/^[23][0-9a-f]{3}:/.test(v);
+  if (isIP(v) !== 4) return true;
+  const [a, b] = v.split(".").map(Number);
+  return (
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
+    a >= 224 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127) ||
+    (a === 198 && (b === 18 || b === 19))
+  );
+}
+
+/**
+ * Names such as `127.0.0.1.nip.io` pass the string check, so resolve them and reject
+ * any private address. fetch resolves the name again (a DNS-rebinding window we accept);
+ * a failed check only costs the cover, the card draws its typographic tile instead.
+ */
+async function resolvesToPublicHost(src: string, signal: AbortSignal) {
+  try {
+    signal.throwIfAborted();
+    const addrs = await Promise.race([
+      lookup(new URL(src).hostname, { all: true }),
+      new Promise<never>((_, reject) => {
+        signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+      }),
+    ]);
+    return addrs.length > 0 && addrs.every((a) => !isPrivateAddress(a.address));
   } catch {
     return false;
   }
@@ -87,11 +135,15 @@ export async function loadCover(src: string | null | undefined) {
     let res: Response | null = null;
     const signal = AbortSignal.timeout(3500);
     for (let hop = 0; hop < 4; hop += 1) {
-      if (!isPublicImageUrl(url)) return null;
+      if (!isPublicImageUrl(url) || !(await resolvesToPublicHost(url, signal))) return null;
+      // `cache: "no-store"` is required for the byte cap below: otherwise Next's patched
+      // fetch auto-caches this route's GETs and reads the whole body into the Data Cache
+      // before fetch() even resolves (and fills that cache with user-chosen URLs).
       res = await fetch(url, {
         headers: { "User-Agent": "DigyNotesOG/1.0" },
         redirect: "manual",
         signal,
+        cache: "no-store",
       });
       const next = res.status >= 300 && res.status < 400 ? res.headers.get("location") : null;
       if (!next) break;
@@ -101,8 +153,23 @@ export async function loadCover(src: string | null | undefined) {
     const type = (res?.headers.get("content-type") ?? "").split(";")[0].trim();
     if (!res || !res.ok || !/^image\/(jpeg|jpg|png)$/.test(type)) return null;
     if (Number(res.headers.get("content-length") ?? 0) > MAX_COVER_BYTES) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.byteLength > MAX_COVER_BYTES) return null;
+    // Read with a running cap: without content-length, arrayBuffer() would buffer
+    // whatever a chunked response streams until the timeout.
+    const reader = res.body?.getReader();
+    if (!reader) return null;
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_COVER_BYTES) {
+        await reader.cancel().catch(() => {});
+        return null;
+      }
+      chunks.push(value);
+    }
+    const buf = Buffer.concat(chunks);
     return `data:${type === "image/jpg" ? "image/jpeg" : type};base64,${buf.toString("base64")}`;
   } catch {
     return null;
