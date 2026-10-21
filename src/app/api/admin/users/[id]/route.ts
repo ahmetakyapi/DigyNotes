@@ -202,19 +202,28 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
     }
 
-    const user = await prisma.user.update({
-      where: { id: params.id },
-      data: updateData,
-      select: { id: true, name: true, email: true, isAdmin: true, isBanned: true, isPublic: true },
-    });
-
-    await prisma.activityLog.create({
-      data: {
-        userId: adminId,
-        action: "user.update",
-        metadata: { targetUserId: params.id, changes: updateData, adminAction: true },
-      },
-    });
+    // One transaction, so a failed audit write never reports an applied change as failed.
+    const [user] = await prisma.$transaction([
+      prisma.user.update({
+        where: { id: params.id },
+        data: updateData,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          isAdmin: true,
+          isBanned: true,
+          isPublic: true,
+        },
+      }),
+      prisma.activityLog.create({
+        data: {
+          userId: adminId,
+          action: "user.update",
+          metadata: { targetUserId: params.id, changes: updateData, adminAction: true },
+        },
+      }),
+    ]);
 
     return NextResponse.json(user);
   } catch (error) {

@@ -34,21 +34,26 @@ export async function POST(request: NextRequest) {
 
     if (action === "ban" || action === "unban") {
       const isBanned = action === "ban";
-      const result = await prisma.user.updateMany({
-        where: { id: { in: safeIds } },
-        data: { isBanned },
-      });
-      await prisma.activityLog.create({
-        data: {
-          userId: adminId,
-          action: "user.update",
-          metadata: {
-            targetUserIds: safeIds,
-            count: result.count,
-            changes: { isBanned },
-            adminAction: true,
+      // Interactive transaction: the audit entry needs the count, and a failed log write
+      // must roll the change back instead of reporting an applied change as failed.
+      const result = await prisma.$transaction(async (tx) => {
+        const updated = await tx.user.updateMany({
+          where: { id: { in: safeIds } },
+          data: { isBanned },
+        });
+        await tx.activityLog.create({
+          data: {
+            userId: adminId,
+            action: "user.update",
+            metadata: {
+              targetUserIds: safeIds,
+              count: updated.count,
+              changes: { isBanned },
+              adminAction: true,
+            },
           },
-        },
+        });
+        return updated;
       });
       return NextResponse.json({ success: true, affected: result.count });
     }

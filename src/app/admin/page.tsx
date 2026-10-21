@@ -588,6 +588,10 @@ export default function AdminPage() {
 
   const allOnPageSelected = users.length > 0 && users.every((u) => selectedUsers.has(u.id));
 
+  // The bulk API skips the admin's own id, so the delete confirm counts without it.
+  const bulkDeleteCount =
+    selfId && selectedUsers.has(selfId) ? selectedUsers.size - 1 : selectedUsers.size;
+
   const toggleSelectAll = () => {
     setSelectedUsers(allOnPageSelected ? new Set() : new Set(users.map((u) => u.id)));
   };
@@ -1067,7 +1071,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={() => setConfirmBulkDelete(true)}
-                  disabled={bulkLoading}
+                  disabled={bulkLoading || bulkDeleteCount === 0}
                   className="cursor-pointer rounded-full border border-danger/30 px-3.5 py-1.5 text-[12px] font-semibold text-danger transition-colors duration-200 hover:bg-danger/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Sil
@@ -1949,13 +1953,13 @@ export default function AdminPage() {
       )}
 
       {/* ── Bulk delete confirm ── */}
-      {confirmBulkDelete && selectedUsers.size > 0 && (
+      {confirmBulkDelete && bulkDeleteCount > 0 && (
         <ConfirmModal
           title="Kullanıcıları Sil"
           message={
             <>
               <span className="font-semibold text-[var(--text-primary)]">
-                {selectedUsers.size} kullanıcı
+                {bulkDeleteCount} kullanıcı
               </span>{" "}
               silinecek.
             </>
