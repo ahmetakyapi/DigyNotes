@@ -662,7 +662,7 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 2. `og:image` was the raw TMDB poster (500×750) declared as 1200×630.
 3. The generated card was a ~535 KB PNG that took ~6 s (fonts fetched from Google on every render). WhatsApp drops large/slow images.
 **Fix**: `getSiteUrl()` falls back to `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` and ignores localhost values on Vercel. `og:image` is always our card, `/posts/<id>/opengraph-image?v=<updatedAt>`, re-encoded to JPEG in pure JS (pngjs + jpeg-js), fonts read from `assets/og-fonts/`, and the CDN caches it.
-**Speed** (measured with the card's `Server-Timing` header): Satori/resvg rendering is the cost, not DB or covers. A blurred `boxShadow` cost ~500 ms and a 980 px radial glow ~250 ms per card, so the cards use an unblurred offset layer and a small glow. Cards are also pre-warmed: the share sheet's preview `<img>` and the owner opening their note request the exact og:image URL, so WhatsApp gets a CDN hit. Server-side fire-and-forget warming did not help on Vercel.
+**Speed** (measured with the card's `Server-Timing` header): Satori/resvg rendering is the cost, not DB or covers. A blurred `boxShadow` cost ~500 ms and a 980 px radial glow ~250 ms per card, so the cards use an unblurred offset layer and a small glow. Cards are also pre-warmed: the share sheet's preview `<img>` and the owner opening their note request the exact og:image URL, so WhatsApp gets a CDN hit. Server-side fire-and-forget warming from `generateMetadata` did not help on Vercel and was removed (2026-10). Cover fetches (`loadCover`, `src/lib/og-image.ts`) allow only ports 80/443, resolve DNS on every redirect hop, stop at 3 MB and pass `cache: "no-store"`: since Next 14.2, force-dynamic routes still put GET fetches in the Data Cache and read the whole body before `fetch()` resolves, which defeats any byte cap.
 **Prevention**: Check share tags with `curl -A "WhatsApp/2.23.20.0" <url> | grep og:`; the image must be absolute, real size, JPEG/PNG, and under ~300 KB. Fonts must be in `outputFileTracingIncludes` (next.config.js). Do NOT use sharp for the cards: it built locally but the Vercel deployment with it failed (2026-10-10).
 **Files**: `src/lib/{metadata,og-fonts,og-image}.ts`, `src/lib/og-parts.tsx`, `src/app/**/opengraph-image.tsx`, `src/app/posts/[id]/page.tsx`, `next.config.js`
 
@@ -726,4 +726,81 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
-*Last updated: 2026-10-14*
+## ERR-DATA-014: Counts and dates off by a day/month/year for notes written 00:00–03:00 Istanbul time
+
+**First seen**: 2026-10-21
+**Symptom**: A note written between 00:00 and 03:00 Istanbul time was counted in the previous day, month or year: stats monthly series and "Bu Yıl", year in review (months, streaks, 1 January notes in the year before), admin activity charts and the "Bugün" KPI, and the stored `Post.date` text ("20 Ekim" for a note written at 01:00 on 21 Ekim). Admin 24h labels showed UTC hours.
+**Root cause**: Vercel functions run in UTC. `getFullYear()`, `getMonth()`, `getDate()`, `setHours(0,0,0,0)`, `new Date(y, m, 1)`, `toISOString().slice(0, 10)` and `toLocale*String()` without `timeZone` all give UTC values; Istanbul is UTC+3 all year, so every calendar boundary moves 3 hours late.
+**Fix**: Server-side buckets use the helpers in `src/lib/number-format.ts` (`getIstanbulDayStart`, `getIstanbulMonthStart`, `getIstanbulYearStart(year)`, `getIstanbulDateParts(date)` with month 0–11, `getIstanbulDateKey(date)` → "YYYY-MM-DD"); admin charts use `buildActivityBuckets` (`src/lib/admin-buckets.ts`); every `toLocale*String` that renders on the server or is stored passes `timeZone: "Europe/Istanbul"`. Tested in `tests/number-format.test.mjs` and `tests/admin-buckets.test.mjs`.
+**Prevention**: Server code never uses the local `Date` getters/setters or `toISOString().slice` on a real instant. A bucket date built with `Date.UTC` is read back with UTC getters or `timeZone: "UTC"`. `Post.date` rows written before 2026-10-21 may still carry the UTC day.
+**Files**: `src/lib/number-format.ts`, `src/lib/admin-buckets.ts`, `src/app/api/users/me/{stats,year-in-review}/route.ts`, `src/app/api/admin/{activity,stats,users/[id]}/route.ts`, `src/app/api/posts/route.ts`
+
+---
+
+## ERR-UI-008: Server-rendered page invisible until hydration (`style="opacity:0"`)
+
+**First seen**: 2026-10-20
+**Symptom**: Public notes, `/tag/*` and `/discover` came from the server with their content but stayed blank until the JS bundle hydrated, then faded in (bad LCP; crawlers saw `opacity:0`). `curl <url>/posts/<id> | grep 'style="opacity:0"'` matched the main wrapper.
+**Root cause**: framer-motion serialises `initial` into the SSR HTML. `initial={reduce ? false : { opacity: 0 }}` is `{ opacity: 0 }` on the server, because `useReducedMotion()` is null there.
+**Fix**: `useIsHydrating()` (`src/hooks/useIsHydrating.ts`, `useSyncExternalStore`: true on the server and during hydration). Entrance animations on server-rendered content use `initial={reduce || hydrating ? false : {...}}` — AppShell's page wrapper, PageHeader, Tag and Discover cards. Later client mounts (navigation, paging, search) still animate.
+**Prevention**: Never put a hidden `initial` on content that is rendered on the server. Don't use a module-level or effect-set "mounted" flag instead: Suspense boundaries hydrate after root effects ran, which gives a mismatch.
+**Files**: `src/hooks/useIsHydrating.ts`, `src/components/AppShell.tsx`, `src/components/ui/PageHeader.tsx`, `src/app/{tag/[name]/TagPageClient,discover/DiscoverPageClient}.tsx`
+
+---
+
+## ERR-UI-009: "Hydration failed" on the landing page with reduced motion on
+
+**First seen**: 2026-10-20
+**Symptom**: Only with `prefers-reduced-motion: reduce`: React threw away the server HTML of `/` and re-rendered the whole page in the browser ("initial UI does not match").
+**Root cause**: framer's `useReducedMotion()` is null during SSR but already true in the client's hydration render, so markup that branches on it (different elements, initial values, text) differs.
+**Fix**: `useHydratedReducedMotion()` (`src/hooks/useReducedMotion.ts`) reads false during SSR and hydration and the real value right after; the landing is wrapped in `LandingMotion` (`<MotionConfig reducedMotion="user">`, `src/components/landing/Motion.tsx`) so reveals that mounted in their `initial` state finish without movement.
+**Prevention**: In server-rendered components, branch markup on `useHydratedReducedMotion`, never on framer's hook; reading framer's hook inside effects is fine.
+**Files**: `src/hooks/useReducedMotion.ts`, `src/components/landing/*`, `src/app/page.tsx`
+
+---
+
+## ERR-SEC-001: XSS through `/new-post?excerpt=` (Quill parses strings as HTML)
+
+**First seen**: 2026-10-20
+**Symptom**: A crafted link such as `/new-post?excerpt=<img src=x onerror=…>` ran script in the victim's signed-in session; a third-party search excerpt could do the same.
+**Root cause**: The composer set `content` to `` `<p>${excerpt}</p>` ``. Quill 1.3.7 converts string values through `innerHTML` on an element inside the document, so event handlers fire before Quill's own cleanup.
+**Fix**: Plain text that goes into Quill as a string is escaped first: `escapeHtml` (`src/lib/text.ts`).
+**Prevention**: Anything that reaches Quill (or `dangerouslySetInnerHTML`) is either sanitized HTML (`sanitizePostContent`) or escaped text — never URL params or API text as-is.
+**Files**: `src/app/new-post/page.tsx`, `src/lib/text.ts`
+
+---
+
+## ERR-AUTH-001: Everyone signed out once / other devices signed out after a password change
+
+**First seen**: 2026-10-21
+**Symptom**: After the 2026-10-21 deploy every user had to sign in again once. After a password change or reset, the user's other browsers land on `/login`.
+**Root cause**: Intended. The JWT carries `pwv`, a fingerprint of the stored password hash (`src/lib/password-version.ts`); the session callback drops sessions whose `pwv` no longer matches (and banned or deleted users), and the middleware treats tokens without `pwv` (issued before the change) as signed out. Before this, a stolen session survived a password reset.
+**Fix**: Nothing to fix. The settings page signs the current device back in after a change. A token that still passes the middleware but no longer resolves to a session is sent to `/login?callbackUrl=…` by `MaintenanceGuard` (server) and `ConditionalAppShell` (client). A DB error during the session lookup keeps the session (logged), so a blip never signs anyone out.
+**Prevention**: Don't refresh `pwv` in the `jwt` callback (not even on `update()`); keep the session callback's lookup in its try/catch.
+**Files**: `src/lib/auth.ts`, `src/lib/password-version.ts`, `src/middleware.ts`, `src/components/{MaintenanceGuard,ConditionalAppShell}.tsx`, `src/app/profile/settings/page.tsx`
+
+---
+
+## ERR-BUILD-006: `[API Error] Dynamic server usage: Route /api/... couldn't be rendered statically` in the build log
+
+**First seen**: 2026-10-21
+**Symptom**: `next build` printed `[API Error]` with `DYNAMIC_SERVER_USAGE` for admin and export routes.
+**Root cause**: During the build Next probes GET handlers without a segment config; `headers()` (via `getServerSession`) throws Next's dynamic-usage signal, and the route's `catch` passed it to `handleApiError`, which now logs in every environment.
+**Fix**: `handleApiError` rethrows Next's internal errors (`digest` `DYNAMIC_SERVER_USAGE` or `NEXT_*`), and per-user GET routes export `dynamic = "force-dynamic"`.
+**Prevention**: Every per-user GET route sets `export const dynamic = "force-dynamic"` (`.claude/rules/api-routes.md`).
+**Files**: `src/lib/api-server.ts`, `src/app/api/**/route.ts`
+
+---
+
+## ERR-RT-004: Notification click never marked it read (flag set inside a setState updater)
+
+**First seen**: 2026-10-20
+**Symptom**: Clicking an unread notification navigated but it stayed unread.
+**Root cause**: The code set a local flag inside `setItems(prev => …)` and read it right after the call. React 18 defers the updater whenever the fiber has pending work, so the flag was still false.
+**Fix**: Decide from render-time state (the clicked item's `read`), then update.
+**Prevention**: Never rely on side effects inside a state updater.
+**Files**: `src/app/notifications/page.tsx`
+
+---
+
+*Last updated: 2026-10-21*
