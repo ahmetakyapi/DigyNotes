@@ -136,10 +136,14 @@ export async function loadCover(src: string | null | undefined) {
     const signal = AbortSignal.timeout(3500);
     for (let hop = 0; hop < 4; hop += 1) {
       if (!isPublicImageUrl(url) || !(await resolvesToPublicHost(url, signal))) return null;
+      // `cache: "no-store"` is required for the byte cap below: otherwise Next's patched
+      // fetch auto-caches this route's GETs and reads the whole body into the Data Cache
+      // before fetch() even resolves (and fills that cache with user-chosen URLs).
       res = await fetch(url, {
         headers: { "User-Agent": "DigyNotesOG/1.0" },
         redirect: "manual",
         signal,
+        cache: "no-store",
       });
       const next = res.status >= 300 && res.status < 400 ? res.headers.get("location") : null;
       if (!next) break;
