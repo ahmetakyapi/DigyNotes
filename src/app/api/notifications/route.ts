@@ -257,10 +257,14 @@ export async function GET(request: NextRequest) {
       }
 
       const comment = commentMap.get(notification.referenceId);
+      /* "comment" goes only to the note owner and to the author of the comment answered,
+         so anyone else got it as a reply. Their comment may not be the stored parent: a
+         reply below the last loaded level hangs on the answered comment's parent. */
       const isReplyToRecipient = Boolean(
         comment?.parentId &&
-        comment.parent?.userId === notification.userId &&
-        comment.user.id !== notification.userId
+        comment.user.id !== notification.userId &&
+        (comment.parent?.userId === notification.userId ||
+          comment.post.userId !== notification.userId)
       );
       const href = commentHref(comment);
       const text =
