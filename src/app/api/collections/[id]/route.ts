@@ -33,7 +33,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     }
 
     const isOwner = viewerId === collection.userId;
-    const canRead = isOwner || isAdmin || collection.user.isPublic;
+    // A banned owner's collections read as private, like their profile and notes.
+    const canRead = isOwner || isAdmin || (collection.user.isPublic && !collection.user.isBanned);
 
     if (!canRead) {
       return NextResponse.json({ error: "Koleksiyon bulunamadı" }, { status: 404 });

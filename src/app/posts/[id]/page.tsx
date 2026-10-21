@@ -23,10 +23,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const post = await getPostDetail(params.id, await getSessionUserId())
-    .then((result) => result.post)
-    .catch(() => undefined);
-  if (post === undefined) return {};
+  const detail = await getPostDetail(params.id, await getSessionUserId()).catch(() => undefined);
+  if (detail === undefined) return {};
+  const { access, post } = detail;
   /* Not readable → the 404 page, with noindex. The status stays 200 while this route
      has a loading.tsx (Next 14 has already streamed the shell); without it, it is a
      real 404 (measured). The noindex keeps it out of search either way. */
@@ -92,16 +91,19 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       alternates: {
         canonical: canonicalPath,
       },
-      robots: isIndexable
-        ? undefined
-        : {
-            index: false,
-            follow: false,
-            googleBot: {
+      /* The full note's author select leaves out the ban flag (it would reach the client);
+         the access row carries it, so an admin viewing a banned author's note gets noindex. */
+      robots:
+        isIndexable && isPostPublic(access.post)
+          ? undefined
+          : {
               index: false,
               follow: false,
+              googleBot: {
+                index: false,
+                follow: false,
+              },
             },
-          },
       openGraph: {
         title: shareTitle,
         description,
@@ -139,11 +141,12 @@ function cardUrlFor(post: Pick<PostDetail, "id" | "updatedAt">) {
    no longer see an empty skeleton). Same read rule as /api/posts/[id]: drafts, trashed
    notes and private authors' notes are a 404 for everyone but the owner and admins. */
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const { post } = await getPostDetail(params.id, await getSessionUserId());
+  const { access, post } = await getPostDetail(params.id, await getSessionUserId());
   if (!post) notFound();
 
   const siteUrl = getSiteUrl();
-  const isPublic = isPostPublic(post);
+  // The access row, not the full note: only it carries the author's ban flag.
+  const isPublic = isPostPublic(access.post);
   const author = post.user;
   const initialPost = JSON.parse(JSON.stringify(post)) as Post;
 
