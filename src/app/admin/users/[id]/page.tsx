@@ -10,13 +10,14 @@
      - Right: time info card, action breakdown, quick actions
 */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { ArrowLeftIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
+import { formatRelativeTime } from "@/lib/relative-time";
 
 /* ─── types ─── */
 interface UserDetail {
@@ -68,7 +69,7 @@ interface ApiResponse {
 
 /* ─── constants ─── */
 const RANGE_OPTIONS: { key: RangeKey; label: string }[] = [
-  { key: "24h", label: "24s" },
+  { key: "24h", label: "24 Saat" },
   { key: "7d", label: "7 Gün" },
   { key: "30d", label: "30 Gün" },
   { key: "90d", label: "90 Gün" },
@@ -90,6 +91,8 @@ const ACTION_META: Record<string, { label: string; color: string }> = {
   "user.register": { label: "Kayıt Oldu", color: "var(--accent-2)" },
   "category.create": { label: "Kategori Oluşturuldu", color: "rgb(var(--accent-2-rgb) / 0.6)" },
   "user.follow": { label: "Takip Etti", color: "var(--text-muted)" },
+  "user.update": { label: "Kullanıcı Güncelledi", color: "rgb(var(--accent-2-rgb) / 0.4)" },
+  "user.delete": { label: "Kullanıcı Sildi", color: "var(--danger)" },
 };
 
 /* ─── helpers ─── */
@@ -109,18 +112,6 @@ function fmtDate(iso: string) {
     month: "long",
     year: "numeric",
   });
-}
-function timeAgo(iso: string | null) {
-  if (!iso) return null;
-  const diff = Date.now() - new Date(iso).getTime();
-  const min = Math.floor(diff / 60000);
-  if (min < 1) return "Az önce";
-  if (min < 60) return `${min} dk önce`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr} saat önce`;
-  const day = Math.floor(hr / 24);
-  if (day < 30) return `${day} gün önce`;
-  return null;
 }
 
 /* ─── sub-components ─── */
@@ -216,28 +207,37 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [range, setRange] = useState<RangeKey>("24h");
   const [error, setError] = useState("");
+  /* Each full reload gets a new id; a response that belongs to an older one is dropped. */
+  const requestIdRef = useRef(0);
 
   const load = useCallback(
-    async (p: number, replace = false, r?: RangeKey) => {
-      const activeRange = r ?? range;
+    async (p: number, replace = false) => {
+      const requestId = replace ? ++requestIdRef.current : requestIdRef.current;
       if (p === 1) setLoading(true);
       else setLoadingMore(true);
 
       try {
         const res = await requestJson<ApiResponse>(
-          `/api/admin/users/${params.id}?page=${p}&range=${activeRange}`,
+          `/api/admin/users/${params.id}?page=${p}&range=${range}`,
           undefined,
           "Kullanıcı detayı yüklenemedi."
         );
-        setData((prev) => (replace || !prev ? res : { ...res, logs: [...prev.logs, ...res.logs] }));
+        if (requestId !== requestIdRef.current) return;
+        setData((prev) => {
+          if (replace || !prev) return res;
+          // Offset paging shifts when new logs arrive meanwhile: skip rows already shown.
+          const seen = new Set(prev.logs.map((l) => l.id));
+          return { ...res, logs: [...prev.logs, ...res.logs.filter((l) => !seen.has(l.id))] };
+        });
         setError("");
       } catch (error) {
+        if (requestId !== requestIdRef.current) return;
         const message = getClientErrorMessage(error, "Kullanıcı detayı yüklenemedi.");
         setError(message);
         toast.error(message);
       } finally {
-        if (p === 1) setLoading(false);
-        else setLoadingMore(false);
+        if (p !== 1) setLoadingMore(false);
+        else if (requestId === requestIdRef.current) setLoading(false);
       }
     },
     [params.id, range]
@@ -247,10 +247,11 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     void load(1, true);
   }, [load]);
 
+  // The range is part of `load`, so the effect above makes the one request.
   function handleRangeChange(r: RangeKey) {
+    if (r === range) return;
     setRange(r);
     setPage(1);
-    load(1, true, r);
   }
 
   async function togglePublic() {
@@ -273,7 +274,8 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
     }
   }
 
-  if (loading) {
+  // Full-page spinner only on the first load; a range change keeps the dossier on screen.
+  if (loading && !data) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center">
         <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-accent" />
@@ -371,7 +373,10 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
           {/* left: charts + logs */}
           <div className="space-y-5 lg:col-span-2">
             {/* activity chart */}
-            <section className={CARD}>
+            <section
+              className={`${CARD} transition-opacity duration-200 ${loading ? "opacity-60" : ""}`}
+              aria-busy={loading}
+            >
               <SectionTitle
                 index="A"
                 title={`${RANGE_LABELS[range]} Aktivitesi`}
@@ -498,7 +503,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     setPage(next);
                     load(next);
                   }}
-                  disabled={loadingMore}
+                  disabled={loadingMore || loading}
                   className="mt-4 w-full cursor-pointer rounded-full border border-[var(--border)] py-2.5 text-[12.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {loadingMore ? "Yükleniyor…" : "Daha Fazla Göster"}
@@ -521,11 +526,9 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     user.lastLoginAt ? (
                       <span>
                         <span className="block">{fmtFull(user.lastLoginAt)}</span>
-                        {timeAgo(user.lastLoginAt) && (
-                          <span className="text-[12px] font-medium font-normal text-[var(--gold)]">
-                            {timeAgo(user.lastLoginAt)}
-                          </span>
-                        )}
+                        <span className="text-[12px] font-medium text-[var(--gold)]">
+                          {formatRelativeTime(user.lastLoginAt)}
+                        </span>
                       </span>
                     ) : (
                       "—"
@@ -538,11 +541,9 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
                     user.lastLogoutAt ? (
                       <span>
                         <span className="block">{fmtFull(user.lastLogoutAt)}</span>
-                        {timeAgo(user.lastLogoutAt) && (
-                          <span className="text-[12px] font-medium text-[var(--text-muted)]">
-                            {timeAgo(user.lastLogoutAt)}
-                          </span>
-                        )}
+                        <span className="text-[12px] font-medium text-[var(--text-muted)]">
+                          {formatRelativeTime(user.lastLogoutAt)}
+                        </span>
                       </span>
                     ) : (
                       "—"

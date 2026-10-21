@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     data: {
       userId: user.id,
       action: "user.register",
-      metadata: { name: user.name, email: user.email },
+      metadata: { name: user.name },
     },
   });
 

@@ -106,7 +106,14 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         createdAt: true,
         lastLoginAt: true,
         lastLogoutAt: true,
-        _count: { select: { posts: true, followers: true, following: true, activityLogs: true } },
+        _count: {
+          select: {
+            posts: { where: { isDeleted: false } },
+            followers: true,
+            following: true,
+            activityLogs: true,
+          },
+        },
       },
     });
 
@@ -172,7 +179,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Kendi admin yetkini kaldıramazsın" }, { status: 400 });
     }
 
-    const updateData: Record<string, unknown> = {};
+    // A banned session is dropped at once, so a self-ban would lock the admin out for good.
+    if (params.id === adminId && isBanned === true) {
+      return NextResponse.json({ error: "Kendi hesabını banlayamazsın" }, { status: 400 });
+    }
+
+    const updateData: Record<string, boolean> = {};
     if (typeof isAdmin === "boolean") updateData.isAdmin = isAdmin;
     if (typeof isBanned === "boolean") updateData.isBanned = isBanned;
     if (typeof isPublic === "boolean") updateData.isPublic = isPublic;
@@ -194,6 +206,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       where: { id: params.id },
       data: updateData,
       select: { id: true, name: true, email: true, isAdmin: true, isBanned: true, isPublic: true },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        userId: adminId,
+        action: "user.update",
+        metadata: { targetUserId: params.id, changes: updateData, adminAction: true },
+      },
     });
 
     return NextResponse.json(user);
@@ -222,7 +242,19 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
     }
 
-    await prisma.user.delete({ where: { id: params.id } });
+    // The account's own logs hold its name, e-mail and note titles, so they go too;
+    // the audit entry keeps only the id.
+    await prisma.$transaction([
+      prisma.activityLog.deleteMany({ where: { userId: params.id } }),
+      prisma.user.delete({ where: { id: params.id } }),
+      prisma.activityLog.create({
+        data: {
+          userId: adminId,
+          action: "user.delete",
+          metadata: { targetUserId: params.id, adminAction: true },
+        },
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   BarChart,
   Bar,
@@ -78,6 +80,8 @@ const TABS = [
 
 export default function AdminPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const selfId = session?.user?.id;
   const [tab, setTab] = useState<"overview" | "users" | "content" | "activity" | "settings">(
     "overview"
   );
@@ -94,10 +98,12 @@ export default function AdminPage() {
   const [usersPage, setUsersPage] = useState(1);
   const [usersTotalPages, setUsersTotalPages] = useState(1);
   const [userSearch, setUserSearch] = useState("");
+  const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<UserRow | null>(null);
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
 
   /* posts */
   const [posts, setPosts] = useState<PostRow[]>([]);
@@ -105,6 +111,7 @@ export default function AdminPage() {
   const [postsPage, setPostsPage] = useState(1);
   const [postsTotalPages, setPostsTotalPages] = useState(1);
   const [postSearch, setPostSearch] = useState("");
+  const [debouncedPostSearch, setDebouncedPostSearch] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [confirmDeletePost, setConfirmDeletePost] = useState<PostRow | null>(null);
 
@@ -147,83 +154,123 @@ export default function AdminPage() {
   }, [seriesRange, fetchStats]);
 
   /* ── fetch users ── */
-  const fetchUsers = useCallback(async (page: number, search: string) => {
+  /* Searches wait for a typing pause, and every effect aborts the request it started, so a
+     slower earlier response can never overwrite the table for a newer query. */
+  const fetchUsers = useCallback(async (page: number, search: string, signal?: AbortSignal) => {
     setLoadingUsers(true);
     const p = new URLSearchParams({ page: String(page) });
     if (search) p.set("search", search);
     try {
       const data = await requestJson<{ users?: UserRow[]; total?: number; totalPages?: number }>(
         `/api/admin/users?${p}`,
-        undefined,
+        signal ? { signal } : undefined,
         "Kullanıcılar yüklenemedi."
       );
+      if (signal?.aborted) return;
       setUsers(data.users ?? []);
       setUsersTotal(data.total ?? 0);
       setUsersTotalPages(data.totalPages ?? 1);
       setPanelError("");
     } catch (error) {
+      if (signal?.aborted) return;
       setPanelError(getClientErrorMessage(error, "Kullanıcılar yüklenemedi."));
     } finally {
-      setLoadingUsers(false);
+      if (!signal?.aborted) setLoadingUsers(false);
     }
   }, []);
 
   useEffect(() => {
-    if (tab === "users") fetchUsers(usersPage, userSearch);
-  }, [tab, usersPage, userSearch, fetchUsers]);
+    const t = window.setTimeout(() => setDebouncedUserSearch(userSearch.trim()), 300);
+    return () => window.clearTimeout(t);
+  }, [userSearch]);
+
+  useEffect(() => {
+    if (tab !== "users") return;
+    const controller = new AbortController();
+    void fetchUsers(usersPage, debouncedUserSearch, controller.signal);
+    return () => controller.abort();
+  }, [tab, usersPage, debouncedUserSearch, fetchUsers]);
+
+  /* A selection only covers the rows on screen: another page or query starts empty. */
+  useEffect(() => {
+    setSelectedUsers(new Set());
+    setConfirmBulkDelete(false);
+  }, [usersPage, debouncedUserSearch]);
 
   /* ── fetch posts ── */
-  const fetchPosts = useCallback(async (page: number, q: string) => {
+  const fetchPosts = useCallback(async (page: number, q: string, signal?: AbortSignal) => {
     setLoadingPosts(true);
     const p = new URLSearchParams({ page: String(page) });
     if (q) p.set("q", q);
     try {
       const data = await requestJson<{ posts?: PostRow[]; total?: number; totalPages?: number }>(
         `/api/admin/posts?${p}`,
-        undefined,
+        signal ? { signal } : undefined,
         "İçerikler yüklenemedi."
       );
+      if (signal?.aborted) return;
       setPosts(data.posts ?? []);
       setPostsTotal(data.total ?? 0);
       setPostsTotalPages(data.totalPages ?? 1);
       setPanelError("");
     } catch (error) {
+      if (signal?.aborted) return;
       setPanelError(getClientErrorMessage(error, "İçerikler yüklenemedi."));
     } finally {
-      setLoadingPosts(false);
+      if (!signal?.aborted) setLoadingPosts(false);
     }
   }, []);
 
   useEffect(() => {
-    if (tab === "content") fetchPosts(postsPage, postSearch);
-  }, [tab, postsPage, postSearch, fetchPosts]);
+    const t = window.setTimeout(() => setDebouncedPostSearch(postSearch.trim()), 300);
+    return () => window.clearTimeout(t);
+  }, [postSearch]);
+
+  useEffect(() => {
+    if (tab !== "content") return;
+    const controller = new AbortController();
+    void fetchPosts(postsPage, debouncedPostSearch, controller.signal);
+    return () => controller.abort();
+  }, [tab, postsPage, debouncedPostSearch, fetchPosts]);
 
   /* ── fetch activity ── */
-  const fetchActivity = useCallback(async (page: number, filter: string, range: RangeKey) => {
-    setLoadingLogs(true);
-    const p = new URLSearchParams({ page: String(page), range });
-    if (filter) p.set("action", filter);
-    try {
-      const data = await requestJson<{
-        logs?: ActivityLog[];
-        total?: number;
-        totalPages?: number;
-        chartData?: { label: string; count: number }[];
-      }>(`/api/admin/activity?${p}`, undefined, "Aktivite verisi yüklenemedi.");
-      setLogs(data.logs ?? []);
-      setLogsTotal(data.total ?? 0);
-      setLogsTotalPages(data.totalPages ?? 1);
-      setChartData(data.chartData ?? []);
-      setPanelError("");
-    } catch (error) {
-      setPanelError(getClientErrorMessage(error, "Aktivite verisi yüklenemedi."));
-    } finally {
-      setLoadingLogs(false);
-    }
-  }, []);
+  const fetchActivity = useCallback(
+    async (page: number, filter: string, range: RangeKey, signal?: AbortSignal) => {
+      setLoadingLogs(true);
+      const p = new URLSearchParams({ page: String(page), range });
+      if (filter) p.set("action", filter);
+      try {
+        const data = await requestJson<{
+          logs?: ActivityLog[];
+          total?: number;
+          totalPages?: number;
+          chartData?: { label: string; count: number }[];
+        }>(
+          `/api/admin/activity?${p}`,
+          signal ? { signal } : undefined,
+          "Aktivite verisi yüklenemedi."
+        );
+        if (signal?.aborted) return;
+        setLogs(data.logs ?? []);
+        setLogsTotal(data.total ?? 0);
+        setLogsTotalPages(data.totalPages ?? 1);
+        setChartData(data.chartData ?? []);
+        setPanelError("");
+      } catch (error) {
+        if (signal?.aborted) return;
+        setPanelError(getClientErrorMessage(error, "Aktivite verisi yüklenemedi."));
+      } finally {
+        if (!signal?.aborted) setLoadingLogs(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
-    if (tab === "activity") fetchActivity(logsPage, logsFilter, activityRange);
+    if (tab !== "activity") return;
+    const controller = new AbortController();
+    void fetchActivity(logsPage, logsFilter, activityRange, controller.signal);
+    return () => controller.abort();
   }, [tab, logsPage, logsFilter, activityRange, fetchActivity]);
 
   /* ── fetch settings ── */
@@ -275,7 +322,7 @@ export default function AdminPage() {
           : `${updated.name} artık admin işlemleri yapamaz.`,
         followUp: "Gerekirse kullanıcı detayına gidip son aktivitelerini kontrol et.",
       });
-      await fetchUsers(usersPage, userSearch);
+      await fetchUsers(usersPage, debouncedUserSearch);
     } catch (error) {
       const message = getClientErrorMessage(error, "Rol güncellenemedi.");
       toast.error(message);
@@ -313,7 +360,7 @@ export default function AdminPage() {
           ? "Gerekirse ilgili notları içerik sekmesinden ayrıca gözden geçir."
           : "Kullanıcının profil görünürlüğünü ve son hareketlerini doğrula.",
       });
-      await fetchUsers(usersPage, userSearch);
+      await fetchUsers(usersPage, debouncedUserSearch);
     } catch (error) {
       const message = getClientErrorMessage(error, "Kullanıcı durumu güncellenemedi.");
       toast.error(message);
@@ -351,7 +398,7 @@ export default function AdminPage() {
           : `${updated.name} profili yalnızca kendisi ve adminler tarafından görüntülenebilir.`,
         followUp: "Değişiklik anında uygulanır; gerekirse profil sayfasını yenile.",
       });
-      await fetchUsers(usersPage, userSearch);
+      await fetchUsers(usersPage, debouncedUserSearch);
     } catch (error) {
       const message = getClientErrorMessage(error, "Profil görünürlüğü güncellenemedi.");
       toast.error(message);
@@ -376,7 +423,7 @@ export default function AdminPage() {
         detail: "Hesap ve ilişkili içerikleri kalıcı olarak kaldırıldı.",
         followUp: "Arama sonucundan düştüğünü ve gerekirse aktivite geçmişini gözden geçir.",
       });
-      await fetchUsers(usersPage, userSearch);
+      await fetchUsers(usersPage, debouncedUserSearch);
     } catch (error) {
       const message = getClientErrorMessage(error, "Kullanıcı silinemedi.");
       toast.error(message);
@@ -407,10 +454,10 @@ export default function AdminPage() {
       setAdminFeedback({
         tone: "warning",
         title: "Not kaldırıldı",
-        detail: "İçerik yayından alındı ve admin log'una işlendi.",
+        detail: "Not kalıcı olarak silindi ve admin log'una işlendi.",
         followUp: "Gerekirse not sahibini kullanıcı sekmesinden ayrıca incele.",
       });
-      await fetchPosts(postsPage, postSearch);
+      await fetchPosts(postsPage, debouncedPostSearch);
     } catch (error) {
       const message = getClientErrorMessage(error, "Not silinemedi.");
       toast.error(message);
@@ -455,7 +502,7 @@ export default function AdminPage() {
               : "Seçili kullanıcıları tekrar filtreleyip kalan istisnaları kontrol et.",
         });
       }
-      await fetchUsers(1, userSearch);
+      await fetchUsers(1, debouncedUserSearch);
       setUsersPage(1);
     } catch (error) {
       const message = getClientErrorMessage(error, "Toplu işlem uygulanamadı.");
@@ -539,10 +586,10 @@ export default function AdminPage() {
     });
   };
 
+  const allOnPageSelected = users.length > 0 && users.every((u) => selectedUsers.has(u.id));
+
   const toggleSelectAll = () => {
-    setSelectedUsers((prev) =>
-      prev.size === users.length ? new Set() : new Set(users.map((u) => u.id))
-    );
+    setSelectedUsers(allOnPageSelected ? new Set() : new Set(users.map((u) => u.id)));
   };
 
   /* LAYOUT: Editorial admin desk (max-w-6xl, inside AppShell).
@@ -1019,7 +1066,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runBulkAction("delete")}
+                  onClick={() => setConfirmBulkDelete(true)}
                   disabled={bulkLoading}
                   className="cursor-pointer rounded-full border border-danger/30 px-3.5 py-1.5 text-[12px] font-semibold text-danger transition-colors duration-200 hover:bg-danger/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -1043,7 +1090,7 @@ export default function AdminPage() {
                 <input
                   type="checkbox"
                   className="accent-accent"
-                  checked={users.length > 0 && selectedUsers.size === users.length}
+                  checked={allOnPageSelected}
                   onChange={toggleSelectAll}
                 />
                 <span className="text-[12.5px] font-medium text-[var(--text-muted)]">
@@ -1052,6 +1099,15 @@ export default function AdminPage() {
               </label>
               {loadingUsers ? (
                 <TableSpinner />
+              ) : users.length === 0 ? (
+                <div className="p-4">
+                  <EmptyState
+                    compact
+                    icon={<UsersIcon size={20} />}
+                    title="Kullanıcı Bulunamadı"
+                    description="Aramayı değiştirip tekrar dene."
+                  />
+                </div>
               ) : (
                 <div className="divide-y divide-[var(--border)]">
                   {users.map((u) => (
@@ -1065,15 +1121,12 @@ export default function AdminPage() {
                         checked={selectedUsers.has(u.id)}
                         onChange={() => toggleSelectUser(u.id)}
                       />
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => router.push(`/admin/users/${u.id}`)}
-                      >
+                      <Link href={`/admin/users/${u.id}`} tabIndex={-1} aria-hidden="true">
                         <Avatar name={u.name} size="md" />
-                      </div>
-                      <div
-                        className="min-w-0 flex-1 cursor-pointer"
-                        onClick={() => router.push(`/admin/users/${u.id}`)}
+                      </Link>
+                      <Link
+                        href={`/admin/users/${u.id}`}
+                        className="block min-w-0 flex-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
                       >
                         <div className="flex flex-wrap items-center gap-1.5">
                           <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
@@ -1108,13 +1161,14 @@ export default function AdminPage() {
                             })}
                           </span>
                         </div>
-                      </div>
+                      </Link>
                       <div className="flex shrink-0 flex-col items-end gap-3">
                         <div className="flex items-center gap-3">
                           <ToggleSwitch
                             label="Admin"
                             active={u.isAdmin}
                             tone="accent"
+                            disabled={u.id === selfId}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleAdmin(u);
@@ -1133,6 +1187,7 @@ export default function AdminPage() {
                             label="Ban"
                             active={u.isBanned}
                             tone="danger"
+                            disabled={u.id === selfId}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleBan(u);
@@ -1166,7 +1221,7 @@ export default function AdminPage() {
                         type="checkbox"
                         className="accent-accent"
                         aria-label="Tümünü seç"
-                        checked={users.length > 0 && selectedUsers.size === users.length}
+                        checked={allOnPageSelected}
                         onChange={toggleSelectAll}
                       />
                     </th>
@@ -1194,6 +1249,17 @@ export default function AdminPage() {
                         <TableSpinner />
                       </td>
                     </tr>
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td colSpan={10} className="p-6">
+                        <EmptyState
+                          compact
+                          icon={<UsersIcon size={20} />}
+                          title="Kullanıcı Bulunamadı"
+                          description="Aramayı değiştirip tekrar dene."
+                        />
+                      </td>
+                    </tr>
                   ) : (
                     users.map((u) => (
                       <tr
@@ -1209,11 +1275,11 @@ export default function AdminPage() {
                             onChange={() => toggleSelectUser(u.id)}
                           />
                         </td>
-                        <td
-                          className="cursor-pointer px-4 py-3"
-                          onClick={() => router.push(`/admin/users/${u.id}`)}
-                        >
-                          <div className="flex items-center gap-2.5">
+                        <td className="px-4 py-3">
+                          <Link
+                            href={`/admin/users/${u.id}`}
+                            className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                          >
                             <Avatar name={u.name} size="sm" />
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5">
@@ -1228,7 +1294,7 @@ export default function AdminPage() {
                                 </p>
                               )}
                             </div>
-                          </div>
+                          </Link>
                         </td>
                         <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{u.email}</td>
                         <td className="px-4 py-3 text-center text-sm font-semibold tabular-nums text-[var(--text-primary)]">
@@ -1249,6 +1315,7 @@ export default function AdminPage() {
                             active={u.isAdmin}
                             tone="accent"
                             title={u.isAdmin ? "Admin Yetkisini Kaldır" : "Admin Yap"}
+                            disabled={u.id === selfId}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleAdmin(u);
@@ -1271,6 +1338,7 @@ export default function AdminPage() {
                             active={u.isBanned}
                             tone="danger"
                             title={u.isBanned ? "Banı Kaldır" : "Banla"}
+                            disabled={u.id === selfId}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleBan(u);
@@ -1357,12 +1425,15 @@ export default function AdminPage() {
                       className="flex items-start gap-3 p-4 transition-colors duration-200 hover:bg-[var(--bg-raised)]"
                     >
                       <div className="min-w-0 flex-1">
-                        <p
-                          className="mb-1.5 cursor-pointer font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)]"
-                          onClick={() => router.push(`/posts/${p.id}`)}
-                        >
-                          {p.title}
-                        </p>
+                        <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+                          <Link
+                            href={`/posts/${p.id}`}
+                            className="rounded font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                          >
+                            {p.title}
+                          </Link>
+                          <PostStateBadges post={p} />
+                        </div>
                         <div className="mb-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] font-medium text-[var(--text-muted)]">
                           <span>{p.category}</span>
                           {p.user && (
@@ -1436,13 +1507,18 @@ export default function AdminPage() {
                         key={p.id}
                         className="group transition-colors duration-200 hover:bg-[var(--bg-raised)]"
                       >
-                        <td
-                          className="cursor-pointer px-4 py-3"
-                          onClick={() => router.push(`/posts/${p.id}`)}
-                        >
-                          <p className="max-w-[200px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
-                            {p.title}
-                          </p>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1.5">
+                            <Link
+                              href={`/posts/${p.id}`}
+                              className="block min-w-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                            >
+                              <p className="max-w-[200px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
+                                {p.title}
+                              </p>
+                            </Link>
+                            <PostStateBadges post={p} />
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-xs text-[var(--text-muted)]">{p.category}</td>
                         <td className="px-4 py-3">
@@ -1872,6 +1948,27 @@ export default function AdminPage() {
         />
       )}
 
+      {/* ── Bulk delete confirm ── */}
+      {confirmBulkDelete && selectedUsers.size > 0 && (
+        <ConfirmModal
+          title="Kullanıcıları Sil"
+          message={
+            <>
+              <span className="font-semibold text-[var(--text-primary)]">
+                {selectedUsers.size} kullanıcı
+              </span>{" "}
+              silinecek.
+            </>
+          }
+          detail="Bu işlem geri alınamaz. Hesapların tüm notları, yorumları ve koleksiyonları da silinir."
+          onCancel={() => setConfirmBulkDelete(false)}
+          onConfirm={async () => {
+            await runBulkAction("delete");
+            setConfirmBulkDelete(false);
+          }}
+        />
+      )}
+
       {/* ── Delete post confirm ── */}
       {confirmDeletePost && (
         <ConfirmModal
@@ -1962,16 +2059,18 @@ function ToggleSwitch({
   active,
   tone,
   onClick,
+  disabled,
 }: {
   label: string;
   active: boolean;
   tone: SwitchTone;
   onClick: (e: React.MouseEvent) => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
       <span className="text-[11px] font-medium text-[var(--text-muted)]">{label}</span>
-      <Switch active={active} tone={tone} onClick={onClick} title={label} />
+      <Switch active={active} tone={tone} onClick={onClick} title={label} disabled={disabled} />
     </div>
   );
 }
@@ -2005,6 +2104,17 @@ function UserBadges({ user, compact = false }: { user: UserRow; compact?: boolea
       >
         {user.isPublic ? (compact ? "Açık" : "Açık Profil") : compact ? "Gizli" : "Gizli Profil"}
       </span>
+    </>
+  );
+}
+
+function PostStateBadges({ post }: { post: PostRow }) {
+  return (
+    <>
+      {post.isDraft && (
+        <span className={`${BADGE} border-[var(--border)] text-[var(--text-muted)]`}>Taslak</span>
+      )}
+      {post.isDeleted && <span className={`${BADGE} border-danger/35 text-danger`}>Silinmiş</span>}
     </>
   );
 }
