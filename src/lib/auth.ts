@@ -87,27 +87,38 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         const userWithId = session.user as { id: string; avatarUrl?: string | null } & typeof session.user;
-        userWithId.id = token.id as string;
 
         // Banlanmış ya da silinmiş kullanıcıyı ve son şifre değişikliğinden (sıfırlama ya da
         // ayarlar) önce açılmış oturumları düşür + avatar bilgisini session'a ekle.
         // The hash is only compared here, never copied onto the session.
-        let dbUser;
-        try {
-          dbUser = await prisma.user.findUnique({
+        const lookup = () =>
+          prisma.user.findUnique({
             where: { id: token.id as string },
             select: { isBanned: true, avatarUrl: true, password: true },
           });
-        } catch (error) {
-          // A DB blip is not a revoked session: next-auth would turn a throw into "no
-          // session" and clear the cookie. The data APIs fail on their own meanwhile.
-          console.error("[auth] session lookup failed", error);
-          userWithId.avatarUrl = null;
-          return session;
+        let dbUser: Awaited<ReturnType<typeof lookup>>;
+        try {
+          dbUser = await lookup();
+        } catch {
+          // Usually a pooled connection that died while the function sat idle; pg-pool
+          // drops it, so one retry tends to succeed.
+          try {
+            dbUser = await lookup();
+          } catch (error) {
+            // Unknown is not revoked, but not verified either: keep the cookie (a throw or
+            // null would make next-auth clear it and MaintenanceGuard send the user to
+            // /login) and drop the identity, so this request counts as signed out.
+            console.error("[auth] session lookup failed", error);
+            return {
+              ...session,
+              user: { name: session.user.name, email: session.user.email, image: session.user.image },
+            } as typeof session;
+          }
         }
         if (!dbUser || dbUser.isBanned || !isCurrentPasswordVersion(token.pwv, dbUser.password)) {
           return null as unknown as typeof session;
         }
+        userWithId.id = token.id as string;
         userWithId.avatarUrl = dbUser.avatarUrl ?? null;
       }
       return session;

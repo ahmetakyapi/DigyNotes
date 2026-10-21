@@ -11,7 +11,7 @@ export const revalidate = 0;
 export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    const currentUserId = session?.user ? (session.user as { id: string }).id : null;
+    const currentUserId = (session?.user as { id?: string } | undefined)?.id ?? null;
 
     // Hedef kullanıcıyı bul
     const targetUser = await prisma.user.findUnique({

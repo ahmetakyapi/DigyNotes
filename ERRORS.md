@@ -775,8 +775,8 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 **First seen**: 2026-10-21
 **Symptom**: After the 2026-10-21 deploy every user had to sign in again once. After a password change or reset, the user's other browsers land on `/login`.
 **Root cause**: Intended. The JWT carries `pwv`, a fingerprint of the stored password hash (`src/lib/password-version.ts`); the session callback drops sessions whose `pwv` no longer matches (and banned or deleted users), and the middleware treats tokens without `pwv` (issued before the change) as signed out. Before this, a stolen session survived a password reset.
-**Fix**: Nothing to fix. The settings page signs the current device back in after a change. A token that still passes the middleware but no longer resolves to a session is sent to `/login?callbackUrl=…` by `MaintenanceGuard` (server) and `ConditionalAppShell` (client). A DB error during the session lookup keeps the session (logged), so a blip never signs anyone out.
-**Prevention**: Don't refresh `pwv` in the `jwt` callback (not even on `update()`); keep the session callback's lookup in its try/catch.
+**Fix**: Nothing to fix. The settings page signs the current device back in after a change. A token that still passes the middleware but no longer resolves to a session is sent to `/login?callbackUrl=…` by `MaintenanceGuard` (server) and `ConditionalAppShell` (client). A DB error during the session lookup is retried once; if it still fails, that request keeps the cookie but loses the identity (it counts as signed out), so a blip neither signs anyone out nor skips the revocation check.
+**Prevention**: Don't refresh `pwv` in the `jwt` callback (not even on `update()`). In the session callback set `user.id` only after the ban/`pwv` check passed, and never return the identity from the lookup's catch. Server code reads the id with `getSessionUserId()`/`requireAuth()` or checks it explicitly — never `if (session?.user)` followed by an unchecked `.id`.
 **Files**: `src/lib/auth.ts`, `src/lib/password-version.ts`, `src/middleware.ts`, `src/components/{MaintenanceGuard,ConditionalAppShell}.tsx`, `src/app/profile/settings/page.tsx`
 
 ---

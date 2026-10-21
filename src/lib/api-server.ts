@@ -94,9 +94,9 @@ export async function requireAuth(): Promise<[string, null] | [null, NextRespons
  */
 export async function requireAdmin(): Promise<string | null> {
   const session = await getServerAuthSession();
-  if (!session?.user) return null;
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) return null;
 
-  const userId = (session.user as { id: string }).id;
   const { prisma } = await import("@/lib/prisma");
   const user = await prisma.user.findUnique({
     where: { id: userId },

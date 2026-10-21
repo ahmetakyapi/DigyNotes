@@ -70,7 +70,7 @@ export default function PostDetailClient({
 }) {
   const router = useRouter();
   const { data: session } = useSession();
-  const currentUserId = session?.user ? (session.user as { id: string }).id : null;
+  const currentUserId = (session?.user as { id?: string } | undefined)?.id ?? null;
 
   const [post, setPost] = useState<Post | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);

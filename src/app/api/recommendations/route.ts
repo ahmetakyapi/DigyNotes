@@ -21,8 +21,8 @@ const CATEGORY_POOL = 100;
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const userId = (session.user as { id: string }).id;
+    const userId = (session?.user as { id?: string } | undefined)?.id;
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     // The user's archive is the taste profile: tags (weighted by rating) and category mix.
     const ownNotes = await prisma.post.findMany({

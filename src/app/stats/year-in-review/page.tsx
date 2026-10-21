@@ -33,7 +33,7 @@ import {
 } from "@/lib/stats-insights";
 import { ResilientImage } from "@/components/ResilientImage";
 import { Em } from "@/components/ui/PageHeader";
-import { formatRating } from "@/lib/number-format";
+import { formatRating, getIstanbulDateParts } from "@/lib/number-format";
 
 /* ── Types ── */
 interface YearData {
@@ -108,7 +108,8 @@ function formatDate(iso: string) {
 
 /* ── Main Page ── */
 export default function YearInReviewPage() {
-  const currentYear = new Date().getFullYear();
+  // Istanbul year, like the API's buckets (and the same on server and client).
+  const currentYear = getIstanbulDateParts(new Date()).year;
   const [year, setYear] = useState(currentYear);
   const [data, setData] = useState<YearData | null>(null);
   const [loading, setLoading] = useState(true);

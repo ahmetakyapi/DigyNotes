@@ -52,7 +52,8 @@ async function bootstrapAdmin() {
   }
 
   const session = await getServerSession(authOptions);
-  if (!session?.user) {
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) {
     return applyRateLimitHeaders(
       NextResponse.json({ error: "Giriş yapmalısın" }, { status: 401 }),
       rateLimit
@@ -67,7 +68,6 @@ async function bootstrapAdmin() {
     );
   }
 
-  const userId = (session.user as { id: string }).id;
   const user = await prisma.user.update({
     where: { id: userId },
     data: { isAdmin: true },

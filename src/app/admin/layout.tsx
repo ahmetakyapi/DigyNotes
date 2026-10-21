@@ -4,10 +4,11 @@ import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerAuthSession();
-  if (!session?.user) redirect("/login");
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  if (!userId) redirect("/login");
 
   const user = await prisma.user.findUnique({
-    where: { id: (session.user as { id: string }).id },
+    where: { id: userId },
     select: { isAdmin: true },
   });
 

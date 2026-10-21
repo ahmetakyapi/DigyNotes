@@ -32,6 +32,7 @@ export async function GET(_req: NextRequest, { params }: { params: { username: s
             bio: true,
             avatarUrl: true,
             isPublic: true,
+            isBanned: true,
             _count: { select: { posts: { where: { isDeleted: false, isDraft: false } } } },
           },
         },
@@ -41,14 +42,18 @@ export async function GET(_req: NextRequest, { params }: { params: { username: s
     });
 
     /* A private account shows what its own private card shows: no bio, no count. */
-    const users = follows.map((f) => ({
-      id: f.following.id,
-      name: f.following.name ?? "",
-      username: f.following.username,
-      bio: f.following.isPublic ? f.following.bio : null,
-      avatarUrl: f.following.avatarUrl,
-      postCount: f.following.isPublic ? f.following._count.posts : null,
-    }));
+    const users = follows.map((f) => {
+      // A banned account counts as private (resolveProfileAccess).
+      const open = f.following.isPublic && !f.following.isBanned;
+      return {
+        id: f.following.id,
+        name: f.following.name ?? "",
+        username: f.following.username,
+        bio: open ? f.following.bio : null,
+        avatarUrl: f.following.avatarUrl,
+        postCount: open ? f.following._count.posts : null,
+      };
+    });
 
     const followedIds =
       currentUserId && users.length > 0

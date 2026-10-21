@@ -312,6 +312,8 @@ export default function NotesPageClient({
   }
 
   if (
+    // While new filters load, PostsList shows its skeleton instead of this page.
+    !postsRefreshing &&
     posts.length === 0 &&
     savedPosts.length === 0 &&
     draftPosts.length === 0 &&

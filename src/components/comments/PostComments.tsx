@@ -56,7 +56,7 @@ export function PostComments({
   const searchParams = useSearchParams();
   const targetCommentId = searchParams.get("comment");
   const { data: session } = useSession();
-  const currentUserId = session?.user ? (session.user as { id: string }).id : null;
+  const currentUserId = (session?.user as { id?: string } | undefined)?.id ?? null;
   const viewerName = session?.user?.name ?? null;
   const reduceMotion = useReducedMotion();
 

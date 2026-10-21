@@ -43,12 +43,12 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    const userId = (session?.user as { id?: string } | undefined)?.id;
+    if (!userId) {
       return NextResponse.json({ error: "Giriş yapmanız gerekiyor" }, { status: 401 });
     }
 
     const { id: postId } = params;
-    const userId = (session.user as { id: string }).id;
     const rateLimit = await consumeRateLimit({
       action: "post-like-toggle",
       req,

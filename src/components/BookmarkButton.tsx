@@ -28,7 +28,7 @@ export function BookmarkButton({
 }: BookmarkButtonProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const currentUserId = session?.user ? (session.user as { id: string }).id : null;
+  const currentUserId = (session?.user as { id?: string } | undefined)?.id ?? null;
   const [bookmarked, setBookmarked] = useState(initialBookmarked ?? false);
   const [loading, setLoading] = useState(false);
 
