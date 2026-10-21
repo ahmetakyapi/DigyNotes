@@ -95,6 +95,7 @@ export function PostsList({
   const [activeTags, setActiveTags] = useState<string[]>(initialActiveTags);
   const [viewMode, setViewMode] = useState<PostsViewMode>("grid");
   const [activeTab, setActiveTab] = useState<PostsTab>(resolvedInitialTab);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   /* ── URL sync ── */
 
@@ -235,8 +236,10 @@ export function PostsList({
 
   // Sort and the advanced filters run here, not in the paged query (outside "notlar" so do
   // category, tag and search), so they must see the whole list, not the pages loaded so far
-  // (ERR-DATA-013). The loaders clear their cursor on error, which ends the loop.
+  // (ERR-DATA-013). The open Filtreler dialog needs it too: its status options come from the
+  // list. The loaders clear their cursor on error, which ends the loop.
   const needsWholeList =
+    advancedOpen ||
     hasActiveSortFilters(sortFilter, defaultSortFilter) ||
     (activeTab !== "notlar" &&
       (localQuery.trim() !== "" || activeCategory.trim() !== "" || activeTags.length > 0));
@@ -308,6 +311,7 @@ export function PostsList({
           availableStatuses={availableStatuses}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          onAdvancedOpenChange={setAdvancedOpen}
         />
       </div>
 

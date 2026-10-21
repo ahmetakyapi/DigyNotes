@@ -22,6 +22,8 @@ interface SortFilterBarProps {
   availableStatuses?: string[];
   defaultValue?: SortFilterState;
   inlineContent?: React.ReactNode;
+  /** Told when the Filtreler dialog opens and closes; pass a stable callback (e.g. a state setter). */
+  onAdvancedOpenChange?: (open: boolean) => void;
 }
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -57,6 +59,7 @@ export function SortFilterBar({
   availableStatuses = [],
   defaultValue = createSortFilterState(),
   inlineContent,
+  onAdvancedOpenChange,
 }: SortFilterBarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const trapRef = useFocusTrap(showAdvanced);
@@ -103,6 +106,14 @@ export function SortFilterBar({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [showAdvanced]);
+
+  // A paged parent can load the rest of its list while the dialog is open, so the status
+  // options cover every note, not only the pages loaded so far.
+  useEffect(() => {
+    if (!showAdvanced || !onAdvancedOpenChange) return;
+    onAdvancedOpenChange(true);
+    return () => onAdvancedOpenChange(false);
+  }, [showAdvanced, onAdvancedOpenChange]);
 
   return (
     <>
