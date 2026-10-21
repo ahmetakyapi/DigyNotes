@@ -12,12 +12,22 @@ export default function CommunityStatsCard({ title, creator }: Props) {
   const [stats, setStats] = useState<{ count: number; avgRating: number } | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const params = new URLSearchParams({ title });
     if (creator) params.set("creator", creator);
     fetch(`/api/community/stats?${params}`)
-      .then((r) => r.json())
-      .then(setStats)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        // An error body ({ error }) used to render "undefined kişi notladı".
+        setStats(
+          data && typeof data.count === "number" && typeof data.avgRating === "number" ? data : null
+        );
+      })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [title, creator]);
 
   if (!stats || stats.count < 2) return null;

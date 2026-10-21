@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { handleApiError } from "@/lib/api-server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -41,10 +43,29 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
     // cursor-based pagination
     const url = new URL(req.url);
     const cursor = url.searchParams.get("cursor") ?? undefined;
-    const limit = Math.min(Number(url.searchParams.get("limit") ?? "20"), 50);
+    const parsedLimit = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
+    const limit = Math.min(Math.max(Number.isFinite(parsedLimit) ? parsedLimit : 20, 1), 50);
+
+    /* Visibility lives in the query (so hasMore and the cursor stay right) and mirrors
+       canReadPost: a like outlives its note being trashed, turned back into a draft or
+       its author going private, and the tab must not keep showing it. Drafts and
+       trashed notes never appear on this public tab, not even for admins. */
+    const visiblePost: Prisma.PostWhereInput = {
+      isDeleted: false,
+      isDraft: false,
+      ...(currentUserRecord?.isAdmin
+        ? {}
+        : {
+            OR: [
+              { userId: null },
+              { user: { isPublic: true } },
+              ...(currentUserId ? [{ userId: currentUserId }] : []),
+            ],
+          }),
+    };
 
     const likes = await prisma.postLike.findMany({
-      where: { userId: targetUser.id },
+      where: { userId: targetUser.id, post: visiblePost },
       orderBy: { createdAt: "desc" },
       take: limit + 1,
       ...(cursor
@@ -52,6 +73,8 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
         : {}),
       include: {
         post: {
+          /* The card never renders the note body. */
+          omit: { content: true },
           include: {
             tags: { include: { tag: true } },
             user: { select: { id: true, name: true, username: true, avatarUrl: true } },
@@ -60,30 +83,19 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
       },
     });
 
-    // Sadece erişilebilir (public veya kendi) postları döndür
-    const accessible = likes.filter(({ post }) => {
-      if (!post) return false;
-      if (post.userId === currentUserId) return true;
-      // post'un sahibinin profili public değilse post'u gösterme
-      return true; // post visibility server-side'da post tablosunda yoksa tümünü göster
-    });
-
-    const hasMore = accessible.length > limit;
-    const items = (hasMore ? accessible.slice(0, limit) : accessible).map(
-      ({ post, createdAt }) => ({
-        ...post,
-        createdAt: post.createdAt.toISOString(),
-        updatedAt: post.updatedAt.toISOString(),
-        likedAt: createdAt.toISOString(),
-        tags: post.tags.map((pt) => pt.tag),
-      })
-    );
+    const hasMore = likes.length > limit;
+    const items = (hasMore ? likes.slice(0, limit) : likes).map(({ post, createdAt }) => ({
+      ...post,
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+      likedAt: createdAt.toISOString(),
+      tags: post.tags.map((pt) => pt.tag),
+    }));
 
     const nextCursor = hasMore ? items[items.length - 1].id : null;
 
     return NextResponse.json({ posts: items, nextCursor, total: items.length });
   } catch (err) {
-    console.error("[GET /api/users/[username]/liked-posts] error:", err);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    return handleApiError(err, "Beğenilen notlar yüklenemedi.");
   }
 }

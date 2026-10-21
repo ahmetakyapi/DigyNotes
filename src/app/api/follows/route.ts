@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
 import {
@@ -62,26 +63,37 @@ export async function POST(req: NextRequest) {
     });
 
     if (!existing) {
-      await prisma.follow.create({
-        data: { followerId: userId, followingId: target.id },
-      });
+      /* Two tabs racing: the loser hits the composite key, the follow already exists. */
+      const created = await prisma.follow
+        .create({ data: { followerId: userId, followingId: target.id } })
+        .then(() => true)
+        .catch((error: unknown) => {
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+            return false;
+          }
+          throw error;
+        });
 
-      await prisma.notification.create({
-        data: {
-          userId: target.id,
-          type: "follow",
-          referenceId: userId,
-        },
-      });
+      if (created) {
+        /* Follow/unfollow loops must not flood the target with "seni takip etti". */
+        const notification = { userId: target.id, type: "follow", referenceId: userId };
+        const alreadyNotified = await prisma.notification.findFirst({
+          where: { ...notification, createdAt: { gte: new Date(Date.now() - 24 * 60 * 60_000) } },
+          select: { id: true },
+        });
+        if (!alreadyNotified) {
+          await prisma.notification.create({ data: notification });
+        }
+
+        await prisma.activityLog.create({
+          data: {
+            userId,
+            action: "user.follow",
+            metadata: { targetUserId: target.id, targetUsername: username },
+          },
+        });
+      }
     }
-
-    await prisma.activityLog.create({
-      data: {
-        userId,
-        action: "user.follow",
-        metadata: { targetUserId: target.id, targetUsername: username },
-      },
-    });
 
     return applyRateLimitHeaders(NextResponse.json({ success: true }), rateLimit);
   } catch (error) {

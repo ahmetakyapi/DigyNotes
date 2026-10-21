@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-server";
 
@@ -13,21 +14,27 @@ export async function GET(req: NextRequest) {
 
     if (!title) return NextResponse.json({ count: 0, avgRating: 0 });
 
-    const posts = await prisma.post.findMany({
-      where: {
-        title: { equals: title, mode: "insensitive" },
-        ...(creator ? { creator: { equals: creator, mode: "insensitive" } } : {}),
-        // Only published notes count; drafts and trashed notes stay private.
-        isDeleted: false,
-        isDraft: false,
-        user: { isPublic: true },
-      },
-      select: { rating: true },
-    });
+    const where: Prisma.PostWhereInput = {
+      title: { equals: title, mode: "insensitive" },
+      ...(creator ? { creator: { equals: creator, mode: "insensitive" } } : {}),
+      // Only published notes count; drafts and trashed notes stay private.
+      isDeleted: false,
+      isDraft: false,
+      user: { isPublic: true },
+    };
 
-    const count = posts.length;
-    const avgRating =
-      count > 0 ? Math.round((posts.reduce((s, p) => s + p.rating, 0) / count) * 10) / 10 : 0;
+    const [authors, rated] = await Promise.all([
+      prisma.post.groupBy({ by: ["userId"], where }),
+      prisma.post.aggregate({
+        where: { AND: [where, { rating: { gt: 0 } }] },
+        _avg: { rating: true },
+      }),
+    ]);
+
+    // The card says "N kişi": people, not notes (a rewatch is the same person).
+    const count = authors.length;
+    // Unrated notes are stored as 0 and stay out of the average, like everywhere else.
+    const avgRating = Math.round((rated._avg.rating ?? 0) * 10) / 10;
 
     return NextResponse.json({ count, avgRating });
   } catch (error) {

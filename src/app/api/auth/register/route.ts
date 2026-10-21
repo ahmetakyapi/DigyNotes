@@ -9,6 +9,7 @@ import {
   createRateLimitErrorResponse,
 } from "@/lib/rate-limit";
 import { getSiteSetting } from "@/lib/site-settings";
+import { isReservedUsername } from "@/lib/usernames";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // The name can't be edited later and shows on every public surface.
@@ -71,6 +72,10 @@ export async function POST(request: NextRequest) {
 
     if (!/^[a-z0-9_]{3,30}$/.test(cleanUsername)) {
       return fail("Kullanıcı adı 3-30 karakter, sadece harf, rakam ve _ içerebilir.", 400);
+    }
+
+    if (isReservedUsername(cleanUsername)) {
+      return fail("Bu kullanıcı adı kullanılamaz.", 400);
     }
 
     const existingUsername = await prisma.user.findUnique({
