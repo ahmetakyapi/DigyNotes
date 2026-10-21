@@ -98,7 +98,7 @@ test("requireStringField returns null for empty or non-string", () => {
 
 // ── sanitizePostContent ─────────────────────────────────────────────
 
-test("sanitizePostContent keeps only Quill's ql-* classes", () => {
+test("sanitizePostContent keeps only the classes Quill writes into content", () => {
   assert.equal(
     sanitizePostContent('<p class="ql-align-center fixed inset-0">x</p>'),
     '<p class="ql-align-center">x</p>'
@@ -108,6 +108,16 @@ test("sanitizePostContent keeps only Quill's ql-* classes", () => {
     '<pre class="ql-syntax">kod</pre><li class="ql-indent-1">a</li>'
   );
   assert.equal(sanitizePostContent('<span class="hidden">h</span>'), "<span>h</span>");
+  assert.equal(
+    sanitizePostContent(
+      '<p class="ql-direction-rtl ql-editor">a</p><span class="ql-hidden">b</span>'
+    ),
+    '<p class="ql-direction-rtl">a</p><span>b</span>'
+  );
+  assert.equal(
+    sanitizePostContent('<span class="ql-size-large ql-font-serif ql-tooltip">c</span>'),
+    '<span class="ql-size-large ql-font-serif">c</span>'
+  );
 });
 
 test("sanitizePostContent strips app classes from links and marks them as user content", () => {

@@ -93,9 +93,19 @@ export const POST_SANITIZE_CONFIG: sanitizeHtml.IOptions = {
     a: ["href", "name", "target", "rel"],
     img: ["src", "alt", "width", "height"],
   },
-  // Quill only emits ql-* classes (align, indent, size, syntax…); any other class would let a
-  // note use app utilities such as `fixed inset-0 z-50` and draw over the note page.
-  allowedClasses: { "*": ["ql-*"] },
+  // Only the classes Quill 1.3.7 writes into content. Any other class (app utilities such as
+  // `fixed inset-0 z-50`, or Quill UI classes like ql-hidden) could restyle the note page.
+  allowedClasses: {
+    "*": [
+      "ql-align-*",
+      "ql-indent-*",
+      "ql-size-*",
+      "ql-font-*",
+      "ql-direction-*",
+      "ql-syntax",
+      "ql-video",
+    ],
+  },
   // User links are user-generated content: no ranking credit, no opener or referrer.
   transformTags: {
     a: (tagName, attribs) => ({
