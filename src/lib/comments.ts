@@ -5,7 +5,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { decodeCommentCursor, encodeCommentCursor } from "@/lib/comment-thread";
+import { decodeCommentCursor, encodeCommentCursor, resolveReplyParent } from "@/lib/comment-thread";
 import { extractMentions } from "@/lib/mentions";
 import { canReadPost, type PostReadAccess } from "@/lib/post-access";
 
@@ -17,7 +17,8 @@ export const COMMENT_USER_SELECT = {
 } as const;
 
 /* Reply levels fetched below a page of roots. Each level is one query; real threads
-   are a few levels deep, the cap only bounds a pathological chain. */
+   are a few levels deep, the cap only bounds a pathological chain. A new reply never
+   goes below it (`resolveReplyParentId`), so nothing is saved that no page returns. */
 const MAX_REPLY_DEPTH = 12;
 /* Mention tokens scanned per comment when resolving links (the API notifies at most
    five, but older text may name more). */
@@ -128,6 +129,14 @@ export async function findCommentForResponse(commentId: string, viewerId: string
   if (!row) return null;
   const [comment] = await serializeComments([row]);
   return comment;
+}
+
+/** The comment a new reply to `parent` is stored under (see `resolveReplyParent`). */
+export function resolveReplyParentId(parent: { id: string; parentId: string | null }) {
+  return resolveReplyParent(parent, MAX_REPLY_DEPTH, async (id) => {
+    const row = await prisma.comment.findUnique({ where: { id }, select: { parentId: true } });
+    return row ? row.parentId : undefined;
+  });
 }
 
 /**
