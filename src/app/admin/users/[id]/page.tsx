@@ -311,7 +311,7 @@ export default function UserDetailPage({ params }: { params: { id: string } }) {
       {/* ── editorial header ── */}
       <header className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end">
         <span className="dn-display flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[44px] italic leading-none text-[var(--gold)]">
-          {user.name.charAt(0).toUpperCase()}
+          {user.name.charAt(0).toLocaleUpperCase("tr-TR")}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

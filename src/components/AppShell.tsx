@@ -134,7 +134,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
     pathname.startsWith("/posts/") ||
     pathname === "/new-post";
   const isProfile = pathname.startsWith("/profile");
-  const userInitial = session?.user?.name?.charAt(0)?.toUpperCase() ?? "?";
+  const userInitial = session?.user?.name?.charAt(0)?.toLocaleUpperCase("tr-TR") ?? "?";
   const userAvatarUrl = session?.user?.avatarUrl ?? null;
 
   return (

@@ -14,6 +14,8 @@ interface ConfirmModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: "danger" | "default";
+  /** While the confirmed action runs: the confirm button is disabled and the modal stays open. */
+  isLoading?: boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -25,17 +27,18 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   confirmLabel = "Sil",
   cancelLabel = "Vazgeç",
   variant = "danger",
+  isLoading = false,
 }) => {
   const trapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !isLoading) onClose();
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [isOpen, onClose]);
+  }, [isOpen, isLoading, onClose]);
 
   return (
     <AnimatePresence>
@@ -53,7 +56,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             exit="exit"
             variants={modalBackdrop}
             aria-hidden
-            onMouseDown={onClose}
+            onMouseDown={isLoading ? undefined : onClose}
           />
 
           <motion.div
@@ -79,7 +82,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               </button>
               <button
                 onClick={onConfirm}
-                className={`rounded-md px-5 py-3 text-sm font-semibold text-white transition-colors ${
+                disabled={isLoading}
+                className={`rounded-md px-5 py-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                   variant === "danger"
                     ? "bg-[var(--danger)] hover:bg-[var(--danger-light)]"
                     : "bg-[var(--gold)] hover:bg-[var(--gold-light)]"

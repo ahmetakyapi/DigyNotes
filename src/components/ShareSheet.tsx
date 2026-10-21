@@ -28,8 +28,7 @@ import {
 } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { modalBackdrop } from "@/lib/variants";
-import { EASE_OUT_EXPO } from "@/components/landing/Motion";
+import { EASE_OUT_EXPO, modalBackdrop } from "@/lib/variants";
 
 export interface SharePreview {
   /** Same-origin URL of the share card image (`/posts/<id>/opengraph-image`). */
@@ -106,7 +105,12 @@ export default function ShareSheet({ open, onClose, title, text, url, preview }:
   const saveCard = async () => {
     if (!preview) return;
     try {
-      const blob = await (await fetch(preview.image)).blob();
+      const res = await fetch(preview.image);
+      // A failed render (500, a 504 timeout page) must not be saved as a broken .jpg.
+      if (!res.ok || !res.headers.get("content-type")?.startsWith("image/")) {
+        throw new Error("card");
+      }
+      const blob = await res.blob();
       const file = new File([blob], `${slugify(title)}-digynotes.jpg`, { type: "image/jpeg" });
       // Phones: hand the card to the share sheet (Instagram story, WhatsApp status…).
       if (navigator.canShare?.({ files: [file] })) {
@@ -116,7 +120,8 @@ export default function ShareSheet({ open, onClose, title, text, url, preview }:
       const href = URL.createObjectURL(blob);
       const a = Object.assign(document.createElement("a"), { href, download: file.name });
       a.click();
-      URL.revokeObjectURL(href);
+      // Revoked a moment later: revoking right after click() can cancel the download.
+      setTimeout(() => URL.revokeObjectURL(href), 1000);
       toast.success("Kart kaydedildi");
     } catch (err) {
       if ((err as Error)?.name !== "AbortError") toast.error("Kart kaydedilemedi");

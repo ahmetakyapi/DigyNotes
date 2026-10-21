@@ -5,6 +5,10 @@
 
 export const EASE = [0.22, 1, 0.36, 1] as const
 
+/* Lives here, not in landing/Motion (a client module that pulls in Lenis), so the share
+   sheet on note pages can use it without loading the landing's smooth scroll. */
+export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
+
 export const fadeIn = {
   hidden:  { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.4, ease: EASE } },

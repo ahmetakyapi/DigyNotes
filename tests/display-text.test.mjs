@@ -31,3 +31,15 @@ test("formatDisplaySentence keeps names and acronyms", () => {
     "Insomniac, Wolverine'i sert yapmış. MMO'lardaki en güzel his, HBO'da."
   );
 });
+
+test("display helpers capitalise accented Latin letters at the first letter", () => {
+  assert.equal(formatDisplayTitle("élite"), "Élite");
+  assert.equal(formatDisplayTitle("Élite"), "Élite");
+  assert.equal(formatDisplayTitle("Ólafur Arnalds"), "Ólafur Arnalds");
+  assert.equal(formatDisplayTitle("âşık veysel"), "Âşık Veysel");
+  assert.equal(formatDisplayTitle("Ñu"), "Ñu");
+  assert.equal(
+    formatDisplaySentence("élite bir dizi. ölmeden önce izle."),
+    "Élite bir dizi. Ölmeden önce izle."
+  );
+});

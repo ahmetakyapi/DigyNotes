@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-server";
+import { categorySupportsSpoiler } from "@/lib/post-config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,17 +30,23 @@ export async function GET(req: NextRequest) {
       },
       take: 10,
       orderBy: { createdAt: "desc" },
-      include: {
+      // Only what the "Diğer Notlar" list on the note page renders: no content HTML.
+      select: {
+        id: true,
+        excerpt: true,
+        rating: true,
+        category: true,
+        hasSpoiler: true,
+        createdAt: true,
         user: { select: { id: true, name: true, username: true, avatarUrl: true } },
-        tags: { include: { tag: true } },
       },
     });
 
-    const result = posts.map(({ tags, ...rest }) => ({
-      ...rest,
-      createdAt: rest.createdAt.toISOString(),
-      updatedAt: rest.updatedAt.toISOString(),
-      tags: tags.map((pt) => pt.tag),
+    // A spoiler note's excerpt is the spoiler itself, so it never leaves the server.
+    const result = posts.map((post) => ({
+      ...post,
+      excerpt: post.hasSpoiler && categorySupportsSpoiler(post.category) ? "" : post.excerpt,
+      createdAt: post.createdAt.toISOString(),
     }));
 
     return NextResponse.json(result);

@@ -38,6 +38,11 @@ import toast from "react-hot-toast";
 
 const SPOILER_OVERLAY_STORAGE_KEY = "dn_spoiler_overlay_seen";
 
+/* Keeps the blurred spoiler body's links out of the tab order. React 18 doesn't know
+   `inert` yet and drops a boolean value (with a warning), so it gets the HTML form, an
+   empty string; Next's React types already declare it as a boolean, hence the cast. */
+const INERT_PROPS = { inert: "" } as unknown as React.HTMLAttributes<HTMLElement>;
+
 interface LikeData {
   count: number;
   liked: boolean;
@@ -72,6 +77,7 @@ export default function PostDetailClient({
   const [isDeleting, setIsDeleting] = useState(false);
   const [pinned, setPinned] = useState(Boolean(initialPost?.isPinned));
   const [archived, setArchived] = useState(Boolean(initialPost?.isArchived));
+  const [isUpdatingFlags, setIsUpdatingFlags] = useState(false);
   const [communityPosts, setCommunityPosts] = useState<Post[]>([]);
   const [imgOrientation, setImgOrientation] = useState<"portrait" | "landscape" | null>(null);
   const [isSpoilerRevealed, setIsSpoilerRevealed] = useState(false);
@@ -79,6 +85,7 @@ export default function PostDetailClient({
 
   /* Like state */
   const [likeData, setLikeData] = useState<LikeData>({ count: 0, liked: false });
+  const [likesLoaded, setLikesLoaded] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
 
   const [interactionMessage, setInteractionMessage] = useState<{
@@ -131,12 +138,15 @@ export default function PostDetailClient({
       .catch(() => {});
   }, [post?.title, post?.id]);
 
-  /* Fetch likes */
+  /* Fetch likes. The like button waits for it: a toggle sent before the real state is
+     known could flip a like the reader already has, or be overwritten mid-flight. */
   useEffect(() => {
+    setLikesLoaded(false);
     fetch(`/api/posts/${params.id}/likes`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => data && setLikeData(data))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLikesLoaded(true));
   }, [params.id]);
 
   /* Owners are the ones who share: when they open a shareable note, quietly render its
@@ -215,6 +225,7 @@ export default function PostDetailClient({
   };
 
   const handleConfirmDelete = async () => {
+    if (isDeleting) return;
     setIsDeleting(true);
     try {
       await requestJson<{ success: boolean }>(
@@ -241,7 +252,7 @@ export default function PostDetailClient({
       router.push("/login");
       return;
     }
-    if (isLiking) return;
+    if (isLiking || !likesLoaded) return;
     setIsLiking(true);
     // Optimistic update
     setLikeData((prev) => ({
@@ -267,6 +278,37 @@ export default function PostDetailClient({
       }
     } finally {
       setIsLiking(false);
+    }
+  };
+
+  /* Pin / archive. One request at a time; the flag flips only after the server confirms. */
+  const runPostAction = async (
+    action: "pin" | "unpin" | "archive" | "unarchive",
+    apply: () => void,
+    successMessage: string,
+    fallbackMessage: string
+  ) => {
+    if (!post || isUpdatingFlags) return;
+    setIsUpdatingFlags(true);
+    try {
+      await requestJson<{ success: boolean }>(
+        `/api/posts/${post.id}/actions`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action }),
+        },
+        fallbackMessage
+      );
+      apply();
+      toast.success(successMessage);
+    } catch (error) {
+      toast.error(getClientErrorMessage(error, fallbackMessage));
+      if (isAuthenticationError(error)) {
+        router.push("/login");
+      }
+    } finally {
+      setIsUpdatingFlags(false);
     }
   };
 
@@ -367,16 +409,39 @@ export default function PostDetailClient({
       <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
         {/* Breadcrumb */}
         <nav className="mb-4 flex items-center gap-2 text-[12.5px] font-medium text-[var(--text-muted)]">
-          <Link href="/notes" className="transition-colors hover:text-[var(--gold)]">
-            Notlar
-          </Link>
-          <span className="text-[var(--border)]">›</span>
-          <Link
-            href={`/category/${encodeURIComponent(categorySlug)}`}
-            className="transition-colors hover:text-[var(--gold)]"
-          >
-            {categoryLabel}
-          </Link>
+          {/* /notes and /category/* are the viewer's own private lists: only the owner's
+              breadcrumb leads there; everyone else goes back to the author. */}
+          {isOwnPost ? (
+            <>
+              <Link href="/notes" className="transition-colors hover:text-[var(--gold)]">
+                Notlar
+              </Link>
+              <span className="text-[var(--border)]">›</span>
+              <Link
+                href={`/category/${encodeURIComponent(categorySlug)}`}
+                className="transition-colors hover:text-[var(--gold)]"
+              >
+                {categoryLabel}
+              </Link>
+            </>
+          ) : (
+            <>
+              {authorProfileHref ? (
+                <Link
+                  href={authorProfileHref}
+                  className="transition-colors hover:text-[var(--gold)]"
+                >
+                  {post.user?.name || `@${post.user?.username}`}
+                </Link>
+              ) : (
+                <Link href="/discover" className="transition-colors hover:text-[var(--gold)]">
+                  Keşfet
+                </Link>
+              )}
+              <span className="text-[var(--border)]">›</span>
+              <span>{categoryLabel}</span>
+            </>
+          )}
           <span className="text-[var(--border)]">›</span>
           <span className="max-w-[180px] truncate text-[var(--text-secondary)] sm:max-w-xs">
             {displayTitle.length > 35 ? displayTitle.slice(0, 35) + "…" : displayTitle}
@@ -385,7 +450,9 @@ export default function PostDetailClient({
 
         <div
           className="relative w-full overflow-hidden rounded-[32px] border border-[var(--border-subtle)] bg-[#0b0b0a] shadow-[var(--media-glow)]"
-          style={{ height: imgOrientation === "landscape" ? "56vh" : "64vh", minHeight: 420 }}
+          /* One height for every cover: the orientation is only known after the image
+             loads, and resizing the hero then would shift the page below it. */
+          style={{ height: "60vh", minHeight: 420 }}
         >
           {/* Blur backdrop */}
           {imgOrientation !== "landscape" && (
@@ -438,25 +505,19 @@ export default function PostDetailClient({
                 <div className="flex items-center gap-2">
                   <button
                     aria-label={pinned ? "Sabitlemeyi kaldır" : "Sabitle"}
-                    onClick={async () => {
-                      const action = pinned ? "unpin" : "pin";
-                      const res = await fetch(`/api/posts/${post.id}/actions`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action }),
-                      });
-                      if (res.ok) {
-                        setPinned(!pinned);
-                        toast.success(
-                          !pinned
-                            ? "Not sabitlendi, notlarının en üstünde duracak"
-                            : "Sabitleme kaldırıldı"
-                        );
-                      } else {
-                        toast.error("Sabitleme değiştirilemedi. Tekrar dene.");
-                      }
+                    onClick={() => {
+                      const nextPinned = !pinned;
+                      void runPostAction(
+                        nextPinned ? "pin" : "unpin",
+                        () => setPinned(nextPinned),
+                        nextPinned
+                          ? "Not sabitlendi, notlarının en üstünde duracak"
+                          : "Sabitleme kaldırıldı",
+                        "Sabitleme değiştirilemedi. Tekrar dene."
+                      );
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
+                    disabled={isUpdatingFlags}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50 sm:px-3.5 sm:py-2 ${
                       pinned
                         ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
                         : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -480,21 +541,17 @@ export default function PostDetailClient({
                   </button>
                   <button
                     aria-label={archived ? "Arşivden çıkar" : "Arşivle"}
-                    onClick={async () => {
-                      const action = archived ? "unarchive" : "archive";
-                      const res = await fetch(`/api/posts/${post.id}/actions`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action }),
-                      });
-                      if (res.ok) {
-                        setArchived(!archived);
-                        toast.success(!archived ? "Arşivlendi" : "Arşivden çıkarıldı");
-                      } else {
-                        toast.error("Arşiv durumu değiştirilemedi. Tekrar dene.");
-                      }
+                    onClick={() => {
+                      const nextArchived = !archived;
+                      void runPostAction(
+                        nextArchived ? "archive" : "unarchive",
+                        () => setArchived(nextArchived),
+                        nextArchived ? "Arşivlendi" : "Arşivden çıkarıldı",
+                        "Arşiv durumu değiştirilemedi. Tekrar dene."
+                      );
                     }}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 sm:px-3.5 sm:py-2 ${
+                    disabled={isUpdatingFlags}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50 sm:px-3.5 sm:py-2 ${
                       archived
                         ? "border-accent-2 bg-accent-2 text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--accent-2-rgb)/0.3)]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -581,17 +638,7 @@ export default function PostDetailClient({
                   dot and clipped, so a line never starts or ends on a stray separator. */}
               <div className="overflow-hidden text-sm text-[var(--media-text-secondary)]">
                 <div className="-ml-5 flex flex-wrap items-center gap-y-2 [&>*]:inline-flex [&>*]:items-center [&>*]:before:w-5 [&>*]:before:shrink-0 [&>*]:before:text-center [&>*]:before:text-[var(--media-text-secondary)] [&>*]:before:opacity-50 [&>*]:before:content-['•']">
-                  {post.creator &&
-                    (authorProfileHref ? (
-                      <Link
-                        href={authorProfileHref}
-                        className="transition-colors hover:text-[#b9a8ff]"
-                      >
-                        {displayCreator}
-                      </Link>
-                    ) : (
-                      <span>{displayCreator}</span>
-                    ))}
+                  {post.creator && <span>{displayCreator}</span>}
                   {post.years && <span>{post.years}</span>}
                   {post.rating > 0 && (
                     <span className="gap-1.5">
@@ -647,7 +694,7 @@ export default function PostDetailClient({
                 <button
                   type="button"
                   onClick={toggleLike}
-                  disabled={isLiking}
+                  disabled={isLiking || !likesLoaded}
                   aria-label={likeData.liked ? "Beğeniyi kaldır" : "Beğen"}
                   title={likeData.liked ? "Beğeniyi kaldır" : "Beğen"}
                   className={`flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-200 active:scale-95 disabled:opacity-50 ${
@@ -808,6 +855,7 @@ export default function PostDetailClient({
         <ReadingProgress enabled={readingMinutes >= 2 && !shouldBlurSpoiler}>
           <div className="relative">
             <article
+              {...(shouldBlurSpoiler ? INERT_PROPS : {})}
               aria-hidden={shouldBlurSpoiler}
               className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
                 shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
@@ -875,7 +923,7 @@ export default function PostDetailClient({
                 >
                   <div className="mb-2 flex items-center gap-2">
                     <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-[12px] font-bold text-[var(--gold)]">
-                      {cp.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
+                      {cp.user?.name?.charAt(0)?.toLocaleUpperCase("tr-TR") ?? "?"}
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">
                       {cp.user?.name ?? "Kullanıcı"}
@@ -890,7 +938,9 @@ export default function PostDetailClient({
                     )}
                   </div>
                   <p className="line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">
-                    {cp.excerpt}
+                    {cp.hasSpoiler && categorySupportsSpoiler(cp.category)
+                      ? "Spoiler içeriyor; okumak için notu aç."
+                      : cp.excerpt}
                   </p>
                 </Link>
               ))}
@@ -901,20 +951,22 @@ export default function PostDetailClient({
         {/* Alt Navigasyon */}
         <div className="mt-12 border-t border-[var(--border)] pt-6">
           <div className="flex flex-wrap items-center gap-4">
-            <Link
-              href={`/category/${encodeURIComponent(categorySlug)}`}
-              className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              {categoryLabel}
-            </Link>
+            {isOwnPost && (
+              <Link
+                href={`/category/${encodeURIComponent(categorySlug)}`}
+                className="flex items-center gap-1.5 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--gold)]"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                {categoryLabel}
+              </Link>
+            )}
             {post.tags?.[0] && (
               <Link
                 href={`/tag/${encodeURIComponent(post.tags[0].name)}`}
@@ -939,6 +991,7 @@ export default function PostDetailClient({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
         title="Yazıyı Sil"
         message="Bu yazıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
       />
