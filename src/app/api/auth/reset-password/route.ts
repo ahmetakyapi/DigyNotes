@@ -100,7 +100,8 @@ export async function POST(request: NextRequest) {
     // the same link can't both succeed.
     const updated = await prisma.user.updateMany({
       where: { id: result.userId, password: lookup.hash },
-      // lastLogoutAt mirrors sign-out: the reset ends the account's earlier sessions.
+      // The new hash changes the password version the sessions carry (pwv, src/lib/auth.ts),
+      // so every earlier session stops working; lastLogoutAt only feeds the admin view.
       data: { password: hashedPassword, lastLogoutAt: new Date() },
     });
     if (updated.count === 0) {

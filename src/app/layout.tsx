@@ -31,8 +31,7 @@ import { GradientMesh } from "@/components/GradientMesh";
 import CommandPalette from "@/components/CommandPalette";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/metadata";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerAuthSession } from "@/lib/api-server";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -116,7 +115,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Known on the server so semi-public pages (/discover, /profile) render their
   // content in the first HTML instead of a session loader.
-  const session = await getServerSession(authOptions).catch(() => null);
+  const session = await getServerAuthSession().catch(() => null);
 
   return (
     <html

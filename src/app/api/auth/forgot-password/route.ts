@@ -12,6 +12,9 @@ const WINDOW_MS = 15 * 60_000;
 const RATE_LIMIT_MESSAGE = "Çok fazla deneme yaptın. Lütfen 15 dakika sonra tekrar dene.";
 // Same answer whether or not the address has an account (no user enumeration).
 const SENT_MESSAGE = "Bu adrese kayıtlı bir hesap varsa şifre sıfırlama bağlantısı gönderdik.";
+// Same answer time too: sending the mail takes a Resend round trip, an unknown address
+// none, so every accepted request takes at least this long.
+const MIN_RESPONSE_MS = 1000;
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,6 +42,8 @@ export async function POST(request: NextRequest) {
     });
     if (!emailLimit.success) return createRateLimitErrorResponse(emailLimit, RATE_LIMIT_MESSAGE);
 
+    const startedAt = Date.now();
+
     const secret = process.env.NEXTAUTH_SECRET;
     if (!secret) {
       console.error("[forgot-password] NEXTAUTH_SECRET is not set");
@@ -60,6 +65,11 @@ export async function POST(request: NextRequest) {
         secret,
       });
       await sendPasswordResetEmail({ to: user.email, name: user.name, token });
+    }
+
+    const remaining = MIN_RESPONSE_MS - (Date.now() - startedAt);
+    if (remaining > 0) {
+      await new Promise((resolve) => setTimeout(resolve, remaining + Math.random() * 150));
     }
 
     return NextResponse.json({ ok: true, message: SENT_MESSAGE });

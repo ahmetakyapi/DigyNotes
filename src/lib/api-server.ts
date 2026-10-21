@@ -4,6 +4,7 @@
  * Test edilemeyen (side-effect'li) yardımcılar burada yaşar.
  */
 
+import { cache } from "react";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -26,32 +27,46 @@ export async function safeParseBody<T = Record<string, unknown>>(
 
 // ── Error handling ──────────────────────────────────────────────────
 
+// İsteğin kendisinin yol açabileceği Prisma kodları. Diğerleri (P1xxx bağlantı,
+// P2021/P2022 şema farkı, …) sunucu hatasıdır ve 500 döner.
+const CLIENT_PRISMA_STATUS: Record<string, number> = { P2002: 400, P2003: 400, P2025: 404 };
+
 /**
  * API route'larında yakalanan hataları tutarlı JSON yanıtına çevirir.
- * Geliştirme ortamında hatayı konsola yazar.
+ * Hatayı her ortamda sunucu loguna yazar (Vercel function logs); istemci yalnızca
+ * genel Türkçe mesajı görür.
  */
 export function handleApiError(
   error: unknown,
   fallbackMessage = "Bir hata oluştu. Lütfen tekrar deneyin."
 ) {
-  if (process.env.NODE_ENV === "development") {
-    console.error("[API Error]", error);
+  console.error("[API Error]", error);
+
+  if (isKnownPrismaError(error)) {
+    const status = CLIENT_PRISMA_STATUS[error.code];
+    if (status) {
+      return NextResponse.json({ error: getPrismaErrorMessage(error) }, { status });
+    }
   }
 
-  const status = isKnownPrismaError(error) ? 400 : 500;
-  const message = isKnownPrismaError(error) ? getPrismaErrorMessage(error) : fallbackMessage;
-
-  return NextResponse.json({ error: message }, { status });
+  return NextResponse.json({ error: fallbackMessage }, { status: 500 });
 }
 
 // ── Auth helpers ────────────────────────────────────────────────────
+
+/**
+ * Oturumu sunucu render'ı başına bir kez çözer: layout, generateMetadata ve sayfa aynı
+ * sonucu paylaşır (session callback'i her çağrıda veritabanına gider). Route
+ * handler'larda React cache kapsamı yoktur, her çağrı doğrudan çalışır.
+ */
+export const getServerAuthSession = cache(() => getServerSession(authOptions));
 
 /**
  * Oturum kontrolü yaparak kullanıcı ID'sini döner.
  * Oturum yoksa null döner.
  */
 export async function getSessionUserId(): Promise<string | null> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerAuthSession();
   return (session?.user as { id?: string })?.id ?? null;
 }
 
@@ -74,7 +89,7 @@ export async function requireAuth(): Promise<[string, null] | [null, NextRespons
  * Admin ise userId döner, değilse null.
  */
 export async function requireAdmin(): Promise<string | null> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerAuthSession();
   if (!session?.user) return null;
 
   const userId = (session.user as { id: string }).id;

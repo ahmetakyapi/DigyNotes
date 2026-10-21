@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerAuthSession } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
 import { getSiteSetting } from "@/lib/site-settings";
 import { redirect } from "next/navigation";
@@ -17,7 +16,7 @@ export async function MaintenanceGuard({ children }: { children: React.ReactNode
   const maintenanceMode = await getSiteSetting("maintenanceMode");
 
   if (maintenanceMode === "true") {
-    const session = await getServerSession(authOptions);
+    const session = await getServerAuthSession();
     const userId = (session?.user as { id?: string })?.id;
 
     if (userId) {

@@ -35,6 +35,10 @@ type UpstashRedisConfig = {
   token: string;
 };
 
+// A slow or hanging Upstash must not stall every limited endpoint: past this the call
+// aborts and consumeRateLimit falls back to the in-memory limiter.
+const UPSTASH_TIMEOUT_MS = 1500;
+
 const UPSTASH_RATE_LIMIT_SCRIPT = `
 local current = redis.call("INCR", KEYS[1])
 if current == 1 then
@@ -166,6 +170,7 @@ async function sendUpstashCommand(config: UpstashRedisConfig, command: unknown[]
     },
     body: JSON.stringify(command),
     cache: "no-store",
+    signal: AbortSignal.timeout(UPSTASH_TIMEOUT_MS),
   });
 
   if (!response.ok) {

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
@@ -240,7 +241,21 @@ export default function ProfileSettingsPage() {
         toast.error(err.error ?? "Şifre değiştirilemedi");
         return;
       }
-      toast.success("Şifren güncellendi");
+      // The new hash ends every session opened with the old password, this one too:
+      // sign this device back in so only the other devices are signed out.
+      const relogin = profile?.email
+        ? await signIn("credentials", {
+            email: profile.email,
+            password: newPassword,
+            redirect: false,
+          }).catch(() => null)
+        : null;
+      if (!relogin?.ok || relogin.error) {
+        toast.success("Şifren güncellendi, yeni şifrenle tekrar giriş yap");
+        router.push("/login");
+        return;
+      }
+      toast.success("Şifren güncellendi, diğer cihazlardaki oturumlar kapatıldı");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

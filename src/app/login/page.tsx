@@ -36,11 +36,16 @@ export default function LoginPage() {
 
     try {
       const result = await signIn("credentials", {
-        email: email.toLowerCase(),
+        email: email.trim().toLowerCase(),
         password,
         redirect: false,
       });
 
+      // Thrown by authorize() in src/lib/auth.ts when the per-address or per-IP limit is hit.
+      if (result?.error === "RATE_LIMITED") {
+        publishError("Çok fazla deneme yaptın. Lütfen birkaç dakika sonra tekrar dene.");
+        return;
+      }
       if (result?.error) {
         publishError("E-posta veya şifre hatalı.");
         return;

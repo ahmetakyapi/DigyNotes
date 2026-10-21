@@ -2,26 +2,24 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import { consumeRateLimit } from "./rate-limit";
+import { isCurrentPasswordVersion, passwordVersion } from "./password-version";
 
-// ── Basit in-memory login rate limit ────────────────────────────────
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-const LOGIN_MAX = 8;
+// ── Login rate limit ────────────────────────────────────────────────
+// Shared limiter (Upstash when configured, in-memory fallback): per address against
+// guessing one account, per IP against spraying one password over many accounts.
+const LOGIN_MAX_PER_EMAIL = 8;
+const LOGIN_MAX_PER_IP = 30;
 const LOGIN_WINDOW_MS = 5 * 60_000; // 5 dakika
 
-function checkLoginRateLimit(email: string): boolean {
-  const now = Date.now();
-  const key = `login:${email}`;
-  const entry = loginAttempts.get(key);
-
-  if (!entry || entry.resetAt <= now) {
-    loginAttempts.set(key, { count: 1, resetAt: now + LOGIN_WINDOW_MS });
-    return true;
+// consumeRateLimit reads the client IP from a Request; authorize only gets plain headers.
+function toLimiterRequest(headers: Record<string, unknown> | undefined) {
+  const forwarded: Record<string, string> = {};
+  for (const name of ["x-forwarded-for", "x-real-ip"]) {
+    const value = headers?.[name];
+    if (typeof value === "string" && value) forwarded[name] = value;
   }
-
-  if (entry.count >= LOGIN_MAX) return false;
-
-  entry.count += 1;
-  return true;
+  return new Request("http://localhost/api/auth/callback/credentials", { headers: forwarded });
 }
 // ────────────────────────────────────────────────────────────────────
 
@@ -33,13 +31,30 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Şifre", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const normalizedEmail = credentials.email.toLowerCase();
+        const normalizedEmail = credentials.email.trim().toLowerCase();
 
-        // Rate limit kontrolü
-        if (!checkLoginRateLimit(normalizedEmail)) return null;
+        // Rate limit kontrolü — thrown, so signIn() returns error "RATE_LIMITED" and the
+        // login page says "too many attempts" instead of "wrong password".
+        const limiterReq = toLimiterRequest(req?.headers);
+        const [byEmail, byIp] = await Promise.all([
+          consumeRateLimit({
+            action: "auth-login-email",
+            req: limiterReq,
+            userId: `email:${normalizedEmail}`,
+            limit: LOGIN_MAX_PER_EMAIL,
+            windowMs: LOGIN_WINDOW_MS,
+          }),
+          consumeRateLimit({
+            action: "auth-login-ip",
+            req: limiterReq,
+            limit: LOGIN_MAX_PER_IP,
+            windowMs: LOGIN_WINDOW_MS,
+          }),
+        ]);
+        if (!byEmail.success || !byIp.success) throw new Error("RATE_LIMITED");
 
         const user = await prisma.user.findUnique({
           where: { email: normalizedEmail },
@@ -51,7 +66,7 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
 
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, name: user.name, pwv: passwordVersion(user.password) };
       },
     }),
   ],
@@ -61,7 +76,12 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      // pwv is stamped only at sign-in, never refreshed (not even on update()), so a
+      // session can't re-bless itself after the password changes.
+      if (user) {
+        token.id = user.id;
+        token.pwv = (user as { pwv?: string }).pwv;
+      }
       return token;
     },
     async session({ session, token }) {
@@ -69,15 +89,17 @@ export const authOptions: NextAuthOptions = {
         const userWithId = session.user as { id: string; avatarUrl?: string | null } & typeof session.user;
         userWithId.id = token.id as string;
 
-        // Banlanmış kullanıcıyı aktif oturumdan da düşür + avatar bilgisini session'a ekle
+        // Banlanmış ya da silinmiş kullanıcıyı ve son şifre değişikliğinden (sıfırlama ya da
+        // ayarlar) önce açılmış oturumları düşür + avatar bilgisini session'a ekle.
+        // The hash is only compared here, never copied onto the session.
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          select: { isBanned: true, avatarUrl: true },
+          select: { isBanned: true, avatarUrl: true, password: true },
         });
-        if (dbUser?.isBanned) {
+        if (!dbUser || dbUser.isBanned || !isCurrentPasswordVersion(token.pwv, dbUser.password)) {
           return null as unknown as typeof session;
         }
-        userWithId.avatarUrl = dbUser?.avatarUrl ?? null;
+        userWithId.avatarUrl = dbUser.avatarUrl ?? null;
       }
       return session;
     },

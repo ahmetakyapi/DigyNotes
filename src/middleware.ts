@@ -28,8 +28,11 @@ export default withAuth(
       signIn: "/login",
     },
     callbacks: {
+      /* A token without `pwv` predates session binding to the password (src/lib/auth.ts)
+         and no longer resolves to a session: send it to /login instead of an empty shell. */
       authorized: ({ token, req }) =>
-        Boolean(token) || (req.method === "GET" && PUBLIC_POST_READ.test(req.nextUrl.pathname)),
+        Boolean(token?.pwv) ||
+        (req.method === "GET" && PUBLIC_POST_READ.test(req.nextUrl.pathname)),
     },
   }
 );

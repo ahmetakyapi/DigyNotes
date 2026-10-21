@@ -35,8 +35,12 @@ export default function RegisterPage() {
       publishError("Şifreler eşleşmiyor.");
       return;
     }
-    if (password.length < 6) {
-      publishError("Şifre en az 6 karakter olmalı.");
+    if (password.length < 8) {
+      publishError("Şifre en az 8 karakter olmalı.");
+      return;
+    }
+    if (password.length > 128) {
+      publishError("Şifre en fazla 128 karakter olabilir.");
       return;
     }
 
@@ -95,6 +99,7 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              maxLength={80}
               autoComplete="name"
               placeholder="Adın Soyadın"
               className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
@@ -168,8 +173,10 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={8}
+                maxLength={128}
                 autoComplete="new-password"
-                placeholder="En az 6 karakter"
+                placeholder="En az 8 karakter"
                 className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
               <button
