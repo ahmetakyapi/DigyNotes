@@ -67,12 +67,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             exit="exit"
             variants={modalPanel}
           >
-            <h3 id="confirm-modal-title" className="mb-2 text-base font-bold text-[var(--text-primary)]">
+            <h3
+              id="confirm-modal-title"
+              className="mb-2 text-base font-bold text-[var(--text-primary)]"
+            >
               {title}
             </h3>
-            <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">
-              {message}
-            </p>
+            <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">{message}</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={onClose}

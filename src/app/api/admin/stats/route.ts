@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const rawSeries = searchParams.get("series") || "30d";
-    const series: SeriesRange = VALID_SERIES.includes(rawSeries as SeriesRange) ? (rawSeries as SeriesRange) : "30d";
+    const series: SeriesRange = VALID_SERIES.includes(rawSeries as SeriesRange)
+      ? (rawSeries as SeriesRange)
+      : "30d";
     const seriesDays = series === "7d" ? 7 : series === "30d" ? 30 : series === "90d" ? 90 : 365;
 
     // Days are cut at Istanbul midnight (servers run in UTC); Istanbul has no DST.

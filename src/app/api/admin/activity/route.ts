@@ -9,10 +9,10 @@ const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
 function getRangeStart(range: RangeKey): Date {
   const now = new Date();
   const ms: Record<RangeKey, number> = {
-    "24h":  24 * 60 * 60 * 1000,
-    "7d":   7  * 24 * 60 * 60 * 1000,
-    "30d":  30 * 24 * 60 * 60 * 1000,
-    "90d":  90 * 24 * 60 * 60 * 1000,
+    "24h": 24 * 60 * 60 * 1000,
+    "7d": 7 * 24 * 60 * 60 * 1000,
+    "30d": 30 * 24 * 60 * 60 * 1000,
+    "90d": 90 * 24 * 60 * 60 * 1000,
     "365d": 365 * 24 * 60 * 60 * 1000,
   };
   return new Date(now.getTime() - ms[range]);
@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const action = searchParams.get("action") || "";
     const rawRange = searchParams.get("range") || "24h";
-    const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey) ? (rawRange as RangeKey) : "24h";
+    const range: RangeKey = VALID_RANGES.includes(rawRange as RangeKey)
+      ? (rawRange as RangeKey)
+      : "24h";
     const limit = 50;
     const skip = (page - 1) * limit;
 
