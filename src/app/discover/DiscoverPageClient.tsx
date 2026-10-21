@@ -50,21 +50,32 @@ export default function DiscoverPageClient({
   // Server-rendered cards show at once; cards mounted later (search, paging) stagger in.
   const hydrating = useIsHydrating();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
   const USERS_PER_PAGE = 6;
 
   const fetchUsers = useCallback(async (q: string) => {
+    // Only the newest search may write: a slower earlier query must not overwrite it
+    const id = ++requestIdRef.current;
     setLoading(true);
     try {
       const url = q.trim() ? `/api/users/search?q=${encodeURIComponent(q)}` : "/api/users/search";
       const res = await fetch(url);
       const data = res.ok ? await res.json() : null;
+      if (id !== requestIdRef.current) return;
       setUsers(Array.isArray(data) ? data : []);
     } catch {
-      setUsers([]);
+      if (id === requestIdRef.current) setUsers([]);
     } finally {
-      setLoading(false);
+      if (id === requestIdRef.current) setLoading(false);
     }
   }, []);
+
+  useEffect(
+    () => () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    },
+    []
+  );
 
   const seeded = Boolean(initialUsers);
   useEffect(() => {

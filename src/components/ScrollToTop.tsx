@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpIcon } from "@phosphor-icons/react";
 
 /**
@@ -8,10 +8,17 @@ import { ArrowUpIcon } from "@phosphor-icons/react";
  */
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setVisible(window.scrollY > 400);
+      const next = window.scrollY > 400;
+      // Gizlenince buton aria-hidden olur; odak görünmez bir kontrolde kalmasın.
+      // Buton atlama bağlantısından önce geldiği için sonraki Tab sayfanın başından sürer.
+      if (!next && buttonRef.current && document.activeElement === buttonRef.current) {
+        buttonRef.current.blur();
+      }
+      setVisible(next);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -19,14 +26,18 @@ export default function ScrollToTop() {
   }, []);
 
   const scrollUp = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
     <button
+      ref={buttonRef}
       onClick={scrollUp}
       aria-label="Yukarı Dön"
-      className={`hover:border-accent/40 fixed bottom-20 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition-all duration-300 hover:text-[var(--gold)] active:scale-95 sm:bottom-6 sm:right-6 sm:h-11 sm:w-11 ${
+      tabIndex={visible ? 0 : -1}
+      aria-hidden={!visible}
+      className={`fixed bottom-20 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition-all duration-300 hover:border-accent/40 hover:text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 sm:bottom-6 sm:right-6 sm:h-11 sm:w-11 ${
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
       }`}
     >
