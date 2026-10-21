@@ -84,6 +84,10 @@ export default function ProfilePageClient({
   const [likedPosts, setLikedPosts] = useState<Post[]>([]);
   const [likedLoading, setLikedLoading] = useState(false);
   const [likedLoaded, setLikedLoaded] = useState(false);
+  const [likedFailed, setLikedFailed] = useState(false);
+  const [likedCursor, setLikedCursor] = useState<string | null>(null);
+  const [loadingMoreLiked, setLoadingMoreLiked] = useState(false);
+  const [moreLikedFailed, setMoreLikedFailed] = useState(false);
   const [loadingMorePosts, setLoadingMorePosts] = useState(false);
   const [morePostsFailed, setMorePostsFailed] = useState(false);
 
@@ -134,15 +138,52 @@ export default function ProfilePageClient({
   useEffect(() => {
     if (activeTab !== "liked" || likedLoaded) return;
     setLikedLoading(true);
-    fetch(`/api/users/${username}/liked-posts?limit=50`)
-      .then((r) => r.json())
+    fetch(`/api/users/${encodeURIComponent(username)}/liked-posts?limit=50`)
+      .then((r) => {
+        if (!r.ok) throw new Error(`API ${r.status}`);
+        return r.json();
+      })
       .then((data) => {
         setLikedPosts(Array.isArray(data.posts) ? data.posts : []);
+        setLikedCursor(typeof data.nextCursor === "string" ? data.nextCursor : null);
         setLikedLoaded(true);
       })
-      .catch(() => setLikedLoaded(true))
+      .catch(() => {
+        // A failed request is not "no likes": show the error state with a retry.
+        setLikedFailed(true);
+        setLikedLoaded(true);
+      })
       .finally(() => setLikedLoading(false));
   }, [activeTab, username, likedLoaded]);
+
+  const retryLiked = () => {
+    setLikedFailed(false);
+    setLikedLoading(true);
+    setLikedLoaded(false);
+  };
+
+  const loadMoreLiked = async () => {
+    if (loadingMoreLiked || !likedCursor) return;
+    setLoadingMoreLiked(true);
+    setMoreLikedFailed(false);
+    try {
+      const res = await fetch(
+        `/api/users/${encodeURIComponent(username)}/liked-posts?limit=50&cursor=${encodeURIComponent(likedCursor)}`
+      );
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = (await res.json()) as { posts?: Post[]; nextCursor?: string | null };
+      const incoming = Array.isArray(data.posts) ? data.posts : [];
+      setLikedPosts((prev) => {
+        const ids = new Set(prev.map((post) => post.id));
+        return [...prev, ...incoming.filter((post) => !ids.has(post.id))];
+      });
+      setLikedCursor(typeof data.nextCursor === "string" ? data.nextCursor : null);
+    } catch {
+      setMoreLikedFailed(true);
+    } finally {
+      setLoadingMoreLiked(false);
+    }
+  };
 
   const joinedDate = user ? new Date(user.createdAt).toLocaleString("tr-TR", JOINED_FORMAT) : "";
   // The first page holds 30 notes; the profile used to stop there ("30 / 30 not" of 34).
@@ -212,8 +253,9 @@ export default function ProfilePageClient({
     if (activeTab === "posts") {
       return {
         label: "Notlar",
+        // Search covers the loaded notes only; say so while more are left (ERR-DATA-013).
         count: normalizedProfileQuery
-          ? `${filteredPosts.length} / ${posts.length} not`
+          ? `${filteredPosts.length} / ${posts.length} not${hasMorePosts ? " (yüklenen notlarda)" : ""}`
           : `${user?.postCount ?? posts.length} not`,
         placeholder: "Not, kategori ya da etiket ara...",
       };
@@ -229,7 +271,11 @@ export default function ProfilePageClient({
       label: "Beğenilen Notlar",
       count: likedLoading
         ? "Yükleniyor…"
-        : `${filteredLikedPosts.length} / ${likedPosts.length} beğenilen not`,
+        : likedFailed
+          ? "Yüklenemedi"
+          : normalizedProfileQuery
+            ? `${filteredLikedPosts.length} / ${likedPosts.length} beğenilen not${likedCursor ? " (yüklenen notlarda)" : ""}`
+            : `${likedPosts.length}${likedCursor ? "+" : ""} beğenilen not`,
       placeholder: "Beğenilen notlarda ara...",
     };
   }, [
@@ -238,9 +284,12 @@ export default function ProfilePageClient({
     user?.postCount,
     filteredPosts.length,
     posts.length,
+    hasMorePosts,
     filteredCollections.length,
     collections.length,
     likedLoading,
+    likedFailed,
+    likedCursor,
     filteredLikedPosts.length,
     likedPosts.length,
   ]);
@@ -297,8 +346,8 @@ export default function ProfilePageClient({
             Bu profil gizli
           </div>
           <p className="mb-5 text-xs leading-5 text-[var(--text-muted)]">
-            Bu kişinin notlarını görmek için onu takip etmen ya da profilini herkese açması
-            gerekiyor.
+            Bu kişi notlarını yalnızca kendine açık tutuyor. Profilini herkese açtığında notlarını
+            burada görebilirsin.
           </p>
           <Link href="/discover" className="text-xs text-[var(--gold)] hover:underline">
             ← Kişileri keşfet
@@ -472,6 +521,16 @@ export default function ProfilePageClient({
               setIsFollowingProfile(isFollowing);
               setUser((prev) => (prev ? { ...prev, isFollowing } : prev));
               setFollowerCount((count) => count + (isFollowing ? 1 : -1));
+            } else if (currentUser?.id && currentUser.id === user.id) {
+              // Following or unfollowing from your own lists changes your "Takip" count.
+              setUser((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      followingCount: Math.max(0, prev.followingCount + (isFollowing ? 1 : -1)),
+                    }
+                  : prev
+              );
             }
           }}
         />
@@ -480,7 +539,11 @@ export default function ProfilePageClient({
       {/* Tabs */}
       <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
         {/* ── Tab bar ── */}
-        <div className="mb-6 inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1">
+        <div
+          role="tablist"
+          aria-label="Profil bölümleri"
+          className="mb-6 inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1"
+        >
           {[
             { key: "posts" as const, label: "Notlar" },
             { key: "collections" as const, label: "Koleksiyonlar" },
@@ -489,6 +552,8 @@ export default function ProfilePageClient({
             <button
               key={tab.key}
               type="button"
+              role="tab"
+              aria-selected={activeTab === tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                 activeTab === tab.key
@@ -511,6 +576,7 @@ export default function ProfilePageClient({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={tabMeta.placeholder}
+                aria-label={tabMeta.placeholder}
                 className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none"
               />
             </div>
@@ -521,6 +587,7 @@ export default function ProfilePageClient({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={tabMeta.placeholder}
+              aria-label={tabMeta.placeholder}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none sm:text-sm"
             />
           </div>
@@ -551,7 +618,11 @@ export default function ProfilePageClient({
             </div>
           ) : filteredPosts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-              <p className="text-sm text-[var(--text-muted)]">Aramana uyan not yok.</p>
+              <p className="text-sm text-[var(--text-muted)]">
+                {hasMorePosts
+                  ? "Yüklenen notlarda aramana uyan not yok. Daha fazla not yükleyip tekrar bakabilirsin."
+                  : "Aramana uyan not yok."}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -695,6 +766,17 @@ export default function ProfilePageClient({
               />
             ))}
           </div>
+        ) : likedFailed ? (
+          <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
+            <p className="text-sm text-[var(--text-muted)]">Beğenilen notlar yüklenemedi.</p>
+            <button
+              type="button"
+              onClick={retryLiked}
+              className="mt-4 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
+            >
+              Tekrar Dene
+            </button>
+          </div>
         ) : likedPosts.length === 0 ? (
           <div className="py-16 text-center">
             <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-card)]">
@@ -716,7 +798,11 @@ export default function ProfilePageClient({
           </div>
         ) : filteredLikedPosts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--bg-card)] px-6 py-12 text-center">
-            <p className="text-sm text-[var(--text-muted)]">Aramana uyan not yok.</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              {likedCursor
+                ? "Yüklenen notlarda aramana uyan not yok. Daha fazla not yükleyip tekrar bakabilirsin."
+                : "Aramana uyan not yok."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -801,6 +887,29 @@ export default function ProfilePageClient({
                 </article>
               </div>
             ))}
+          </div>
+        )}
+
+        {activeTab === "liked" && !likedLoading && !likedFailed && likedCursor && (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <button
+              type="button"
+              onClick={() => void loadMoreLiked()}
+              disabled={loadingMoreLiked}
+              aria-busy={loadingMoreLiked}
+              className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
+            >
+              {loadingMoreLiked
+                ? "Yükleniyor…"
+                : moreLikedFailed
+                  ? "Tekrar Dene"
+                  : "Daha Fazla Yükle"}
+            </button>
+            {moreLikedFailed && (
+              <p className="text-[12.5px] text-[var(--text-muted)]">
+                Beğenilen notların devamı yüklenemedi.
+              </p>
+            )}
           </div>
         )}
       </div>

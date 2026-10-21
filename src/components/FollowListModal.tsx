@@ -33,8 +33,10 @@ export default function FollowListModal({
   onClose,
   onUserFollowChange,
 }: FollowListModalProps) {
-  const { data: session } = useSession();
-  const currentUsername = (session?.user as { username?: string } | undefined)?.username ?? null;
+  // Guests see the list without follow buttons: a signed-out follow would only bounce
+  // off the login redirect. The API's isSelf already hides the viewer's own row.
+  const { status: sessionStatus } = useSession();
+  const isSignedIn = sessionStatus === "authenticated";
   const [users, setUsers] = useState<FollowUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -79,8 +81,7 @@ export default function FollowListModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.7)" }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/70 p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="follow-list-title"
@@ -128,8 +129,9 @@ export default function FollowListModal({
             <div className="py-12 text-center">
               <p className="mb-3 text-sm text-[var(--text-muted)]">Liste yüklenemedi.</p>
               <button
+                type="button"
                 onClick={load}
-                className="text-xs text-[var(--gold)] transition-colors hover:text-[#e0c068]"
+                className="cursor-pointer text-xs text-[var(--gold)] transition-colors hover:text-[var(--gold-light)] focus-visible:underline"
               >
                 Tekrar Dene
               </button>
@@ -181,7 +183,7 @@ export default function FollowListModal({
                         )}
                       </div>
                     </Link>
-                    {u.username && !u.isSelf && currentUsername !== u.username && (
+                    {isSignedIn && u.username && !u.isSelf && (
                       <FollowButton
                         username={u.username}
                         initialIsFollowing={u.isFollowing}

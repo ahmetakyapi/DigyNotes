@@ -57,3 +57,8 @@ export async function searchPublicUsers(query?: string | null) {
     .sort((a, b) => b.postCount - a.postCount) // stable: ties keep the pre-ranking
     .slice(0, 30);
 }
+
+/** Every public profile Keşfet can list; `searchPublicUsers` returns at most 30 of them. */
+export function countPublicUsers() {
+  return prisma.user.count({ where: { isPublic: true, isBanned: false } });
+}

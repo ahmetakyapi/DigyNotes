@@ -12,6 +12,7 @@
 */
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeftIcon,
@@ -22,18 +23,6 @@ import {
   HashIcon,
   StarIcon,
 } from "@phosphor-icons/react";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  BarChart,
-  Bar,
-  Cell,
-} from "recharts";
 import { getCategoryLabel, normalizeFixedCategory } from "@/lib/categories";
 import { getPostImageSrc } from "@/lib/post-image";
 import {
@@ -74,21 +63,24 @@ interface YearData {
 /* ── Constants ── */
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const TOOLTIP_STYLE = {
-  background: "var(--bg-card)",
-  border: "1px solid var(--border)",
-  borderRadius: 14,
-  color: "var(--text-primary)",
-  fontSize: 12,
-  boxShadow: "var(--shadow-soft)",
-};
-
-/* Readable axis labels (owner rule): sans, 12px, muted — not tiny mono. */
-const TICK_STYLE = {
-  fontSize: 12,
-  fill: "var(--text-muted)",
-  fontFamily: "var(--font-sans), ui-sans-serif, system-ui, sans-serif",
-};
+/* recharts is ~100 KB gzip: the charts load on their own (YearCharts), so the page hydrates
+   and asks for its numbers without waiting for them (the effect below preloads the chunk).
+   Each skeleton fills the fixed-height box the chart sits in, so nothing shifts. */
+function ChartSkeleton() {
+  return <div className="h-full w-full animate-pulse rounded-2xl bg-[var(--bg-raised)]" />;
+}
+const CategoryChart = dynamic(() => import("./YearCharts").then((m) => m.CategoryChart), {
+  ssr: false,
+  loading: ChartSkeleton,
+});
+const MonthlyChart = dynamic(() => import("./YearCharts").then((m) => m.MonthlyChart), {
+  ssr: false,
+  loading: ChartSkeleton,
+});
+const RatingChart = dynamic(() => import("./YearCharts").then((m) => m.RatingChart), {
+  ssr: false,
+  loading: ChartSkeleton,
+});
 
 /* Verb that completes "Bu yıl en çok <Kategori> ..." — null falls back to a neutral phrasing. */
 const CATEGORY_VERBS: Record<string, string | null> = {
@@ -115,17 +107,38 @@ export default function YearInReviewPage() {
   const [year, setYear] = useState(currentYear);
   const [data, setData] = useState<YearData | null>(null);
   const [loading, setLoading] = useState(true);
+  // A failed request is not "no notes this year": it gets its own state with a retry.
+  const [failed, setFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    // Start the chart chunk now, in parallel with the data request.
+    void import("./YearCharts");
     setLoading(true);
+    setFailed(false);
     fetch(`/api/users/me/year-in-review?year=${year}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((payload) => {
-        setData(payload);
-        setLoading(false);
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
       })
-      .catch(() => setLoading(false));
-  }, [year]);
+      .then((payload: YearData) => {
+        if (!cancelled) setData(payload);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setData(null);
+          setFailed(true);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      // A quick year switch must not let the older response land last.
+      cancelled = true;
+    };
+  }, [year, reloadKey]);
 
   /* ── Loading ── */
   if (loading) {
@@ -144,6 +157,29 @@ export default function YearInReviewPage() {
             className="mb-6 h-64 animate-pulse rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)]"
           />
         ))}
+      </main>
+    );
+  }
+
+  /* ── Error ── */
+  if (failed) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <YearHero year={year} onYearChange={setYear} max={currentYear}>
+          <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-secondary)]">
+            Yılın özeti yüklenemedi. Biraz sonra tekrar dene.
+          </p>
+        </YearHero>
+
+        <div className="mt-12 rounded-[28px] border border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
+          <button
+            type="button"
+            onClick={() => setReloadKey((key) => key + 1)}
+            className="inline-flex h-11 cursor-pointer items-center rounded-full border border-[var(--border)] px-5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
+          >
+            Tekrar Dene
+          </button>
+        </div>
       </main>
     );
   }
@@ -266,34 +302,7 @@ export default function YearInReviewPage() {
           </div>
           <ChartFrame label="Kategorilere Göre">
             <div className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={data.categories.map((c) => ({ ...c, label: getCategoryLabel(c.name) }))}
-                  margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
-                >
-                  <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis dataKey="label" tick={TICK_STYLE} axisLine={false} tickLine={false} />
-                  <YAxis
-                    allowDecimals={false}
-                    tick={TICK_STYLE}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={TOOLTIP_STYLE}
-                    cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }}
-                  />
-                  <Bar dataKey="count" name="Not" radius={[10, 10, 0, 0]}>
-                    {data.categories.map((c, idx) => (
-                      <Cell
-                        key={c.name}
-                        fill={idx === 0 ? "var(--gold)" : "var(--accent-2)"}
-                        fillOpacity={idx === 0 ? 1 : 0.7}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              <CategoryChart categories={data.categories} />
             </div>
           </ChartFrame>
         </div>
@@ -318,46 +327,7 @@ export default function YearInReviewPage() {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-12">
           <ChartFrame label="Aylara Göre Notlar">
             <div className="h-60">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={data.monthlySeries}
-                  margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
-                >
-                  <defs>
-                    <linearGradient id="yirAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--gold)" stopOpacity={0.28} />
-                      <stop offset="100%" stopColor="var(--gold)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke="var(--border)" vertical={false} />
-                  <XAxis dataKey="month" tick={TICK_STYLE} axisLine={false} tickLine={false} />
-                  <YAxis
-                    allowDecimals={false}
-                    tick={TICK_STYLE}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={TOOLTIP_STYLE}
-                    cursor={{ stroke: "var(--border)", strokeDasharray: "4 4" }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    name="Not"
-                    stroke="var(--gold)"
-                    strokeWidth={2}
-                    fill="url(#yirAreaGrad)"
-                    dot={false}
-                    activeDot={{
-                      r: 5,
-                      fill: "var(--accent-2)",
-                      stroke: "var(--bg-card)",
-                      strokeWidth: 2,
-                    }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              <MonthlyChart series={data.monthlySeries} />
             </div>
           </ChartFrame>
           <div className="flex flex-col divide-y divide-[var(--border)] border-y border-[var(--border)]">
@@ -474,7 +444,7 @@ export default function YearInReviewPage() {
               {data.topTags.map((tag, idx) => (
                 <Link
                   key={tag.name}
-                  href={`/tag/${tag.name}`}
+                  href={`/tag/${encodeURIComponent(tag.name)}`}
                   className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200 ease-out-expo ${
                     idx === 0
                       ? "border-accent/40 bg-accent/10 text-[var(--gold)] hover:border-accent"
@@ -510,21 +480,7 @@ export default function YearInReviewPage() {
       >
         <ChartFrame label={`%${ratedShare} puanlı`}>
           <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={data.ratingDistribution}
-                margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
-              >
-                <CartesianGrid stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="label" tick={TICK_STYLE} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={TICK_STYLE} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={TOOLTIP_STYLE}
-                  cursor={{ fill: "rgb(var(--gold-rgb)/0.06)" }}
-                />
-                <Bar dataKey="count" name="Not" fill="var(--gold)" radius={[10, 10, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <RatingChart distribution={data.ratingDistribution} />
           </div>
         </ChartFrame>
       </Chapter>

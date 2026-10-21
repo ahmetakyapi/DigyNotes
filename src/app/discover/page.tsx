@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { buildPageMetadata, toAbsoluteUrl } from "@/lib/metadata";
 import { listPublicPosts } from "@/lib/public-posts";
-import { searchPublicUsers } from "@/lib/public-users";
+import { countPublicUsers, searchPublicUsers } from "@/lib/public-users";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/JsonLd";
 import type { Post } from "@/types";
@@ -20,11 +20,13 @@ export const metadata: Metadata = buildPageMetadata({
    in the first HTML; if the read fails the client fetches them as before. */
 async function loadInitial() {
   try {
-    const [users, trending] = await Promise.all([
+    const [users, trending, totalUsers] = await Promise.all([
       searchPublicUsers(),
       listPublicPosts({ sort: "rating", limit: 6 }),
+      // The list holds 30 profiles; the header counts all of them (ERR-DATA-013).
+      countPublicUsers().catch(() => null),
     ]);
-    return { users, trending: JSON.parse(JSON.stringify(trending)) as Post[] };
+    return { users, trending: JSON.parse(JSON.stringify(trending)) as Post[], totalUsers };
   } catch (error) {
     console.error("[discover] initial data failed:", error);
     return null;
@@ -41,7 +43,11 @@ export default async function DiscoverPage() {
           { name: "Keşfet", url: toAbsoluteUrl("/discover") },
         ])}
       />
-      <DiscoverPageClient initialUsers={initial?.users} initialTrending={initial?.trending} />
+      <DiscoverPageClient
+        initialUsers={initial?.users}
+        initialTrending={initial?.trending}
+        initialTotal={initial?.totalUsers}
+      />
     </>
   );
 }
