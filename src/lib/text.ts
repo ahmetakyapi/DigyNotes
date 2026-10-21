@@ -27,6 +27,19 @@ export function stripHtml(html: string) {
     .trim();
 }
 
+/**
+ * Plain text → safe HTML text. Quill parses string values as HTML (via innerHTML), so
+ * third-party or URL text must go through this before it is wrapped in `<p>`.
+ */
+export function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function truncateText(text: string, maxLength: number) {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, Math.max(0, maxLength - 1)).trimEnd()}...`;

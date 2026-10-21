@@ -16,6 +16,7 @@ import {
   isBlankOrTemplateContent,
 } from "../src/lib/post-templates.ts";
 import {
+  areLocalDraftWritesBlocked,
   clearAllLocalDrafts,
   clearLegacyLocalDrafts,
   getLocalDraftKey,
@@ -153,4 +154,12 @@ test("clearAllLocalDrafts removes every draft and nothing else", () => {
   assert.equal(clearAllLocalDrafts(storage), 3);
   assert.deepEqual(storage.keys(), ["dn_theme"]);
   assert.equal(clearAllLocalDrafts(null), 0);
+});
+
+test("sign-out (clearAllLocalDrafts) blocks draft writes until the next page load", () => {
+  // Set even without storage; nothing in the module turns it off again.
+  clearAllLocalDrafts(null);
+  assert.equal(areLocalDraftWritesBlocked(), true);
+  clearLegacyLocalDrafts(null);
+  assert.equal(areLocalDraftWritesBlocked(), true);
 });

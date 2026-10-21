@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
-import { clearLegacyLocalDrafts, getLocalDraftKey } from "@/lib/local-drafts";
+import {
+  areLocalDraftWritesBlocked,
+  clearLegacyLocalDrafts,
+  getLocalDraftKey,
+} from "@/lib/local-drafts";
 import { isBlankOrTemplateContent } from "@/lib/post-templates";
 
 const AUTOSAVE_INTERVAL_MS = 30_000; // 30 saniye
@@ -51,6 +55,8 @@ export function useAutoSave(postId?: string) {
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const draftRef = useRef<DraftData | null>(null);
+  /** Changes since the last write; the hide/unmount flush only writes when there are some. */
+  const dirtyRef = useRef(false);
 
   // Drafts from before the per-user keys can't be attributed to anyone.
   useEffect(() => {
@@ -58,13 +64,15 @@ export function useAutoSave(postId?: string) {
   }, []);
 
   const saveDraft = useCallback(() => {
-    if (!key || !draftRef.current) return false;
+    // Sign-out already wiped the drafts (clearAllLocalDrafts); unload must not write one back.
+    if (!key || !draftRef.current || areLocalDraftWritesBlocked()) return false;
     if (!draftHasUserInput(draftRef.current)) return false;
 
     const data: DraftData = { ...draftRef.current, savedAt: Date.now() };
 
     try {
       localStorage.setItem(key, JSON.stringify(data));
+      dirtyRef.current = false;
       setLastSavedAt(data.savedAt);
       setHasUnsavedChanges(false);
       return true;
@@ -76,6 +84,7 @@ export function useAutoSave(postId?: string) {
 
   const updateDraft = useCallback((data: Omit<DraftData, "savedAt">) => {
     draftRef.current = { ...data, savedAt: Date.now() };
+    dirtyRef.current = true;
     setHasUnsavedChanges(true);
   }, []);
 
@@ -107,6 +116,7 @@ export function useAutoSave(postId?: string) {
     setLastSavedAt(null);
     setHasUnsavedChanges(false);
     draftRef.current = null;
+    dirtyRef.current = false;
   }, [key]);
 
   // Periyodik kaydetme
@@ -127,6 +137,30 @@ export function useAutoSave(postId?: string) {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [saveDraft, hasUnsavedChanges]);
+
+  const saveDraftRef = useRef(saveDraft);
+  useEffect(() => {
+    saveDraftRef.current = saveDraft;
+  }, [saveDraft]);
+
+  /* In-app navigation unmounts the composer without beforeunload, and mobile tabs are often
+     only hidden (iOS Safari skips beforeunload): write what changed since the last save. */
+  useEffect(() => {
+    const flush = () => {
+      if (dirtyRef.current) saveDraftRef.current();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", flush);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, []);
 
   return {
     /** True once the signed-in user is known; drafts load and save only then. */
