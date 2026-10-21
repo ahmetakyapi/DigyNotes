@@ -122,6 +122,7 @@ export function PostsToolbar({
   availableStatuses,
   viewMode,
   onViewModeChange,
+  onAdvancedOpenChange,
 }: {
   readonly sortFilter: SortFilterState;
   readonly onSortFilterChange: (v: SortFilterState) => void;
@@ -131,6 +132,7 @@ export function PostsToolbar({
   readonly availableStatuses: string[];
   readonly viewMode: PostsViewMode;
   readonly onViewModeChange: (v: PostsViewMode) => void;
+  readonly onAdvancedOpenChange?: (open: boolean) => void;
 }) {
   return (
     <div className="w-full sm:w-auto">
@@ -141,6 +143,7 @@ export function PostsToolbar({
         filteredCount={filteredCount}
         availableStatuses={availableStatuses}
         defaultValue={defaultSortFilter}
+        onAdvancedOpenChange={onAdvancedOpenChange}
         inlineContent={
           <div className="inline-flex h-9 items-center rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 sm:h-10 sm:p-1">
             <button
