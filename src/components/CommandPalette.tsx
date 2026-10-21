@@ -35,7 +35,14 @@ interface CommandItem {
 }
 
 // Landing and auth screens: no palette there.
-const AUTH_FREE_PATHS = ["/", "/login", "/register", "/forgot-password", "/reset-password"];
+const AUTH_FREE_PATHS = [
+  "/",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/maintenance",
+];
 
 interface NoteHit {
   id: string;

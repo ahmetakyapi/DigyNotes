@@ -19,6 +19,7 @@ import { getPostImageSrc } from "@/lib/post-image";
 import type { Post } from "@/types";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useIsHydrating } from "@/hooks/useIsHydrating";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -46,6 +47,8 @@ export default function DiscoverPageClient({
   const [loading, setLoading] = useState(!initialUsers);
   const [currentPage, setCurrentPage] = useState(1);
   const reduce = useReducedMotion();
+  // Server-rendered cards show at once; cards mounted later (search, paging) stagger in.
+  const hydrating = useIsHydrating();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const USERS_PER_PAGE = 6;
 
@@ -165,7 +168,7 @@ export default function DiscoverPageClient({
                 <motion.div
                   key={user.id}
                   className="h-full [&>*]:h-full"
-                  initial={reduce ? false : { opacity: 0, y: 18 }}
+                  initial={reduce || hydrating ? false : { opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
                 >
@@ -237,7 +240,7 @@ export default function DiscoverPageClient({
                   <motion.div
                     key={post.id}
                     className="h-full"
-                    initial={reduce ? false : { opacity: 0, y: 18 }}
+                    initial={reduce || hydrating ? false : { opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
                   >

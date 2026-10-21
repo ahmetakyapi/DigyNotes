@@ -3,7 +3,6 @@ import React, { useRef, useState, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";
@@ -15,6 +14,7 @@ import { DesktopGlobalNav } from "@/components/appshell/DesktopGlobalNav";
 import { AvatarImage } from "@/components/AvatarImage";
 import { Wordmark } from "@/components/Wordmark";
 import { WelcomeReveal } from "@/components/intro/Welcome";
+import { useIsHydrating } from "@/hooks/useIsHydrating";
 
 const NEW_NOTE_HINT_KEY = "dn_new_note_hint_count";
 
@@ -23,6 +23,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
   const reduceMotion = useReducedMotion();
+  // Server HTML and the hydration render skip the page fade, so content is visible before JS.
+  const hydrating = useIsHydrating();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [userUsername, setUserUsername] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -31,13 +33,19 @@ export default function AppShell({ children }: { readonly children: React.ReactN
   const scrollRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
+  const sessionUserId = session?.user?.id;
   useEffect(() => {
+    // Anonymous visitors (public notes, tags) have no profile; the protected API would
+    // only redirect to /login and render it (ERR-RT-002).
+    if (!sessionUserId) return;
+
     // Önce cache'ten hemen yükle
     const cached = localStorage.getItem("dn_username");
     if (cached) setUserUsername(cached);
 
     // Sonra API'dan doğrula/güncelle
-    fetch("/api/users/me")
+    const controller = new AbortController();
+    fetch("/api/users/me", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.username) {
@@ -47,7 +55,8 @@ export default function AppShell({ children }: { readonly children: React.ReactN
         if (data?.isAdmin) setIsAdmin(true);
       })
       .catch(() => {});
-  }, []);
+    return () => controller.abort();
+  }, [sessionUserId]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -358,7 +367,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
       <main id="main-content" className={hideMobileBottomTabs ? "pb-0" : "pb-24 sm:pb-0"}>
         <motion.div
           key={pathname}
-          initial={reduceMotion ? false : { opacity: 0 }}
+          initial={reduceMotion || hydrating ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -378,21 +387,6 @@ export default function AppShell({ children }: { readonly children: React.ReactN
           userUsername={userUsername}
         />
       )}
-
-      {/* ─── TOAST ─── */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: "var(--bg-card)",
-            color: "var(--text-primary)",
-            border: "1px solid var(--border)",
-            fontSize: "14px",
-            borderRadius: "10px",
-          },
-          success: { iconTheme: { primary: "var(--gold)", secondary: "var(--text-on-accent)" } },
-        }}
-      />
     </>
   );
 }

@@ -50,6 +50,15 @@ export function addRecentView(post: {
   }
 }
 
+/** Empties the list (called on sign-out: it holds titles of private notes and drafts). */
+export function clearRecentViews() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // localStorage erişim hatası
+  }
+}
+
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
   const mins = Math.floor(diff / 60_000);
