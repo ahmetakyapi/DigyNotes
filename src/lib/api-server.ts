@@ -40,6 +40,10 @@ export function handleApiError(
   error: unknown,
   fallbackMessage = "Bir hata oluştu. Lütfen tekrar deneyin."
 ) {
+  // Next's own control-flow signals (dynamic usage during build, redirect(), notFound())
+  // must reach the framework, not turn into a logged 500.
+  if (isNextInternalError(error)) throw error;
+
   console.error("[API Error]", error);
 
   if (isKnownPrismaError(error)) {
@@ -100,6 +104,18 @@ export async function requireAdmin(): Promise<string | null> {
   });
 
   return user?.isAdmin ? userId : null;
+}
+
+// ── Next.js internal errors ─────────────────────────────────────────
+
+function isNextInternalError(error: unknown) {
+  const digest =
+    typeof error === "object" && error !== null && "digest" in error
+      ? (error as { digest?: unknown }).digest
+      : undefined;
+  return (
+    typeof digest === "string" && (digest === "DYNAMIC_SERVER_USAGE" || digest.startsWith("NEXT_"))
+  );
 }
 
 // ── Prisma error helpers ────────────────────────────────────────────

@@ -3,6 +3,8 @@ import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
 import { buildActivityBuckets } from "@/lib/admin-buckets";
 
+export const dynamic = "force-dynamic";
+
 type RangeKey = "24h" | "7d" | "30d" | "90d" | "365d";
 const VALID_RANGES: RangeKey[] = ["24h", "7d", "30d", "90d", "365d"];
 

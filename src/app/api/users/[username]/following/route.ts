@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUserId, handleApiError } from "@/lib/api-server";
 import { resolveProfileAccess } from "@/lib/profile-data";
 
+export const dynamic = "force-dynamic";
+
 /* FollowListModal has no paging; the cap keeps a busy profile from loading everyone. */
 const FOLLOW_LIST_LIMIT = 200;
 

@@ -8,6 +8,8 @@ import {
   createRateLimitErrorResponse,
 } from "@/lib/rate-limit";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const [userId, authError] = await requireAuth();

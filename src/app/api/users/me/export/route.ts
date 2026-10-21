@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-server";
 import { stripHtml } from "@/lib/text";
 
+export const dynamic = "force-dynamic";
+
 function escapeCsv(value: unknown) {
   const text = String(value ?? "");
   if (text.includes(",") || text.includes('"') || text.includes("\n")) {

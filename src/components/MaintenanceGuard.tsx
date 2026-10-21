@@ -13,10 +13,17 @@ export async function MaintenanceGuard({ children }: { children: React.ReactNode
     return <>{children}</>;
   }
 
+  /* The middleware only checks that a token exists. A token can outlive its session —
+     signed in before a password change or reset (pwv mismatch), banned or deleted
+     account — and would otherwise get an empty shell where every API answers 401. */
+  const session = await getServerAuthSession().catch(() => undefined);
+  if (session === null) {
+    redirect(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+  }
+
   const maintenanceMode = await getSiteSetting("maintenanceMode");
 
   if (maintenanceMode === "true") {
-    const session = await getServerAuthSession();
     const userId = (session?.user as { id?: string })?.id;
 
     if (userId) {

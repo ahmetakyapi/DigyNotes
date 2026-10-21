@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUserId, requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 
+export const dynamic = "force-dynamic";
+
 const NAME_MAX_LENGTH = 40;
 
 export async function GET() {

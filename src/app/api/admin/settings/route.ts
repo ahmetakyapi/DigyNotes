@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULTS: Record<string, string> = {
   registrationEnabled: "true",
   maintenanceMode: "false",
@@ -40,8 +42,8 @@ export async function PUT(request: NextRequest) {
     }
 
     const allowed = Object.keys(DEFAULTS);
-    const updates = Object.entries(body as Record<string, unknown>).filter(
-      ([key]) => allowed.includes(key)
+    const updates = Object.entries(body as Record<string, unknown>).filter(([key]) =>
+      allowed.includes(key)
     );
 
     await Promise.all(

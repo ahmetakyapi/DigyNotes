@@ -3,6 +3,8 @@ import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
 import { getIstanbulDateKey, getIstanbulDayStart } from "@/lib/number-format";
 
+export const dynamic = "force-dynamic";
+
 type SeriesRange = "7d" | "30d" | "90d" | "365d";
 const VALID_SERIES: SeriesRange[] = ["7d", "30d", "90d", "365d"];
 
