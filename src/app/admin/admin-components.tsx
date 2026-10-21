@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useId, useRef, useState } from "react";
 import { CaretLeftIcon, CaretRightIcon, TrashIcon } from "@phosphor-icons/react";
 import type { AdminFeedback } from "./admin-types";
 
@@ -277,14 +278,40 @@ export function ConfirmModal({
   readonly message: React.ReactNode;
   readonly detail: string;
   readonly onCancel: () => void;
-  readonly onConfirm: () => void;
+  readonly onConfirm: () => void | Promise<unknown>;
   readonly confirmLabel?: string;
 }) {
+  const titleId = useId();
+  const busyRef = useRef(false);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !busyRef.current) onCancel();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onCancel]);
+
+  // One request per confirm: a double click must not send a second DELETE.
+  const handleConfirm = async () => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true);
+    try {
+      await onConfirm();
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] px-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
+      aria-labelledby={titleId}
     >
       <div className="w-full max-w-sm rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-deep)]">
         <div className="mb-5 flex items-center gap-3">
@@ -293,7 +320,10 @@ export function ConfirmModal({
           </span>
           <p className="text-[12.5px] font-medium text-danger">Kalıcı İşlem</p>
         </div>
-        <h3 className="mb-1.5 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)]">
+        <h3
+          id={titleId}
+          className="mb-1.5 text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)]"
+        >
           {title}
         </h3>
         <p className="mb-1 text-sm text-[var(--text-secondary)]">{message}</p>
@@ -302,14 +332,17 @@ export function ConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="cursor-pointer rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95"
+            disabled={busy}
+            autoFocus
+            className="cursor-pointer rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             İptal
           </button>
           <button
             type="button"
-            onClick={onConfirm}
-            className="cursor-pointer rounded-full bg-danger px-4 py-2 text-sm font-semibold text-[var(--bg-base)] transition-all duration-200 hover:bg-danger/90 active:scale-95"
+            onClick={handleConfirm}
+            disabled={busy}
+            className="cursor-pointer rounded-full bg-danger px-4 py-2 text-sm font-semibold text-[var(--bg-base)] transition-all duration-200 hover:bg-danger/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {confirmLabel}
           </button>

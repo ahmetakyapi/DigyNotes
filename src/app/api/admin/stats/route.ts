@@ -41,14 +41,15 @@ export async function GET(request: NextRequest) {
       ratingDistribution,
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.post.count(),
+      // Trashed (soft-deleted) notes are gone everywhere else, so they don't count here either
+      prisma.post.count({ where: { isDeleted: false } }),
       prisma.category.count(),
       prisma.tag.count(),
       prisma.follow.count(),
       prisma.activityLog.count({ where: { createdAt: { gte: todayStart } } }),
       // Posts per day for last 30 days
       prisma.post.findMany({
-        where: { createdAt: { gte: thirtyDaysAgo } },
+        where: { createdAt: { gte: thirtyDaysAgo }, isDeleted: false },
         select: { createdAt: true },
         orderBy: { createdAt: "asc" },
       }),
@@ -61,42 +62,53 @@ export async function GET(request: NextRequest) {
       // Post status distribution
       prisma.post.groupBy({
         by: ["status"],
+        where: { isDeleted: false },
         _count: { id: true },
       }),
       // Posts per category (top 10)
       prisma.post.groupBy({
         by: ["category"],
+        where: { isDeleted: false },
         _count: { id: true },
         orderBy: { _count: { id: "desc" } },
         take: 10,
       }),
-      // Top users by post count
-      prisma.user.findMany({
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          avatarUrl: true,
-          _count: { select: { posts: true } },
-        },
-        orderBy: { posts: { _count: "desc" } },
+      // Top users by post count (grouped on posts: a relation-count orderBy can't skip trashed notes)
+      prisma.post.groupBy({
+        by: ["userId"],
+        where: { isDeleted: false, userId: { not: null } },
+        _count: { _all: true },
+        orderBy: { _count: { userId: "desc" } },
         take: 10,
       }),
       // Top tags by usage
-      prisma.tag.findMany({
-        select: {
-          name: true,
-          _count: { select: { posts: true } },
-        },
-        orderBy: { posts: { _count: "desc" } },
+      prisma.postTag.groupBy({
+        by: ["tagId"],
+        where: { post: { isDeleted: false } },
+        _count: { _all: true },
+        orderBy: { _count: { tagId: "desc" } },
         take: 20,
       }),
-      // Rating distribution
-      prisma.post.findMany({
-        select: { rating: true },
-        where: { rating: { gt: 0 } },
+      // Rating distribution (ratings come in 0.5 steps, so at most 10 groups)
+      prisma.post.groupBy({
+        by: ["rating"],
+        where: { rating: { gt: 0 }, isDeleted: false },
+        _count: { _all: true },
       }),
     ]);
+
+    const [topUserRows, topTagRows] = await Promise.all([
+      prisma.user.findMany({
+        where: { id: { in: topUsers.flatMap((row) => (row.userId ? [row.userId] : [])) } },
+        select: { id: true, name: true, username: true, avatarUrl: true },
+      }),
+      prisma.tag.findMany({
+        where: { id: { in: topTags.map((row) => row.tagId) } },
+        select: { id: true, name: true },
+      }),
+    ]);
+    const usersById = new Map(topUserRows.map((u) => [u.id, u]));
+    const tagNamesById = new Map(topTagRows.map((t) => [t.id, t.name]));
 
     // Build daily series for selected range
     const days: string[] = [];
@@ -130,15 +142,19 @@ export async function GET(request: NextRequest) {
 
     // Rating distribution buckets
     const ratingBuckets: Record<string, number> = {
-      "0.5-1": 0, "1.5-2": 0, "2.5-3": 0, "3.5-4": 0, "4.5-5": 0,
+      "0.5-1": 0,
+      "1.5-2": 0,
+      "2.5-3": 0,
+      "3.5-4": 0,
+      "4.5-5": 0,
     };
-    ratingDistribution.forEach((p) => {
-      const r = p.rating;
-      if (r <= 1) ratingBuckets["0.5-1"]++;
-      else if (r <= 2) ratingBuckets["1.5-2"]++;
-      else if (r <= 3) ratingBuckets["2.5-3"]++;
-      else if (r <= 4) ratingBuckets["3.5-4"]++;
-      else ratingBuckets["4.5-5"]++;
+    ratingDistribution.forEach(({ rating: r, _count }) => {
+      const n = _count._all;
+      if (r <= 1) ratingBuckets["0.5-1"] += n;
+      else if (r <= 2) ratingBuckets["1.5-2"] += n;
+      else if (r <= 3) ratingBuckets["2.5-3"] += n;
+      else if (r <= 4) ratingBuckets["3.5-4"] += n;
+      else ratingBuckets["4.5-5"] += n;
     });
 
     return NextResponse.json({
@@ -160,17 +176,24 @@ export async function GET(request: NextRequest) {
         category: c.category,
         count: c._count.id,
       })),
-      topUsers: topUsers.map((u) => ({
-        id: u.id,
-        name: u.name,
-        username: u.username,
-        avatarUrl: u.avatarUrl,
-        postCount: u._count.posts,
-      })),
-      topTags: topTags.map((t) => ({
-        name: t.name,
-        count: t._count.posts,
-      })),
+      topUsers: topUsers.flatMap((row) => {
+        const u = row.userId ? usersById.get(row.userId) : undefined;
+        return u
+          ? [
+              {
+                id: u.id,
+                name: u.name,
+                username: u.username,
+                avatarUrl: u.avatarUrl,
+                postCount: row._count._all,
+              },
+            ]
+          : [];
+      }),
+      topTags: topTags.flatMap((row) => {
+        const name = tagNamesById.get(row.tagId);
+        return name ? [{ name, count: row._count._all }] : [];
+      }),
       ratingDistribution: Object.entries(ratingBuckets).map(([label, count]) => ({
         label,
         count,

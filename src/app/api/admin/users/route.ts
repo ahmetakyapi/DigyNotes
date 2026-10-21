@@ -38,7 +38,9 @@ export async function GET(request: NextRequest) {
           isBanned: true,
           isPublic: true,
           createdAt: true,
-          _count: { select: { posts: true, followers: true, following: true } },
+          _count: {
+            select: { posts: { where: { isDeleted: false } }, followers: true, following: true },
+          },
         },
         orderBy: { createdAt: "desc" },
         skip,

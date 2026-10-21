@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
           },
         },
         activityLogs: {
-          create: { action: "user.register", metadata: { name, email } },
+          create: { action: "user.register", metadata: { name } },
         },
       },
       select: { id: true, name: true, email: true },

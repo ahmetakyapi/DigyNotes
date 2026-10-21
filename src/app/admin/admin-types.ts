@@ -46,6 +46,8 @@ export interface PostRow {
   status: string | null;
   rating: number;
   createdAt: string;
+  isDraft: boolean;
+  isDeleted: boolean;
   user: { id: string; name: string; username: string | null } | null;
 }
 
@@ -103,6 +105,8 @@ export const ACTION_META: Record<string, { label: string; color: string; icon: s
   "user.register": { label: "Yeni Kayıt", color: "var(--accent-2)", icon: "★" },
   "category.create": { label: "Kategori Oluşturuldu", color: B(0.6), icon: "□" },
   "user.follow": { label: "Takip", color: "var(--text-muted)", icon: "♥" },
+  "user.update": { label: "Kullanıcı Güncellendi", color: B(0.4), icon: "↻" },
+  "user.delete": { label: "Kullanıcı Silindi", color: "var(--danger)", icon: "×" },
 };
 
 export const RANGE_LABELS: Record<RangeKey, string> = {

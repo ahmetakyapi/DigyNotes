@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin, handleApiError } from "@/lib/api-server";
+import { requireAdmin, handleApiError, safeParseBody } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
@@ -36,6 +36,8 @@ export async function GET(request: NextRequest) {
           status: true,
           rating: true,
           createdAt: true,
+          isDraft: true,
+          isDeleted: true,
           user: { select: { id: true, name: true, username: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -58,23 +60,41 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { postId } = await request.json();
+    const body = await safeParseBody<{ postId?: unknown }>(request);
+    const postId = typeof body?.postId === "string" ? body.postId : "";
     if (!postId) {
       return NextResponse.json({ error: "postId gerekli" }, { status: 400 });
     }
 
-    await prisma.post.delete({ where: { id: postId } });
-
-    await prisma.activityLog.create({
-      data: {
-        userId: adminId,
-        action: "post.delete",
-        metadata: { postId, adminAction: true },
-      },
+    const target = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { title: true, category: true, userId: true },
     });
+    if (!target) {
+      return NextResponse.json({ error: "Not bulunamadı" }, { status: 404 });
+    }
+
+    // A moderation takedown is permanent on purpose: a soft delete could be restored by the
+    // author. The log keeps what was removed, since the row itself is gone.
+    await prisma.$transaction([
+      prisma.post.delete({ where: { id: postId } }),
+      prisma.activityLog.create({
+        data: {
+          userId: adminId,
+          action: "post.delete",
+          metadata: {
+            postId,
+            title: target.title,
+            category: target.category,
+            ownerId: target.userId,
+            adminAction: true,
+          },
+        },
+      }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    return handleApiError(error);
+    return handleApiError(error, "Not silinemedi.");
   }
 }

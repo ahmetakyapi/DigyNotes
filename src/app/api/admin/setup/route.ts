@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { handleApiError } from "@/lib/api-server";
 import { headers } from "next/headers";
 import {
   applyRateLimitHeaders,
@@ -11,6 +12,14 @@ import {
 
 // Tek seferlik setup: hiç admin yoksa oturum açık kullanıcıyı admin yapar
 export async function POST() {
+  try {
+    return await bootstrapAdmin();
+  } catch (error) {
+    return handleApiError(error, "Admin kurulumu tamamlanamadı.");
+  }
+}
+
+async function bootstrapAdmin() {
   const requestHeaders = await headers();
   const forwardedFor = requestHeaders.get("x-forwarded-for");
   const host = requestHeaders.get("host") ?? "";
