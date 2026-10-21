@@ -77,6 +77,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement | null>(null);
   const initialSnapshotRef = useRef("");
+  /** Cover and crop as loaded: the stored crop stays until the cover URL actually changes. */
+  const loadedCoverRef = useRef<{ image: string; position: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [originalCategory, setOriginalCategory] = useState("");
 
@@ -176,6 +178,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setImagePosition(post.imagePosition ?? "center");
         setTags((post.tags ?? []).map((t) => t.name));
         setExternalRating(post.externalRating ?? null);
+        loadedCoverRef.current = { image: post.image, position: post.imagePosition ?? "center" };
         initialSnapshotRef.current = nextSnapshot;
         setIsDirty(false);
       } catch (error) {
@@ -209,14 +212,40 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   // Auto-detect image position based on aspect ratio
   useEffect(() => {
     if (!image) return;
+    // A slower earlier cover can finish after a newer one; its result is ignored.
+    let cancelled = false;
     const timer = setTimeout(() => {
       detectImagePosition(image, (pos, landscape) => {
-        setImagePosition(pos);
+        if (cancelled) return;
+        // The loaded cover keeps its stored crop (opening a note is not an edit).
+        const loaded = loadedCoverRef.current;
+        setImagePosition(loaded && image === loaded.image ? loaded.position : pos);
         setIsLandscape(landscape);
       });
     }, 600);
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [image]);
+
+  const handleContentChange = useCallback((value: string, _delta: unknown, source: string) => {
+    setContent(value);
+    /* Quill re-serialises the stored (sanitized) HTML once on load (`<br />` → `<br>`,
+       U+00A0 → `&nbsp;`); only typing, paste and the toolbar come in as "user" edits. */
+    if (source !== "user" && initialSnapshotRef.current) {
+      initialSnapshotRef.current = JSON.stringify({
+        ...JSON.parse(initialSnapshotRef.current),
+        content: value,
+      });
+    }
+  }, []);
+
+  /* Opened in a fresh tab or from a shared link there is no page to go back to. */
+  const goBack = useCallback(() => {
+    if (window.history.length > 1) router.back();
+    else router.push(`/posts/${params.id}`);
+  }, [router, params.id]);
 
   const handleCategoryChange = (cat: string) => {
     const nextFields = syncPostCategoryDependentFields(cat, {
@@ -309,14 +338,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       initialSnapshotRef.current = currentSnapshot;
       setIsDirty(false);
       toast.success("Değişiklikler kaydedildi");
+      // The button stays disabled until the note page replaces the editor.
       router.replace(`/posts/${params.id}`);
       router.refresh();
     } catch (error) {
+      setIsSubmitting(false);
       const message = getClientErrorMessage(error, "Değişiklikler kaydedilemedi.");
       setSubmitError(message);
       toast.error(message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -467,8 +496,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   </select>
                 </div>
                 <div>
-                  <label className={labelClass}>Durum</label>
+                  <label htmlFor="ep-status" className={labelClass}>
+                    Durum
+                  </label>
                   <select
+                    id="ep-status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                     className={inputClass}
@@ -579,7 +611,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                   invalidFields.has("content") ? "border-danger/70" : "border-[var(--border)]"
                 }`}
               >
-                <ReactQuill id="ep-content" theme="snow" value={content} onChange={setContent} />
+                <ReactQuill
+                  id="ep-content"
+                  theme="snow"
+                  value={content}
+                  onChange={handleContentChange}
+                />
               </div>
               {invalidFields.has("content") && (
                 <p className="mt-2 text-[12px] text-[var(--danger)]">
@@ -609,7 +646,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 <div className="min-w-0 bg-[var(--bg-raised)] px-3 py-3">
                   <dt className="text-[11px] font-medium text-[var(--text-muted)]">Puan</dt>
                   <dd className="dn-display mt-0.5 text-xl italic leading-tight text-[var(--text-primary)]">
-                    {rating > 0 ? `${rating} / 5` : "Yok"}
+                    {rating > 0 ? `${formatRating(rating)} / 5` : "Yok"}
                   </dd>
                 </div>
               </dl>
@@ -692,11 +729,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className={sectionClass}>
-              <label className={labelClass}>Puan</label>
+              <p className={labelClass}>Puan</p>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <StarRating rating={rating} interactive onRate={setRating} size={24} />
                 <span className="text-[12.5px] font-medium text-[var(--text-secondary)]">
-                  {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
+                  {rating > 0 ? `${formatRating(rating)} / 5` : "Henüz puanlanmadı"}
                 </span>
                 {rating > 0 && (
                   <button
@@ -769,11 +806,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 )}
               </div>
               <div className={sectionClass}>
-                <label className={labelClass}>Puan</label>
+                <p className={labelClass}>Puan</p>
                 <div className="mt-1 flex flex-wrap items-center gap-3">
                   <StarRating rating={rating} interactive onRate={setRating} size={24} />
                   <span className="text-[12.5px] font-medium text-[var(--text-secondary)]">
-                    {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
+                    {rating > 0 ? `${formatRating(rating)} / 5` : "Henüz puanlanmadı"}
                   </span>
                   {rating > 0 && (
                     <button
@@ -832,7 +869,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={goBack}
               className="cursor-pointer rounded-full px-3 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
               İptal

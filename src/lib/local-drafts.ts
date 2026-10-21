@@ -42,8 +42,19 @@ export function clearLegacyLocalDrafts(storage: DraftStorage | null = getBrowser
   }
 }
 
-/** Removes every composer draft on this browser (called on sign-out). */
+let localDraftWritesBlocked = false;
+
+/**
+ * True once sign-out has started: an open composer must not write its draft back on unload.
+ * Module state, so it resets with the full page load that sign-out ends in.
+ */
+export function areLocalDraftWritesBlocked() {
+  return localDraftWritesBlocked;
+}
+
+/** Removes every composer draft on this browser (called on sign-out) and blocks new ones. */
 export function clearAllLocalDrafts(storage: DraftStorage | null = getBrowserStorage()) {
+  localDraftWritesBlocked = true;
   if (!storage) return 0;
   try {
     return removeKeys(storage, (key) => key.startsWith(LOCAL_DRAFT_PREFIX));

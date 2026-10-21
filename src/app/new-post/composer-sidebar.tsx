@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useId } from "react";
 import Image from "next/image";
 import StarRating from "@/components/StarRating";
 import TagInput from "@/components/TagInput";
 import { customLoader } from "@/lib/image";
+import { formatRating } from "@/lib/number-format";
 import { OptionalHint } from "./composer-utils";
 
 const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
@@ -54,7 +55,7 @@ export function StatusSidebar({
           </span>
           {externalRating !== null && (
             <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-secondary)]">
-              Genel puan: {externalRating}
+              Genel puan: {formatRating(externalRating)}
             </span>
           )}
         </div>
@@ -84,7 +85,7 @@ export function StatusSidebar({
                   : "text-sm text-[var(--text-muted)]"
               }
             >
-              {rating > 0 ? `${rating} / 5` : "Henüz puanlanmadı"}
+              {rating > 0 ? `${formatRating(rating)} / 5` : "Henüz puanlanmadı"}
             </span>
           </div>
         </div>
@@ -132,14 +133,16 @@ export function CoverSidebar({
   imageHint,
   onImageChange,
 }: CoverSidebarProps) {
+  // The sidebar renders twice (desktop aside + mobile details): each copy needs its own id.
+  const inputId = useId();
   return (
     <div className={cardClass}>
-      <label htmlFor="cover-image-input" className={labelClass}>
+      <label htmlFor={inputId} className={labelClass}>
         Kapak Görseli
         <OptionalHint />
       </label>
       <input
-        id="cover-image-input"
+        id={inputId}
         type="url"
         value={image}
         onChange={(event) => onImageChange(event.target.value)}

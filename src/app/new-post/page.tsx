@@ -41,7 +41,7 @@ import {
   type TemplateUndo,
 } from "@/lib/post-templates";
 import { mergePendingTagText } from "@/lib/tag-input";
-import { stripHtml } from "@/lib/text";
+import { escapeHtml, stripHtml } from "@/lib/text";
 import { formatRating } from "@/lib/number-format";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { RestoredDraftBanner, focusComposerField, showUndoToast } from "./composer-utils";
@@ -92,7 +92,6 @@ export default function NewPostPage() {
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [restoredDraftAt, setRestoredDraftAt] = useState<number | null>(null);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const imgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefillAppliedRef = useRef(false);
   const draftCheckedRef = useRef(false);
   const pendingTagTextRef = useRef("");
@@ -109,15 +108,25 @@ export default function NewPostPage() {
     pendingTagTextRef.current = text;
   }, []);
 
+  /* Opened from the PWA "Yeni Not" shortcut or a fresh tab there is no page to go back to. */
+  const goBack = useCallback(() => {
+    if (window.history.length > 1) router.back();
+    else router.push("/notes");
+  }, [router]);
+
   // Taslak yükle (ilk açılışta, oturumdaki kullanıcı belli olunca)
   useEffect(() => {
     if (draftCheckedRef.current || !draftsReady) return;
     draftCheckedRef.current = true;
-    const hasPrefill = Boolean(searchParams.get("title") || searchParams.get("category"));
+    // Only content prefill skips the draft; a bare ?category= hint (quick-start tiles) doesn't.
+    const hasPrefill = ["title", "creator", "years", "image", "excerpt"].some((key) =>
+      searchParams.get(key)?.trim()
+    );
     if (hasPrefill) return;
 
     const draft = loadDraft();
     if (!draft) return;
+    prefillAppliedRef.current = true; // a bare ?category= hint must not overwrite the restored draft
 
     setTitle(draft.title);
     setCategory(draft.category);
@@ -135,6 +144,7 @@ export default function NewPostPage() {
     setExternalRating(draft.externalRating);
     setImagePosition(draft.imagePosition);
     setTemplateUndo(isBlankOrTemplateContent(draft.content) ? { previousContent: "" } : null);
+    setAutofillDone(false);
     setRestoredDraftAt(draft.savedAt);
   }, [draftsReady, loadDraft, searchParams]);
 
@@ -167,6 +177,10 @@ export default function NewPostPage() {
 
   // Her değişiklikte taslağı güncelle
   useEffect(() => {
+    /* While a save is running (and after it succeeded, until /notes takes over) late changes
+       such as the cover detection must not re-arm the draft that the unmount flush would
+       write back; a failed save resets isSubmitting and this runs again. */
+    if (isSubmitting) return;
     updateDraft({
       title,
       category,
@@ -200,6 +214,7 @@ export default function NewPostPage() {
     tags,
     externalRating,
     imagePosition,
+    isSubmitting,
     updateDraft,
   ]);
 
@@ -208,15 +223,18 @@ export default function NewPostPage() {
       setIsLandscape(false);
       return;
     }
-    if (imgTimerRef.current) clearTimeout(imgTimerRef.current);
-    imgTimerRef.current = setTimeout(() => {
+    // A slower earlier cover can finish after a newer one; its result is ignored.
+    let cancelled = false;
+    const timer = setTimeout(() => {
       detectImagePosition(image, (pos, landscape) => {
+        if (cancelled) return;
         setImagePosition(pos);
         setIsLandscape(landscape);
       });
     }, 600);
     return () => {
-      if (imgTimerRef.current) clearTimeout(imgTimerRef.current);
+      cancelled = true;
+      clearTimeout(timer);
     };
   }, [image]);
 
@@ -313,7 +331,7 @@ export default function NewPostPage() {
     setYears(result.years || (isTravelResult ? new Date().getFullYear().toString() : ""));
     if (result.image) setImage(result.image);
     if (result.excerpt && !isTravelResult && canReplaceContentWithExcerpt) {
-      setContent(`<p>${result.excerpt}</p>`);
+      setContent(`<p>${escapeHtml(result.excerpt)}</p>`);
       setTemplateUndo(null);
     }
     setExternalRating(result.externalRating ?? null);
@@ -365,7 +383,7 @@ export default function NewPostPage() {
     if (prefillYears) setYears(prefillYears);
     if (prefillImage) setImage(prefillImage);
     if (prefillExcerpt && !isTravelCategory(nextCategory) && canReplaceContentWithExcerpt) {
-      setContent(`<p>${prefillExcerpt}</p>`);
+      setContent(`<p>${escapeHtml(prefillExcerpt)}</p>`);
       setTemplateUndo(null);
     }
     if (Number.isFinite(prefillExternalRating)) {
@@ -494,8 +512,9 @@ export default function NewPostPage() {
       );
       clearDraft();
       toast.success("Not kaydedildi");
-      router.push("/notes");
+      router.push("/notes"); // the button stays disabled until /notes replaces the composer
     } catch (error) {
+      setIsSubmitting(false);
       const message = getClientErrorMessage(error, "Not kaydedilemedi.");
       setSubmitError(message);
       toast.error(message);
@@ -503,8 +522,6 @@ export default function NewPostPage() {
       if (error instanceof ClientApiError && error.status === 401) {
         router.push("/login");
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -574,7 +591,7 @@ export default function NewPostPage() {
               </span>
               <button
                 type="button"
-                onClick={() => router.back()}
+                onClick={goBack}
                 className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-3.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] active:scale-95"
               >
                 <ArrowLeftIcon size={12} weight="bold" />
@@ -717,7 +734,7 @@ export default function NewPostPage() {
             </button>
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={goBack}
               className="cursor-pointer rounded-full px-2.5 py-2 text-sm text-[var(--text-muted)] transition-colors duration-200 ease-out-expo hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] active:scale-95 sm:px-3.5"
             >
               İptal

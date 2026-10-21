@@ -1,5 +1,7 @@
 "use client";
+import type { KeyboardEvent } from "react";
 import { StarIcon, StarHalfIcon } from "@phosphor-icons/react";
+import { formatRating } from "@/lib/number-format";
 
 interface StarRatingProps {
   rating: number;
@@ -24,13 +26,41 @@ export default function StarRating({
   const hasHalf = rating % 1 >= 0.5;
 
   if (interactive) {
+    /* Keyboard: arrows move half a star, Home clears, End gives five (ARIA slider pattern). */
+    const handleKeyDown = (event: KeyboardEvent<HTMLSpanElement>) => {
+      const step =
+        event.key === "ArrowRight" || event.key === "ArrowUp"
+          ? 0.5
+          : event.key === "ArrowLeft" || event.key === "ArrowDown"
+            ? -0.5
+            : null;
+      let next: number | null = null;
+      if (step !== null) next = Math.min(5, Math.max(0, Math.round((rating + step) * 2) / 2));
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = 5;
+      if (next === null) return;
+      event.preventDefault();
+      onRate?.(next);
+    };
+
     return (
-      <span className="flex items-center gap-0.5">
+      <span
+        role="slider"
+        tabIndex={0}
+        aria-label="Puan"
+        aria-valuemin={0}
+        aria-valuemax={5}
+        aria-valuenow={rating}
+        aria-valuetext={rating > 0 ? `${formatRating(rating)} / 5` : "Puan yok"}
+        onKeyDown={handleKeyDown}
+        className="flex items-center gap-0.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+      >
         {Array.from({ length: 5 }, (_, i) => {
           const starNum = i + 1;
           return (
             <span
               key={starNum}
+              aria-hidden
               className="relative inline-block cursor-pointer"
               style={{ fontSize: size, lineHeight: 1 }}
             >
