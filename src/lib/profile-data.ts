@@ -32,7 +32,7 @@ function pickTopCategory(groups: { category: string; _count: { _all: number } }[
 }
 
 /** A profile's owner row plus whether `viewerId` may see its notes. */
-async function resolveProfileAccess(username: string, viewerId: string | null) {
+export async function resolveProfileAccess(username: string, viewerId: string | null) {
   const user = await prisma.user.findUnique({
     where: { username },
     select: {

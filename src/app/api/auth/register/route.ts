@@ -8,6 +8,7 @@ import {
   createRateLimitErrorResponse,
 } from "@/lib/rate-limit";
 import { getSiteSetting } from "@/lib/site-settings";
+import { isReservedUsername } from "@/lib/usernames";
 
 export async function POST(request: NextRequest) {
   const rateLimit = await consumeRateLimit({
@@ -57,6 +58,13 @@ export async function POST(request: NextRequest) {
         { error: "Kullanıcı adı 3-30 karakter, sadece harf, rakam ve _ içerebilir." },
         { status: 400 }
       ),
+      rateLimit
+    );
+  }
+
+  if (isReservedUsername(cleanUsername)) {
+    return applyRateLimitHeaders(
+      NextResponse.json({ error: "Bu kullanıcı adı kullanılamaz." }, { status: 400 }),
       rateLimit
     );
   }

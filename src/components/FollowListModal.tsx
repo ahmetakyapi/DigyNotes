@@ -14,7 +14,8 @@ interface FollowUser {
   username: string | null;
   bio: string | null;
   avatarUrl: string | null;
-  postCount: number;
+  /* null for private accounts: their own card shows no count either. */
+  postCount: number | null;
   isFollowing: boolean;
   isSelf: boolean;
 }
@@ -87,7 +88,10 @@ export default function FollowListModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div ref={trapRef} className="flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
+      <div
+        ref={trapRef}
+        className="flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
           <div>
@@ -161,9 +165,11 @@ export default function FollowListModal({
                           <p className="truncate text-sm font-medium text-[var(--text-primary)]">
                             {u.name}
                           </p>
-                          <span className="flex-shrink-0 text-[12px] text-[var(--text-muted)]">
-                            {u.postCount} not
-                          </span>
+                          {u.postCount !== null && (
+                            <span className="flex-shrink-0 text-[12px] text-[var(--text-muted)]">
+                              {u.postCount} not
+                            </span>
+                          )}
                         </div>
                         {u.username && (
                           <p className="text-xs text-[var(--text-muted)]">@{u.username}</p>

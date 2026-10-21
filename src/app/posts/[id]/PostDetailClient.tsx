@@ -678,7 +678,7 @@ export default function PostDetailClient({
           )}
         </div>
 
-        <CommunityStatsCard title={displayTitle} creator={displayCreator} />
+        <CommunityStatsCard title={post.title} creator={post.creator} />
 
         {typeof post.lat === "number" && typeof post.lng === "number" && (
           <section className="mb-6 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]">

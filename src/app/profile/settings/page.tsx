@@ -6,6 +6,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
+import { isReservedUsername } from "@/lib/usernames";
 import { ArrowUpRightIcon, CaretRightIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 
@@ -157,8 +158,14 @@ export default function ProfileSettingsPage() {
         setUsernameStatus("ok");
         return;
       }
-      if (!/^[a-z0-9_]{3,20}$/.test(val)) {
+      if (!/^[a-z0-9_]{3,30}$/.test(val)) {
         setUsernameStatus("invalid");
+        return;
+      }
+      if (isReservedUsername(val)) {
+        /* Never free; the lookup below would hit /api/users/search or /me instead. */
+        if (usernameCheckRef.current) clearTimeout(usernameCheckRef.current);
+        setUsernameStatus("taken");
         return;
       }
       setUsernameStatus("checking");
@@ -337,7 +344,7 @@ export default function ProfileSettingsPage() {
         <XIcon size={12} weight="bold" /> Bu kullanıcı adı alınmış
       </span>
     ),
-    invalid: <span className="text-[var(--danger)]">3-20 karakter, yalnızca a-z, 0-9, _</span>,
+    invalid: <span className="text-[var(--danger)]">3-30 karakter, yalnızca a-z, 0-9, _</span>,
   }[usernameStatus];
 
   return (
@@ -420,7 +427,7 @@ export default function ProfileSettingsPage() {
                 onChange={(e) => handleUsernameChange(e.target.value)}
                 className={`${inputBase} pl-9`}
                 placeholder="kullanici_adi"
-                maxLength={20}
+                maxLength={30}
               />
             </div>
             {usernameHint && <p className="mt-1.5 text-xs">{usernameHint}</p>}

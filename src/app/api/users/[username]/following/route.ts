@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getSessionUserId, handleApiError } from "@/lib/api-server";
+import { resolveProfileAccess } from "@/lib/profile-data";
+
+/* FollowListModal has no paging; the cap keeps a busy profile from loading everyone. */
+const FOLLOW_LIST_LIMIT = 200;
 
 export async function GET(_req: NextRequest, { params }: { params: { username: string } }) {
   try {
-    const session = await getServerSession(authOptions);
-    const currentUserId = session?.user ? (session.user as { id: string }).id : null;
-    const user = await prisma.user.findUnique({
-      where: { username: params.username },
-      select: { id: true, isPublic: true },
-    });
-
-    if (!user || !user.isPublic) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    const currentUserId = await getSessionUserId();
+    /* Same rule as the profile page: a private profile's lists open for its owner and admins. */
+    const access = await resolveProfileAccess(params.username, currentUserId);
+    if (!access) {
+      return NextResponse.json({ error: "Profil bulunamadı." }, { status: 404 });
     }
+    if (!access.canView) {
+      return NextResponse.json({ error: "Bu profil gizli." }, { status: 403 });
+    }
+    const { user } = access;
 
     const follows = await prisma.follow.findMany({
       where: { followerId: user.id },
@@ -26,20 +29,23 @@ export async function GET(_req: NextRequest, { params }: { params: { username: s
             username: true,
             bio: true,
             avatarUrl: true,
-            _count: { select: { posts: true } },
+            isPublic: true,
+            _count: { select: { posts: { where: { isDeleted: false, isDraft: false } } } },
           },
         },
       },
       orderBy: { createdAt: "desc" },
+      take: FOLLOW_LIST_LIMIT,
     });
 
+    /* A private account shows what its own private card shows: no bio, no count. */
     const users = follows.map((f) => ({
       id: f.following.id,
       name: f.following.name ?? "",
       username: f.following.username,
-      bio: f.following.bio,
+      bio: f.following.isPublic ? f.following.bio : null,
       avatarUrl: f.following.avatarUrl,
-      postCount: f.following._count.posts,
+      postCount: f.following.isPublic ? f.following._count.posts : null,
     }));
 
     const followedIds =
@@ -65,7 +71,6 @@ export async function GET(_req: NextRequest, { params }: { params: { username: s
       })),
     });
   } catch (err) {
-    console.error("[GET /api/users/[username]/following]", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return handleApiError(err, "Takip edilenler yüklenemedi.");
   }
 }

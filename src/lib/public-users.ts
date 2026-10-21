@@ -3,10 +3,13 @@ import { prisma } from "@/lib/prisma";
 const publishedNote = { isDeleted: false, isDraft: false } as const;
 
 /**
- * Public profiles for Keşfet, most notes first (`/api/users/search` and /discover).
- * Counts only published notes (drafts and trashed notes used to inflate "34 Not"), and
- * `lastNoteAt` is the newest of them: the exact last sign-in time was shown to anyone
- * and said little about the archive.
+ * Public profiles for Keşfet, most published notes first (`/api/users/search` and
+ * /discover). Counts only published notes (drafts and trashed notes used to inflate
+ * "34 Not"), and `lastNoteAt` is the newest of them: the exact last sign-in time was
+ * shown to anyone and said little about the archive.
+ *
+ * Prisma can't order by a filtered relation count, so the database pre-ranks a wider
+ * slice by all notes and the final order (and cut to 30) uses the published count.
  */
 export async function searchPublicUsers(query?: string | null) {
   const q = query?.trim();
@@ -38,16 +41,19 @@ export async function searchPublicUsers(query?: string | null) {
       },
     },
     orderBy: { posts: { _count: "desc" } },
-    take: 30,
+    take: 100,
   });
 
-  return users.map((u) => ({
-    id: u.id,
-    name: u.name,
-    username: u.username,
-    bio: u.bio,
-    avatarUrl: u.avatarUrl,
-    lastNoteAt: u.posts[0]?.createdAt.toISOString() ?? null,
-    postCount: u._count.posts,
-  }));
+  return users
+    .map((u) => ({
+      id: u.id,
+      name: u.name,
+      username: u.username,
+      bio: u.bio,
+      avatarUrl: u.avatarUrl,
+      lastNoteAt: u.posts[0]?.createdAt.toISOString() ?? null,
+      postCount: u._count.posts,
+    }))
+    .sort((a, b) => b.postCount - a.postCount) // stable: ties keep the pre-ranking
+    .slice(0, 30);
 }

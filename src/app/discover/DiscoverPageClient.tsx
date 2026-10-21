@@ -54,8 +54,8 @@ export default function DiscoverPageClient({
     try {
       const url = q.trim() ? `/api/users/search?q=${encodeURIComponent(q)}` : "/api/users/search";
       const res = await fetch(url);
-      const data = await res.json();
-      setUsers(data);
+      const data = res.ok ? await res.json() : null;
+      setUsers(Array.isArray(data) ? data : []);
     } catch {
       setUsers([]);
     } finally {
