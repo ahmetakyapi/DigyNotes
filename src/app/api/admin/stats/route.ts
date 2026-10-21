@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, handleApiError } from "@/lib/api-server";
 import { prisma } from "@/lib/prisma";
+import { getIstanbulDateKey, getIstanbulDayStart } from "@/lib/number-format";
 
 type SeriesRange = "7d" | "30d" | "90d" | "365d";
 const VALID_SERIES: SeriesRange[] = ["7d", "30d", "90d", "365d"];
@@ -17,13 +18,9 @@ export async function GET(request: NextRequest) {
     const series: SeriesRange = VALID_SERIES.includes(rawSeries as SeriesRange) ? (rawSeries as SeriesRange) : "30d";
     const seriesDays = series === "7d" ? 7 : series === "30d" ? 30 : series === "90d" ? 90 : 365;
 
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now);
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - (seriesDays - 1));
-    thirtyDaysAgo.setHours(0, 0, 0, 0);
-
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
+    // Days are cut at Istanbul midnight (servers run in UTC); Istanbul has no DST.
+    const todayStart = getIstanbulDayStart();
+    const thirtyDaysAgo = new Date(todayStart.getTime() - (seriesDays - 1) * 86_400_000);
 
     const [
       totalUsers,
@@ -113,9 +110,7 @@ export async function GET(request: NextRequest) {
     // Build daily series for selected range
     const days: string[] = [];
     for (let i = 0; i < seriesDays; i++) {
-      const d = new Date(thirtyDaysAgo);
-      d.setDate(d.getDate() + i);
-      days.push(d.toISOString().slice(0, 10));
+      days.push(getIstanbulDateKey(new Date(thirtyDaysAgo.getTime() + i * 86_400_000)));
     }
 
     const postsByDay: Record<string, number> = {};
@@ -126,11 +121,11 @@ export async function GET(request: NextRequest) {
     });
 
     postsLast30Days.forEach((p) => {
-      const key = p.createdAt.toISOString().slice(0, 10);
+      const key = getIstanbulDateKey(p.createdAt);
       if (key in postsByDay) postsByDay[key]++;
     });
     usersLast30Days.forEach((u) => {
-      const key = u.createdAt.toISOString().slice(0, 10);
+      const key = getIstanbulDateKey(u.createdAt);
       if (key in usersByDay) usersByDay[key]++;
     });
 

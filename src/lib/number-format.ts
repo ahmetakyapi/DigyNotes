@@ -17,11 +17,37 @@ export function formatRatingFixed(value: number | null | undefined): string {
 }
 
 /**
- * Start of the current calendar month in Istanbul (UTC+3 all year since 2016), as a
- * UTC instant. Servers run in UTC, so "bu ay" would otherwise flip three hours late.
+ * Istanbul is UTC+3 all year (no DST since 2016). Servers run in UTC, so calendar
+ * buckets ("bu ay", days, years) are cut on this offset or they flip three hours late.
  */
+const ISTANBUL_OFFSET_MS = 3 * 60 * 60 * 1000;
+
+/** Start of the current calendar month in Istanbul, as a UTC instant. */
 export function getIstanbulMonthStart(now: Date = new Date()): Date {
-  const OFFSET_MS = 3 * 60 * 60 * 1000;
-  const local = new Date(now.getTime() + OFFSET_MS);
-  return new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), 1) - OFFSET_MS);
+  const local = new Date(now.getTime() + ISTANBUL_OFFSET_MS);
+  return new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), 1) - ISTANBUL_OFFSET_MS);
+}
+
+/** Start of the current calendar day in Istanbul, as a UTC instant. */
+export function getIstanbulDayStart(now: Date = new Date()): Date {
+  const local = new Date(now.getTime() + ISTANBUL_OFFSET_MS);
+  return new Date(
+    Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()) - ISTANBUL_OFFSET_MS
+  );
+}
+
+/** 1 January of `year`, 00:00 in Istanbul, as a UTC instant. */
+export function getIstanbulYearStart(year: number): Date {
+  return new Date(Date.UTC(year, 0, 1) - ISTANBUL_OFFSET_MS);
+}
+
+/** Istanbul calendar date of an instant; `month` is 0-11 like `Date#getMonth`. */
+export function getIstanbulDateParts(date: Date): { year: number; month: number; day: number } {
+  const local = new Date(date.getTime() + ISTANBUL_OFFSET_MS);
+  return { year: local.getUTCFullYear(), month: local.getUTCMonth(), day: local.getUTCDate() };
+}
+
+/** Istanbul calendar day of an instant as "YYYY-MM-DD" (sortable, usable as a bucket key). */
+export function getIstanbulDateKey(date: Date): string {
+  return new Date(date.getTime() + ISTANBUL_OFFSET_MS).toISOString().slice(0, 10);
 }
