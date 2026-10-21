@@ -117,7 +117,9 @@ export function CommentItem({
                 · {formatRelativeTime(comment.createdAt)}
               </time>
             </div>
-            {parent?.user && (
+            {/* Not for replies to your own comment: they name nobody new, and a reply below the
+                last loaded level hangs on its target's parent, often the replier's own comment. */}
+            {parent?.user && parent.user.id !== comment.user.id && (
               <p className="mt-0.5 flex items-center gap-1 text-[12px] font-medium text-[var(--text-muted)]">
                 <ArrowBendUpLeftIcon size={12} weight="bold" aria-hidden />
                 {parent.user.username ? `@${parent.user.username}` : parent.user.name} yanıtlandı
