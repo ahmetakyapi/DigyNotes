@@ -9,6 +9,7 @@
 */
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useIsHydrating } from "@/hooks/useIsHydrating";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -32,6 +33,9 @@ export function PageHeader({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  // Server HTML and the hydration render show the header as is; client navigations animate.
+  const hydrating = useIsHydrating();
+  const skipEntrance = reduce || hydrating;
   const visibleStats = (stats ?? []).filter(
     (s) => s.value !== 0 && s.value !== "0" && s.value != null
   );
@@ -43,7 +47,7 @@ export function PageHeader({
         <h1 className="max-w-[760px] overflow-hidden pb-[0.06em] pt-[0.12em] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[0.92] tracking-[-0.035em] text-[var(--text-primary)] [text-wrap:balance]">
           <motion.span
             className="block"
-            initial={reduce ? false : { y: "105%" }}
+            initial={skipEntrance ? false : { y: "105%" }}
             animate={{ y: "0%" }}
             transition={{ duration: 1, ease: EASE, delay: 0.05 }}
           >
@@ -54,7 +58,7 @@ export function PageHeader({
         {visibleStats.length > 0 && (
           <motion.dl
             className="flex items-end gap-6 sm:gap-8"
-            initial={reduce ? false : { opacity: 0, y: 12 }}
+            initial={skipEntrance ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}
           >
@@ -75,7 +79,7 @@ export function PageHeader({
       {description && (
         <motion.p
           className="mt-4 max-w-[560px] text-[15px] leading-relaxed text-[var(--text-secondary)]"
-          initial={reduce ? false : { opacity: 0 }}
+          initial={skipEntrance ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.25 }}
         >
@@ -85,7 +89,7 @@ export function PageHeader({
 
       <motion.div
         className="mt-6 h-px w-full origin-left bg-[var(--border)]"
-        initial={reduce ? false : { scaleX: 0 }}
+        initial={skipEntrance ? false : { scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 1.2, ease: EASE, delay: 0.15 }}
       />

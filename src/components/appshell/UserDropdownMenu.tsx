@@ -17,8 +17,24 @@ import {
   UserIcon,
 } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { clearRecentViews } from "@/components/RecentlyViewed";
 import { clearAllLocalDrafts } from "@/lib/local-drafts";
 import { ORGANIZATION_SURFACES } from "@/lib/organization";
+
+/* Drops the service worker's runtime caches (`*-runtime`, public/sw.js) on sign-out. */
+function clearRuntimeCaches() {
+  try {
+    if (!("caches" in globalThis)) return;
+    void caches
+      .keys()
+      .then((keys) =>
+        Promise.all(keys.filter((key) => key.endsWith("-runtime")).map((key) => caches.delete(key)))
+      )
+      .catch(() => {});
+  } catch {
+    // Cache Storage unavailable
+  }
+}
 
 interface UserDropdownMenuProps {
   readonly session: {
@@ -163,8 +179,11 @@ export function UserDropdownMenu({
         <button
           onClick={() => {
             localStorage.removeItem("dn_username");
-            // Unsent drafts must not survive into the next account on this device.
+            // Unsent drafts, the recently viewed list and cached responses must not
+            // survive into the next account on this device.
             clearAllLocalDrafts();
+            clearRecentViews();
+            clearRuntimeCaches();
             signOut({ callbackUrl: "/" });
           }}
           className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-[13px] font-medium text-[var(--danger)] transition-colors duration-100 hover:bg-danger/10 hover:text-[var(--danger-light)]"

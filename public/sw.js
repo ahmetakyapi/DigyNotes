@@ -1,4 +1,5 @@
-const CACHE_VERSION = "digynotes-v1";
+// v2: v1 runtime-cached signed-in pages (session, private notes); activate() deletes it.
+const CACHE_VERSION = "digynotes-v2";
 const APP_SHELL_CACHE = `${CACHE_VERSION}-app-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const OFFLINE_URL = "/offline";
@@ -13,9 +14,15 @@ const APP_SHELL_ASSETS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(APP_SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL_ASSETS)).then(() => {
-      return self.skipWaiting();
-    })
+    caches
+      .open(APP_SHELL_CACHE)
+      // Without cookies, so the precached offline page never carries a signed-in session.
+      .then((cache) =>
+        cache.addAll(APP_SHELL_ASSETS.map((url) => new Request(url, { credentials: "omit" })))
+      )
+      .then(() => {
+        return self.skipWaiting();
+      })
   );
 });
 
@@ -42,21 +49,25 @@ async function cacheFirst(request) {
   if (cachedResponse) return cachedResponse;
 
   const response = await fetch(request);
-  const cache = await caches.open(RUNTIME_CACHE);
-  cache.put(request, response.clone());
+  // Store only complete same-origin successes; a failed put never breaks the response.
+  if (response.ok && response.type === "basic") {
+    const copy = response.clone();
+    caches
+      .open(RUNTIME_CACHE)
+      .then((cache) => cache.put(request, copy))
+      .catch(() => {});
+  }
   return response;
 }
 
-async function networkFirstPage(request) {
+// Pages are never cached: each one is rendered per request with the signed-in session
+// (name, email, private notes, drafts) and would outlive sign-out. Offline, a navigation
+// gets the precached offline page instead.
+async function networkWithOfflineFallback(request) {
   try {
-    const response = await fetch(request);
-    const cache = await caches.open(RUNTIME_CACHE);
-    cache.put(request, response.clone());
-    return response;
-  } catch (error) {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) return cachedResponse;
-    return caches.match(OFFLINE_URL);
+    return await fetch(request);
+  } catch {
+    return (await caches.match(OFFLINE_URL)) || Response.error();
   }
 }
 
@@ -69,7 +80,7 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(networkFirstPage(request));
+    event.respondWith(networkWithOfflineFallback(request));
     return;
   }
 

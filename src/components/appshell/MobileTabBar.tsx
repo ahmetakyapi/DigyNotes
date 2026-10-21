@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FileTextIcon, NavigationArrowIcon, StarIcon, UsersThreeIcon } from "@phosphor-icons/react";
 
 interface MobileTabBarProps {
@@ -23,10 +22,9 @@ export function MobileTabBar({
   userInitial,
   userUsername,
 }: MobileTabBarProps) {
-  const router = useRouter();
-
   return (
     <nav
+      aria-label="Ana gezinme"
       className="fixed inset-x-3 z-40 sm:hidden"
       style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)" }}
     >
@@ -55,12 +53,13 @@ export function MobileTabBar({
           label="Keşfet"
           icon={<UsersThreeIcon size={18} />}
         />
-        <button
-          onClick={() =>
-            router.push(userUsername ? `/profile/${userUsername}` : "/profile/settings")
-          }
+        <Link
+          href={userUsername ? `/profile/${userUsername}` : "/profile/settings"}
+          aria-current={isProfile ? "page" : undefined}
           className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 transition-all duration-300 ease-out-expo ${
-            isProfile ? "bg-[var(--gold)] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
+            isProfile
+              ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+              : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
           }`}
         >
           <div
@@ -73,7 +72,7 @@ export function MobileTabBar({
             {userInitial}
           </div>
           <span className="text-[11px] font-semibold tracking-[0.01em]">Profil</span>
-        </button>
+        </Link>
       </div>
     </nav>
   );
@@ -93,8 +92,11 @@ function MobileTab({
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={`flex flex-1 flex-col items-center gap-0.5 rounded-2xl py-2 transition-all duration-300 ease-out-expo ${
-        active ? "bg-[var(--gold)] text-[var(--text-on-accent)]" : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
+        active
+          ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
+          : "text-[var(--text-muted)] active:text-[var(--text-primary)]"
       }`}
     >
       {icon}

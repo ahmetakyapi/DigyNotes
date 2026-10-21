@@ -29,6 +29,7 @@ import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistratio
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { GradientMesh } from "@/components/GradientMesh";
 import CommandPalette from "@/components/CommandPalette";
+import AppToaster from "@/components/AppToaster";
 import { Analytics } from "@vercel/analytics/next";
 import { getSiteUrl } from "@/lib/metadata";
 import { getServerSession } from "next-auth";
@@ -143,6 +144,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <ConditionalAppShell>{children}</ConditionalAppShell>
                 </ErrorBoundary>
                 <CommandPalette />
+                <AppToaster />
                 <PwaInstallPrompt />
               </SessionProviderWrapper>
             </ThemeProvider>

@@ -14,6 +14,7 @@ import { ResilientImage } from "@/components/ResilientImage";
 import { AvatarImage } from "@/components/AvatarImage";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useIsHydrating } from "@/hooks/useIsHydrating";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -32,6 +33,8 @@ export default function TagPageClient({
   const [loading, setLoading] = useState(!initialPosts);
   const [sort, setSort] = useState<SortOption>("newest");
   const reduceMotion = useReducedMotion();
+  // Server-rendered cards show at once; cards mounted later (sort change) stagger in.
+  const hydrating = useIsHydrating();
   // The server copy covers the default sort; fetch only when the sort changes.
   const skipSeededFetch = useRef(Boolean(initialPosts));
 
@@ -122,7 +125,7 @@ export default function TagPageClient({
           {posts.map((post, i) => (
             <motion.div
               key={post.id}
-              initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+              initial={reduceMotion || hydrating ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE, delay: Math.min(i, 8) * 0.05 }}
             >

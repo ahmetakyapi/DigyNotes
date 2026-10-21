@@ -16,6 +16,7 @@ const ALWAYS_PUBLIC = [
   "/forgot-password",
   "/reset-password",
   "/offline",
+  "/maintenance",
 ];
 // These paths are publicly accessible but get AppShell when logged in
 const SEMI_PUBLIC_PREFIXES = ["/discover", "/profile", "/collections"];
@@ -48,15 +49,8 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
         </>
       );
     }
-    return (
-      <>
-        <RouteProgressBar />
-        <KeyboardShortcuts />
-        <ShortcutHelpModal />
-        <ScrollToTop />
-        <AppShell>{children}</AppShell>
-      </>
-    );
+    // Signed in: fall through to the shared tree below, so AppShell keeps its position
+    // and is not remounted when moving between these pages and the rest of the app.
   }
 
   return (
