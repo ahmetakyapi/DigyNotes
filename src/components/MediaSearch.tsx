@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { getSearchTabForCategory, SearchTabKey } from "@/lib/categories";
+import { fetchWikipediaThumb } from "@/lib/wikipedia";
 
 export interface MediaSearchResult {
   title: string;
@@ -19,6 +20,7 @@ export interface MediaSearchResult {
   _tmdbId?: number;
   _mediaType?: "movie" | "tv";
   _rawgId?: number;
+  _wikiTag?: string;
 }
 
 interface TMDBRawResult {
@@ -77,6 +79,10 @@ interface MediaSearchProps {
 const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const RAWG_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY;
 
+const SEARCH_DEBOUNCE_MS = 400;
+// Nominatim kullanım politikası: uygulama başına en fazla saniyede bir istek
+const NOMINATIM_DEBOUNCE_MS = 1000;
+
 const TABS: { key: SearchTab; label: string }[] = [
   { key: "film", label: "Film" },
   { key: "dizi", label: "Dizi" },
@@ -89,12 +95,23 @@ function getInitialTab(category: string): SearchTab {
   return getSearchTabForCategory(category) ?? "film";
 }
 
+// Seçimden sonraki ayrıntı istekleri (yönetmen, geliştirici) formu en fazla `ms` bekletir
+async function fetchJsonWithTimeout(url: string, ms = 5000): Promise<Record<string, unknown>> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function fetchTMDBCredits(tmdbId: number, mediaType: "movie" | "tv"): Promise<string> {
   try {
-    const res = await fetch(
+    const data = await fetchJsonWithTimeout(
       `https://api.themoviedb.org/3/${mediaType}/${tmdbId}/credits?api_key=${TMDB_KEY}&language=en-US`
     );
-    const data = await res.json();
     if (mediaType === "movie") {
       const director = (data.crew as { job: string; name: string }[] | undefined)?.find(
         (c) => c.job === "Director"
@@ -110,41 +127,12 @@ async function fetchTMDBCredits(tmdbId: number, mediaType: "movie" | "tv"): Prom
 async function fetchRawgDeveloper(gameId: number): Promise<string> {
   if (!RAWG_KEY) return "";
   try {
-    const res = await fetch(`https://api.rawg.io/api/games/${gameId}?key=${RAWG_KEY}`);
-    const data = await res.json();
+    const data = await fetchJsonWithTimeout(
+      `https://api.rawg.io/api/games/${gameId}?key=${RAWG_KEY}`
+    );
     return (data.developers as { name: string }[] | undefined)?.[0]?.name ?? "";
   } catch {
     return "";
-  }
-}
-
-async function fetchWikipediaThumb(
-  wikiTag?: string,
-  fallbackTitle?: string
-): Promise<string | undefined> {
-  try {
-    let lang = "en";
-    let title = fallbackTitle ?? "";
-    if (wikiTag) {
-      const colonIdx = wikiTag.indexOf(":");
-      if (colonIdx > -1) {
-        lang = wikiTag.slice(0, colonIdx);
-        title = wikiTag.slice(colonIdx + 1);
-      } else {
-        title = wikiTag;
-      }
-    }
-    if (!title) return undefined;
-    const res = await fetch(
-      `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=200&origin=*`
-    );
-    if (!res.ok) return undefined;
-    const data = await res.json();
-    const pages = data?.query?.pages ?? {};
-    const page = Object.values(pages)[0] as { thumbnail?: { source?: string } };
-    return page?.thumbnail?.source;
-  } catch {
-    return undefined;
   }
 }
 
@@ -225,6 +213,7 @@ async function searchMedia(query: string, tab: SearchTab): Promise<MediaSearchRe
       years: item.released?.slice(0, 4) ?? "",
       image: item.background_image ?? "",
       excerpt: "",
+      // Metacritic (0–100) /5 ölçeğinde saklanır; gösterim: getExternalRatingMeta
       externalRating: item.metacritic ? Math.round((item.metacritic / 20) * 10) / 10 : null,
       externalId: `rawg:${item.id}`,
       _rawgId: item.id,
@@ -236,29 +225,29 @@ async function searchMedia(query: string, tab: SearchTab): Promise<MediaSearchRe
       `https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=6&accept-language=tr&addressdetails=1&extratags=1`,
       { headers: { "Accept-Language": "tr" } }
     );
+    if (!res.ok) throw new Error(String(res.status));
     const data: NominatimRawResult[] = await res.json();
-    return Promise.all(
-      data.map(async (place) => {
-        const main =
-          place.address?.city ||
-          place.address?.town ||
-          place.address?.village ||
-          place.display_name.split(",")[0].trim();
-        const secondary = place.display_name.split(",").slice(1, 3).join(", ").trim();
-        const thumb = await fetchWikipediaThumb(place.extratags?.wikipedia, main);
-        return {
-          title: main,
-          creator: "",
-          years: "",
-          image: thumb ?? "",
-          excerpt: secondary,
-          externalId: `nominatim:${place.display_name}`,
-          latitude: Number.parseFloat(place.lat),
-          longitude: Number.parseFloat(place.lon),
-          locationLabel: place.display_name,
-        };
-      })
-    );
+    // Görseller sonuçlar gösterildikten sonra gelir (arama effect'i, _wikiTag)
+    return data.map((place) => {
+      const main =
+        place.address?.city ||
+        place.address?.town ||
+        place.address?.village ||
+        place.display_name.split(",")[0].trim();
+      const secondary = place.display_name.split(",").slice(1, 3).join(", ").trim();
+      return {
+        title: main,
+        creator: "",
+        years: "",
+        image: "",
+        excerpt: secondary,
+        externalId: `nominatim:${place.display_name}`,
+        latitude: Number.parseFloat(place.lat),
+        longitude: Number.parseFloat(place.lon),
+        locationLabel: place.display_name,
+        _wikiTag: place.extratags?.wikipedia,
+      };
+    });
   }
 
   // kitap
@@ -294,6 +283,7 @@ export function MediaSearch({
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
   const [isSelecting, setIsSelecting] = useState(false);
+  const [searchError, setSearchError] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -301,16 +291,21 @@ export function MediaSearch({
   const [dropdownStyle, setDropdownStyle] = useState({ top: 0, left: 0, width: 0 });
   const skipNextSearchRef = useRef(false);
   const requestSequenceRef = useRef(0);
+  // Seçim sırası ayrı: sorgu effect'i kısa başlıklarda requestSequenceRef'i de artırır
+  const selectionSequenceRef = useRef(0);
 
-  const handleTabChange = useCallback((tab: SearchTab) => {
+  // Odak yalnızca kullanıcı bir sekmeye tıklayınca taşınır; kategori değişimi ve ilk yükleme taşımaz
+  const handleTabChange = useCallback((tab: SearchTab, focusInput = false) => {
     requestSequenceRef.current += 1;
+    selectionSequenceRef.current += 1;
     setActiveTab(tab);
     setQuery("");
     setResults([]);
     setIsOpen(false);
     setHighlighted(-1);
     setIsLoading(false);
-    setTimeout(() => inputRef.current?.focus(), 50);
+    setIsSelecting(false);
+    if (focusInput) setTimeout(() => inputRef.current?.focus(), 50);
   }, []);
 
   // lockedTab değişince tab'i güncelle
@@ -330,6 +325,8 @@ export function MediaSearch({
   }, [category, lockedTab, activeTab, handleTabChange]);
 
   useEffect(() => {
+    setSearchError(false);
+
     if (!query.trim() || query.length < 2) {
       requestSequenceRef.current += 1;
       setResults([]);
@@ -354,23 +351,42 @@ export function MediaSearch({
 
     const nextRequestId = requestSequenceRef.current + 1;
     requestSequenceRef.current = nextRequestId;
-    const timer = setTimeout(async () => {
-      setIsLoading(true);
-      try {
-        const found = await searchMedia(query, activeTab);
-        if (requestSequenceRef.current !== nextRequestId) return;
-        setResults(found);
-        setIsOpen(found.length > 0);
-        setHighlighted(-1);
-      } catch {
-        if (requestSequenceRef.current !== nextRequestId) return;
-        setResults([]);
-        setIsOpen(false);
-      } finally {
-        if (requestSequenceRef.current !== nextRequestId) return;
-        setIsLoading(false);
-      }
-    }, 400);
+    const timer = setTimeout(
+      async () => {
+        setIsLoading(true);
+        try {
+          const found = await searchMedia(query, activeTab);
+          if (requestSequenceRef.current !== nextRequestId) return;
+          setResults(found);
+          setIsOpen(found.length > 0);
+          setHighlighted(-1);
+
+          // Gezi: yerler hemen görünür, Wikipedia görselleri geldikçe eklenir
+          if (activeTab === "gezi" && found.length > 0) {
+            void Promise.all(
+              found.map((item) => fetchWikipediaThumb(item._wikiTag, item.title))
+            ).then((thumbs) => {
+              if (requestSequenceRef.current !== nextRequestId) return;
+              setResults((prev) =>
+                prev.map((item, i) => {
+                  const thumb = thumbs[i];
+                  return item === found[i] && thumb ? { ...item, image: thumb } : item;
+                })
+              );
+            });
+          }
+        } catch {
+          if (requestSequenceRef.current !== nextRequestId) return;
+          setResults([]);
+          setIsOpen(false);
+          setSearchError(true);
+        } finally {
+          if (requestSequenceRef.current !== nextRequestId) return;
+          setIsLoading(false);
+        }
+      },
+      activeTab === "gezi" ? NOMINATIM_DEBOUNCE_MS : SEARCH_DEBOUNCE_MS
+    );
 
     return () => clearTimeout(timer);
   }, [query, activeTab]);
@@ -385,16 +401,31 @@ export function MediaSearch({
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  // Dropdown açıldığında input'un pozisyonunu hesapla (fixed konumlandırma için)
+  // Dropdown açıkken input'un konumunu takip et (fixed konumlandırma için)
   useEffect(() => {
-    if (!isOpen || !inputWrapRef.current) return;
-    const rect = inputWrapRef.current.getBoundingClientRect();
-    setDropdownStyle({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    if (!isOpen) return;
+    const place = () => {
+      const rect = inputWrapRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const next = { top: rect.bottom + 4, left: rect.left, width: rect.width };
+      // Listenin kendi kaydırması aynı değerleri verir; gereksiz render olmasın
+      setDropdownStyle((prev) =>
+        prev.top === next.top && prev.left === next.left && prev.width === next.width ? prev : next
+      );
+    };
+    place();
+    window.addEventListener("scroll", place, { passive: true, capture: true });
+    window.addEventListener("resize", place);
+    return () => {
+      window.removeEventListener("scroll", place, { capture: true });
+      window.removeEventListener("resize", place);
+    };
   }, [isOpen]);
 
   const handleSelect = useCallback(
     async (item: MediaSearchResult) => {
       requestSequenceRef.current += 1;
+      const selectionId = ++selectionSequenceRef.current;
       setIsSelecting(true);
       setIsLoading(false);
       setIsOpen(false);
@@ -402,15 +433,24 @@ export function MediaSearch({
       skipNextSearchRef.current = true;
       setQuery(item.title);
 
-      let creator = item.creator;
-      if (item._tmdbId && item._mediaType) {
-        creator = await fetchTMDBCredits(item._tmdbId, item._mediaType);
-      } else if (item._rawgId) {
-        creator = await fetchRawgDeveloper(item._rawgId);
-      }
+      try {
+        let creator = item.creator;
+        let image = item.image;
+        if (item._tmdbId && item._mediaType) {
+          creator = await fetchTMDBCredits(item._tmdbId, item._mediaType);
+        } else if (item._rawgId) {
+          creator = await fetchRawgDeveloper(item._rawgId);
+        } else if (activeTab === "gezi" && !image) {
+          // Görseli gelmeden seçilen yer: kapağı bir kez daha dene
+          image = (await fetchWikipediaThumb(item._wikiTag, item.title)) ?? "";
+        }
 
-      onSelect({ ...item, creator, _tab: activeTab });
-      setIsSelecting(false);
+        // Beklerken yeni bir seçim ya da sekme değişimi olduysa eski sonuç formu ezmesin
+        if (selectionSequenceRef.current !== selectionId) return;
+        onSelect({ ...item, creator, image, _tab: activeTab });
+      } finally {
+        if (selectionSequenceRef.current === selectionId) setIsSelecting(false);
+      }
     },
     [onSelect, activeTab]
   );
@@ -463,7 +503,7 @@ export function MediaSearch({
             <button
               key={tab.key}
               type="button"
-              onClick={() => handleTabChange(tab.key)}
+              onClick={() => handleTabChange(tab.key, true)}
               className={`rounded-md px-3 py-2 text-[13px] font-semibold transition-colors duration-150 ${
                 activeTab === tab.key
                   ? "bg-[var(--gold)] text-[var(--text-on-accent)]"
@@ -566,7 +606,7 @@ export function MediaSearch({
                   onClick={() => {
                     void onAction(item);
                   }}
-                  className="bg-accent/8 hover:bg-accent/14 flex-shrink-0 rounded-lg border border-accent/25 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors"
+                  className="flex-shrink-0 rounded-lg border border-accent/25 bg-accent/8 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/14"
                 >
                   {actionLabel}
                 </button>
@@ -586,7 +626,11 @@ export function MediaSearch({
 
       {showEmptyState && (
         <p className="mt-2 text-[11px] leading-5 text-[var(--text-muted)]">
-          Uygun sonuç bulunamadı. Başka bir anahtar kelimeyle tekrar dene.
+          {searchError
+            ? activeTab === "gezi"
+              ? "Konum araması şu an yanıt vermiyor, biraz sonra tekrar dene."
+              : "Arama şu an yanıt vermiyor, biraz sonra tekrar dene."
+            : "Uygun sonuç bulunamadı. Başka bir anahtar kelimeyle tekrar dene."}
         </p>
       )}
 

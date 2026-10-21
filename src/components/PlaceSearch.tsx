@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MagnifyingGlassIcon, MapPinIcon, XIcon } from "@phosphor-icons/react";
+import { fetchWikipediaThumb } from "@/lib/wikipedia";
 
 interface NominatimAddress {
   city?: string;
@@ -37,59 +38,45 @@ interface PlaceSearchProps {
   onSelect: (place: PlaceResult) => void;
 }
 
-async function fetchWikipediaThumb(
-  wikiTag?: string,
-  fallbackTitle?: string
-): Promise<string | undefined> {
-  try {
-    let lang = "en";
-    let title = fallbackTitle ?? "";
-
-    if (wikiTag) {
-      const colonIdx = wikiTag.indexOf(":");
-      if (colonIdx > -1) {
-        lang = wikiTag.slice(0, colonIdx);
-        title = wikiTag.slice(colonIdx + 1);
-      } else {
-        title = wikiTag;
-      }
-    }
-
-    if (!title) return undefined;
-
-    const url = `https://${lang}.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&format=json&pithumbsize=200&origin=*`;
-    const res = await fetch(url);
-    if (!res.ok) return undefined;
-    const data = await res.json();
-    const pages = data?.query?.pages ?? {};
-    const page = Object.values(pages)[0] as { thumbnail?: { source?: string } };
-    return page?.thumbnail?.source;
-  } catch {
-    return undefined;
-  }
-}
+// Nominatim kullanım politikası: uygulama başına en fazla saniyede bir istek
+const SEARCH_DEBOUNCE_MS = 1000;
 
 export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PlaceResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [error, setError] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  const skipNextRef = useRef(false);
+  // Her arama, seçim ve temizleme sırayı artırır; eski yanıtlar ve görseller yok sayılır
+  const requestSequenceRef = useRef(0);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(
+    () => () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    },
+    []
+  );
+
+  function cancelPendingSearch() {
+    requestSequenceRef.current += 1;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setLoading(false);
+    setError(false);
+  }
 
   function handleChange(value: string) {
     setQuery(value);
 
-    if (skipNextRef.current) {
-      skipNextRef.current = false;
-      return;
-    }
-
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    const requestId = ++requestSequenceRef.current;
+    setError(false);
 
     if (value.trim().length < 3) {
       setResults([]);
       setShowResults(false);
+      setLoading(false);
       return;
     }
 
@@ -100,16 +87,18 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
         const res = await fetch(url, {
           headers: { "Accept-Language": "tr" },
         });
+        if (!res.ok) throw new Error(String(res.status));
         const data: NominatimPlace[] = await res.json();
+        if (requestSequenceRef.current !== requestId) return;
 
         // Önce sonuçları göster (görsel olmadan)
         const initial: PlaceResult[] = data.map((p) => ({ ...p }));
         setResults(initial);
         setShowResults(true);
 
-        // Wikipedia görsellerini paralelde getir
-        Promise.all(
-          data.map(async (place, idx) => {
+        // Wikipedia görsellerini paralelde getir; place_id ile eşle
+        void Promise.all(
+          data.map(async (place) => {
             const wikiTag = place.extratags?.wikipedia;
             const fallbackTitle =
               place.address?.city ||
@@ -118,29 +107,31 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
               place.display_name.split(",")[0].trim();
 
             const thumbUrl = await fetchWikipediaThumb(wikiTag, fallbackTitle);
-            return { idx, thumbUrl };
+            return { id: place.place_id, thumbUrl };
           })
         ).then((imgs) => {
-          setResults((prev) => {
-            const updated = [...prev];
-            imgs.forEach(({ idx, thumbUrl }) => {
-              if (updated[idx] && thumbUrl) {
-                updated[idx] = { ...updated[idx], thumbUrl };
-              }
-            });
-            return updated;
-          });
+          if (requestSequenceRef.current !== requestId) return;
+          const thumbsById = new Map(imgs.map(({ id, thumbUrl }) => [id, thumbUrl] as const));
+          setResults((prev) =>
+            prev.map((place) => {
+              const thumbUrl = thumbsById.get(place.place_id);
+              return thumbUrl ? { ...place, thumbUrl } : place;
+            })
+          );
         });
       } catch {
+        if (requestSequenceRef.current !== requestId) return;
         setResults([]);
+        setError(true);
+        setShowResults(true);
       } finally {
-        setLoading(false);
+        if (requestSequenceRef.current === requestId) setLoading(false);
       }
-    }, 400);
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   function handleSelect(place: PlaceResult) {
-    skipNextRef.current = true;
+    cancelPendingSearch();
     setResults([]);
     setShowResults(false);
     const placeName =
@@ -153,6 +144,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
   }
 
   function handleClear() {
+    cancelPendingSearch();
     setQuery("");
     setResults([]);
     setShowResults(false);
@@ -168,7 +160,16 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
   return (
     <div className="space-y-3">
       {/* Arama kutusu */}
-      <div className="relative">
+      <div
+        ref={wrapperRef}
+        className="relative"
+        onBlur={(e) => {
+          // Odak bileşenin dışına çıkınca kapat (Tab ile sonuçlara geçmek açık tutar)
+          if (!wrapperRef.current?.contains(e.relatedTarget as Node | null)) {
+            setShowResults(false);
+          }
+        }}
+      >
         <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-accent">
           <MagnifyingGlassIcon size={16} className="shrink-0 text-[var(--text-muted)]" />
           <input
@@ -176,7 +177,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             value={query}
             onChange={(e) => handleChange(e.target.value)}
             onFocus={() => results.length > 0 && setShowResults(true)}
-            onBlur={() => setTimeout(() => setShowResults(false), 150)}
+            aria-label="Konum ara"
             placeholder="Şehir, ülke veya yer adı ara..."
             className="flex-1 bg-transparent text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:text-sm"
           />
@@ -187,7 +188,8 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             <button
               type="button"
               onClick={handleClear}
-              className="shrink-0 text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
+              aria-label="Aramayı temizle"
+              className="shrink-0 cursor-pointer rounded-full text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
             >
               <XIcon size={14} />
             </button>
@@ -203,8 +205,9 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                 <button
                   key={place.place_id}
                   type="button"
-                  onMouseDown={() => handleSelect(place)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--bg-raised)] active:opacity-80"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleSelect(place)}
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--bg-raised)] focus-visible:bg-[var(--bg-raised)] focus-visible:outline-none active:opacity-80"
                 >
                   {/* Thumbnail */}
                   <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-[var(--bg-raised)]">
@@ -235,7 +238,11 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
 
         {showResults && results.length === 0 && !loading && query.length >= 3 && (
           <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
-            <p className="text-sm text-[var(--text-muted)]">Sonuç bulunamadı</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              {error
+                ? "Konum araması şu an yanıt vermiyor, biraz sonra tekrar dene."
+                : "Sonuç bulunamadı"}
+            </p>
           </div>
         )}
       </div>

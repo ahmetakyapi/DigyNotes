@@ -5,6 +5,7 @@ import Image from "next/image";
 import StarRating from "@/components/StarRating";
 import TagInput from "@/components/TagInput";
 import { customLoader } from "@/lib/image";
+import { formatRating } from "@/lib/number-format";
 import { OptionalHint } from "./composer-utils";
 
 const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
@@ -54,7 +55,7 @@ export function StatusSidebar({
           </span>
           {externalRating !== null && (
             <span className="rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-secondary)]">
-              Genel puan: {externalRating}
+              Genel puan: {formatRating(externalRating)}
             </span>
           )}
         </div>
