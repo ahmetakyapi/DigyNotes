@@ -25,6 +25,7 @@ import StarRating from "@/components/StarRating";
 import { getCategoryLabel } from "@/lib/categories";
 import { formatDisplaySentence, formatDisplayTitle } from "@/lib/display-text";
 import { getPostImageSrc } from "@/lib/post-image";
+import { foldSearchText } from "@/lib/text";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import { ResilientImage } from "@/components/ResilientImage";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
@@ -97,35 +98,39 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   const availablePosts = useMemo(() => {
     const existingIds = new Set(collection?.posts.map((post) => post.id) ?? []);
-    const query = postQuery.trim().toLowerCase();
+    const query = foldSearchText(postQuery.trim());
 
     return allPosts.filter((post) => {
       if (existingIds.has(post.id)) return false;
       if (!query) return true;
 
-      return [
-        post.title,
-        post.creator ?? "",
-        post.category,
-        getCategoryLabel(post.category),
-        post.excerpt,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(query);
+      return foldSearchText(
+        [
+          post.title,
+          post.creator ?? "",
+          post.category,
+          getCategoryLabel(post.category),
+          post.excerpt,
+        ].join(" ")
+      ).includes(query);
     });
   }, [allPosts, collection?.posts, postQuery]);
 
   const filteredCollectionPosts = useMemo(() => {
     const posts = collection?.posts ?? [];
-    const query = collectionQuery.trim().toLowerCase();
+    const query = foldSearchText(collectionQuery.trim());
     if (!query) return posts;
 
     return posts.filter((post) =>
-      [post.title, post.creator ?? "", post.category, getCategoryLabel(post.category), post.excerpt]
-        .join(" ")
-        .toLowerCase()
-        .includes(query)
+      foldSearchText(
+        [
+          post.title,
+          post.creator ?? "",
+          post.category,
+          getCategoryLabel(post.category),
+          post.excerpt,
+        ].join(" ")
+      ).includes(query)
     );
   }, [collection?.posts, collectionQuery]);
 

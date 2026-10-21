@@ -6,10 +6,17 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeftIcon, MagnifyingGlassIcon, PlusIcon, StackIcon } from "@phosphor-icons/react";
+import {
+  ArrowLeftIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  StackIcon,
+  WarningCircleIcon,
+} from "@phosphor-icons/react";
 import CollectionCard from "@/components/CollectionCard";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
+import { foldSearchText } from "@/lib/text";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Collection } from "@/types";
@@ -22,6 +29,8 @@ export default function CollectionsPage() {
   const reduceMotion = useReducedMotion();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -37,14 +46,26 @@ export default function CollectionsPage() {
       return;
     }
 
+    setLoadError(false);
     fetch("/api/collections")
-      .then((res) => (res.ok ? res.json() : []))
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json();
+      })
       .then((data) => {
         setCollections(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [status]);
+      .catch(() => {
+        setLoadError(true);
+        setLoading(false);
+      });
+  }, [status, reloadKey]);
+
+  const retryLoad = () => {
+    setLoading(true);
+    setReloadKey((key) => key + 1);
+  };
 
   const createCollection = async () => {
     if (!title.trim()) {
@@ -87,18 +108,17 @@ export default function CollectionsPage() {
   };
 
   const filteredCollections = useMemo(() => {
-    const query = collectionQuery.trim().toLowerCase();
+    const query = foldSearchText(collectionQuery.trim());
     if (!query) return collections;
 
     return collections.filter((collection) =>
-      [
-        collection.title,
-        collection.description ?? "",
-        ...collection.posts.map((post) => post.title),
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(query)
+      foldSearchText(
+        [
+          collection.title,
+          collection.description ?? "",
+          ...collection.posts.map((post) => post.title),
+        ].join(" ")
+      ).includes(query)
     );
   }, [collectionQuery, collections]);
 
@@ -143,7 +163,7 @@ export default function CollectionsPage() {
         }
         description="Notlarını konuya, döneme ya da ruh haline göre gruplandır."
         stats={
-          loading
+          loading || loadError
             ? undefined
             : [
                 { value: collections.length, label: "Koleksiyon" },
@@ -236,6 +256,17 @@ export default function CollectionsPage() {
             />
           ))}
         </div>
+      ) : loadError ? (
+        <EmptyState
+          icon={<WarningCircleIcon size={22} weight="duotone" />}
+          title={
+            <>
+              Koleksiyonlar <Em>Yüklenemedi</Em>
+            </>
+          }
+          description="Bağlantını kontrol edip tekrar dene."
+          primary={{ label: "Tekrar Dene", onClick: retryLoad }}
+        />
       ) : collections.length === 0 ? (
         <EmptyState
           icon={<StackIcon size={22} weight="duotone" />}

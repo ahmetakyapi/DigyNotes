@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCategoryVariants, normalizeCategory } from "@/lib/categories";
+import { getCategoryVariants, normalizeFixedCategory } from "@/lib/categories";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
 
@@ -11,6 +11,9 @@ import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit
 const TITLE_MAX_LENGTH = 160;
 const CREATOR_MAX_LENGTH = 120;
 const YEARS_MAX_LENGTH = 40;
+// Travel ids are `nominatim:<full display name>`, which can run past 200 characters.
+const EXTERNAL_ID_MAX_LENGTH = 500;
+const IMAGE_MAX_LENGTH = 2048;
 
 export async function GET(req: NextRequest) {
   try {
@@ -59,14 +62,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Geçersiz istek verisi" }, { status: 400 });
     }
 
-    const category = normalizeCategory(body.category as string);
+    const category = normalizeFixedCategory(
+      typeof body.category === "string" ? body.category : null
+    );
     const title =
       typeof body.title === "string" ? body.title.trim().slice(0, TITLE_MAX_LENGTH) : "";
     const creator =
       typeof body.creator === "string" ? body.creator.trim().slice(0, CREATOR_MAX_LENGTH) : "";
     const years =
       typeof body.years === "string" ? body.years.trim().slice(0, YEARS_MAX_LENGTH) : "";
-    const image = typeof body.image === "string" ? body.image.trim() : "";
+    const rawImage = typeof body.image === "string" ? body.image.trim() : "";
+    const image =
+      rawImage.length <= IMAGE_MAX_LENGTH && /^https?:\/\//i.test(rawImage) ? rawImage : "";
     const excerpt = typeof body.excerpt === "string" ? body.excerpt.trim().slice(0, 600) : "";
     const externalId = typeof body.externalId === "string" ? body.externalId.trim() : "";
     const externalRating =
@@ -74,8 +81,14 @@ export async function POST(req: NextRequest) {
         ? body.externalRating
         : null;
 
-    if (!category || !title || !externalId) {
-      return NextResponse.json({ error: "Eksik watchlist verisi" }, { status: 400 });
+    if (
+      !category ||
+      category === "other" ||
+      !title ||
+      !externalId ||
+      externalId.length > EXTERNAL_ID_MAX_LENGTH
+    ) {
+      return NextResponse.json({ error: "Eksik ya da geçersiz liste verisi" }, { status: 400 });
     }
 
     const item = await prisma.wishlist.upsert({

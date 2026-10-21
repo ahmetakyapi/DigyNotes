@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getPostReadAccess } from "@/lib/post-access";
 import { requireAuth, safeParseBody, handleApiError } from "@/lib/api-server";
@@ -70,9 +71,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ bookmarked: !!bookmark });
     }
 
-    const where = {
+    // Same rule as canReadPost for a non-owner: the bookmark row outlives a soft delete,
+    // so trashed or draft notes (and notes of private authors) drop out of the list here.
+    const where: Prisma.BookmarkWhereInput = {
       userId,
-      OR: [{ post: { userId: null } }, { post: { user: { isPublic: true } } }],
+      post: {
+        isDeleted: false,
+        isDraft: false,
+        OR: [{ userId: null }, { user: { isPublic: true } }],
+      },
     };
 
     const include = {
@@ -88,6 +95,7 @@ export async function GET(request: NextRequest) {
       const bookmarks = await prisma.bookmark.findMany({
         where,
         orderBy: { createdAt: "desc" },
+        take: 200,
         include,
       });
 

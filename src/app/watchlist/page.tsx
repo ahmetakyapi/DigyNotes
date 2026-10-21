@@ -10,6 +10,7 @@ import {
   MagnifyingGlassIcon,
   MinusCircleIcon,
   StarIcon,
+  WarningCircleIcon,
 } from "@phosphor-icons/react";
 import {
   FIXED_CATEGORIES,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/categories";
 import { ORGANIZATION_SURFACES } from "@/lib/organization";
 import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
+import { foldSearchText } from "@/lib/text";
 import { OrganizationGuide } from "@/components/OrganizationGuide";
 import { MediaSearch, MediaSearchResult } from "@/components/MediaSearch";
 import { ResilientImage } from "@/components/ResilientImage";
@@ -54,6 +56,8 @@ export default function WatchlistPage() {
     useState<(typeof WATCHLIST_CATEGORIES)[number]>("movies");
   const [selectedResult, setSelectedResult] = useState<MediaSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [pendingExternalId, setPendingExternalId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,8 +73,12 @@ export default function WatchlistPage() {
       return;
     }
 
+    setLoadError(false);
     fetch("/api/watchlist")
-      .then((res) => (res.ok ? res.json() : []))
+      .then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.json();
+      })
       .then((data) => {
         const nextItems = Array.isArray(data) ? data : [];
         setItems(nextItems);
@@ -82,8 +90,16 @@ export default function WatchlistPage() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [status]);
+      .catch(() => {
+        setLoadError(true);
+        setLoading(false);
+      });
+  }, [status, reloadKey]);
+
+  const retryLoad = () => {
+    setLoading(true);
+    setReloadKey((key) => key + 1);
+  };
 
   useEffect(() => {
     setSelectedResult(null);
@@ -110,15 +126,14 @@ export default function WatchlistPage() {
   );
 
   const filteredItems = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+    const query = foldSearchText(searchQuery.trim());
     const nextItems = items.filter((item) => {
       if (normalizeCategory(item.category) !== activeCategory) return false;
       if (!query) return true;
 
-      return [item.title, item.creator ?? "", item.excerpt ?? "", item.years ?? ""]
-        .join(" ")
-        .toLowerCase()
-        .includes(query);
+      return foldSearchText(
+        [item.title, item.creator ?? "", item.excerpt ?? "", item.years ?? ""].join(" ")
+      ).includes(query);
     });
 
     return nextItems.sort((left, right) => {
@@ -248,7 +263,7 @@ export default function WatchlistPage() {
         }
         description="Sonra izlemek, okumak ya da gitmek istediklerini buraya ekle."
         stats={
-          loading
+          loading || loadError
             ? undefined
             : [
                 { value: items.length, label: "Kayıt" },
@@ -394,6 +409,17 @@ export default function WatchlistPage() {
               />
             ))}
           </div>
+        ) : loadError ? (
+          <EmptyState
+            icon={<WarningCircleIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Liste <Em>Yüklenemedi</Em>
+              </>
+            }
+            description="Bağlantını kontrol edip tekrar dene."
+            primary={{ label: "Tekrar Dene", onClick: retryLoad }}
+          />
         ) : filteredItems.length === 0 ? (
           <EmptyState
             compact={Boolean(searchQuery.trim())}
