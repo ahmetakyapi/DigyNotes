@@ -175,6 +175,7 @@ export default function ProfileSettingsPage() {
         return;
       }
       setUsernameStatus("checking");
+      if (usernameCheckRef.current) clearTimeout(usernameCheckRef.current);
       usernameCheckRef.current = setTimeout(async () => {
         try {
           const res = await fetch(`/api/users/${val}`);
