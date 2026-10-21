@@ -150,15 +150,19 @@ export default function NewPostPage() {
 
   /** "Taslağı Sil": forget the stored draft and start over with a fresh composer. */
   const discardDraft = () => {
+    // The restore skipped a bare ?category= hint (quick-start tiles); the fresh composer follows it.
+    const baseCategory =
+      normalizeFixedCategory(searchParams.get("category")?.trim()) ?? initialCategory;
+    const baseTemplate = getPostTemplate(baseCategory);
     clearDraft();
     setTitle("");
-    setCategory(initialCategory);
+    setCategory(baseCategory);
     setRating(0);
     setImage("");
-    setContent(initialTemplate?.html ?? "");
+    setContent(baseTemplate?.html ?? "");
     setCreator("");
     setYears("");
-    setStatus(getStatusOptions(initialCategory)[0]);
+    setStatus(getStatusOptions(baseCategory)[0]);
     setHasSpoiler(false);
     setLat(null);
     setLng(null);
@@ -170,7 +174,7 @@ export default function NewPostPage() {
     setSubmitError("");
     setShowRequiredErrors(false);
     setAutofillDone(false);
-    setTemplateUndo(initialTemplate ? { previousContent: "" } : null);
+    setTemplateUndo(baseTemplate ? { previousContent: "" } : null);
     setRestoredDraftAt(null);
     toast.success("Taslak silindi");
   };
