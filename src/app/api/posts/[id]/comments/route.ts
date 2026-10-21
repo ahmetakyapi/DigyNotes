@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getPostReadAccess } from "@/lib/post-access";
+import { canReadPost, getPostReadAccess } from "@/lib/post-access";
 import { getSessionUserId, handleApiError, requireAuth, safeParseBody } from "@/lib/api-server";
-import { findCommentForResponse, loadCommentPage, notifyMentionedUsers } from "@/lib/comments";
+import {
+  findCommentForResponse,
+  loadCommentPage,
+  notifyMentionedUsers,
+  resolveReplyParentId,
+} from "@/lib/comments";
 import {
   applyRateLimitHeaders,
   consumeRateLimit,
@@ -78,36 +83,57 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: "Yorum 1000 karakterden uzun olamaz" }, { status: 400 });
     }
 
-    let parentComment: { id: string; userId: string; postId: string } | null = null;
+    let parentComment: {
+      id: string;
+      userId: string;
+      postId: string;
+      parentId: string | null;
+    } | null = null;
     if (parentId) {
       parentComment = await prisma.comment.findUnique({
         where: { id: parentId },
-        select: { id: true, userId: true, postId: true },
+        select: { id: true, userId: true, postId: true, parentId: true },
       });
 
       if (!parentComment || parentComment.postId !== postId) {
         return NextResponse.json({ error: "Yanıtlanacak yorum bulunamadı" }, { status: 404 });
       }
     }
+    const attachToId = parentComment ? await resolveReplyParentId(parentComment) : null;
 
     const created = await prisma.comment.create({
       data: {
         content,
         post: { connect: { id: postId } },
         user: { connect: { id: userId } },
-        ...(parentComment ? { parent: { connect: { id: parentComment.id } } } : {}),
+        ...(attachToId ? { parent: { connect: { id: attachToId } } } : {}),
       },
       select: { id: true },
     });
 
-    /* "comment" goes to the note owner and to the author of the comment replied to;
-       mentions skip both so nobody gets two notifications for one comment. */
+    /* "comment" goes to the note owner and to the author of the comment replied to (only
+       while they can still open the note, like mentions); mentions skip both so nobody
+       gets two notifications for one comment. */
     const commentRecipients = new Set<string>();
     if (access.post.userId && access.post.userId !== userId) {
       commentRecipients.add(access.post.userId);
     }
-    if (parentComment && parentComment.userId !== userId) {
-      commentRecipients.add(parentComment.userId);
+    if (
+      parentComment &&
+      parentComment.userId !== userId &&
+      !commentRecipients.has(parentComment.userId)
+    ) {
+      const parentAuthor = await prisma.user.findUnique({
+        where: { id: parentComment.userId },
+        select: { isAdmin: true, isBanned: true },
+      });
+      if (
+        parentAuthor &&
+        !parentAuthor.isBanned &&
+        canReadPost(access.post, parentComment.userId, parentAuthor.isAdmin)
+      ) {
+        commentRecipients.add(parentComment.userId);
+      }
     }
 
     if (commentRecipients.size > 0) {

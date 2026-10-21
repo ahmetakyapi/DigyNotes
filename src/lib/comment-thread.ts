@@ -62,6 +62,30 @@ export function mergeComments<T extends FlatComment>(current: T[], incoming: T[]
   return [...current.filter((item) => !incomingIds.has(item.id)), ...incoming];
 }
 
+/**
+ * Where a reply to `parent` is stored when the page loader reads only `maxDepth` reply
+ * levels below a root: `parent` itself, or its parent when the reply would land below
+ * the last level (saved, but never returned). The composer's `@username` keeps who it
+ * answers. `getParentId` reads a comment's parentId (null for a root, undefined when
+ * the comment is gone). A reply to a root costs no lookup.
+ */
+export async function resolveReplyParent(
+  parent: { id: string; parentId: string | null },
+  maxDepth: number,
+  getParentId: (id: string) => Promise<string | null | undefined>
+): Promise<string> {
+  const chain = [parent.id];
+  let up = parent.parentId;
+  while (up && chain.length <= maxDepth) {
+    const next = await getParentId(up);
+    if (next === undefined) break;
+    chain.push(up);
+    up = next;
+  }
+  /* chain.length - 1 = depth of `parent` (root = 0); the reply sits one level below. */
+  return chain.length > maxDepth ? chain[1] : parent.id;
+}
+
 /** Root-page cursor: creation time plus id, so equal timestamps never skip a comment. */
 export function encodeCommentCursor(createdAt: Date | string, id: string) {
   return `${new Date(createdAt).toISOString()}_${id}`;

@@ -34,6 +34,8 @@ interface NotificationItem {
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+/* Notifications per request; older ones come with "Daha Fazla Bildirim". */
+const PAGE_SIZE = 50;
 
 function formatDate(value: string) {
   return new Date(value).toLocaleString("tr-TR", {
@@ -48,7 +50,10 @@ export default function NotificationsPage() {
   const { status } = useSession();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [total, setTotal] = useState<number | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [markingAll, setMarkingAll] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "read">("all");
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -63,6 +68,8 @@ export default function NotificationsPage() {
     if (status === "unauthenticated") {
       setNotifications([]);
       setUnreadCount(0);
+      setTotal(null);
+      setNextCursor(null);
       setLoadError(null);
       setLoading(false);
       return;
@@ -75,11 +82,15 @@ export default function NotificationsPage() {
       setLoadError(null);
 
       try {
-        const response = await fetch("/api/notifications", { cache: "no-store" });
+        const response = await fetch(`/api/notifications?limit=${PAGE_SIZE}`, {
+          cache: "no-store",
+        });
         if (response.status === 401) {
           if (!cancelled) {
             setNotifications([]);
             setUnreadCount(0);
+            setTotal(null);
+            setNextCursor(null);
           }
           return;
         }
@@ -93,10 +104,14 @@ export default function NotificationsPage() {
 
         setNotifications(Array.isArray(data?.notifications) ? data.notifications : []);
         setUnreadCount(typeof data?.unreadCount === "number" ? data.unreadCount : 0);
+        setTotal(typeof data?.total === "number" ? data.total : null);
+        setNextCursor(typeof data?.nextCursor === "string" ? data.nextCursor : null);
       } catch {
         if (!cancelled) {
           setNotifications([]);
           setUnreadCount(0);
+          setTotal(null);
+          setNextCursor(null);
           setLoadError("Bildirimler yüklenemedi. Biraz sonra tekrar dene.");
         }
       } finally {
@@ -137,6 +152,36 @@ export default function NotificationsPage() {
     }
   };
 
+  const loadMore = async () => {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const response = await fetch(
+        `/api/notifications?limit=${PAGE_SIZE}&cursor=${encodeURIComponent(nextCursor)}`,
+        { cache: "no-store" }
+      );
+      if (!response.ok) {
+        throw new Error();
+      }
+      const data = await response.json();
+      const incoming: NotificationItem[] = Array.isArray(data?.notifications)
+        ? data.notifications
+        : [];
+      setNotifications((prev) => {
+        const known = new Set(prev.map((item) => item.id));
+        return [...prev, ...incoming.filter((item) => !known.has(item.id))];
+      });
+      setNextCursor(typeof data?.nextCursor === "string" ? data.nextCursor : null);
+      if (typeof data?.unreadCount === "number") {
+        setUnreadCount(data.unreadCount);
+      }
+    } catch {
+      toast.error("Bildirimler yüklenemedi");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   const filteredNotifications = useMemo(() => {
     if (activeFilter === "unread") {
       return notifications.filter((item) => !item.read);
@@ -151,23 +196,16 @@ export default function NotificationsPage() {
   const readNotifications = filteredNotifications.filter((item) => item.read);
   const lastActivity = notifications[0]?.createdAt ? formatDate(notifications[0].createdAt) : "-";
 
+  /* Decides from render-time state (a flag set inside a setState updater is read before
+     React runs it), and refreshes the shell badge only once the server has answered. */
   const markNotificationRead = async (notificationId: string) => {
-    let shouldRequest = false;
+    const target = notifications.find((item) => item.id === notificationId);
+    if (!target || target.read) return;
 
     setNotifications((prev) =>
-      prev.map((item) => {
-        if (item.id !== notificationId || item.read) {
-          return item;
-        }
-        shouldRequest = true;
-        return { ...item, read: true };
-      })
+      prev.map((item) => (item.id === notificationId ? { ...item, read: true } : item))
     );
-
-    if (!shouldRequest) return;
-
     setUnreadCount((prev) => Math.max(0, prev - 1));
-    window.dispatchEvent(new Event("notifications:refresh"));
 
     try {
       const response = await fetch(`/api/notifications/${notificationId}/read`, {
@@ -182,6 +220,7 @@ export default function NotificationsPage() {
         prev.map((item) => (item.id === notificationId ? { ...item, read: false } : item))
       );
       setUnreadCount((prev) => prev + 1);
+    } finally {
       window.dispatchEvent(new Event("notifications:refresh"));
     }
   };
@@ -218,7 +257,9 @@ export default function NotificationsPage() {
   const headerStats = !loading
     ? [
         ...(unreadCount > 0 ? [{ value: unreadCount, label: "Okunmamış" }] : []),
-        ...(notifications.length > 0 ? [{ value: notifications.length, label: "Toplam" }] : []),
+        ...((total ?? notifications.length) > 0
+          ? [{ value: total ?? notifications.length, label: "Toplam" }]
+          : []),
       ]
     : undefined;
 
@@ -252,7 +293,7 @@ export default function NotificationsPage() {
             type="button"
             onClick={markAllRead}
             disabled={markingAll || unreadCount === 0}
-            className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
             {markingAll ? "İşaretleniyor..." : "Tümünü Okundu İşaretle"}
@@ -262,7 +303,11 @@ export default function NotificationsPage() {
 
       {/* LAYOUT: Pill segmented filter left, mono "last activity" meta right. */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1">
+        <div
+          role="group"
+          aria-label="Bildirimleri Filtrele"
+          className="inline-flex rounded-full border border-[var(--border)] bg-[var(--bg-card)] p-1"
+        >
           {[
             { key: "all", label: "Tümü" },
             { key: "unread", label: "Okunmamış" },
@@ -271,8 +316,9 @@ export default function NotificationsPage() {
             <button
               key={filter.key}
               type="button"
+              aria-pressed={activeFilter === filter.key}
               onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
-              className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-200 ${
+              className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 activeFilter === filter.key
                   ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -355,6 +401,19 @@ export default function NotificationsPage() {
               description="Seçtiğin filtreye uyan bildirim yok."
               primary={{ label: "Tümünü Göster", onClick: () => setActiveFilter("all") }}
             />
+          )}
+
+          {nextCursor && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => void loadMore()}
+                disabled={loadingMore}
+                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loadingMore ? "Yükleniyor..." : "Daha Fazla Bildirim"}
+              </button>
+            </div>
           )}
         </div>
       )}

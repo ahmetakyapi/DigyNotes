@@ -7,6 +7,7 @@ import {
   decodeCommentCursor,
   encodeCommentCursor,
   mergeComments,
+  resolveReplyParent,
 } from "../src/lib/comment-thread.ts";
 import { formatRelativeTime } from "../src/lib/relative-time.ts";
 
@@ -62,6 +63,51 @@ test("comment cursors round-trip and reject garbage", () => {
   assert.equal(decodeCommentCursor("nope"), null);
   assert.equal(decodeCommentCursor("bad-date_id"), null);
   assert.equal(decodeCommentCursor(null), null);
+});
+
+/* A straight chain c0 (root) ← c1 ← … ← c<length-1>; the lookup counts its calls. */
+function chain(length) {
+  const parents = new Map();
+  for (let i = 0; i < length; i += 1) parents.set(`c${i}`, i === 0 ? null : `c${i - 1}`);
+  const lookup = async (id) => {
+    lookup.calls += 1;
+    return parents.has(id) ? parents.get(id) : undefined;
+  };
+  lookup.calls = 0;
+  const node = (depth) => ({ id: `c${depth}`, parentId: parents.get(`c${depth}`) });
+  return { lookup, node };
+}
+
+test("resolveReplyParent keeps replies inside the levels the loader reads", async () => {
+  const maxDepth = 12;
+  const { lookup, node } = chain(14);
+
+  /* Reply to a root: no lookup, stored under it. */
+  assert.equal(await resolveReplyParent(node(0), maxDepth, lookup), "c0");
+  assert.equal(lookup.calls, 0);
+
+  /* Parent at depth 11: the reply lands on level 12, the last one loaded. */
+  assert.equal(await resolveReplyParent(node(11), maxDepth, lookup), "c11");
+
+  /* Parent at depth 12: a reply would be level 13, so it hangs on c11 (level 12). */
+  assert.equal(await resolveReplyParent(node(12), maxDepth, lookup), "c11");
+
+  for (let depth = 0; depth <= 12; depth += 1) {
+    const anchor = await resolveReplyParent(node(depth), maxDepth, lookup);
+    const replyLevel = Number(anchor.slice(1)) + 1;
+    assert.ok(replyLevel <= maxDepth, `reply to depth ${depth} lands on level ${replyLevel}`);
+  }
+});
+
+test("resolveReplyParent walks at most maxDepth levels up", async () => {
+  const { lookup, node } = chain(14);
+  await resolveReplyParent(node(13), 12, lookup);
+  assert.ok(lookup.calls <= 12);
+});
+
+test("resolveReplyParent stops at a missing ancestor", async () => {
+  const lookup = async () => undefined;
+  assert.equal(await resolveReplyParent({ id: "x", parentId: "gone" }, 12, lookup), "x");
 });
 
 test("formatRelativeTime spells times out", () => {

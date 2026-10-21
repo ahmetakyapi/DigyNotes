@@ -83,7 +83,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
     const loadNotifications = async () => {
       try {
-        const response = await fetch("/api/notifications?limit=1");
+        const response = await fetch("/api/notifications?countOnly=1", { cache: "no-store" });
         if (!response.ok) return;
         const data = await response.json();
         if (active && typeof data?.unreadCount === "number") {
