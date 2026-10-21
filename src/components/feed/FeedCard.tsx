@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, ChatCircleIcon, HeartIcon } from "@phosphor-icons/react";
 import { getCategoryLabel } from "@/lib/categories";
@@ -32,7 +32,13 @@ interface FeedCardProps {
   onFollowChange: (authorId: string, isFollowing: boolean) => void;
 }
 
-export function FeedCard({ post, showFollow, onToggleLike, onFollowChange }: FeedCardProps) {
+/** Memoized: liking or following patches one post, so only that card re-renders. */
+export const FeedCard = memo(function FeedCard({
+  post,
+  showFollow,
+  onToggleLike,
+  onFollowChange,
+}: FeedCardProps) {
   const displayTitle = formatDisplayTitle(post.title);
   const displayCreator = formatDisplayTitle(post.creator);
   const displayExcerpt = formatDisplaySentence(post.excerpt);
@@ -199,7 +205,7 @@ export function FeedCard({ post, showFollow, onToggleLike, onFollowChange }: Fee
       </div>
     </article>
   );
-}
+});
 
 function AuthorLink({
   href,

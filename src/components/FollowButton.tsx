@@ -2,11 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import {
-  getClientErrorMessage,
-  isAuthenticationError,
-  requestJson,
-} from "@/lib/client-api";
+import { getClientErrorMessage, isAuthenticationError, requestJson } from "@/lib/client-api";
 
 interface Props {
   username: string;
@@ -64,7 +60,8 @@ export default function FollowButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className={`rounded-lg border font-semibold transition-all disabled:opacity-50 ${sizeClassName} ${
+      aria-busy={loading}
+      className={`cursor-pointer rounded-lg border font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-wait disabled:opacity-50 ${sizeClassName} ${
         isFollowing
           ? "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-danger/60 hover:text-danger"
           : "border-accent/60 bg-accent/10 text-accent hover:bg-accent/20"

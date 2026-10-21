@@ -95,7 +95,9 @@ export default function FeedPageClient() {
     if (tab === "following") params.set("own", own ? "1" : "0");
 
     const response = await fetch(`/api/feed?${params.toString()}`);
-    if (response.status === 401) throw new FeedUnauthorizedError();
+    // An expired session comes back as the middleware's redirect to /login (ERR-RT-002).
+    const loginRedirect = response.redirected && new URL(response.url).pathname === "/login";
+    if (response.status === 401 || loginRedirect) throw new FeedUnauthorizedError();
     if (!response.ok) throw new Error("Feed fetch failed");
     const data = (await response.json()) as { items?: FeedPost[]; nextCursor?: string | null };
     return {
@@ -223,41 +225,48 @@ export default function FeedPageClient() {
     patchTab("following", EMPTY_TAB);
   };
 
-  const toggleLike = async (post: FeedPost) => {
-    if (pendingLikesRef.current.has(post.id)) return;
-    pendingLikesRef.current.add(post.id);
+  // Stable callbacks so the memoized FeedCard only re-renders the card that changed.
+  const toggleLike = useCallback(
+    async (post: FeedPost) => {
+      if (pendingLikesRef.current.has(post.id)) return;
+      pendingLikesRef.current.add(post.id);
 
-    const liked = !post.likedByMe;
-    patchPosts((p) => p.id === post.id, {
-      likedByMe: liked,
-      likeCount: Math.max(0, post.likeCount + (liked ? 1 : -1)),
-    });
-
-    try {
-      const data = await requestJson<{ count: number; liked: boolean }>(
-        `/api/posts/${post.id}/likes`,
-        { method: "POST" },
-        "Beğeni işlemi tamamlanamadı."
-      );
-      patchPosts((p) => p.id === post.id, { likedByMe: data.liked, likeCount: data.count });
-    } catch (error) {
+      const liked = !post.likedByMe;
       patchPosts((p) => p.id === post.id, {
-        likedByMe: post.likedByMe,
-        likeCount: post.likeCount,
+        likedByMe: liked,
+        likeCount: Math.max(0, post.likeCount + (liked ? 1 : -1)),
       });
-      toast.error(getClientErrorMessage(error, "Beğeni işlemi tamamlanamadı."));
-    } finally {
-      pendingLikesRef.current.delete(post.id);
-    }
-  };
 
-  const handleFollowChange = (authorId: string, isFollowing: boolean) => {
-    setFollowedHere((prev) => new Set(prev).add(authorId));
-    patchPosts((p) => p.user?.id === authorId, { isFollowing });
-    // The following list changes with every follow; refetch it on the next visit.
-    generationRef.current.following++;
-    patchTab("following", EMPTY_TAB);
-  };
+      try {
+        const data = await requestJson<{ count: number; liked: boolean }>(
+          `/api/posts/${post.id}/likes`,
+          { method: "POST" },
+          "Beğeni işlemi tamamlanamadı."
+        );
+        patchPosts((p) => p.id === post.id, { likedByMe: data.liked, likeCount: data.count });
+      } catch (error) {
+        patchPosts((p) => p.id === post.id, {
+          likedByMe: post.likedByMe,
+          likeCount: post.likeCount,
+        });
+        toast.error(getClientErrorMessage(error, "Beğeni işlemi tamamlanamadı."));
+      } finally {
+        pendingLikesRef.current.delete(post.id);
+      }
+    },
+    [patchPosts]
+  );
+
+  const handleFollowChange = useCallback(
+    (authorId: string, isFollowing: boolean) => {
+      setFollowedHere((prev) => new Set(prev).add(authorId));
+      patchPosts((p) => p.user?.id === authorId, { isFollowing });
+      // The following list changes with every follow; refetch it on the next visit.
+      generationRef.current.following++;
+      patchTab("following", EMPTY_TAB);
+    },
+    [patchPosts, patchTab]
+  );
 
   const renderCard = (post: FeedPost, context: FeedTab) => (
     <FeedCard
@@ -272,15 +281,6 @@ export default function FeedPageClient() {
       onFollowChange={handleFollowChange}
     />
   );
-
-  const uniqueAuthors = new Set(current.items.map((post) => post.user?.id).filter(Boolean)).size;
-  const headerStats =
-    current.status === "ready" && current.items.length > 0
-      ? [
-          { value: current.items.length, label: "Not" },
-          ...(uniqueAuthors > 0 ? [{ value: uniqueAuthors, label: "Kişi" }] : []),
-        ]
-      : undefined;
 
   const header = {
     following: {
@@ -322,12 +322,9 @@ export default function FeedPageClient() {
     <main className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pt-10">
       {/* LAYOUT: Editorial masthead → tab bar (+ own-notes chip) → state block (skeleton /
           error / empty / list with load-more) → popular preview under a thin following list. */}
-      <PageHeader
-        index="07"
-        title={header.title}
-        description={header.description}
-        stats={headerStats}
-      />
+      {/* No header stats: an infinite feed has no total, and counting the loaded
+          pages grows while scrolling (ERR-DATA-013). */}
+      <PageHeader index="07" title={header.title} description={header.description} />
 
       <FeedTabs
         active={activeTab}

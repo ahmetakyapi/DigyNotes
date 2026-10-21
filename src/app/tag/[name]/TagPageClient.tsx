@@ -19,13 +19,19 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 type SortOption = "newest" | "oldest" | "rating";
 
+/** Same page size as page.tsx: the tag page lists at most this many notes. */
+const TAG_PAGE_LIMIT = 50;
+
 export default function TagPageClient({
   params,
   initialPosts,
+  initialTotal,
 }: {
   params: { name: string };
   /** First page (newest) read on the server, so the notes are in the HTML. */
   initialPosts?: Post[];
+  /** Every public note with this tag, counted on the server (sorting doesn't change it). */
+  initialTotal?: number | null;
 }) {
   const tagName = decodeURIComponent(params.name);
   const [posts, setPosts] = useState<Post[]>(initialPosts ?? []);
@@ -39,7 +45,9 @@ export default function TagPageClient({
     if (skipSeededFetch.current && sort === "newest") return;
     skipSeededFetch.current = false;
     setLoading(true);
-    fetch(`/api/public/posts?tag=${encodeURIComponent(tagName)}&sort=${sort}&limit=50`)
+    fetch(
+      `/api/public/posts?tag=${encodeURIComponent(tagName)}&sort=${sort}&limit=${TAG_PAGE_LIMIT}`
+    )
       .then((r) => r.json())
       .then((data) => {
         setPosts(Array.isArray(data) ? data : []);
@@ -47,6 +55,10 @@ export default function TagPageClient({
       })
       .catch(() => setLoading(false));
   }, [tagName, sort]);
+
+  // The list stops at 50, so without the server total a full list reads "50+".
+  const totalLabel =
+    initialTotal ?? (posts.length < TAG_PAGE_LIMIT ? posts.length : `${TAG_PAGE_LIMIT}+`);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -60,7 +72,7 @@ export default function TagPageClient({
           </>
         }
         description="Bu etiketi kullanan herkese açık notlar."
-        stats={loading ? undefined : [{ value: posts.length, label: "Herkese Açık Not" }]}
+        stats={loading ? undefined : [{ value: totalLabel, label: "Herkese Açık Not" }]}
         actions={
           <>
             <Link
@@ -84,6 +96,7 @@ export default function TagPageClient({
       <div className="mb-6 flex items-center justify-between gap-3">
         <p className="text-[12.5px] font-medium text-[var(--text-muted)]">Sıralama</p>
         <select
+          aria-label="Sıralama"
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
           className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-xs"

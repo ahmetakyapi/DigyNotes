@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { cache } from "react";
 import { buildPageMetadata, NO_INDEX, toAbsoluteUrl } from "@/lib/metadata";
-import { listPublicPosts } from "@/lib/public-posts";
+import { countPublicPosts, listPublicPosts } from "@/lib/public-posts";
 import { normalizeTagName } from "@/lib/text";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/JsonLd";
@@ -32,6 +32,17 @@ const loadTagPosts = cache(async (tagName: string) => {
   }
 });
 
+/* Header total: the page lists the first 50 notes only, so the count must not come
+   from that list (ERR-DATA-013). `null` = count failed, the client shows "50+". */
+async function loadTagTotal(tagName: string) {
+  try {
+    return await countPublicPosts(tagName);
+  } catch (error) {
+    console.error("[tag] total failed:", error);
+    return null;
+  }
+}
+
 function tagPath(tagName: string) {
   return `/tag/${encodeURIComponent(normalizeTagName(tagName))}`;
 }
@@ -54,7 +65,7 @@ export async function generateMetadata({
 
 export default async function TagPage({ params }: { params: { name: string } }) {
   const tagName = readTagName(params.name);
-  const posts = await loadTagPosts(tagName);
+  const [posts, total] = await Promise.all([loadTagPosts(tagName), loadTagTotal(tagName)]);
   return (
     <>
       <JsonLd
@@ -64,7 +75,7 @@ export default async function TagPage({ params }: { params: { name: string } }) 
           { name: `#${tagName}`, url: toAbsoluteUrl(tagPath(tagName)) },
         ])}
       />
-      <TagPageClient params={params} initialPosts={posts ?? undefined} />
+      <TagPageClient params={params} initialPosts={posts ?? undefined} initialTotal={total} />
     </>
   );
 }

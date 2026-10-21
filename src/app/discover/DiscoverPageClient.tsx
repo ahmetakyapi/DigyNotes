@@ -21,6 +21,8 @@ import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+/** = `take` in searchPublicUsers (not imported: that module pulls in Prisma). */
+const USER_RESULT_CAP = 30;
 
 export interface PublicUser {
   id: string;
@@ -35,10 +37,13 @@ export interface PublicUser {
 export default function DiscoverPageClient({
   initialUsers,
   initialTrending,
+  initialTotal,
 }: {
   /** Server-read first state (page.tsx): profiles and top-rated notes are in the HTML. */
   readonly initialUsers?: PublicUser[];
   readonly initialTrending?: Post[];
+  /** Every public profile, counted on the server; the list itself stops at 30. */
+  readonly initialTotal?: number | null;
 }) {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<PublicUser[]>(initialUsers ?? []);
@@ -88,8 +93,9 @@ export default function DiscoverPageClient({
   );
 
   const showTrending = trendingPosts.length > 0 && !query.trim();
+  // Only the server total: the loaded list is capped at 30 (ERR-DATA-013).
   const headerStats =
-    !loading && users.length > 0 ? [{ value: users.length, label: "Profil" }] : undefined;
+    !query.trim() && initialTotal != null ? [{ value: initialTotal, label: "Profil" }] : undefined;
 
   return (
     <main className="min-h-screen pb-12 pt-8 sm:pt-10">
@@ -190,6 +196,8 @@ export default function DiscoverPageClient({
                   <button
                     key={page}
                     type="button"
+                    aria-label={`${page}. sayfa`}
+                    aria-current={page === currentPage ? "page" : undefined}
                     onClick={() => setCurrentPage(page)}
                     className={`dn-mono flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-full px-3 text-[11px] transition-colors duration-200 active:scale-95 ${
                       page === currentPage
@@ -213,7 +221,11 @@ export default function DiscoverPageClient({
             )}
 
             <div className="mt-4 text-center text-[12px] font-medium text-[var(--text-muted)]">
-              <span className="text-[var(--text-secondary)]">{users.length}</span> profil
+              <span className="text-[var(--text-secondary)]">
+                {users.length}
+                {users.length >= USER_RESULT_CAP ? "+" : ""}
+              </span>{" "}
+              profil
               {query.trim() && <span className="text-[var(--text-faint)]"> · arama: {query}</span>}
             </div>
           </>

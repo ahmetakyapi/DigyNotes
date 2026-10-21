@@ -6,8 +6,15 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { customLoader } from "@/lib/image";
-import { ArrowUpRightIcon, CaretRightIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
+import {
+  ArrowUpRightIcon,
+  CaretRightIcon,
+  CheckIcon,
+  WarningCircleIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import { PageHeader, Em } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const inputBase =
   "w-full h-12 px-4 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm";
@@ -116,14 +123,16 @@ export default function ProfileSettingsPage() {
     "idle" | "checking" | "ok" | "taken" | "invalid"
   >("idle");
   const usernameCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Bumped on every check, so a stale timer or response never overwrites a newer status. */
+  const checkSeqRef = useRef(0);
 
-  useEffect(() => {
+  const loadProfile = useCallback(() => {
+    setLoading(true);
     fetch("/api/users/me")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) {
           toast.error("Profil yüklenemedi");
-          setLoading(false);
           return;
         }
         setProfile(data);
@@ -131,13 +140,14 @@ export default function ProfileSettingsPage() {
         setBio(data.bio ?? "");
         setAvatarUrl(data.avatarUrl ?? "");
         setIsPublic(data.isPublic);
-        setLoading(false);
       })
-      .catch(() => {
-        toast.error("Profil yüklenemedi");
-        setLoading(false);
-      });
+      .catch(() => toast.error("Profil yüklenemedi"))
+      .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   useEffect(() => {
     return () => {
@@ -149,6 +159,9 @@ export default function ProfileSettingsPage() {
 
   const checkUsername = useCallback(
     (val: string) => {
+      // Cancel the previous check before any early return, or its timer still fires.
+      if (usernameCheckRef.current) clearTimeout(usernameCheckRef.current);
+      const seq = ++checkSeqRef.current;
       if (!val) {
         setUsernameStatus("idle");
         return;
@@ -162,13 +175,17 @@ export default function ProfileSettingsPage() {
         return;
       }
       setUsernameStatus("checking");
-      if (usernameCheckRef.current) clearTimeout(usernameCheckRef.current);
       usernameCheckRef.current = setTimeout(async () => {
         try {
           const res = await fetch(`/api/users/${val}`);
-          setUsernameStatus(res.ok ? "taken" : "ok");
+          if (seq !== checkSeqRef.current) return;
+          // 200 = public profile, 403 = private profile: both mean the name is taken.
+          // Anything else is unknown; the server stays the final check on save.
+          setUsernameStatus(
+            res.status === 404 ? "ok" : res.ok || res.status === 403 ? "taken" : "idle"
+          );
         } catch {
-          setUsernameStatus("ok");
+          if (seq === checkSeqRef.current) setUsernameStatus("idle");
         }
       }, 500);
     },
@@ -182,6 +199,8 @@ export default function ProfileSettingsPage() {
   };
 
   const handleSave = async () => {
+    // Without the loaded profile the form holds defaults; saving them would wipe it.
+    if (!profile) return;
     if (!username.trim()) {
       toast.error("Kullanıcı adı boş bırakılamaz");
       return;
@@ -319,6 +338,25 @@ export default function ProfileSettingsPage() {
               className="h-28 animate-pulse rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)]"
             />
           ))}
+        </div>
+      </main>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <main className="min-h-screen py-10">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <EmptyState
+            icon={<WarningCircleIcon size={22} weight="duotone" />}
+            title={
+              <>
+                Profil <Em>Yüklenemedi</Em>
+              </>
+            }
+            description="Bağlantını kontrol edip tekrar dene."
+            primary={{ label: "Tekrar Dene", onClick: loadProfile }}
+          />
         </div>
       </main>
     );
@@ -472,71 +510,90 @@ export default function ProfileSettingsPage() {
 
         {/* ── (03) Güvenlik ── */}
         <SettingsSection index="03" label="Şifre" note="Şifreni buradan değiştirebilirsin.">
-          <div>
-            <label htmlFor="settings-current-password" className={labelClass}>
-              Mevcut Şifre
-            </label>
+          {/* A real form: Enter submits, and password managers see the change. */}
+          <form
+            className="space-y-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void handlePasswordChange();
+            }}
+          >
+            {/* Account identifier for password managers; sign-in uses the e-mail. */}
             <input
-              id="settings-current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              className={inputBase}
-              placeholder="••••••••"
-              autoComplete="current-password"
+              type="text"
+              name="username"
+              autoComplete="username"
+              value={profile.email}
+              readOnly
+              hidden
             />
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label htmlFor="settings-new-password" className={labelClass}>
-                Yeni Şifre
+              <label htmlFor="settings-current-password" className={labelClass}>
+                Mevcut Şifre
               </label>
               <input
-                id="settings-new-password"
+                id="settings-current-password"
                 type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className={inputBase}
-                placeholder="En az 8 karakter"
-                minLength={8}
-                autoComplete="new-password"
-              />
-              {newPassword.length > 0 && newPassword.length < 8 && (
-                <p className={errorTextClass}>En az 8 karakter gerekli</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="settings-confirm-password" className={labelClass}>
-                Yeni Şifre (Tekrar)
-              </label>
-              <input
-                id="settings-confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 className={inputBase}
                 placeholder="••••••••"
-                autoComplete="new-password"
+                autoComplete="current-password"
               />
-              {confirmPassword && newPassword !== confirmPassword && (
-                <p className={errorTextClass}>Şifreler eşleşmiyor</p>
-              )}
             </div>
-          </div>
-          <button
-            type="button"
-            onClick={handlePasswordChange}
-            disabled={
-              changingPassword ||
-              !currentPassword ||
-              !newPassword ||
-              newPassword !== confirmPassword ||
-              newPassword.length < 8
-            }
-            className="cursor-pointer rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {changingPassword ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
-          </button>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="settings-new-password" className={labelClass}>
+                  Yeni Şifre
+                </label>
+                <input
+                  id="settings-new-password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className={inputBase}
+                  placeholder="En az 8 karakter"
+                  minLength={8}
+                  maxLength={128}
+                  autoComplete="new-password"
+                />
+                {newPassword.length > 0 && newPassword.length < 8 && (
+                  <p className={errorTextClass}>En az 8 karakter gerekli</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="settings-confirm-password" className={labelClass}>
+                  Yeni Şifre (Tekrar)
+                </label>
+                <input
+                  id="settings-confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={inputBase}
+                  placeholder="••••••••"
+                  maxLength={128}
+                  autoComplete="new-password"
+                />
+                {confirmPassword && newPassword !== confirmPassword && (
+                  <p className={errorTextClass}>Şifreler eşleşmiyor</p>
+                )}
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={
+                changingPassword ||
+                !currentPassword ||
+                !newPassword ||
+                newPassword !== confirmPassword ||
+                newPassword.length < 8
+              }
+              className="cursor-pointer rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {changingPassword ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
+            </button>
+          </form>
         </SettingsSection>
 
         {/* ── (04) Uygulama — mobilde tema ve bildirimler ── */}

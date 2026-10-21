@@ -149,3 +149,8 @@ export async function listPublicPosts(options: {
   });
   return posts.map(serializePublicPost);
 }
+
+/** How many public notes match (all of them, not the first page). */
+export function countPublicPosts(tag?: string | null) {
+  return prisma.post.count({ where: publicPostsWhere(tag) });
+}
