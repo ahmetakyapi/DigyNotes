@@ -43,6 +43,7 @@ import {
 import { mergePendingTagText } from "@/lib/tag-input";
 import { stripHtml } from "@/lib/text";
 import { formatRating } from "@/lib/number-format";
+import { getExternalRatingMeta } from "@/lib/external-rating";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { RestoredDraftBanner, focusComposerField, showUndoToast } from "./composer-utils";
 
@@ -246,8 +247,12 @@ export default function NewPostPage() {
       setLng(nextFields.lng);
       setLocationLabel(nextFields.locationLabel);
       setAutofillDone(false);
+      // The score's scale follows the category (TMDB /10 vs Metacritic /5): drop it when that changes.
+      if (getExternalRatingMeta(category).source !== getExternalRatingMeta(nextCategory).source) {
+        setExternalRating(null);
+      }
     },
-    [content, templateUndo, creator, hasSpoiler, lat, lng, locationLabel]
+    [content, templateUndo, creator, hasSpoiler, lat, lng, locationLabel, category]
   );
 
   /** The search excerpt only goes into an editor that holds nothing the user wrote. */

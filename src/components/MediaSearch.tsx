@@ -136,6 +136,19 @@ async function fetchRawgDeveloper(gameId: number): Promise<string> {
   }
 }
 
+// Gezi kapakları: sonuç başına tek Wikipedia isteği. Arama effect'i başlatır; seçim ve
+// "Listeye Ekle" aynı isteği bekler (bitmişse beklemeden, görsel yoksa yeniden sormadan)
+const placeThumbLookups = new WeakMap<MediaSearchResult, Promise<string | undefined>>();
+
+function lookupPlaceThumb(item: MediaSearchResult): Promise<string | undefined> {
+  let pending = placeThumbLookups.get(item);
+  if (!pending) {
+    pending = fetchWikipediaThumb(item._wikiTag, item.title);
+    placeThumbLookups.set(item, pending);
+  }
+  return pending;
+}
+
 function mapMovieResults(items: TMDBRawResult[]): MediaSearchResult[] {
   return items.slice(0, 5).map((item) => ({
     title: item.title ?? "",
@@ -284,6 +297,8 @@ export function MediaSearch({
   const [highlighted, setHighlighted] = useState(-1);
   const [isSelecting, setIsSelecting] = useState(false);
   const [searchError, setSearchError] = useState(false);
+  // Yanıtı gelen son sorgu: boş/hata satırı yalnızca onun için görünür (debounce sırasında değil)
+  const [searchedQuery, setSearchedQuery] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -305,6 +320,7 @@ export function MediaSearch({
     setHighlighted(-1);
     setIsLoading(false);
     setIsSelecting(false);
+    setSearchedQuery(null);
     if (focusInput) setTimeout(() => inputRef.current?.focus(), 50);
   }, []);
 
@@ -360,12 +376,11 @@ export function MediaSearch({
           setResults(found);
           setIsOpen(found.length > 0);
           setHighlighted(-1);
+          setSearchedQuery(query);
 
           // Gezi: yerler hemen görünür, Wikipedia görselleri geldikçe eklenir
           if (activeTab === "gezi" && found.length > 0) {
-            void Promise.all(
-              found.map((item) => fetchWikipediaThumb(item._wikiTag, item.title))
-            ).then((thumbs) => {
+            void Promise.all(found.map((item) => lookupPlaceThumb(item))).then((thumbs) => {
               if (requestSequenceRef.current !== nextRequestId) return;
               setResults((prev) =>
                 prev.map((item, i) => {
@@ -380,6 +395,7 @@ export function MediaSearch({
           setResults([]);
           setIsOpen(false);
           setSearchError(true);
+          setSearchedQuery(query);
         } finally {
           if (requestSequenceRef.current !== nextRequestId) return;
           setIsLoading(false);
@@ -430,6 +446,7 @@ export function MediaSearch({
       setIsLoading(false);
       setIsOpen(false);
       setResults([]);
+      setSearchedQuery(null);
       skipNextSearchRef.current = true;
       setQuery(item.title);
 
@@ -441,8 +458,8 @@ export function MediaSearch({
         } else if (item._rawgId) {
           creator = await fetchRawgDeveloper(item._rawgId);
         } else if (activeTab === "gezi" && !image) {
-          // Görseli gelmeden seçilen yer: kapağı bir kez daha dene
-          image = (await fetchWikipediaThumb(item._wikiTag, item.title)) ?? "";
+          // Görseli gelmeden seçilen yer: süren aramayı bekle (yeni istek açmaz)
+          image = (await lookupPlaceThumb(item)) ?? "";
         }
 
         // Beklerken yeni bir seçim ya da sekme değişimi olduysa eski sonuç formu ezmesin
@@ -492,7 +509,11 @@ export function MediaSearch({
   const minCharacterCount = activeTab === "gezi" ? 3 : 2;
   const showHelperText = query.trim().length > 0 && query.trim().length < minCharacterCount;
   const showEmptyState =
-    !isLoading && query.trim().length >= minCharacterCount && results.length === 0 && !isOpen;
+    !isLoading &&
+    searchedQuery === query &&
+    query.trim().length >= minCharacterCount &&
+    results.length === 0 &&
+    !isOpen;
 
   return (
     <div ref={containerRef}>
@@ -603,8 +624,14 @@ export function MediaSearch({
               {onAction && (
                 <button
                   type="button"
-                  onClick={() => {
-                    void onAction(item);
+                  onClick={async () => {
+                    // Görseli henüz gelmemiş yer de kapağıyla eklensin
+                    let target = item;
+                    if (activeTab === "gezi" && !item.image) {
+                      const thumb = await lookupPlaceThumb(item);
+                      if (thumb) target = { ...item, image: thumb };
+                    }
+                    void onAction(target);
                   }}
                   className="flex-shrink-0 rounded-lg border border-accent/25 bg-accent/8 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/14"
                 >

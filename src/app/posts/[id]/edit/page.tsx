@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 import { getClientErrorMessage, requestJson } from "@/lib/client-api";
 import { customLoader } from "@/lib/image";
 import { formatRating } from "@/lib/number-format";
+import { getExternalRatingMeta } from "@/lib/external-rating";
 import { buildOpenStreetMapLink, formatCoordinate } from "@/lib/maps";
 import { categorySupportsSpoiler } from "@/lib/post-config";
 import {
@@ -234,6 +235,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setLat(nextFields.lat);
     setLng(nextFields.lng);
     setLocationLabel(nextFields.locationLabel);
+    // The score's scale follows the category (TMDB /10 vs Metacritic /5): drop it when that changes.
+    if (getExternalRatingMeta(category).source !== getExternalRatingMeta(cat).source) {
+      setExternalRating(null);
+    }
   };
 
   const handlePlaceSelect = (place: PlaceResult) => {
