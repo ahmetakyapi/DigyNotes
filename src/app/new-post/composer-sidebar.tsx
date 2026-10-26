@@ -96,7 +96,7 @@ export function StatusSidebar({
               type="checkbox"
               checked={hasSpoiler}
               onChange={(event) => onSpoilerChange(event.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-[var(--border)] text-accent focus:ring-accent"
+              className="mt-0.5 h-4 w-4 rounded-sm border-[var(--border)] text-accent focus:ring-accent"
               aria-label="Spoiler Uyarısı Ekle"
             />
             <span className="min-w-0">
@@ -225,7 +225,7 @@ function CoverPreview({
           Kapak Önizleme
         </span>
         <span
-          className="absolute bottom-3 right-3 rounded-md border px-2 py-0.5 text-[12px] font-medium backdrop-blur-sm"
+          className="absolute bottom-3 right-3 rounded-md border px-2 py-0.5 text-[12px] font-medium backdrop-blur-xs"
           style={{
             borderColor: "var(--media-control-border)",
             background: "var(--media-control-bg)",

@@ -13,7 +13,7 @@ interface TagBadgeProps {
 }
 
 export default function TagBadge({ tag, onClick, onRemove, active, href }: TagBadgeProps) {
-  const className = `inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium transition-colors ${
+  const className = `inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-medium transition-colors ${
     onClick || href ? "cursor-pointer" : ""
   } ${
     active
@@ -38,7 +38,7 @@ export default function TagBadge({ tag, onClick, onRemove, active, href }: TagBa
             e.stopPropagation();
             onRemove(tag.name);
           }}
-          className="-mr-0.5 ml-0.5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="-mr-0.5 ml-0.5 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-danger focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
           aria-label={`${tag.name} etiketini kaldır`}
         >
           <XIcon size={10} weight="bold" aria-hidden />

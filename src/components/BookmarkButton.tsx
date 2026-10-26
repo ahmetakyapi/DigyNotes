@@ -88,7 +88,7 @@ export function BookmarkButton({
               <Link
                 href={ORGANIZATION_SURFACES.bookmarks.href}
                 onClick={() => toast.dismiss(t.id)}
-                className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[12.5px] font-semibold text-accent transition-colors hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="shrink-0 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[12.5px] font-semibold text-accent transition-colors hover:bg-accent/20 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 Görüntüle
               </Link>

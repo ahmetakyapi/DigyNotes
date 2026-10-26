@@ -181,7 +181,7 @@ export const DarkTooltip = ({
 }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs">
       {label && <p className="mb-1.5 text-[12px] font-medium text-[var(--text-muted)]">{label}</p>}
       {payload.map((p) => (
         <div key={p.name} className="flex items-center gap-2">
@@ -308,12 +308,12 @@ export function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] px-4 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
     >
-      <div className="w-full max-w-sm rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-deep)]">
+      <div className="w-full max-w-sm rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-6">
         <div className="mb-5 flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-full border border-danger/30 text-danger">
             <TrashIcon size={16} weight="bold" />

@@ -11,7 +11,7 @@ interface DesktopGlobalNavProps {
 
 export function DesktopGlobalNav({ isFeed, isRecommended, isDiscover }: DesktopGlobalNavProps) {
   return (
-    <div className="flex flex-shrink-0 items-center gap-0.5 px-1">
+    <div className="flex shrink-0 items-center gap-0.5 px-1">
       <NavLink href="/feed" active={isFeed} icon={<NavigationArrowIcon size={11} />}>
         Akış
       </NavLink>
@@ -39,7 +39,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className={`flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-medium transition-colors duration-200 ${
+      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-2.5 pb-[11px] pt-[10px] text-[13px] font-medium transition-colors duration-200 ${
         active
           ? "border-[var(--gold)] text-[var(--text-primary)]"
           : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"

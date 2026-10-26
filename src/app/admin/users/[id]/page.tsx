@@ -182,7 +182,7 @@ const DarkTooltip = ({
 }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs">
       {label && <p className="mb-1 text-[12px] font-medium text-[var(--text-muted)]">{label}</p>}
       {payload.map((p) => (
         <div key={p.name} className="flex items-center gap-2">

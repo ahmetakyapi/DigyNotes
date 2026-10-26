@@ -287,7 +287,7 @@ export default function CollectionDetailPage({
   const ghostPill =
     "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-xs font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50";
   const inputCls =
-    "w-full border border-[var(--border)] bg-[var(--bg-base)] text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm";
+    "w-full border border-[var(--border)] bg-[var(--bg-base)] text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-sm";
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
@@ -484,7 +484,7 @@ export default function CollectionDetailPage({
                     key={post.id}
                     className="flex items-center gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] p-3 transition-colors duration-300 hover:border-[var(--text-faint)]"
                   >
-                    <div className="relative h-20 w-14 flex-shrink-0 overflow-hidden rounded-[14px]">
+                    <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-[14px]">
                       <ResilientImage
                         src={getPostImageSrc(post.image, post.category)}
                         alt={formatDisplayTitle(post.title)}
@@ -624,7 +624,7 @@ export default function CollectionDetailPage({
                       className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.06]"
                     />
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[var(--bg-card)] to-transparent" />
-                    <span className="absolute left-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-primary)] backdrop-blur-sm">
+                    <span className="absolute left-3 top-3 rounded-full border border-[var(--border)] bg-[var(--bg-overlay)] px-2.5 py-1 text-[12px] font-medium text-[var(--text-primary)] backdrop-blur-xs">
                       {String(i + 1).padStart(2, "0")} · {getCategoryLabel(post.category)}
                     </span>
                   </div>

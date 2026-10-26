@@ -53,7 +53,7 @@ export default function StarRating({
         aria-valuenow={rating}
         aria-valuetext={rating > 0 ? `${formatRating(rating)} / 5` : "Puan yok"}
         onKeyDown={handleKeyDown}
-        className="flex items-center gap-0.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className="flex items-center gap-0.5 rounded-full focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
       >
         {Array.from({ length: 5 }, (_, i) => {
           const starNum = i + 1;

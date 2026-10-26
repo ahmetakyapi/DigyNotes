@@ -385,13 +385,13 @@ export default function WatchlistPage() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Ara..."
-                className="h-9 w-44 rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
+                className="h-9 w-44 rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-8 pr-3 text-[16px] text-[var(--text-primary)] outline-hidden transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
               />
             </label>
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WatchlistSort)}
-              className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-secondary)] outline-none transition-colors focus:border-accent/40 sm:text-xs"
+              className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[16px] text-[var(--text-secondary)] outline-hidden transition-colors focus:border-accent/40 sm:text-xs"
             >
               <option value="recent">Yeni</option>
               <option value="title">A-Z</option>

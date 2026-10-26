@@ -10,12 +10,12 @@ export default function RecommendedLoading() {
             key={i}
             className="flex animate-pulse gap-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4"
           >
-            <div className="h-28 w-20 flex-shrink-0 rounded-lg bg-[var(--bg-raised)]" />
+            <div className="h-28 w-20 shrink-0 rounded-lg bg-[var(--bg-raised)]" />
             <div className="flex-1 space-y-2.5">
-              <div className="h-4 w-3/4 rounded bg-[var(--bg-raised)]" />
-              <div className="h-3 w-1/2 rounded bg-[var(--bg-raised)]" />
-              <div className="h-3 w-full rounded bg-[var(--bg-raised)]" />
-              <div className="h-3 w-2/3 rounded bg-[var(--bg-raised)]" />
+              <div className="h-4 w-3/4 rounded-sm bg-[var(--bg-raised)]" />
+              <div className="h-3 w-1/2 rounded-sm bg-[var(--bg-raised)]" />
+              <div className="h-3 w-full rounded-sm bg-[var(--bg-raised)]" />
+              <div className="h-3 w-2/3 rounded-sm bg-[var(--bg-raised)]" />
             </div>
           </div>
         ))}

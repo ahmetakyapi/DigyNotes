@@ -53,7 +53,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-labelledby="add-category-title"
@@ -70,7 +70,7 @@ const AddCategoryModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-accent/60 focus:outline-none focus:ring-1 focus:ring-accent/20 sm:text-sm"
+            className="mb-4 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-accent/60 focus:outline-hidden focus:ring-1 focus:ring-accent/20 sm:text-sm"
             placeholder="Kategori adı (örn: Film, Kitap…)"
             autoFocus
             required

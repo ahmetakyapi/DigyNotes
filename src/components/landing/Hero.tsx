@@ -70,7 +70,7 @@ function Reel({
   return (
     <span
       ref={ref}
-      className={`group/reel relative inline-block h-[0.82em] ${width} translate-y-[0.06em] -rotate-[3deg] overflow-hidden rounded-full bg-[var(--bg-raised)] align-baseline shadow-[var(--shadow-deep)] ring-[1.5px] ring-accent/45 transition-transform duration-700 ease-out-expo hover:rotate-0 hover:scale-[1.04]`}
+      className={`group/reel relative inline-block h-[0.82em] ${width} translate-y-[0.06em] -rotate-[3deg] overflow-hidden rounded-full bg-[var(--bg-raised)] align-baseline ring-[1.5px] ring-accent/45 transition-transform duration-700 ease-out-expo hover:rotate-0 hover:scale-[1.04]`}
     >
       <AnimatePresence initial={false}>
         {/* Bottom-up wipe from two counter-moving transforms (GPU) instead of
@@ -190,12 +190,17 @@ const WALL = [
   "severance",
 ];
 
+/* No tilt classes on the floaters: their motion style (x, y, rotate) writes an inline
+   `transform`, which under Tailwind v3 cancelled any `rotate-*` class, so the posters
+   have always rested upright. Tailwind v4 rotates through the separate `rotate`
+   property, which an inline transform no longer cancels; a tilt now belongs in the
+   motion `rotate` value. */
 const FLOATERS = [
   {
     src: `${MEDIA}/perfect-days.webp`,
     title: "Perfect Days",
     rating: "5,0",
-    cls: "right-[5%] top-[20%] w-[150px] rotate-[6deg] xl:w-[176px]",
+    cls: "right-[5%] top-[20%] w-[150px] xl:w-[176px]",
     depth: 1.4,
     fly: [-120, -520, 18],
   },
@@ -203,7 +208,7 @@ const FLOATERS = [
     src: `${MEDIA}/outer-wilds.webp`,
     title: "Outer Wilds",
     rating: "5,0",
-    cls: "right-[19%] top-[40%] w-[124px] -rotate-[8deg] xl:top-[44%] xl:w-[146px]",
+    cls: "right-[19%] top-[40%] w-[124px] xl:top-[44%] xl:w-[146px]",
     depth: 0.8,
     fly: [-260, -380, -24],
   },
@@ -211,7 +216,7 @@ const FLOATERS = [
     src: `${MEDIA}/kyoto.webp`,
     title: "Kyoto",
     rating: "4,5",
-    cls: "right-[4%] top-[58%] hidden w-[124px] rotate-[3deg] xl:block",
+    cls: "right-[4%] top-[58%] hidden w-[124px] xl:block",
     depth: 1.9,
     fly: [160, -300, 30],
   },
@@ -353,7 +358,7 @@ export function Hero() {
                   className={`w-[27%] ${["translate-y-3 -rotate-6", "z-10 -translate-y-1", "translate-y-3 rotate-6"][i]}`}
                 >
                   <motion.div
-                    className="relative aspect-[2/3] overflow-hidden rounded-xl border border-[var(--border)] shadow-[var(--shadow-deep)]"
+                    className="relative aspect-[2/3] overflow-hidden rounded-xl border border-[var(--border)]"
                     initial={reduce ? false : { opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1.2, ease: EASE_OUT_EXPO, delay: 0.55 + i * 0.1 }}
@@ -369,7 +374,7 @@ export function Hero() {
             className="relative mx-auto grid w-full max-w-[1600px] gap-6 border-t border-[var(--border)] pt-5 md:grid-cols-[1.2fr_1fr] md:items-end"
             style={reduce ? undefined : { opacity: chromeOpacity, y: chromeY }}
           >
-            <p className="max-w-[420px] text-[15px] leading-relaxed text-[var(--text-secondary)] sm:text-base">
+            <p className="max-w-[420px] text-[15px] leading-relaxed text-[var(--text-secondary)] sm:text-base sm:leading-6">
               İzlediğin filmi, okuduğun kitabı, gezdiğin şehri not al.{" "}
               <span className="text-[var(--text-primary)]">
                 Puan ver, etiket ekle, aklından geçenleri yaz.
@@ -589,7 +594,7 @@ function Floater({
           initial={reduce ? false : { opacity: 0, y: 80, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.4, ease: EASE_OUT_EXPO, delay: 0.5 + i * 0.12 }}
-          className="overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--bg-card)] p-1.5 shadow-[var(--shadow-deep)]"
+          className="overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--bg-card)] p-1.5"
         >
           <div className="relative aspect-[2/3] overflow-hidden rounded-[13px]">
             <Image src={f.src} alt="" fill sizes="200px" className="object-cover" />

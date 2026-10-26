@@ -13,10 +13,10 @@ export default function WatchlistLoading() {
             key={i}
             className="flex animate-pulse items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3.5"
           >
-            <div className="h-16 w-12 flex-shrink-0 rounded-lg bg-[var(--bg-raised)]" />
+            <div className="h-16 w-12 shrink-0 rounded-lg bg-[var(--bg-raised)]" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-2/3 rounded bg-[var(--bg-raised)]" />
-              <div className="h-3 w-1/3 rounded bg-[var(--bg-raised)]" />
+              <div className="h-4 w-2/3 rounded-sm bg-[var(--bg-raised)]" />
+              <div className="h-3 w-1/3 rounded-sm bg-[var(--bg-raised)]" />
             </div>
             <div className="h-7 w-20 rounded-full bg-[var(--bg-raised)]" />
           </div>

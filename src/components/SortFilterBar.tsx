@@ -64,9 +64,9 @@ export function SortFilterBar({
   const [showAdvanced, setShowAdvanced] = useState(false);
   const trapRef = useFocusTrap(showAdvanced);
   const selectClass =
-    "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-accent/30 focus:border-accent/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
+    "h-9 rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 text-xs font-medium text-[var(--text-secondary)] outline-hidden transition-colors hover:border-accent/30 focus:border-accent/40 cursor-pointer sm:h-10 sm:min-w-[112px] sm:px-2.5";
   const inputClass =
-    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-none transition-colors hover:border-accent/30 focus:border-accent/40";
+    "h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] px-3 text-[16px] sm:text-xs font-medium text-[var(--text-secondary)] outline-hidden transition-colors hover:border-accent/30 focus:border-accent/40";
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (value.minRating > 0) count += 1;

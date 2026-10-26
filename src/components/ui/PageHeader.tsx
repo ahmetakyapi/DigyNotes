@@ -64,7 +64,7 @@ export function PageHeader({
           >
             {visibleStats.map((s) => (
               <div key={s.label} className="flex flex-col">
-                <dd className="dn-display text-[38px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
+                <dd className="dn-display text-[38px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl sm:leading-none">
                   {s.value}
                 </dd>
                 <dt className="order-last mt-1 text-[12px] font-medium text-[var(--text-muted)]">

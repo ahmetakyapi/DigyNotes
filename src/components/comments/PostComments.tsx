@@ -37,7 +37,7 @@ async function fetchCommentPage(postId: string, cursor: string | null) {
 }
 
 const textareaClass =
-  "w-full resize-none rounded-2xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-sm sm:leading-relaxed";
+  "w-full resize-none rounded-2xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-4 py-3 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-hidden transition-colors duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-sm sm:leading-relaxed";
 
 /**
  * The note's conversation: composer on top, newest threads first (older ones behind
@@ -369,7 +369,7 @@ export function PostComments({
                 type="button"
                 onClick={() => void submitComment(null)}
                 disabled={submitting === "root" || !commentText.trim()}
-                className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full bg-accent px-4 text-xs font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full bg-accent px-4 text-xs font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-light focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {submitting === "root" ? (
                   <CircleNotchIcon size={14} className="animate-spin" aria-hidden />
@@ -399,9 +399,9 @@ export function PostComments({
             <div key={index} className="flex gap-3 p-4">
               <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-[var(--bg-raised)]" />
               <div className="flex-1 space-y-2">
-                <div className="h-3 w-32 animate-pulse rounded bg-[var(--bg-raised)]" />
-                <div className="h-3 w-full animate-pulse rounded bg-[var(--bg-raised)]" />
-                <div className="h-3 w-2/3 animate-pulse rounded bg-[var(--bg-raised)]" />
+                <div className="h-3 w-32 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+                <div className="h-3 w-full animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+                <div className="h-3 w-2/3 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
               </div>
             </div>
           ))}
@@ -414,7 +414,7 @@ export function PostComments({
           <button
             type="button"
             onClick={() => setReloadKey((key) => key + 1)}
-            className="h-8 cursor-pointer rounded-full border border-[var(--border)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            className="h-8 cursor-pointer rounded-full border border-[var(--border)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
           >
             Tekrar Dene
           </button>
@@ -447,7 +447,7 @@ export function PostComments({
             type="button"
             onClick={() => void loadMore()}
             disabled={loadingMore}
-            className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-accent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loadingMore && <CircleNotchIcon size={14} className="animate-spin" aria-hidden />}
             {loadingMore ? "Yükleniyor..." : "Daha Fazla Yorum"}

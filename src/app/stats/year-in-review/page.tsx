@@ -181,7 +181,7 @@ export default function YearInReviewPage() {
           <button
             type="button"
             onClick={() => setReloadKey((key) => key + 1)}
-            className="inline-flex h-11 cursor-pointer items-center rounded-full border border-[var(--border)] px-5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
+            className="inline-flex h-11 cursor-pointer items-center rounded-full border border-[var(--border)] px-5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] hover:text-[var(--text-primary)] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
           >
             Tekrar Dene
           </button>
@@ -379,7 +379,7 @@ export default function YearInReviewPage() {
                 >
                   {/* Rank */}
                   <span
-                    className={`dn-display w-10 flex-shrink-0 text-4xl italic leading-none sm:w-14 sm:text-5xl ${
+                    className={`dn-display w-10 shrink-0 text-4xl italic leading-none sm:w-14 sm:text-5xl sm:leading-none ${
                       idx === 0 ? "text-[var(--gold)]" : "text-[var(--text-faint)]"
                     }`}
                   >
@@ -387,7 +387,7 @@ export default function YearInReviewPage() {
                   </span>
 
                   {/* Poster */}
-                  <div className="relative h-16 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)]">
+                  <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-xl border border-[var(--border)]">
                     <ResilientImage
                       src={getPostImageSrc(post.image, post.category)}
                       alt={post.title}
@@ -410,7 +410,7 @@ export default function YearInReviewPage() {
                   </div>
 
                   {/* Rating */}
-                  <div className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-3 py-1">
+                  <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-accent-2/30 bg-accent-2/10 px-3 py-1">
                     <StarIcon size={12} weight="fill" className="text-[var(--accent-2)]" />
                     <span className="text-sm font-bold tabular-nums text-[var(--accent-2)]">
                       {formatRating(post.rating)}
@@ -682,7 +682,7 @@ function BigNumber({
     <div className="border-[var(--border)] py-6 pr-4 md:[&:not(:last-child)]:border-r [&:nth-child(-n+2)]:border-b md:[&:nth-child(-n+2)]:border-b-0 [&:nth-child(even)]:pl-4 md:[&:nth-child(n+2)]:pl-6 [&:nth-child(odd)]:border-r">
       <p className={monoLabel}>{label}</p>
       <p
-        className={`dn-display mt-3 text-6xl italic tabular-nums leading-[0.85] tracking-[-0.03em] sm:text-7xl ${
+        className={`dn-display mt-3 text-6xl italic tabular-nums leading-[0.85] tracking-[-0.03em] sm:text-7xl sm:leading-none ${
           accent ? "text-[var(--gold)]" : "text-[var(--text-primary)]"
         }`}
       >

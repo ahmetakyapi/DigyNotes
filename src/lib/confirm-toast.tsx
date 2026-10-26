@@ -42,7 +42,7 @@ export function confirmToast(message: string, options: ConfirmToastOptions = {})
             <button
               type="button"
               onClick={() => settle(false, t.id)}
-              className="cursor-pointer rounded-full px-3.5 py-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              className="cursor-pointer rounded-full px-3.5 py-1.5 text-[13px] font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
             >
               {cancelLabel}
             </button>
@@ -50,7 +50,7 @@ export function confirmToast(message: string, options: ConfirmToastOptions = {})
               type="button"
               autoFocus
               onClick={() => settle(true, t.id)}
-              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 ${
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors focus-visible:outline-hidden focus-visible:ring-2 ${
                 tone === "danger"
                   ? "bg-danger text-[var(--bg-base)] hover:bg-danger/90 focus-visible:ring-danger/40"
                   : "bg-accent text-[var(--text-on-accent)] hover:bg-accent-dark focus-visible:ring-accent/40"

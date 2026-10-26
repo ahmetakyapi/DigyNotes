@@ -39,7 +39,7 @@ export function FeedTabs({ active, onChange, showOwn, onToggleOwn }: FeedTabsPro
               role="tab"
               aria-selected={selected}
               onClick={() => onChange(tab.id)}
-              className={`relative h-9 cursor-pointer rounded-full px-4 text-[13px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+              className={`relative h-9 cursor-pointer rounded-full px-4 text-[13px] font-semibold transition-colors duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 ${
                 selected
                   ? "text-[var(--text-on-accent)]"
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -66,7 +66,7 @@ export function FeedTabs({ active, onChange, showOwn, onToggleOwn }: FeedTabsPro
           type="button"
           onClick={onToggleOwn}
           aria-pressed={showOwn}
-          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-medium transition-colors duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 ${
             showOwn
               ? "border-accent/40 bg-accent/10 text-[var(--text-primary)]"
               : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--text-faint)] hover:text-[var(--text-primary)]"

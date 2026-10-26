@@ -110,7 +110,7 @@ export default function TagPageClient({
           aria-label="Sıralama"
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
-          className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-xs"
+          className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-xs"
         >
           <option value="newest">En Yeni</option>
           <option value="oldest">En Eski</option>

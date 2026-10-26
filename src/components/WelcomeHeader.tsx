@@ -141,7 +141,7 @@ export function WelcomeHeader({ posts, summary }: WelcomeHeaderProps) {
 function Stat({ value, label }: { value: React.ReactNode; label: string }) {
   return (
     <span className="flex flex-col">
-      <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl">
+      <span className="dn-display text-[40px] italic leading-none tracking-[-0.02em] text-[var(--text-primary)] sm:text-5xl sm:leading-none">
         {value}
       </span>
       <span className="mt-1 text-[12px] font-medium text-[var(--text-muted)]">{label}</span>

@@ -195,7 +195,7 @@ export function TravelMapView({ posts }: { posts: Post[] }) {
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className="relative h-16 w-14 flex-shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
+                <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
                   <ResilientImage
                     src={getPostImageSrc(post.image, post.category)}
                     alt=""

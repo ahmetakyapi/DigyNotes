@@ -19,7 +19,7 @@ import { OptionalHint } from "./composer-utils";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";
+  "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-hidden focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";
 const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const cardClass = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 const helperTextClass = "mt-2 text-[11px] leading-5 text-[var(--text-muted)]";
@@ -467,7 +467,7 @@ export function ContentSection({
           <button
             type="button"
             onClick={templateApplied ? onRemoveTemplate : onApplyTemplate}
-            className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 self-start rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition-colors duration-200 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 ${
+            className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 self-start rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition-colors duration-200 ease-out-expo focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 ${
               templateApplied
                 ? "border-accent/35 bg-accent/10 text-[var(--gold)] hover:border-danger/40 hover:text-[var(--danger)]"
                 : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--text-primary)]"

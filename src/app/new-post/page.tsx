@@ -54,7 +54,7 @@ const FIELD_ELEMENT_IDS: Record<RequiredPostField, string> = {
 };
 
 const inputBase =
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-all duration-150 focus:outline-hidden focus:border-accent/60 focus:ring-1 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 
 function flashClass(flashed: boolean) {
   return flashed ? "ring-2 ring-accent/40 border-accent/50" : "";
@@ -710,7 +710,7 @@ export default function NewPostPage() {
 
       {/* LAYOUT: floating glass pill action bar — context left, draft/cancel/save right */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
-        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 backdrop-blur-xl">
           <div className="min-w-0">
             <p className="dn-eyebrow">Yeni Not · {categoryLabel}</p>
             {title ? (
@@ -724,7 +724,7 @@ export default function NewPostPage() {
             )}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             {lastSavedAt && (
               <span className="mr-1 hidden text-[12px] font-medium text-[var(--text-muted)] md:inline">
                 Taslak kaydedildi

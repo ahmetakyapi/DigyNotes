@@ -214,7 +214,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
         className={
           isMobileFull
             ? "flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 text-[var(--text-secondary)] transition-colors duration-200 hover:text-[var(--gold)]"
-            : "flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgb(var(--ink-rgb)/0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-auto sm:rounded-lg sm:border-[var(--border)] sm:bg-[var(--bg-card)] sm:px-3 sm:shadow-[var(--shadow-soft)]"
+            : "flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-[0_6px_18px_rgb(var(--ink-rgb)/0.24)] transition-colors duration-200 hover:text-[var(--gold)] sm:h-10 sm:w-auto sm:rounded-lg sm:border-[var(--border)] sm:bg-[var(--bg-card)] sm:px-3 "
         }
         title="Ara"
       >
@@ -244,7 +244,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                 onClick={() => selectUser(u.username)}
                 className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-200 hover:bg-[var(--bg-raised)] active:opacity-80"
               >
-                <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)]">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)] text-xs font-bold text-[var(--gold)]">
                   <AvatarImage
                     src={u.avatarUrl}
                     alt={u.name}
@@ -299,7 +299,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             type="button"
             onClick={closeSearch}
             aria-label="Aramayı Kapat"
-            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
             <ArrowLeftIcon size={20} weight="bold" />
           </button>
@@ -310,11 +310,11 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             {isUserMode ? (
               <UserCircleIcon
                 size={14}
-                className="flex-shrink-0 text-[var(--gold)]"
+                className="shrink-0 text-[var(--gold)]"
                 weight="bold"
               />
             ) : (
-              <MagnifyingGlassIcon size={14} className="flex-shrink-0 text-[var(--text-muted)]" />
+              <MagnifyingGlassIcon size={14} className="shrink-0 text-[var(--text-muted)]" />
             )}
             <input
               ref={inputRef}
@@ -323,7 +323,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
               onChange={handleChange}
               placeholder="Ara... veya @kullanıcı"
               data-search-input="true"
-              className="min-w-0 flex-1 bg-transparent text-[16px] leading-tight text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:text-sm"
+              className="min-w-0 flex-1 bg-transparent text-[16px] leading-tight text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden sm:text-sm sm:leading-5"
               onKeyDown={(e) => e.key === "Escape" && closeSearch()}
             />
             {query && (
@@ -334,7 +334,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
                   cancelUserSearch();
                 }}
                 aria-label="Aramayı Temizle"
-                className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
               >
                 <XIcon size={12} />
               </button>
@@ -358,14 +358,14 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
       <div ref={containerRef} className="relative hidden sm:block">
         <form
           onSubmit={submit}
-          className={`flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 shadow-[var(--shadow-soft)] ${
+          className={`flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 ${
             isMobileFull ? "w-full" : ""
           }`}
         >
           {isUserMode ? (
-            <UserCircleIcon size={13} className="flex-shrink-0 text-[var(--gold)]" weight="bold" />
+            <UserCircleIcon size={13} className="shrink-0 text-[var(--gold)]" weight="bold" />
           ) : (
-            <MagnifyingGlassIcon size={13} className="flex-shrink-0 text-[var(--text-muted)]" />
+            <MagnifyingGlassIcon size={13} className="shrink-0 text-[var(--text-muted)]" />
           )}
           <input
             ref={desktopInputRef}
@@ -374,7 +374,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
             onChange={handleChange}
             placeholder="Ara... veya @kullanıcı"
             data-search-input="true"
-            className={`bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none ${
+            className={`bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden ${
               isMobileFull ? "min-w-0 flex-1" : "w-52"
             }`}
             onKeyDown={(e) => e.key === "Escape" && closeSearch()}
@@ -384,7 +384,7 @@ export function SearchBar({ mobileMode = "compact" }: SearchBarProps) {
               type="button"
               onClick={clear}
               aria-label="Aramayı Temizle"
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)]"
             >
               <XIcon size={11} />
             </button>

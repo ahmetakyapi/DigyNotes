@@ -15,11 +15,11 @@ export default function CollectionsLoading() {
           >
             <div className="mb-3 flex gap-1.5">
               {[1, 2, 3].map((j) => (
-                <div key={j} className="h-14 w-10 rounded bg-[var(--bg-raised)]" />
+                <div key={j} className="h-14 w-10 rounded-sm bg-[var(--bg-raised)]" />
               ))}
             </div>
-            <div className="mb-2 h-5 w-3/4 rounded bg-[var(--bg-raised)]" />
-            <div className="h-3 w-1/2 rounded bg-[var(--bg-raised)]" />
+            <div className="mb-2 h-5 w-3/4 rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-3 w-1/2 rounded-sm bg-[var(--bg-raised)]" />
           </div>
         ))}
       </div>

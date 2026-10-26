@@ -75,7 +75,7 @@ export const FeaturedCard = React.memo(function FeaturedCard({
               {post.years ? ` · ${post.years}` : ""}
             </span>
           </div>
-          <h2 className="dn-display mb-2 max-w-[80%] text-[40px] italic leading-[0.92] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl lg:text-7xl">
+          <h2 className="dn-display mb-2 max-w-[80%] text-[40px] italic leading-[0.92] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl sm:leading-none lg:text-7xl lg:leading-none">
             {formatDisplayTitle(post.title)}
           </h2>
           {post.creator && (
@@ -135,14 +135,14 @@ export const PostGridCard = React.memo(function PostGridCard({
     <Link href={`/posts/${post.id}`} className="group block">
       <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-[var(--text-faint)] sm:flex-row">
         {showIndex && (
-          <div className="flex h-9 flex-shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
+          <div className="flex h-9 shrink-0 items-center justify-center border-b border-[var(--border)] sm:h-auto sm:w-9 sm:border-b-0 sm:border-r">
             <span className="dn-mono text-[12px] tabular-nums text-[var(--text-faint)] transition-colors duration-300 group-hover:text-[var(--gold)]">
               {String(index + 2).padStart(2, "0")}
             </span>
           </div>
         )}
 
-        <div className="relative h-48 min-h-[148px] flex-shrink-0 sm:h-auto sm:min-h-[160px] sm:w-[34%]">
+        <div className="relative h-48 min-h-[148px] shrink-0 sm:h-auto sm:min-h-[160px] sm:w-[34%]">
           <ResilientImage
             src={getPostImageSrc(post.image, post.category)}
             alt={displayTitle}
@@ -158,21 +158,21 @@ export const PostGridCard = React.memo(function PostGridCard({
         <div className="flex min-w-0 flex-1 flex-col justify-between p-4 sm:p-5">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
-              <span className="flex-shrink-0 text-[11px] font-medium text-[var(--gold)]">
+              <span className="shrink-0 text-[11px] font-medium text-[var(--gold)]">
                 {getCategoryLabel(post.category)}
               </span>
               {post.isPinned && (
-                <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
+                <span className="flex shrink-0 items-center gap-1 rounded-xs border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
                   <PushPin size={9} weight="fill" /> Sabit
                 </span>
               )}
               {post.isDraft && (
-                <span className="flex-shrink-0 rounded-sm border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-1.5 py-0.5 text-[11px] font-bold text-[#f59e0b]">
+                <span className="shrink-0 rounded-xs border border-[#f59e0b]/25 bg-[#f59e0b]/8 px-1.5 py-0.5 text-[11px] font-bold text-[#f59e0b]">
                   Taslak
                 </span>
               )}
               {post.isArchived && (
-                <span className="flex-shrink-0 rounded-sm border border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] bg-[color-mix(in_srgb,var(--text-muted)_8%,transparent)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--text-muted)]">
+                <span className="shrink-0 rounded-xs border border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] bg-[color-mix(in_srgb,var(--text-muted)_8%,transparent)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--text-muted)]">
                   Arşiv
                 </span>
               )}
@@ -182,7 +182,7 @@ export const PostGridCard = React.memo(function PostGridCard({
               {post.status && <StatusBadge status={post.status} />}
             </div>
 
-            <h2 className="mb-1 line-clamp-2 text-[17px] font-bold leading-[1.15] tracking-[-0.025em] text-[var(--text-primary)] sm:text-lg">
+            <h2 className="mb-1 line-clamp-2 text-[17px] font-bold leading-[1.15] tracking-[-0.025em] text-[var(--text-primary)] sm:text-lg sm:leading-7">
               {displayTitle}
             </h2>
 
@@ -247,7 +247,7 @@ export const PostListCard = React.memo(function PostListCard({
   return (
     <Link href={`/posts/${post.id}`} className="group block">
       <article className="flex items-center gap-4 overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--bg-card)] px-3 py-3 transition-all duration-500 ease-out-expo hover:border-[var(--text-faint)] sm:px-4">
-        <div className="relative h-20 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
+        <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-lg border border-[var(--border)]">
           <ResilientImage
             src={getPostImageSrc(post.image, post.category)}
             alt={displayTitle}

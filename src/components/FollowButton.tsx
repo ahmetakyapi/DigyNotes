@@ -61,7 +61,7 @@ export default function FollowButton({
       onClick={handleClick}
       disabled={loading}
       aria-busy={loading}
-      className={`cursor-pointer rounded-lg border font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-wait disabled:opacity-50 ${sizeClassName} ${
+      className={`cursor-pointer rounded-lg border font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 disabled:cursor-wait disabled:opacity-50 ${sizeClassName} ${
         isFollowing
           ? "border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-danger/60 hover:text-danger"
           : "border-accent/60 bg-accent/10 text-accent hover:bg-accent/20"

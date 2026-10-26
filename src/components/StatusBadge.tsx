@@ -74,7 +74,7 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
       }}
     >
       <span
-        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
         style={{ backgroundColor: styles.dotColor }}
       />
       {status}

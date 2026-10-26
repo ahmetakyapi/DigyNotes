@@ -175,7 +175,7 @@ export default function StatsCharts({ data }: { data: StatsData }) {
                 return (
                   <div key={item.name} className="flex items-center gap-3">
                     <span
-                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                      className="h-2 w-2 shrink-0 rounded-full"
                       style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                     />
                     <span className="flex-1 truncate text-sm text-[var(--text-secondary)]">

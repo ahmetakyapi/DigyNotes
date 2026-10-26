@@ -202,7 +202,7 @@ export default function CollectionsPage() {
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
               placeholder="Örn. 2024'te izlediklerim"
-              className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm"
+              className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-sm"
             />
           </label>
           <label className="block">
@@ -215,7 +215,7 @@ export default function CollectionsPage() {
               onChange={(event) => setDescription(event.target.value)}
               maxLength={400}
               placeholder="Bu koleksiyonda neler var? Kısaca yaz"
-              className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm"
+              className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-base)] px-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-faint)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-sm"
             />
           </label>
           <button
@@ -241,7 +241,7 @@ export default function CollectionsPage() {
               value={collectionQuery}
               onChange={(event) => setCollectionQuery(event.target.value)}
               placeholder="Koleksiyonlarda ara..."
-              className="h-10 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-sm"
+              className="h-10 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-sm"
             />
           </label>
         </div>

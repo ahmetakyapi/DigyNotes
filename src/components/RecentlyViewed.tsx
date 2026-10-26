@@ -183,7 +183,7 @@ export default function RecentlyViewed() {
         <ClockCounterClockwiseIcon
           size={14}
           weight="bold"
-          className="flex-shrink-0 text-[var(--text-muted)]"
+          className="shrink-0 text-[var(--text-muted)]"
         />
         <h2 className="text-[13.5px] font-semibold text-[var(--text-secondary)]">
           Son Görüntülenenler
@@ -247,8 +247,8 @@ export default function RecentlyViewed() {
           onClickCapture={handleClickCapture}
         >
           {items.map((item) => (
-            <Link key={item.id} href={`/posts/${item.id}`} className="group flex-shrink-0">
-              <div className="w-[168px] flex-shrink-0 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-[border-color,transform,box-shadow] duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:border-accent/30 group-hover:shadow-[0_10px_30px_-12px_rgb(var(--gold-rgb)/0.35)] sm:w-[196px]">
+            <Link key={item.id} href={`/posts/${item.id}`} className="group shrink-0">
+              <div className="w-[168px] shrink-0 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] transition-[border-color,transform,box-shadow] duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:border-accent/30 group-hover:shadow-[0_10px_30px_-12px_rgb(var(--gold-rgb)/0.35)] sm:w-[196px]">
                 {/* Poster */}
                 <div className="relative h-20 w-full overflow-hidden sm:h-24">
                   <ResilientImage

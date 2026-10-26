@@ -293,7 +293,7 @@ export default function NotificationsPage() {
             type="button"
             onClick={markAllRead}
             disabled={markingAll || unreadCount === 0}
-            className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-xs font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--gold)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <CheckCircleIcon size={14} weight="bold" />
             {markingAll ? "İşaretleniyor..." : "Tümünü Okundu İşaretle"}
@@ -318,7 +318,7 @@ export default function NotificationsPage() {
               type="button"
               aria-pressed={activeFilter === filter.key}
               onClick={() => setActiveFilter(filter.key as "all" | "unread" | "read")}
-              className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+              className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-colors duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 activeFilter === filter.key
                   ? "bg-accent text-[var(--text-on-accent)]"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
@@ -409,7 +409,7 @@ export default function NotificationsPage() {
                 type="button"
                 onClick={() => void loadMore()}
                 disabled={loadingMore}
-                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-accent/40 hover:text-accent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loadingMore ? "Yükleniyor..." : "Daha Fazla Bildirim"}
               </button>

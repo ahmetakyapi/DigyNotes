@@ -158,7 +158,7 @@ export default function ShareSheet({ open, onClose, title, text, url, preview }:
           aria-labelledby="share-sheet-title"
         >
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-xs"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -169,7 +169,7 @@ export default function ShareSheet({ open, onClose, title, text, url, preview }:
 
           <motion.div
             ref={trapRef}
-            className="relative flex max-h-[92svh] w-full flex-col gap-4 overflow-y-auto rounded-t-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-[var(--shadow-deep)] sm:max-w-md sm:rounded-[28px] sm:p-6"
+            className="relative flex max-h-[92svh] w-full flex-col gap-4 overflow-y-auto rounded-t-[28px] border border-[var(--border)] bg-[var(--bg-card)] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:max-w-md sm:rounded-[28px] sm:p-6"
             initial={{ y: "100%", opacity: 0.6 }}
             animate={{ y: 0, opacity: 1, transition: { duration: 0.5, ease: EASE_OUT_EXPO } }}
             exit={{ y: "100%", opacity: 0, transition: { duration: 0.25 } }}

@@ -19,9 +19,9 @@ import { PageHeader, Em } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 const inputBase =
-  "w-full h-12 px-4 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm";
+  "w-full h-12 px-4 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-hidden focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm";
 const textareaBase =
-  "w-full px-4 py-3 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-none focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm leading-relaxed resize-none";
+  "w-full px-4 py-3 rounded-2xl text-[var(--text-primary)] placeholder:text-[var(--text-faint)] bg-[var(--bg-card)] border border-[var(--border)] focus:outline-hidden focus:border-[var(--text-primary)] transition-colors duration-200 ease-out-expo text-[16px] sm:text-sm sm:leading-5 leading-relaxed resize-none";
 const labelClass = "block text-[12.5px] text-[var(--text-muted)] mb-2 font-medium";
 const rowButtonClass =
   "group flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3.5 text-left transition-colors duration-200 ease-out-expo hover:border-[var(--text-primary)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50";
@@ -74,7 +74,7 @@ function Toggle({
       aria-checked={checked}
       aria-label={label}
       onClick={onChange}
-      className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-300 ease-out-expo ${
+      className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-300 ease-out-expo ${
         checked ? "border-accent bg-accent" : "border-[var(--border)] bg-[var(--bg-raised)]"
       }`}
     >
@@ -436,7 +436,7 @@ export default function ProfileSettingsPage() {
               Profil Fotoğrafı Bağlantısı
             </label>
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
                 {avatarUrl ? (
                   <Image
                     loader={customLoader}
@@ -709,16 +709,16 @@ export default function ProfileSettingsPage() {
 
       {/* LAYOUT: floating glass pill save bar — visibility status left, İptal + Kaydet right */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:pb-6">
-        <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between gap-4 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+        <div className="pointer-events-auto mx-auto flex max-w-xl items-center justify-between gap-4 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 backdrop-blur-xl">
           <p className="flex min-w-0 items-center gap-2 truncate text-[12.5px] font-medium text-[var(--text-muted)]">
             <span
-              className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
+              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
                 isPublic ? "bg-[var(--gold)]" : "bg-[var(--text-faint)]"
               }`}
             />
             {isPublic ? "Profilin herkese açık" : "Profilin gizli"}
           </p>
-          <div className="flex flex-shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5">
             <button
               type="button"
               onClick={() => router.back()}
