@@ -4,21 +4,21 @@ import test from "node:test";
 
 import { PROTECTED_PAGE_MATCHERS, isProtectedPagePath } from "../src/lib/protected-routes.ts";
 
-const middlewareSource = readFileSync(new URL("../src/middleware.ts", import.meta.url), "utf8");
+const proxySource = readFileSync(new URL("../src/proxy.ts", import.meta.url), "utf8");
 
-function middlewarePageMatchers() {
-  const block = middlewareSource.match(/matcher:\s*\[([\s\S]*?)\]/);
-  assert.ok(block, "src/middleware.ts has a matcher array");
+function proxyPageMatchers() {
+  const block = proxySource.match(/matcher:\s*\[([\s\S]*?)\]/);
+  assert.ok(block, "src/proxy.ts has a matcher array");
   return [...block[1].matchAll(/"([^"]+)"/g)]
     .map((match) => match[1])
     .filter((entry) => !entry.startsWith("/api"));
 }
 
-test("PROTECTED_PAGE_MATCHERS mirrors the page entries of the middleware matcher", () => {
+test("PROTECTED_PAGE_MATCHERS mirrors the page entries of the proxy matcher", () => {
   assert.deepEqual(
     [...PROTECTED_PAGE_MATCHERS].sort(),
-    middlewarePageMatchers().sort(),
-    "a page entry was added to or removed from src/middleware.ts: update src/lib/protected-routes.ts"
+    proxyPageMatchers().sort(),
+    "a page entry was added to or removed from src/proxy.ts: update src/lib/protected-routes.ts"
   );
 });
 

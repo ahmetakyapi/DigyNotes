@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import {
   ArchiveIcon,
   HeartIcon,
@@ -318,11 +318,11 @@ export default function PostDetailClient({
       <div className="min-h-screen bg-[var(--bg-base)]">
         <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-8 lg:px-16">
           <div className="mb-3 flex items-center gap-2">
-            <div className="h-3 w-12 animate-pulse rounded bg-[var(--bg-raised)]" />
-            <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
-            <div className="h-3 w-16 animate-pulse rounded bg-[var(--bg-raised)]" />
-            <div className="h-3 w-2 animate-pulse rounded bg-[var(--bg-raised)]" />
-            <div className="h-3 w-32 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-3 w-12 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-3 w-2 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-3 w-16 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-3 w-2 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-3 w-32 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
           </div>
           <div
             className="w-full animate-pulse rounded-2xl bg-[var(--bg-raised)]"
@@ -331,9 +331,9 @@ export default function PostDetailClient({
         </div>
         <div className="mx-auto max-w-3xl space-y-4 px-4 py-10 sm:px-6">
           <div className="h-8 w-3/4 animate-pulse rounded-lg bg-[var(--bg-raised)]" />
-          <div className="h-4 w-full animate-pulse rounded bg-[var(--bg-raised)]" />
-          <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--bg-raised)]" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-[var(--bg-raised)]" />
+          <div className="h-4 w-full animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+          <div className="h-4 w-5/6 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+          <div className="h-4 w-4/5 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
         </div>
       </div>
     );
@@ -453,7 +453,7 @@ export default function PostDetailClient({
         </nav>
 
         <div
-          className="relative w-full overflow-hidden rounded-[32px] border border-[var(--border-subtle)] bg-[#0b0b0a] shadow-[var(--media-glow)]"
+          className="relative w-full overflow-hidden rounded-[32px] border border-[var(--border-subtle)] bg-[#0b0b0a]"
           /* One height for every cover: the orientation is only known after the image
              loads, and resizing the hero then would shift the page below it. */
           style={{ height: "60vh", minHeight: 420 }}
@@ -524,7 +524,7 @@ export default function PostDetailClient({
                     className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50 sm:px-3.5 sm:py-2 ${
                       pinned
                         ? "border-accent-dark bg-accent-dark text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--gold-rgb)/0.3)]"
-                        : "shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                        : "shadow-xs hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     }`}
                     style={
                       pinned
@@ -555,7 +555,7 @@ export default function PostDetailClient({
                       );
                     }}
                     disabled={isUpdatingFlags}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50 sm:px-3.5 sm:py-2 ${
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-xs backdrop-blur-md transition-all duration-200 active:scale-95 disabled:opacity-50 sm:px-3.5 sm:py-2 ${
                       archived
                         ? "border-accent-2 bg-accent-2 text-[var(--text-on-accent)] shadow-[0_2px_10px_rgb(var(--accent-2-rgb)/0.3)]"
                         : "hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
@@ -582,7 +582,7 @@ export default function PostDetailClient({
                     text={`${post.title} — DigyNotes`}
                     label="Paylaş"
                     preview={sharePreview}
-                    className="font-semibold shadow-sm hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
+                    className="font-semibold shadow-xs hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)]"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
@@ -592,7 +592,7 @@ export default function PostDetailClient({
                   <Link
                     aria-label="Notu düzenle"
                     href={`/posts/${post.id}/edit`}
-                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)] active:scale-95 sm:px-3.5 sm:py-2"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-xs backdrop-blur-md transition-all duration-200 hover:border-[var(--media-control-hover-border)] hover:bg-[var(--media-control-hover-bg)] hover:text-[var(--gold)] active:scale-95 sm:px-3.5 sm:py-2"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
@@ -606,7 +606,7 @@ export default function PostDetailClient({
                     aria-label="Notu sil"
                     onClick={() => setIsModalOpen(true)}
                     disabled={isDeleting}
-                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-sm backdrop-blur-md transition-all duration-200 hover:border-[var(--danger)] hover:text-[var(--danger-light)] active:scale-95 disabled:opacity-40 sm:px-3.5 sm:py-2"
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-2.5 text-xs font-semibold shadow-xs backdrop-blur-md transition-all duration-200 hover:border-[var(--danger)] hover:text-[var(--danger-light)] active:scale-95 disabled:opacity-40 sm:px-3.5 sm:py-2"
                     style={{
                       borderColor: "var(--media-control-border)",
                       background: "var(--media-control-bg)",
@@ -635,7 +635,7 @@ export default function PostDetailClient({
                   </span>
                 )}
               </div>
-              <h1 className="dn-display mb-4 text-[44px] italic leading-[0.9] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl lg:text-[88px]">
+              <h1 className="dn-display mb-4 text-[44px] italic leading-[0.9] tracking-[-0.02em] text-[var(--media-text-primary)] sm:text-6xl sm:leading-none lg:text-[88px]">
                 {displayTitle}
               </h1>
               {/* Meta: every item carries its own leading dot; the row is shifted left by one
@@ -783,7 +783,7 @@ export default function PostDetailClient({
           >
             <div className="flex items-center gap-3 px-4 py-3">
               <div
-                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
                   shouldBlurSpoiler
                     ? "border border-danger/25 bg-danger/10 text-[var(--danger)]"
                     : "border border-accent/25 bg-accent/10 text-[var(--gold)]"
@@ -845,7 +845,7 @@ export default function PostDetailClient({
                   markSpoilerOverlayDismissed();
                   setIsSpoilerRevealed((prev) => !prev);
                 }}
-                className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
+                className={`shrink-0 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   shouldBlurSpoiler
                     ? "bg-[var(--gold)] text-[var(--text-on-accent)] hover:bg-[var(--gold-light)]"
                     : "border border-[var(--border)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-accent/30 hover:text-[var(--gold)]"
@@ -862,7 +862,7 @@ export default function PostDetailClient({
             <article
               {...(shouldBlurSpoiler ? INERT_PROPS : {})}
               aria-hidden={shouldBlurSpoiler}
-              className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
+              className={`prose prose-base max-w-none transition-[filter,opacity] duration-300 sm:prose-lg prose-headings:font-extrabold prose-headings:tracking-[-0.035em] prose-headings:text-[var(--text-primary)] prose-h2:mt-14 prose-p:leading-[1.85] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--gold)] prose-a:no-underline prose-a:hover:underline prose-blockquote:border-l-[var(--gold)] prose-blockquote:font-[family-name:var(--font-display)] prose-blockquote:text-3xl prose-blockquote:font-normal prose-blockquote:italic prose-blockquote:leading-tight prose-blockquote:text-[var(--text-secondary)] prose-strong:text-[var(--text-primary)] prose-code:rounded-sm prose-code:bg-[var(--bg-raised)] prose-code:px-1 prose-code:text-[var(--gold)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:bg-[var(--bg-raised)] prose-ol:text-[var(--text-secondary)] prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--gold)] ${
                 shouldBlurSpoiler ? "pointer-events-none select-none opacity-70 blur-[14px]" : ""
               }`}
             >
@@ -927,7 +927,7 @@ export default function PostDetailClient({
                   className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 transition-colors hover:border-accent/30 hover:bg-[var(--bg-raised)]"
                 >
                   <div className="mb-2 flex items-center gap-2">
-                    <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 text-[12px] font-bold text-[var(--gold)]">
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/10 text-[12px] font-bold text-[var(--gold)]">
                       {cp.user?.name?.charAt(0)?.toLocaleUpperCase("tr-TR") ?? "?"}
                     </div>
                     <span className="text-xs font-medium text-[var(--text-secondary)]">

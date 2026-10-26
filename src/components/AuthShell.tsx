@@ -10,7 +10,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { Wordmark } from "@/components/Wordmark";
 

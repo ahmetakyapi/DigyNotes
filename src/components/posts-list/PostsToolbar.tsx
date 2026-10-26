@@ -67,7 +67,7 @@ export function PostsTabSwitcher({
 
   return (
     <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-      <div className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 shadow-[var(--shadow-soft)] sm:gap-1 sm:p-1">
+      <div className="flex max-w-full items-center gap-0.5 overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-strong)] p-0.5 sm:gap-1 sm:p-1">
         {visibleTabs.map((tab) => (
           <button
             key={tab.key}
@@ -285,7 +285,7 @@ export function SavedEmptyState() {
       </p>
       <Link
         href="/discover"
-        className="mt-5 rounded-full border border-[var(--border)] px-4 py-2 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className="mt-5 rounded-full border border-[var(--border)] px-4 py-2 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors hover:border-accent/35 hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
       >
         Keşfet&apos;e Göz At
       </Link>

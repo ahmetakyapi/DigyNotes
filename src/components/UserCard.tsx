@@ -24,7 +24,7 @@ export default function UserCard({ user }: UserCardProps) {
   const content = (
     <>
       <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)]">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)]">
           <AvatarImage
             src={user.avatarUrl}
             alt={user.name}
@@ -80,7 +80,7 @@ export default function UserCard({ user }: UserCardProps) {
     return (
       <Link
         href={href}
-        className="group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)] transition-all duration-200 hover:-translate-y-1 hover:border-accent/24 hover:shadow-[var(--shadow-card)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
+        className="group block rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 transition-all duration-200 hover:-translate-y-1 hover:border-accent/24 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
       >
         {content}
       </Link>
@@ -88,7 +88,7 @@ export default function UserCard({ user }: UserCardProps) {
   }
 
   return (
-    <article className="rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5 shadow-[var(--shadow-soft)]">
+    <article className="rounded-[26px] border border-[var(--border)] bg-[image:var(--card-surface)] p-5">
       {content}
     </article>
   );

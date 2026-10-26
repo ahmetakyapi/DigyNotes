@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
@@ -20,12 +20,12 @@ interface ButtonProps extends MotionButtonProps {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[var(--bg-base)] font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
+    "bg-[var(--gold)] hover:bg-[var(--gold-light)] text-[var(--bg-base)] font-semibold shadow-xs hover:shadow-md disabled:opacity-50",
   secondary:
     "border border-[var(--border)] bg-[var(--bg-card)] hover:border-accent/60 text-[var(--text-primary)] disabled:opacity-50",
   ghost: "text-[var(--text-primary)] hover:bg-[var(--bg-card)] disabled:opacity-50",
   danger:
-    "bg-[var(--danger)] hover:bg-[var(--danger-light)] text-white font-semibold shadow-sm hover:shadow-md disabled:opacity-50",
+    "bg-[var(--danger)] hover:bg-[var(--danger-light)] text-white font-semibold shadow-xs hover:shadow-md disabled:opacity-50",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -54,7 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || loading;
 
     const baseClasses =
-      "inline-flex items-center justify-center font-medium transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-base)] disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-medium transition-colors duration-200 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-base)] disabled:cursor-not-allowed";
 
     const focusRing =
       variant === "primary" || variant === "secondary"

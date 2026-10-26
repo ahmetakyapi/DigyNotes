@@ -14,7 +14,7 @@ import {
   matchesAdvancedFilters,
 } from "@/components/SortFilterBar";
 import toast from "react-hot-toast";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeftIcon,
   FolderOpenIcon,
@@ -144,12 +144,12 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
     return (
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <div className="mb-6 flex items-center gap-2">
-          <div className="h-3 w-12 animate-pulse rounded bg-[var(--border)]" />
-          <div className="h-3 w-2 animate-pulse rounded bg-[var(--border)]" />
-          <div className="h-3 w-20 animate-pulse rounded bg-[var(--border)]" />
+          <div className="h-3 w-12 animate-pulse rounded-sm bg-[var(--border)]" />
+          <div className="h-3 w-2 animate-pulse rounded-sm bg-[var(--border)]" />
+          <div className="h-3 w-20 animate-pulse rounded-sm bg-[var(--border)]" />
         </div>
         <div className="mb-2 h-7 w-40 animate-pulse rounded-lg bg-[var(--border)]" />
-        <div className="mb-8 h-3 w-16 animate-pulse rounded bg-[var(--border)]" />
+        <div className="mb-8 h-3 w-16 animate-pulse rounded-sm bg-[var(--border)]" />
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -207,7 +207,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`${categoryLabel} içinde ara...`}
-            className="h-9 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-8 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
+            className="h-9 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-9 pr-8 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden transition-all focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-xs"
           />
           {searchQuery && (
             <button
@@ -319,7 +319,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
               >
                 <Link href={`/posts/${post.id}`} className="group block h-full">
                   <article className="flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--bg-card)] transition-colors duration-500 ease-out-expo hover:border-[var(--text-faint)] sm:flex-row">
-                    <div className="relative h-48 min-h-[140px] flex-shrink-0 overflow-hidden sm:h-auto sm:w-[32%]">
+                    <div className="relative h-48 min-h-[140px] shrink-0 overflow-hidden sm:h-auto sm:w-[32%]">
                       <ResilientImage
                         src={getPostImageSrc(post.image, post.category)}
                         alt={displayTitle}
@@ -342,7 +342,7 @@ export default function CategoryPageClient({ params }: { params: { id: string } 
                           )}
                           {post.status && <StatusBadge status={post.status} />}
                         </div>
-                        <h2 className="mb-1.5 line-clamp-2 text-base font-extrabold leading-snug tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-lg">
+                        <h2 className="mb-1.5 line-clamp-2 text-base font-extrabold leading-snug tracking-[-0.02em] text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)] sm:text-lg sm:leading-7">
                           {displayTitle}
                         </h2>
                         {post.creator && (

@@ -1,4 +1,8 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
+
+/* Tailwind v4 reads this v3-style config through `@config` in src/app/globals.css.
+   `.mts` so Node loads it as an ES module without a "type is not specified" warning. */
 
 export default {
   content: [
@@ -80,9 +84,10 @@ export default {
         modal: "1rem",
       },
       boxShadow: {
-        "accent-sm": "0 0 0 1px rgb(var(--gold-rgb) / 0.25), 0 6px 18px -6px rgb(var(--gold-rgb) / 0.3)",
+        "accent-sm":
+          "0 0 0 1px rgb(var(--gold-rgb) / 0.25), 0 6px 18px -6px rgb(var(--gold-rgb) / 0.3)",
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [typography],
 } satisfies Config;

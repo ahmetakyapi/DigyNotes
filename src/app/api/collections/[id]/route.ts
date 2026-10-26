@@ -19,7 +19,11 @@ async function getCollection(id: string) {
   });
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const session = await getServerSession(authOptions);
     const viewerId = (session?.user as { id?: string; isAdmin?: boolean } | undefined)?.id;
@@ -50,7 +54,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;
@@ -116,7 +124,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

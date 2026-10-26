@@ -548,7 +548,7 @@ export function MediaSearch({
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 pr-10 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none sm:text-sm"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 pr-10 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-hidden sm:text-sm"
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
           {isLoading || isSelecting ? (
@@ -604,11 +604,11 @@ export function MediaSearch({
                   <img
                     src={resizeImageUrl(item.image, 96)}
                     alt={item.title}
-                    className={`flex-shrink-0 rounded object-cover ${imgClass}`}
+                    className={`shrink-0 rounded object-cover ${imgClass}`}
                   />
                 ) : (
                   <div
-                    className={`flex flex-shrink-0 items-center justify-center rounded bg-[var(--bg-raised)] ${imgClass}`}
+                    className={`flex shrink-0 items-center justify-center rounded-sm bg-[var(--bg-raised)] ${imgClass}`}
                   >
                     <span className="text-xs text-[var(--text-muted)]">?</span>
                   </div>
@@ -634,7 +634,7 @@ export function MediaSearch({
                     }
                     void onAction(target);
                   }}
-                  className="flex-shrink-0 rounded-lg border border-accent/25 bg-accent/8 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/14"
+                  className="shrink-0 rounded-lg border border-accent/25 bg-accent/8 px-3 py-1.5 text-[11px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/14"
                 >
                   {actionLabel}
                 </button>
@@ -666,7 +666,7 @@ export function MediaSearch({
       {activeTab === "oyun" && !RAWG_KEY && (
         <p className="mt-2 text-[11px] text-[var(--text-secondary)]">
           Oyun araması için{" "}
-          <code className="rounded bg-[var(--bg-raised)] px-1 text-[var(--gold)]">
+          <code className="rounded-sm bg-[var(--bg-raised)] px-1 text-[var(--gold)]">
             NEXT_PUBLIC_RAWG_API_KEY
           </code>{" "}
           ortam değişkeni gerekli.

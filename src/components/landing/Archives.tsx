@@ -8,7 +8,7 @@
 */
 import Image from "next/image";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { motion, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll, useSpring, useTransform } from "motion/react";
 import { ARCHIVES, type ArchiveItem } from "./data";
 import { MaskLine } from "./Motion";
 

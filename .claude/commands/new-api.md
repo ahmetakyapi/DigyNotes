@@ -45,12 +45,15 @@ try {
 }
 ```
 
-## 6. Dynamic Route Params (Next.js 14)
+## 6. Dynamic Route Params (Next.js 16 — params is a Promise)
 ```typescript
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
-) { ... }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
+  ...
+}
 ```
 
 ## 7. After creating:

@@ -170,7 +170,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
           }
         }}
       >
-        <div className="flex items-center gap-2 rounded border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-accent">
+        <div className="flex items-center gap-2 rounded-sm border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2.5 transition-colors duration-200 focus-within:border-accent">
           <MagnifyingGlassIcon size={16} className="shrink-0 text-[var(--text-muted)]" />
           <input
             type="text"
@@ -179,7 +179,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
             onFocus={() => results.length > 0 && setShowResults(true)}
             aria-label="Konum ara"
             placeholder="Şehir, ülke veya yer adı ara..."
-            className="flex-1 bg-transparent text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none sm:text-sm"
+            className="flex-1 bg-transparent text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden sm:text-sm"
           />
           {loading && (
             <div className="h-3.5 w-3.5 shrink-0 animate-spin rounded-full border border-accent border-t-transparent" />
@@ -189,7 +189,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
               type="button"
               onClick={handleClear}
               aria-label="Aramayı temizle"
-              className="shrink-0 cursor-pointer rounded-full text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              className="shrink-0 cursor-pointer rounded-full text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-secondary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
             >
               <XIcon size={14} />
             </button>
@@ -198,7 +198,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
 
         {/* Sonuçlar dropdown */}
         {showResults && results.length > 0 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-card)]">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-sm border border-[var(--border)] bg-[var(--bg-card)]">
             {results.map((place) => {
               const { main, secondary } = getPlaceLabel(place);
               return (
@@ -207,10 +207,10 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => handleSelect(place)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--bg-raised)] focus-visible:bg-[var(--bg-raised)] focus-visible:outline-none active:opacity-80"
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--bg-raised)] focus-visible:bg-[var(--bg-raised)] focus-visible:outline-hidden active:opacity-80"
                 >
                   {/* Thumbnail */}
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-[var(--bg-raised)]">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-sm bg-[var(--bg-raised)]">
                     {place.thumbUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={place.thumbUrl} alt={main} className="h-full w-full object-cover" />
@@ -237,7 +237,7 @@ export default function PlaceSearch({ onSelect }: PlaceSearchProps) {
         )}
 
         {showResults && results.length === 0 && !loading && query.length >= 3 && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-sm border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3">
             <p className="text-sm text-[var(--text-muted)]">
               {error
                 ? "Konum araması şu an yanıt vermiyor, biraz sonra tekrar dene."

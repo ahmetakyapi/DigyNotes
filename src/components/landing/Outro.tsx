@@ -9,7 +9,7 @@
 */
 import Link from "next/link";
 import { ArrowUpIcon, ArrowUpRightIcon } from "@phosphor-icons/react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { EASE_OUT_EXPO, FadeUp, Magnetic, MaskLine } from "./Motion";
 
 const STEPS = [

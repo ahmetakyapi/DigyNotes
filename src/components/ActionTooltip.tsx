@@ -40,7 +40,7 @@ export function ActionTooltip({ label, children }: ActionTooltipProps) {
       {children}
       <span
         role="tooltip"
-        className={`pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 inline-flex -translate-x-1/2 whitespace-nowrap rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-soft)] transition-all duration-150 group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-within/tooltip:translate-y-0 group-focus-within/tooltip:opacity-100 ${
+        className={`pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 inline-flex -translate-x-1/2 whitespace-nowrap rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-primary)] transition-all duration-150 group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-within/tooltip:translate-y-0 group-focus-within/tooltip:opacity-100 ${
           isTouchOpen ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"
         }`}
       >

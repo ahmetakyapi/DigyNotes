@@ -16,7 +16,11 @@ function isPostAction(value: unknown): value is PostAction {
   return typeof value === "string" && (ALLOWED_ACTIONS as readonly string[]).includes(value);
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  request: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

@@ -33,7 +33,7 @@ For each new component, follow `/new-component` conventions:
 
 ## Phase 5: Pages (if needed)
 - Public pages: no auth check needed
-- Protected pages: add route to `src/middleware.ts` if not already covered
+- Protected pages: add route to `src/proxy.ts` if not already covered
 - Use `ConditionalAppShell` or AppShell as needed
 
 ## Phase 6: Integration Checklist
@@ -46,6 +46,6 @@ For each new component, follow `/new-component` conventions:
 
 ## Phase 7: Update Documentation
 After implementation:
-1. New private page or API → add it to the `matcher` in `src/middleware.ts`
+1. New private page or API → add it to the `matcher` in `src/proxy.ts`
 2. If any new errors were encountered, add to ERRORS.md
 3. Update CLAUDE.md if new architectural patterns were established (no route/component inventories)

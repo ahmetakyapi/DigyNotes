@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useSession } from "next-auth/react";
 import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";
@@ -167,7 +167,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
             <Link
               href="/notes"
               aria-label="DigyNotes ana sayfa"
-              className="group flex flex-shrink-0 items-center gap-3 pl-3.5 transition-opacity duration-200 hover:opacity-80 sm:pl-0"
+              className="group flex shrink-0 items-center gap-3 pl-3.5 transition-opacity duration-200 hover:opacity-80 sm:pl-0"
             >
               <Wordmark size="md" />
               <span className="hidden border-l border-[var(--border)] pl-3 text-[12px] font-medium text-[var(--text-muted)] lg:inline">
@@ -240,7 +240,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     <PlusIcon
                       size={14}
                       weight="bold"
-                      className="flex-shrink-0 transition-transform duration-500 ease-out-expo group-hover:rotate-90"
+                      className="shrink-0 transition-transform duration-500 ease-out-expo group-hover:rotate-90"
                     />
                   </span>
                   <span className="text-[12px] font-semibold sm:text-[13px]">
@@ -258,7 +258,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                     aria-label={`Kullanıcı menüsü — ${session.user?.name ?? ""}`}
                     aria-expanded={showUserMenu}
                     aria-haspopup="true"
-                    className={`flex h-10 w-10 flex-shrink-0 select-none items-center justify-center overflow-hidden rounded-full transition-all duration-150 sm:h-10 sm:w-10 sm:shadow-none ${
+                    className={`flex h-10 w-10 shrink-0 select-none items-center justify-center overflow-hidden rounded-full transition-all duration-150 sm:h-10 sm:w-10 sm:shadow-none ${
                       showUserMenu
                         ? "bg-[var(--bg-raised)] shadow-[0_0_0_2px_var(--gold),0_8px_20px_rgb(var(--ink-rgb)/0.28)]"
                         : "bg-[var(--bg-raised)] shadow-[0_0_0_1px_var(--border),0_6px_18px_rgb(var(--ink-rgb)/0.24)] hover:shadow-[0_0_0_1px_var(--gold),0_8px_20px_rgb(var(--ink-rgb)/0.28)]"
@@ -302,7 +302,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                 <Link
                   href="/notes"
                   aria-current={activeCategory === "all" ? "page" : undefined}
-                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-4 text-[13px] font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
+                  className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-4 text-[13px] font-medium transition-all duration-200 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
                     activeCategory === "all"
                       ? "bg-accent text-[var(--text-on-accent)]"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
@@ -317,7 +317,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
                       key={cat}
                       href={`/category/${encodeURIComponent(cat)}`}
                       aria-current={isActive ? "page" : undefined}
-                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
+                      className={`flex h-9 shrink-0 snap-start items-center justify-center rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] active:scale-95 ${
                         isActive
                           ? "bg-accent text-[var(--text-on-accent)]"
                           : "bg-[var(--bg-card)] text-[var(--text-secondary)] ring-1 ring-[var(--border)]"
@@ -351,7 +351,7 @@ export default function AppShell({ children }: { readonly children: React.ReactN
 
             {/* spacer + ayraç + global nav */}
             <div className="min-w-[24px] flex-1" />
-            <div className="mx-2 flex flex-shrink-0 items-center self-stretch">
+            <div className="mx-2 flex shrink-0 items-center self-stretch">
               <div className="h-4 w-px bg-[var(--border)]" />
             </div>
             <DesktopGlobalNav
@@ -405,7 +405,7 @@ function NavTab({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`group relative flex flex-shrink-0 cursor-pointer items-baseline gap-1.5 whitespace-nowrap rounded-sm px-3 pb-[12px] pt-[9px] text-[13px] font-medium transition-colors duration-200 first:pl-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--gold)] ${
+      className={`group relative flex shrink-0 cursor-pointer items-baseline gap-1.5 whitespace-nowrap rounded-xs px-3 pb-[12px] pt-[9px] text-[13px] font-medium transition-colors duration-200 first:pl-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--gold)] ${
         active
           ? "text-[var(--text-primary)]"
           : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"

@@ -835,7 +835,7 @@ export default function AdminPage() {
                           return (
                             <div key={s.status} className="flex items-center gap-2 py-1.5">
                               <span
-                                className="h-2 w-2 flex-shrink-0 rounded-full"
+                                className="h-2 w-2 shrink-0 rounded-full"
                                 style={{ background: color }}
                               />
                               <span className="flex-1 truncate text-[12px] text-[var(--text-secondary)]">
@@ -1134,7 +1134,7 @@ export default function AdminPage() {
                       </Link>
                       <Link
                         href={`/admin/users/${u.id}`}
-                        className="block min-w-0 flex-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                        className="block min-w-0 flex-1 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
                       >
                         <div className="flex flex-wrap items-center gap-1.5">
                           <p className="font-medium text-[var(--text-primary)]">{u.name}</p>
@@ -1286,7 +1286,7 @@ export default function AdminPage() {
                         <td className="px-4 py-3">
                           <Link
                             href={`/admin/users/${u.id}`}
-                            className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                            className="flex items-center gap-2.5 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
                           >
                             <Avatar name={u.name} size="sm" />
                             <div className="min-w-0">
@@ -1436,7 +1436,7 @@ export default function AdminPage() {
                         <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
                           <Link
                             href={`/posts/${p.id}`}
-                            className="rounded font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                            className="rounded-sm font-medium text-[var(--text-primary)] transition-colors duration-200 hover:text-[var(--gold)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
                           >
                             {p.title}
                           </Link>
@@ -1519,7 +1519,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-1.5">
                             <Link
                               href={`/posts/${p.id}`}
-                              className="block min-w-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                              className="block min-w-0 rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
                             >
                               <p className="max-w-[200px] truncate font-medium text-[var(--text-primary)] transition-colors duration-200 group-hover:text-[var(--gold)]">
                                 {p.title}
@@ -1926,7 +1926,7 @@ export default function AdminPage() {
                           saveSettings({ maintenanceMessage: e.target.value });
                         }
                       }}
-                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm"
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-base)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-hidden focus:ring-2 focus:ring-accent/15 sm:text-sm"
                       placeholder="Bakım mesajı..."
                     />
                     <p className="text-[12px] text-[var(--text-faint)]">
@@ -2005,7 +2005,7 @@ export default function AdminPage() {
 const TH = "px-4 py-3.5 text-left text-[12px] font-normal text-[var(--text-muted)] font-medium";
 
 const SEARCH_INPUT =
-  "w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-10 pr-4 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/15 sm:text-sm";
+  "w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] py-2.5 pl-10 pr-4 text-[16px] text-[var(--text-primary)] transition-colors duration-200 placeholder:text-[var(--text-faint)] focus:border-accent/50 focus:outline-hidden focus:ring-2 focus:ring-accent/15 sm:text-sm";
 
 const FILTER_PILL =
   "cursor-pointer whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11.5px] font-semibold transition-colors duration-200 ease-out-expo active:scale-95";

@@ -28,7 +28,7 @@ export default function ConditionalAppShell({ children }: { children: React.Reac
   const router = useRouter();
   const { status } = useSession();
 
-  /* The middleware lets a page it protects through on any token that carries `pwv`, so
+  /* The proxy lets a page it protects through on any token that carries `pwv`, so
      one revoked since (password changed or reset elsewhere, user banned or deleted) lands
      here without a session, in a shell whose every request fails. Send it to /login, but
      only once /api/auth/session itself answers "no session": a failed session refetch

@@ -62,7 +62,7 @@ export default function LoginPage() {
       }
       queueWelcome(session.user.name);
       setRedirecting(true);
-      // Back to the page the middleware bounced here (?callbackUrl=), validated same-origin.
+      // Back to the page the proxy bounced here (?callbackUrl=), validated same-origin.
       const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
       router.push(getSafeCallbackPath(callbackUrl, window.location.origin));
       router.refresh();
@@ -94,7 +94,7 @@ export default function LoginPage() {
               required
               autoComplete="username"
               placeholder="ornek@mail.com"
-              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
           </div>
 
@@ -127,7 +127,7 @@ export default function LoginPage() {
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+                className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
               <button
                 type="button"

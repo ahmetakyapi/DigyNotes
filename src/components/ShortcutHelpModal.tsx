@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { KeyboardIcon, XIcon } from "@phosphor-icons/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { modalBackdrop, modalPanel } from "@/lib/variants";
@@ -57,7 +57,7 @@ export default function ShortcutHelpModal() {
           onMouseDown={() => setOpen(false)}
         >
           <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -67,7 +67,7 @@ export default function ShortcutHelpModal() {
 
           <motion.div
             ref={trapRef}
-            className="relative w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]"
+            className="relative w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-6"
             onMouseDown={(e) => e.stopPropagation()}
             initial="hidden"
             animate="visible"

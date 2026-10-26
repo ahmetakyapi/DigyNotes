@@ -3,7 +3,7 @@
 /* Fade/rise-in wrapper for the stats sections, shared by page.tsx and the lazily
    loaded StatsCharts. Disabled with reduced motion. */
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 

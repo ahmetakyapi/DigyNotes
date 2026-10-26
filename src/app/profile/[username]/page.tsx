@@ -11,10 +11,11 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function generateMetadata({
-  params,
+  params: paramsPromise,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }): Promise<Metadata> {
+  const params = await paramsPromise;
   const noIndex = { index: false, follow: false } as const;
   const result = await getProfilePageData(params.username, await getSessionUserId()).catch(
     () => null
@@ -80,7 +81,12 @@ export async function generateMetadata({
 
 /* Read on the server so the first HTML holds the profile and its notes (with links to
    each note); the client component takes it as its first state. */
-export default async function ProfilePage({ params }: { params: { username: string } }) {
+export default async function ProfilePage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const params = await paramsPromise;
   const result = await getProfilePageData(params.username, await getSessionUserId());
   if (result.kind === "not-found") notFound();
 

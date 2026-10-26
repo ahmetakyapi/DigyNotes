@@ -35,7 +35,7 @@ export function showUndoToast(message: string, onUndo: () => void, id = "compose
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-auto flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-4 pr-2 shadow-[var(--shadow-soft)] transition-all duration-200 ${
+        className={`pointer-events-auto flex w-[min(360px,calc(100vw-2rem))] items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] py-3 pl-4 pr-2 transition-all duration-200 ${
           t.visible ? "translate-y-0 opacity-100" : "-translate-y-1 opacity-0"
         }`}
       >
@@ -48,7 +48,7 @@ export function showUndoToast(message: string, onUndo: () => void, id = "compose
             onUndo();
             toast.dismiss(t.id);
           }}
-          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-[12.5px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1.5 text-[12.5px] font-semibold text-[var(--gold)] transition-colors hover:bg-accent/20 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <ClockCounterClockwiseIcon size={13} weight="bold" aria-hidden />
           Geri Al
@@ -57,7 +57,7 @@ export function showUndoToast(message: string, onUndo: () => void, id = "compose
           type="button"
           onClick={() => toast.dismiss(t.id)}
           aria-label="Bildirimi kapat"
-          className="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="inline-flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <XIcon size={12} weight="bold" aria-hidden />
         </button>
@@ -103,7 +103,7 @@ export function RestoredDraftBanner({
         <button
           type="button"
           onClick={onDiscard}
-          className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-1.5 text-[12.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-danger/40 hover:text-[var(--danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95"
+          className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-1.5 text-[12.5px] font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-danger/40 hover:text-[var(--danger)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95"
         >
           Taslağı Sil
         </button>
@@ -111,7 +111,7 @@ export function RestoredDraftBanner({
           type="button"
           onClick={onDismiss}
           aria-label="Bildirimi kapat"
-          className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <XIcon size={13} weight="bold" aria-hidden />
         </button>

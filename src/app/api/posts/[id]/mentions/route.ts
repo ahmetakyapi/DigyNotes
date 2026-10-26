@@ -12,7 +12,11 @@ const MAX_SUGGESTIONS = 6;
 /* `@` suggestions for the comment composer: people in this conversation first (the
    note's author, then recent commenters), then people the viewer follows, then other
    public profiles matching `q` (username or name). The viewer is never suggested. */
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

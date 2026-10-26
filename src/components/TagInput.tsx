@@ -292,7 +292,7 @@ export default function TagInput({
         : "Enter, Tab ya da virgülle ekle; boşluklar tireye dönüşür.");
 
   const chipClass = (selected: boolean) =>
-    `inline-flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors duration-200 ease-out-expo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-40 ${
+    `inline-flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors duration-200 ease-out-expo focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-40 ${
       selected
         ? "border-accent/40 bg-accent/10 text-[var(--gold)]"
         : "border-[var(--border)] bg-[var(--bg-raised)] text-[var(--text-secondary)] hover:border-accent/35 hover:text-[var(--text-primary)]"
@@ -372,7 +372,7 @@ export default function TagInput({
                     ? "Etiket yaz (örn. bilim kurgu, #festival)"
                     : "Bir etiket daha…"
               }
-              className="w-full bg-transparent py-0.5 text-[16px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="w-full bg-transparent py-0.5 text-[16px] text-[var(--text-primary)] outline-hidden placeholder:text-[var(--text-muted)] sm:text-sm"
             />
             <ul
               id={listboxId}

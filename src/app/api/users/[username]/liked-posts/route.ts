@@ -8,7 +8,11 @@ import { handleApiError } from "@/lib/api-server";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ username: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const session = await getServerSession(authOptions);
     const currentUserId = (session?.user as { id?: string } | undefined)?.id ?? null;

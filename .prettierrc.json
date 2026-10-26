@@ -4,5 +4,9 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "printWidth": 100,
-  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-prisma"]
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-prisma"
+  ],
+  "tailwindStylesheet": "./src/app/globals.css"
 }

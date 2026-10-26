@@ -1,5 +1,5 @@
 /**
- * Where to send a user after signing in. The middleware adds `?callbackUrl=<path+search>`
+ * Where to send a user after signing in. The proxy adds `?callbackUrl=<path+search>`
  * when it bounces an anonymous request to /login; next-auth's bare `signIn()` passes the
  * absolute `window.location.href` instead. Only a same-origin page is honoured and the
  * result is always a path (pathname+search+hash); everything else falls back (no open

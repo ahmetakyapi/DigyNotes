@@ -9,7 +9,7 @@
 */
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "motion/react";
 import { formatRatingFixed } from "@/lib/number-format";
 import { MEDIA } from "./data";
 import { EASE_OUT_EXPO, FadeUp, MaskLine, useHydratedReducedMotion } from "./Motion";
@@ -68,7 +68,7 @@ function RatingPlayground() {
           aria-valuemax={5}
           aria-valuenow={value}
           aria-valuetext={`${formatRatingFixed(value)} / 5`}
-          className="flex cursor-pointer gap-1.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--bg-card)]"
+          className="flex cursor-pointer gap-1.5 rounded-xl outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--bg-card)]"
           onPointerMove={(e) => setHover(pick(e.clientX))}
           onPointerLeave={() => setHover(null)}
           onClick={(e) => setValue(pick(e.clientX))}
@@ -364,7 +364,7 @@ function YearStrip() {
           ["Tem", "En Dolu Ay"],
         ].map(([n, l]) => (
           <div key={l}>
-            <span className="dn-display block text-5xl italic leading-none text-[var(--text-primary)] sm:text-6xl">
+            <span className="dn-display block text-5xl italic leading-none text-[var(--text-primary)] sm:text-6xl sm:leading-none">
               {n}
             </span>
             <span className="text-[12px] font-medium text-[var(--text-muted)]">{l}</span>

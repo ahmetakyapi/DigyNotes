@@ -31,7 +31,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputClasses = `
       w-full px-3 py-2 rounded-lg border border-[var(--border)]
       bg-[var(--bg-raised)] text-[var(--text-primary)] placeholder-[var(--text-muted)]
-      focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/15
+      focus:outline-hidden focus:border-accent/60 focus:ring-1 focus:ring-accent/15
       disabled:bg-[var(--bg-card)] disabled:text-[var(--text-muted)] disabled:cursor-not-allowed
       transition-all duration-150
       ${error ? "border-danger/50 focus:border-danger/70 focus:ring-danger/10" : ""}

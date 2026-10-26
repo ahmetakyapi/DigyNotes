@@ -119,8 +119,8 @@ export default function FollowListModal({
                 <div key={i} className="flex items-center gap-3">
                   <div className="h-10 w-10 animate-pulse rounded-full bg-[var(--bg-raised)]" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3 w-28 animate-pulse rounded bg-[var(--bg-raised)]" />
-                    <div className="h-2.5 w-20 animate-pulse rounded bg-[var(--bg-raised)]" />
+                    <div className="h-3 w-28 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+                    <div className="h-2.5 w-20 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
                   </div>
                 </div>
               ))}
@@ -152,7 +152,7 @@ export default function FollowListModal({
                       onClick={onClose}
                       className="flex min-w-0 flex-1 items-center gap-3"
                     >
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
                         <AvatarImage
                           src={u.avatarUrl}
                           alt={u.name}
@@ -168,7 +168,7 @@ export default function FollowListModal({
                             {u.name}
                           </p>
                           {u.postCount !== null && (
-                            <span className="flex-shrink-0 text-[12px] text-[var(--text-muted)]">
+                            <span className="shrink-0 text-[12px] text-[var(--text-muted)]">
                               {u.postCount} not
                             </span>
                           )}

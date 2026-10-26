@@ -8,14 +8,14 @@ Film, dizi, oyun ve kitap notlarını takip etmek için kişisel dijital not def
 
 | Katman | Teknoloji |
 | --- | --- |
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 16 (App Router) · React 19 |
 | Dil | TypeScript |
-| Stil | Tailwind CSS |
+| Stil | Tailwind CSS v4 |
 | Veritabanı | PostgreSQL (Neon — serverless) |
 | ORM | Prisma v7 |
 | DB Driver | `@prisma/adapter-pg` |
 | Auth | NextAuth v4 (Credentials + JWT) |
-| Rich Text | React Quill |
+| Rich Text | react-quill-new (Quill 2) |
 | Toast | react-hot-toast |
 | Film/Dizi API | TMDB (The Movie Database) |
 | Oyun API | RAWG Video Games Database |
@@ -211,7 +211,7 @@ src/
 │   ├── prisma.ts                   # PrismaClient singleton (PrismaPg adapter)
 │   ├── auth.ts                     # NextAuth konfigürasyonu
 │   └── categories.ts               # FIXED_CATEGORIES sabit listesi
-├── middleware.ts                   # Korumalı rotalar
+├── proxy.ts                        # Korumalı rotalar (Next 16 proxy)
 └── types/
     ├── index.ts                    # Post, Category, Tag, User arayüzleri
     └── next-auth.d.ts              # Session tip genişletmesi

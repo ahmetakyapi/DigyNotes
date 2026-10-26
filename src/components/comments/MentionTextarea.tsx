@@ -18,7 +18,7 @@ interface MentionTextareaProps {
   rows?: number;
   maxLength?: number;
   className?: string;
-  textareaRef?: RefObject<HTMLTextAreaElement>;
+  textareaRef?: RefObject<HTMLTextAreaElement | null>;
 }
 
 /* Suggestions per query, shared by every box on the page (composer and replies). */

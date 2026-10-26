@@ -301,8 +301,8 @@ export default function ProfilePageClient({
           <div className="flex items-center gap-4">
             <div className="h-20 w-20 animate-pulse rounded-full bg-[var(--bg-card)]" />
             <div className="space-y-2">
-              <div className="h-5 w-40 animate-pulse rounded bg-[var(--bg-card)]" />
-              <div className="h-3 w-24 animate-pulse rounded bg-[var(--bg-card)]" />
+              <div className="h-5 w-40 animate-pulse rounded-sm bg-[var(--bg-card)]" />
+              <div className="h-3 w-24 animate-pulse rounded-sm bg-[var(--bg-card)]" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -321,7 +321,7 @@ export default function ProfilePageClient({
   if (privateProfile) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-soft)]">
+        <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-8 text-center">
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-raised)]">
             <AvatarImage
               src={privateProfile.avatarUrl}
@@ -415,7 +415,7 @@ export default function ProfilePageClient({
 
         <div className="relative mx-auto -mt-20 max-w-4xl px-4 pb-8 sm:-mt-24 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-card)] ring-[6px] ring-[var(--bg-base)] sm:h-28 sm:w-28">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--bg-card)] ring-[6px] ring-[var(--bg-base)] sm:h-28 sm:w-28">
               <AvatarImage
                 src={user.avatarUrl}
                 alt={user.name}
@@ -460,7 +460,7 @@ export default function ProfilePageClient({
             )}
           </p>
           {user.bio && (
-            <p className="dn-display mt-4 max-w-xl text-xl italic leading-snug text-[var(--text-secondary)] sm:text-2xl">
+            <p className="dn-display mt-4 max-w-xl text-xl italic leading-snug text-[var(--text-secondary)] sm:text-2xl sm:leading-8">
               “{user.bio}”
             </p>
           )}
@@ -577,7 +577,7 @@ export default function ProfilePageClient({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={tabMeta.placeholder}
                 aria-label={tabMeta.placeholder}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-hidden"
               />
             </div>
           </div>
@@ -588,7 +588,7 @@ export default function ProfilePageClient({
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={tabMeta.placeholder}
               aria-label={tabMeta.placeholder}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-none sm:text-sm"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-4 py-2.5 text-[16px] text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] focus:border-[var(--gold)] focus:outline-hidden sm:text-sm"
             />
           </div>
         </div>
@@ -633,7 +633,7 @@ export default function ProfilePageClient({
                   >
                     {/* Cover */}
                     <div
-                      className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
+                      className="relative h-48 shrink-0 sm:h-auto sm:w-[36%]"
                       style={{ minHeight: "160px" }}
                     >
                       <ResilientImage
@@ -655,7 +655,7 @@ export default function ProfilePageClient({
                             {getCategoryLabel(post.category)}
                           </span>
                           {post.isPinned && (
-                            <span className="flex shrink-0 items-center gap-1 rounded-sm border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
+                            <span className="flex shrink-0 items-center gap-1 rounded-xs border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[11px] font-semibold text-accent">
                               <PushPin size={9} weight="fill" /> Sabit
                             </span>
                           )}
@@ -702,7 +702,7 @@ export default function ProfilePageClient({
                 onClick={() => void loadMorePosts()}
                 disabled={loadingMorePosts}
                 aria-busy={loadingMorePosts}
-                className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
+                className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
               >
                 {loadingMorePosts
                   ? "Yükleniyor…"
@@ -772,7 +772,7 @@ export default function ProfilePageClient({
             <button
               type="button"
               onClick={retryLiked}
-              className="mt-4 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
+              className="mt-4 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)]"
             >
               Tekrar Dene
             </button>
@@ -813,7 +813,7 @@ export default function ProfilePageClient({
                 <article className="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] transition-all duration-300 hover:border-accent/30 sm:flex-row">
                   {/* Cover */}
                   <div
-                    className="relative h-48 flex-shrink-0 sm:h-auto sm:w-[36%]"
+                    className="relative h-48 shrink-0 sm:h-auto sm:w-[36%]"
                     style={{ minHeight: "160px" }}
                   >
                     <ResilientImage
@@ -856,7 +856,7 @@ export default function ProfilePageClient({
                       <h2 className="mb-1 line-clamp-2 text-sm font-bold leading-snug text-[var(--text-primary)] transition-colors duration-200 group-hover:text-accent">
                         <Link
                           href={`/posts/${post.id}`}
-                          className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-[var(--gold)]"
+                          className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-hidden focus-visible:after:ring-2 focus-visible:after:ring-[var(--gold)]"
                         >
                           {formatDisplayTitle(post.title)}
                         </Link>
@@ -897,7 +897,7 @@ export default function ProfilePageClient({
               onClick={() => void loadMoreLiked()}
               disabled={loadingMoreLiked}
               aria-busy={loadingMoreLiked}
-              className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
+              className="cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-muted)] hover:text-[var(--text-primary)] focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-60"
             >
               {loadingMoreLiked
                 ? "Yükleniyor…"
@@ -929,7 +929,7 @@ function ProfileStat({
   return (
     <span className="flex flex-col">
       <span
-        className={`dn-display text-[40px] italic leading-none tracking-[-0.02em] sm:text-5xl ${
+        className={`dn-display text-[40px] italic leading-none tracking-[-0.02em] sm:text-5xl sm:leading-none ${
           accent ? "text-[var(--gold)]" : "text-[var(--text-primary)]"
         }`}
       >

@@ -8,7 +8,7 @@
   ROW 4: 2×2 chart grid in hairline cards; lavender primary, apricot secondary.
   (A third row of category / month / rated-share cards repeated the insights word for
   word and was dropped; so was the "(i) Kısaca" kicker above the statement.)
-  MOTION: sections fade/rise in sequence (framer-motion), disabled with reduced motion.
+  MOTION: sections fade/rise in sequence (motion), disabled with reduced motion.
 */
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -296,7 +296,7 @@ function KpiCell({
     <div className="border-[var(--border)] p-5 sm:p-6 md:[&:not(:last-child)]:border-r [&:nth-child(-n+2)]:border-b md:[&:nth-child(-n+2)]:border-b-0 [&:nth-child(odd)]:border-r">
       <p className={monoLabel}>{label}</p>
       <p
-        className={`dn-display mt-3 text-5xl italic tabular-nums leading-[0.9] tracking-[-0.02em] sm:text-6xl ${
+        className={`dn-display mt-3 text-5xl italic tabular-nums leading-[0.9] tracking-[-0.02em] sm:text-6xl sm:leading-none ${
           accent ? "text-[var(--gold)]" : "text-[var(--text-primary)]"
         }`}
       >

@@ -167,7 +167,7 @@ export const FeedCard = memo(function FeedCard({
           aria-label={likeLabel}
           aria-pressed={post.likedByMe}
           title={likeLabel}
-          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-95 ${
+          className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold transition-colors duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-95 ${
             post.likedByMe
               ? "bg-danger/10 text-danger"
               : "text-[var(--text-muted)] hover:bg-[var(--bg-raised)] hover:text-danger"
@@ -180,7 +180,7 @@ export const FeedCard = memo(function FeedCard({
           href={`/posts/${post.id}#comments`}
           aria-label={`${post.commentCount} yorum`}
           title="Yorumlar"
-          className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--bg-raised)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50"
         >
           <ChatCircleIcon size={17} />
           <span className="dn-mono tabular-nums">{post.commentCount}</span>
@@ -193,7 +193,7 @@ export const FeedCard = memo(function FeedCard({
         />
         <Link
           href={`/posts/${post.id}`}
-          className="group/open ml-auto inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-[var(--gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          className="group/open ml-auto inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold text-[var(--gold)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50"
         >
           Notu Aç
           <ArrowRightIcon

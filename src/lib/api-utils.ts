@@ -93,8 +93,9 @@ export const POST_SANITIZE_CONFIG: sanitizeHtml.IOptions = {
     a: ["href", "name", "target", "rel"],
     img: ["src", "alt", "width", "height"],
   },
-  // Only the classes Quill 1.3.7 writes into content. Any other class (app utilities such as
-  // `fixed inset-0 z-50`, or Quill UI classes like ql-hidden) could restyle the note page.
+  // Only the classes Quill writes into content (1.3.7 for older notes, 2.x semantic HTML
+  // since 2026-10-26). Any other class (app utilities such as `fixed inset-0 z-50`, or
+  // Quill UI classes like ql-hidden / ql-ui) could restyle the note page.
   allowedClasses: {
     "*": [
       "ql-align-*",
@@ -116,8 +117,18 @@ export const POST_SANITIZE_CONFIG: sanitizeHtml.IOptions = {
 };
 
 /**
+ * Quill 2's semantic HTML (react-quill-new's onChange value) writes every space as `&nbsp;`
+ * and an empty line as `<p></p>`. Stored as-is, a note would never wrap between words and
+ * would lose its blank lines, so both are brought back to what Quill 1 stored: plain spaces
+ * and `<p><br /></p>`. Runs on sanitized output, where entities are already decoded.
+ */
+export function normalizeQuillHtml(html: string): string {
+  return html.replace(/\u00a0/g, " ").replace(/<p><\/p>/g, "<p><br /></p>");
+}
+
+/**
  * Post içeriğini sanitize eder.
  */
 export function sanitizePostContent(html: string): string {
-  return sanitizeHtml(html || "", POST_SANITIZE_CONFIG);
+  return normalizeQuillHtml(sanitizeHtml(html || "", POST_SANITIZE_CONFIG));
 }

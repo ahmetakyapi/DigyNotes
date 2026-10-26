@@ -13,8 +13,9 @@ const MAX_BRANCH_DEPTH = 50;
    nowhere). */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string; commentId: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string; commentId: string }> }
 ) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

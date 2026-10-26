@@ -4,7 +4,7 @@ export default function NotesLoading() {
       {/* Tab switcher skeleton */}
       <div className="mb-4 flex items-center gap-3">
         <div className="h-10 w-56 animate-pulse rounded-xl bg-[var(--bg-card)]" />
-        <div className="hidden h-4 w-24 animate-pulse rounded bg-[var(--bg-card)] sm:block" />
+        <div className="hidden h-4 w-24 animate-pulse rounded-sm bg-[var(--bg-card)] sm:block" />
       </div>
 
       {/* Category pills skeleton */}

@@ -28,21 +28,24 @@ const nextConfig = {
       // covers/avatars render via customLoader/unoptimized (ERR-006), never the optimizer.
     ],
   },
-  experimental: {
-    // Share cards read their fonts from disk (src/lib/og-fonts.ts); file tracing can't
-    // see a path built from process.cwd(), so ship the files with those routes.
-    outputFileTracingIncludes: {
-      "/opengraph-image": OG_TRACE,
-      "/posts/[id]/opengraph-image": OG_TRACE,
-      "/profile/[username]/opengraph-image": OG_TRACE,
-    },
+  // Share cards read their fonts from disk (src/lib/og-fonts.ts); file tracing can't
+  // see a path built from process.cwd(), so ship the files with those routes.
+  // (Top-level since Next 15; it used to live under `experimental`.)
+  outputFileTracingIncludes: {
+    "/opengraph-image": OG_TRACE,
+    "/posts/[id]/opengraph-image": OG_TRACE,
+    "/profile/[username]/opengraph-image": OG_TRACE,
+  },
+  // Turbopack (the Next 16 default bundler) guesses the workspace root from the nearest
+  // lockfile; pin it so a stray lockfile in a parent folder can't move it.
+  turbopack: {
+    root: __dirname,
   },
   typescript: {
     ignoreBuildErrors: false,
   },
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
+  // No `eslint` key: Next 16 removed it and `next build` no longer lints;
+  // `npm run lint` runs ESLint on its own (CI runs it as a separate step).
   async headers() {
     return [
       // Güvenlik header'ları — tüm sayfalar

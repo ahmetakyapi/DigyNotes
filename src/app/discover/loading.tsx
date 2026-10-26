@@ -16,13 +16,13 @@ export default function DiscoverLoading() {
             <div className="mb-4 flex items-center gap-3">
               <div className="h-11 w-11 rounded-full bg-[var(--bg-raised)]" />
               <div className="space-y-1.5">
-                <div className="h-4 w-24 rounded bg-[var(--bg-raised)]" />
-                <div className="h-3 w-16 rounded bg-[var(--bg-raised)]" />
+                <div className="h-4 w-24 rounded-sm bg-[var(--bg-raised)]" />
+                <div className="h-3 w-16 rounded-sm bg-[var(--bg-raised)]" />
               </div>
             </div>
             <div className="space-y-2">
-              <div className="h-3 w-full rounded bg-[var(--bg-raised)]" />
-              <div className="h-3 w-2/3 rounded bg-[var(--bg-raised)]" />
+              <div className="h-3 w-full rounded-sm bg-[var(--bg-raised)]" />
+              <div className="h-3 w-2/3 rounded-sm bg-[var(--bg-raised)]" />
             </div>
           </div>
         ))}

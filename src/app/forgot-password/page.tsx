@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
             type="button"
             onClick={handleResend}
             disabled={loading || cooldown > 0}
-            className="h-[52px] w-full cursor-pointer rounded-full border border-[var(--border)] text-[15px] font-semibold text-[var(--text-primary)] transition-colors duration-200 hover:border-accent/40 hover:bg-accent/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-[52px] w-full cursor-pointer rounded-full border border-[var(--border)] text-[15px] font-semibold text-[var(--text-primary)] transition-colors duration-200 hover:border-accent/40 hover:bg-accent/5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -174,7 +174,7 @@ export default function ForgotPasswordPage() {
               autoFocus
               autoComplete="email"
               placeholder="ornek@mail.com"
-              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
           </div>
 

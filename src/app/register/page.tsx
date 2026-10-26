@@ -106,7 +106,7 @@ export default function RegisterPage() {
               maxLength={80}
               autoComplete="name"
               placeholder="Adın Soyadın"
-              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function RegisterPage() {
                 placeholder="kullanici_adin"
                 minLength={3}
                 maxLength={30}
-                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+                className="dn-input-auth w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] py-3 pl-8 pr-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
             </div>
             <p className="mt-1 text-[11px] text-[var(--text-muted)]">
@@ -162,7 +162,7 @@ export default function RegisterPage() {
               required
               autoComplete="username"
               placeholder="ornek@mail.com"
-              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
           </div>
 
@@ -185,7 +185,7 @@ export default function RegisterPage() {
                 maxLength={128}
                 autoComplete="new-password"
                 placeholder="En az 8 karakter"
-                className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+                className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
               />
               <button
                 type="button"
@@ -244,7 +244,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
               placeholder="Şifreyi tekrar girin"
-              className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
+              className={`dn-input-auth w-full rounded-xl border bg-[var(--bg-raised)] px-4 py-3 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
                 confirmPw && confirmPw !== password
                   ? "dn-input-auth-error border-danger/50"
                   : "border-[var(--border)]"
@@ -262,7 +262,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading || redirecting || leaving}
-            className="dn-btn-primary-auth mt-2 w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+            className="dn-btn-primary-auth w-full rounded-xl py-3.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

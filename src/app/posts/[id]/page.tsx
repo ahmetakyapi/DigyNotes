@@ -20,7 +20,12 @@ import PostDetailClient from "./PostDetailClient";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const params = await paramsPromise;
   const detail = await getPostDetail(params.id, await getSessionUserId()).catch(() => undefined);
   if (detail === undefined) return {};
   const { access, post } = detail;
@@ -138,7 +143,12 @@ function cardUrlFor(post: Pick<PostDetail, "id" | "updatedAt">) {
    HTML already holds title, author, rating, tags and body (crawlers and link previews
    no longer see an empty skeleton). Same read rule as /api/posts/[id]: drafts, trashed
    notes and private authors' notes are a 404 for everyone but the owner and admins. */
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function PostPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await paramsPromise;
   const { access, post } = await getPostDetail(params.id, await getSessionUserId());
   if (!post) notFound();
 

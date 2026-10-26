@@ -10,7 +10,7 @@
      - Right: time info card, action breakdown, quick actions
 */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -182,7 +182,7 @@ const DarkTooltip = ({
 }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs shadow-[var(--shadow-soft)]">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-3.5 py-2.5 text-xs">
       {label && <p className="mb-1 text-[12px] font-medium text-[var(--text-muted)]">{label}</p>}
       {payload.map((p) => (
         <div key={p.name} className="flex items-center gap-2">
@@ -199,7 +199,13 @@ const DarkTooltip = ({
 const CARD = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 
 /* ─── main ─── */
-export default function UserDetailPage({ params }: { params: { id: string } }) {
+export default function UserDetailPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 16: a page's params arrive as a Promise; client pages unwrap it with `use`.
+  const params = use(paramsPromise);
   const router = useRouter();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);

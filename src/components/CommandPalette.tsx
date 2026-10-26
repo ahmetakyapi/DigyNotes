@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import {
   MagnifyingGlassIcon,
   FileTextIcon,
@@ -339,7 +339,7 @@ export default function CommandPalette() {
 
           <motion.div
             ref={trapRef}
-            className="relative w-full max-w-2xl overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] shadow-[var(--shadow-deep)]"
+            className="relative w-full max-w-2xl overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)]"
             onMouseDown={(e) => e.stopPropagation()}
             initial="hidden"
             animate="visible"
@@ -356,7 +356,7 @@ export default function CommandPalette() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Not, sayfa ya da eylem ara…"
-                className="w-full bg-transparent text-lg tracking-[-0.01em] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none"
+                className="w-full bg-transparent text-lg tracking-[-0.01em] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-hidden"
                 autoComplete="off"
                 spellCheck={false}
               />

@@ -6,10 +6,10 @@ export default function ProfileLoading() {
         <div className="h-20 w-20 animate-pulse rounded-full bg-[var(--bg-card)]" />
         <div className="flex-1 space-y-2.5 text-center sm:text-left">
           <div className="mx-auto h-6 w-40 animate-pulse rounded-lg bg-[var(--bg-card)] sm:mx-0" />
-          <div className="mx-auto h-4 w-28 animate-pulse rounded bg-[var(--bg-card)] sm:mx-0" />
+          <div className="mx-auto h-4 w-28 animate-pulse rounded-sm bg-[var(--bg-card)] sm:mx-0" />
           <div className="flex justify-center gap-4 sm:justify-start">
-            <div className="h-4 w-20 animate-pulse rounded bg-[var(--bg-raised)]" />
-            <div className="h-4 w-20 animate-pulse rounded bg-[var(--bg-raised)]" />
+            <div className="h-4 w-20 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-4 w-20 animate-pulse rounded-sm bg-[var(--bg-raised)]" />
           </div>
         </div>
       </div>

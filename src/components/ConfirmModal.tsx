@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { modalBackdrop, modalPanel } from "@/lib/variants";
 
@@ -50,7 +50,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           aria-labelledby="confirm-modal-title"
         >
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-xs"
             initial="hidden"
             animate="visible"
             exit="exit"

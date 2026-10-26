@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useCallback } from 'react'
-import { useMotionValue, useMotionTemplate, useSpring, useTransform } from 'framer-motion'
+import { useMotionValue, useMotionTemplate, useSpring, useTransform } from 'motion/react'
 
 /**
  * 3D kart eğim + holografik parlaklık efekti.

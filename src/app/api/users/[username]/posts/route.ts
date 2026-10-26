@@ -10,7 +10,11 @@ export const revalidate = 0;
  * (`getProfilePageData` serves that one). Public like the profile itself: anyone for a
  * public profile, only the owner and admins for a private one.
  */
-export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ username: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const { searchParams } = req.nextUrl;
     const offset = Math.max(0, Number.parseInt(searchParams.get("offset") ?? "0", 10) || 0);

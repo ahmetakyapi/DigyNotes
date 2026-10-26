@@ -1,6 +1,11 @@
-import { withAuth } from "next-auth/middleware";
+import { withAuth, type NextRequestWithAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import type { NextFetchEvent, NextRequest } from "next/server";
+
+/* Next 16 renamed `middleware.ts` to `proxy.ts` (it now always runs on the Node runtime)
+   and expects an exported `proxy` function. next-auth v4's `withAuth` builds the handler;
+   `proxy` only forwards to it, so the token check, the `/login` redirect and the headers
+   below behave exactly as they did in the middleware. */
 
 /* Reads a public note page makes in the browser (the note, its likes, comments and
    related notes). They sit under the protected `/api/posts/:path*`, so anonymous
@@ -9,8 +14,8 @@ import type { NextRequest } from "next/server";
    (POST/PUT/DELETE) still need a session here. */
 const PUBLIC_POST_READ = /^\/api\/posts\/[^/]+(?:\/(?:likes|comments))?$/;
 
-export default withAuth(
-  function middleware(req: NextRequest) {
+const authProxy = withAuth(
+  function addRequestHeaders(req: NextRequest) {
     const res = NextResponse.next();
     // Inject pathname header so server components (MaintenanceGuard) can read it
     res.headers.set("x-pathname", req.nextUrl.pathname);
@@ -37,6 +42,10 @@ export default withAuth(
     },
   }
 );
+
+export function proxy(req: NextRequest, event: NextFetchEvent) {
+  return authProxy(req as NextRequestWithAuth, event);
+}
 
 export const config = {
   matcher: [

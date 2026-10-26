@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useMotionTemplate, useMotionValue } from 'framer-motion'
+import { useMotionTemplate, useMotionValue } from 'motion/react'
 
 /**
  * Mouse takip eden radial gradient spotlight.

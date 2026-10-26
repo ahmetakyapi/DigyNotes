@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import toast from "react-hot-toast";
 import {
   ArrowDownIcon,
@@ -95,7 +95,7 @@ export default function FeedPageClient() {
     if (tab === "following") params.set("own", own ? "1" : "0");
 
     const response = await fetch(`/api/feed?${params.toString()}`);
-    // An expired session comes back as the middleware's redirect to /login (ERR-RT-002).
+    // An expired session comes back as the proxy's redirect to /login (ERR-RT-002).
     const loginRedirect = response.redirected && new URL(response.url).pathname === "/login";
     if (response.status === 401 || loginRedirect) throw new FeedUnauthorizedError();
     if (!response.ok) throw new Error("Feed fetch failed");
@@ -393,7 +393,7 @@ export default function FeedPageClient() {
                 type="button"
                 onClick={() => void loadMore()}
                 disabled={current.loadingMore}
-                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-6 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-6 text-sm font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {current.loadingMore ? (
                   <>
@@ -431,7 +431,7 @@ export default function FeedPageClient() {
               <button
                 type="button"
                 onClick={() => changeTab("popular")}
-                className="group inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                className="group inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-[var(--border)] px-4 text-[13px] font-semibold text-[var(--text-secondary)] transition-colors duration-200 hover:border-[var(--text-faint)] hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 Tümünü Gör
                 <ArrowRightIcon

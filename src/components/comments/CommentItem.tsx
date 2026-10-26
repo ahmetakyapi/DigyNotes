@@ -25,7 +25,7 @@ export interface CommentThreadContext {
   isSubmittingReply: boolean;
   deletingId: string | null;
   commentsById: Map<string, CommentData>;
-  replyInputRef: RefObject<HTMLTextAreaElement>;
+  replyInputRef: RefObject<HTMLTextAreaElement | null>;
   onReplyTextChange: (value: string) => void;
   onToggleReply: (comment: CommentData) => void;
   onSubmitReply: (parentId: string) => void;
@@ -37,7 +37,7 @@ export interface CommentThreadContext {
 const MAX_INDENT_DEPTH = 3;
 
 const ghostButton =
-  "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[12px] font-medium text-[var(--text-muted)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[12px] font-medium text-[var(--text-muted)] transition-colors duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-40";
 
 export function CommentItem({
   comment,
@@ -194,13 +194,13 @@ export function CommentItem({
                     placeholder="Yanıtını yaz, @ ile birini etiketle..."
                     ariaLabel={`${comment.user.name} adlı kişiye yanıt`}
                     rows={2}
-                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-none transition-colors duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-[13px]"
+                    className="w-full resize-none rounded-xl border border-[var(--surface-strong-border)] bg-[var(--surface-strong)] px-3 py-2 text-[16px] leading-6 text-[var(--text-contrast)] placeholder-[var(--text-faint)] outline-hidden transition-colors duration-200 focus:border-accent/40 focus:ring-1 focus:ring-accent/20 sm:text-[13px]"
                   />
                   <div className="mt-2 flex items-center justify-end gap-2">
                     <button
                       type="button"
                       onClick={() => ctx.onToggleReply(comment)}
-                      className="h-8 cursor-pointer rounded-full px-3 text-[12px] font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                      className="h-8 cursor-pointer rounded-full px-3 text-[12px] font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
                     >
                       İptal
                     </button>
@@ -208,7 +208,7 @@ export function CommentItem({
                       type="button"
                       onClick={() => ctx.onSubmitReply(comment.id)}
                       disabled={ctx.isSubmittingReply || !ctx.replyText.trim()}
-                      className="h-8 cursor-pointer rounded-full bg-accent px-4 text-[12px] font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="h-8 cursor-pointer rounded-full bg-accent px-4 text-[12px] font-semibold text-[var(--text-on-accent)] transition-colors duration-200 hover:bg-accent-light focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {ctx.isSubmittingReply ? "Gönderiliyor..." : "Yanıtla"}
                     </button>

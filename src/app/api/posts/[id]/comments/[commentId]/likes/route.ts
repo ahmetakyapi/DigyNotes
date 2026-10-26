@@ -17,8 +17,9 @@ export const revalidate = 0;
    unlike removes it, so liking again never stacks duplicates. */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string; commentId: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string; commentId: string }> }
 ) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

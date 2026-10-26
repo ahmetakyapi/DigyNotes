@@ -207,7 +207,7 @@ function ResetPasswordForm() {
               maxLength={128}
               autoComplete="new-password"
               placeholder="En az 8 karakter"
-              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
+              className="dn-input-auth h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] px-4 pr-12 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm"
             />
             <button
               type="button"
@@ -238,7 +238,7 @@ function ResetPasswordForm() {
             required
             autoComplete="new-password"
             placeholder="Şifreyi tekrar gir"
-            className={`dn-input-auth h-12 w-full rounded-2xl border bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
+            className={`dn-input-auth h-12 w-full rounded-2xl border bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-all duration-200 placeholder:text-[var(--text-muted)] sm:text-sm ${
               confirmPw && confirmPw !== password
                 ? "dn-input-auth-error border-danger/50"
                 : "border-[var(--border)]"

@@ -7,6 +7,7 @@ import {
   sanitizeStringField,
   requireStringField,
   sanitizePostContent,
+  normalizeQuillHtml,
 } from "../src/lib/api-utils.ts";
 
 // ── transformPostTags ───────────────────────────────────────────────
@@ -127,4 +128,30 @@ test("sanitizePostContent strips app classes from links and marks them as user c
   assert.ok(!html.includes("class="));
   assert.ok(html.includes('href="https://x.example"'));
   assert.ok(html.includes('rel="nofollow ugc noopener noreferrer"'));
+});
+
+// ── Quill 2 semantic HTML (react-quill-new) ─────────────────────────
+test("sanitizePostContent turns Quill 2's &nbsp; spaces back into wrapping spaces", () => {
+  assert.equal(
+    sanitizePostContent("<p>ilk&nbsp;satır&nbsp;&nbsp;burada</p>"),
+    "<p>ilk satır  burada</p>"
+  );
+});
+
+test("sanitizePostContent keeps Quill 2's empty lines as blank lines", () => {
+  assert.equal(sanitizePostContent("<p>a</p><p></p><p>b</p>"), "<p>a</p><p><br /></p><p>b</p>");
+  assert.equal(sanitizePostContent("<p>a</p><p><br></p>"), "<p>a</p><p><br /></p>");
+});
+
+test("sanitizePostContent accepts Quill 2 semantic lists and code blocks", () => {
+  assert.equal(
+    sanitizePostContent(
+      '<ul><li>bir<ul><li>iç</li></ul></li></ul><ol><li>sıra</li></ol><pre data-language="plain">\nkod\n</pre>'
+    ),
+    "<ul><li>bir<ul><li>iç</li></ul></li></ul><ol><li>sıra</li></ol><pre>\nkod\n</pre>"
+  );
+});
+
+test("normalizeQuillHtml leaves other markup alone", () => {
+  assert.equal(normalizeQuillHtml('<p class="ql-align-center">x</p>'), '<p class="ql-align-center">x</p>');
 });

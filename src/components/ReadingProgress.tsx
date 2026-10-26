@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 
 /*
   LAYOUT: wraps a note body; a 2px accent line pinned to the top of the viewport fills

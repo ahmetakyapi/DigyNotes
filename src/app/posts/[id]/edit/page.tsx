@@ -1,9 +1,9 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { Post } from "@/types";
 import {
   FIXED_CATEGORIES,
@@ -44,10 +44,10 @@ const FIELD_ELEMENT_IDS: Record<RequiredPostField, string> = {
   content: "ep-content",
 };
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const inputBase =
-  "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
+  "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-hidden focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
 const labelClass = "mb-2 block text-[12.5px] text-[var(--text-muted)] font-medium";
 const sectionClass =
   "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-5 xl:p-6";
@@ -74,7 +74,13 @@ function createEditSnapshot(input: {
   return JSON.stringify(input);
 }
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
+export default function EditPostPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 16: a page's params arrive as a Promise; client pages unwrap it with `use`.
+  const params = use(paramsPromise);
   const router = useRouter();
   const formRef = useRef<HTMLFormElement | null>(null);
   const initialSnapshotRef = useRef("");
@@ -676,7 +682,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                 </p>
               )}
               {image && (
-                <div className="mt-3 overflow-hidden rounded-[20px] border border-[var(--border-subtle)] bg-[var(--media-panel-bg)] shadow-[var(--shadow-soft)]">
+                <div className="mt-3 overflow-hidden rounded-[20px] border border-[var(--border-subtle)] bg-[var(--media-panel-bg)]">
                   <div className="relative h-36 w-full sm:h-48 lg:h-52 xl:h-56">
                     <Image
                       loader={customLoader}
@@ -718,7 +724,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                     <span className="absolute left-3 top-3 rounded-full border border-accent/30 bg-[var(--bg-overlay)] px-2.5 py-1 text-[11px] font-medium text-[var(--gold)] backdrop-blur-md">
                       Kapak Önizleme
                     </span>
-                    <span className="absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--media-control-text)] backdrop-blur-sm">
+                    <span className="absolute bottom-3 right-3 rounded-full border border-[var(--media-control-border)] bg-[var(--media-control-bg)] px-2.5 py-1 text-[11px] font-medium text-[var(--media-control-text)] backdrop-blur-xs">
                       {isLandscape ? "Yatay Görsel" : "Dikey Görsel"}
                     </span>
                   </div>
@@ -760,7 +766,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                     type="checkbox"
                     checked={hasSpoiler}
                     onChange={(e) => setHasSpoiler(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[var(--border)] accent-accent"
+                    className="mt-0.5 h-4 w-4 cursor-pointer rounded-sm border-[var(--border)] accent-accent"
                   />
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -835,7 +841,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
                       type="checkbox"
                       checked={hasSpoiler}
                       onChange={(e) => setHasSpoiler(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 cursor-pointer rounded border-[var(--border)] accent-accent"
+                      className="mt-0.5 h-4 w-4 cursor-pointer rounded-sm border-[var(--border)] accent-accent"
                     />
                     <span className="min-w-0">
                       <span className="block text-sm font-semibold text-[var(--text-primary)]">
@@ -852,7 +858,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
       {/* LAYOUT: floating glass pill action bar (matches /new-post) — context left, cancel/save right */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-3 sm:px-5 sm:pb-5">
-        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-xl">
+        <div className="pointer-events-auto mx-auto flex max-w-[1080px] items-center justify-between gap-3 rounded-full border border-[var(--border)] bg-[var(--header-glass)] py-2 pl-5 pr-2 backdrop-blur-xl">
           <div className="min-w-0">
             <p className="dn-eyebrow flex items-center gap-1.5">
               Düzenleniyor
@@ -871,7 +877,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               <p className="text-sm italic text-[var(--text-muted)]">—</p>
             )}
           </div>
-          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             <button
               type="button"
               onClick={goBack}
@@ -903,7 +909,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               ) : (
                 <>
                   {isDirty && (
-                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--text-on-accent)] opacity-60" />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-on-accent)] opacity-60" />
                   )}
                   <span className="sm:hidden">Kaydet</span>
                   <span className="hidden sm:inline">Değişiklikleri Kaydet</span>

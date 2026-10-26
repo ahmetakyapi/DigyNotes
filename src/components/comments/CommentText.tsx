@@ -6,14 +6,14 @@ export function CommentText({ content, mentions }: { content: string; mentions: 
   const segments = mentions.length > 0 ? splitMentions(content, mentions) : null;
 
   return (
-    <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-[var(--text-dim)] sm:text-sm">
+    <p className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-[var(--text-dim)] sm:text-sm sm:leading-5">
       {segments
         ? segments.map((segment, index) =>
             segment.type === "mention" ? (
               <Link
                 key={index}
                 href={`/profile/${segment.username}`}
-                className="rounded-sm font-medium text-accent transition-colors hover:text-accent-light hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="rounded-xs font-medium text-accent transition-colors hover:text-accent-light hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 {segment.value}
               </Link>

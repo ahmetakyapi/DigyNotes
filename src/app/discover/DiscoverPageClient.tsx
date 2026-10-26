@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import {
   CaretLeftIcon,
   CaretRightIcon,
@@ -138,7 +138,7 @@ export default function DiscoverPageClient({
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="İsim ya da kullanıcı adıyla ara..."
-            className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-colors duration-200 hover:border-[var(--text-faint)] focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
+            className="h-11 w-full rounded-full border border-[var(--border)] bg-[var(--bg-card)] pl-10 pr-4 text-[16px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-hidden transition-colors duration-200 hover:border-[var(--text-faint)] focus:border-accent/40 focus:ring-1 focus:ring-accent/10 sm:text-sm"
           />
         </label>
 

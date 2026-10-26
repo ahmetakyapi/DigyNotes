@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowLeftIcon, HashIcon } from "@phosphor-icons/react";
 import { Post } from "@/types";
 import StarRating from "@/components/StarRating";
@@ -110,7 +110,7 @@ export default function TagPageClient({
           aria-label="Sıralama"
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOption)}
-          className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-none transition-colors duration-200 focus:border-accent/50 sm:text-xs"
+          className="h-9 cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg-card)] px-4 text-[16px] text-[var(--text-primary)] outline-hidden transition-colors duration-200 focus:border-accent/50 sm:text-xs"
         >
           <option value="newest">En Yeni</option>
           <option value="oldest">En Eski</option>

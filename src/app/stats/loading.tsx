@@ -10,8 +10,8 @@ export default function StatsLoading() {
             key={i}
             className="animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] p-4"
           >
-            <div className="mb-2 h-3 w-16 rounded bg-[var(--bg-raised)]" />
-            <div className="h-7 w-12 rounded bg-[var(--bg-raised)]" />
+            <div className="mb-2 h-3 w-16 rounded-sm bg-[var(--bg-raised)]" />
+            <div className="h-7 w-12 rounded-sm bg-[var(--bg-raised)]" />
           </div>
         ))}
       </div>

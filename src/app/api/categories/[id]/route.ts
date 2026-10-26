@@ -3,7 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth, handleApiError } from "@/lib/api-server";
 import { consumeRateLimit, createRateLimitErrorResponse } from "@/lib/rate-limit";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

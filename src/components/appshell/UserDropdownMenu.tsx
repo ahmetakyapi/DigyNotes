@@ -63,7 +63,7 @@ export function UserDropdownMenu({
     <div className="absolute right-0 top-[calc(100%+6px)] z-50 w-56 overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-header)] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.4),0_20px_50px_-8px_rgba(0,0,0,0.6)]">
       {/* User info */}
       <div className="flex items-center gap-3 border-b border-[var(--border-header)] px-3.5 py-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent/20 bg-accent/10">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent/20 bg-accent/10">
           <AvatarImage
             src={userAvatarUrl}
             alt={session.user?.name ?? "Avatar"}
