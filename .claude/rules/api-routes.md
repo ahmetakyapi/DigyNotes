@@ -13,5 +13,5 @@ paths:
 - Writes on user content go through `consumeRateLimit({ action, req, userId, limit, windowMs })` + `createRateLimitErrorResponse` (`@/lib/rate-limit`).
 - Ownership before UPDATE/DELETE: load the row → 404 if missing → 403 if `row.userId !== userId`. Post reads go through `getPostReadAccess` (`@/lib/post-access`).
 - Per-user responses: `export const dynamic = "force-dynamic"`.
-- Dynamic params (Next 14): `export async function GET(req: NextRequest, { params }: { params: { id: string } })` (ERR-TS-002).
-- A new private route must be added to the `matcher` in `src/middleware.ts`; unauthenticated calls to matched APIs get the login page HTML, not JSON (ERR-RT-002).
+- Dynamic params (Next 16, a Promise): `export async function GET(req: NextRequest, { params: paramsPromise }: { params: Promise<{ id: string }> }) { const params = await paramsPromise; … }` (ERR-TS-002).
+- A new private route must be added to the `matcher` in `src/proxy.ts`; unauthenticated calls to matched APIs get the login page HTML, not JSON (ERR-RT-002).

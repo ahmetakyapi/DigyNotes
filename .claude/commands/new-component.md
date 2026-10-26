@@ -64,7 +64,7 @@ Rounded:     rounded-xl
 - Tailwind classes only — no inline styles, no CSS modules
 - Turkish UI text (button labels, placeholders, error messages)
 - External images: `<Image src={url} unoptimized ... />`
-- React-Quill: `const QuillEditor = dynamic(() => import('react-quill'), { ssr: false })`
+- Rich text: `const QuillEditor = dynamic(() => import('react-quill-new'), { ssr: false })`
 
 ## After Creating
 No inventory to update — CLAUDE.md doesn't list components. Record only a new rule or gotcha.

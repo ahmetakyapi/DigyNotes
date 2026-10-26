@@ -60,10 +60,11 @@ const count = await prisma.follow.count({ where: { followingId: userId } });
 **First seen**: 2024-11
 **Symptom**: `ReferenceError: document is not defined` on any page using react-quill
 **Root cause**: react-quill accesses `document` on import — fails in Next.js server-side rendering
-**Fix**: Always load react-quill with dynamic import:
+**Fix**: Always load the editor with dynamic import (since 2026-10-26 the package is `react-quill-new`, the maintained Quill 2 fork; `react-quill` calls `findDOMNode`, which React 19 removed):
 
 ```typescript
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
 ```
 
 **Prevention**: Never import react-quill directly at the top of a file. Always use `dynamic`.
@@ -321,13 +322,16 @@ declare module "next-auth" {
 
 ### ERR-TS-002: `Type '{ params: { id: string } }' is not assignable`
 **Symptom**: TypeScript error on dynamic route handler second parameter
-**Root cause**: Next.js 14 App Router route handler params typing
-**Fix**: Type the second parameter explicitly:
+**Root cause**: App Router route handler params typing. Since Next 16 (2026-10-26) `params` is a Promise; the build's route validator (`.next/types/validator.ts`) rejects the old synchronous shape.
+**Fix**: Type the second parameter explicitly and await it:
 ```typescript
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
-) { ... }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
+  ...
+}
 ```
 **Files**: Any `src/app/api/**/[param]/route.ts`
 
@@ -368,7 +372,7 @@ export async function GET(
 ### ERR-BUILD-002: `Module not found: Can't resolve 'react-quill'`
 **Symptom**: Build fails when react-quill is imported
 **Root cause**: react-quill imports browser APIs at module level
-**Fix**: Always use dynamic import (see ERR-003). Never import react-quill statically.
+**Fix**: Always use dynamic import (see ERR-003). Never import the editor (`react-quill-new`) statically.
 
 ---
 
@@ -420,7 +424,7 @@ useEffect(() => { localStorage.setItem(...) }, []);
 **Symptom**: API call returns 200 but body is HTML, `JSON.parse` fails
 **Root cause**: The route is protected by middleware but the client isn't authenticated, so middleware redirects to login
 **Fix**:
-1. Check if the route should be protected in `src/middleware.ts`
+1. Check if the route should be protected in `src/proxy.ts`
 2. If it should be public, remove from the matcher
 3. If it should be protected, ensure the client has a valid session before calling
 
@@ -689,7 +693,7 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 3. `SessionProvider` had no initial session, so `useSession()` was `"loading"` during server rendering and `ConditionalAppShell` rendered `FullScreenLoader` instead of the page for `/discover` and `/profile`.
 **Fix**: Middleware `authorized` callback lets anonymous GET through to `/api/posts/[id]`, `…/likes`, `…/comments`, `/api/posts/related` (handlers check `getPostReadAccess`). Pages read their data on the server with the same loaders as the APIs (`post-detail.ts`, `profile-data.ts`, `public-posts.ts`, `public-users.ts`) and pass it as initial state. The root layout passes `getServerSession()` to `SessionProvider`.
 **Prevention**: Check a public page signed out with `curl <url> | grep <some note text>`. Never gate a public page's data behind a matcher entry; render public content on the server.
-**Files**: `src/middleware.ts`, `src/app/layout.tsx`, `src/components/SessionProviderWrapper.tsx`, `src/app/{posts/[id],profile/[username],tag/[name],discover}/page.tsx`, `src/lib/{post-detail,profile-data,public-posts,public-users}.ts`
+**Files**: `src/proxy.ts`, `src/app/layout.tsx`, `src/components/SessionProviderWrapper.tsx`, `src/app/{posts/[id],profile/[username],tag/[name],discover}/page.tsx`, `src/lib/{post-detail,profile-data,public-posts,public-users}.ts`
 
 ---
 
@@ -777,7 +781,7 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 **Root cause**: Intended. The JWT carries `pwv`, a fingerprint of the stored password hash (`src/lib/password-version.ts`); the session callback drops sessions whose `pwv` no longer matches (and banned or deleted users), and the middleware treats tokens without `pwv` (issued before the change) as signed out. Before this, a stolen session survived a password reset.
 **Fix**: Nothing to fix. The settings page signs the current device back in after a change. A token that still passes the middleware but no longer resolves to a session is sent to `/login?callbackUrl=…` by `MaintenanceGuard` (server) and `ConditionalAppShell` (client). A DB error during the session lookup is retried once; if it still fails, that request keeps the cookie but loses the identity (it counts as signed out), so a blip neither signs anyone out nor skips the revocation check.
 **Prevention**: Don't refresh `pwv` in the `jwt` callback (not even on `update()`). In the session callback set `user.id` only after the ban/`pwv` check passed, and never return the identity from the lookup's catch. Server code reads the id with `getSessionUserId()`/`requireAuth()` or checks it explicitly — never `if (session?.user)` followed by an unchecked `.id`.
-**Files**: `src/lib/auth.ts`, `src/lib/password-version.ts`, `src/middleware.ts`, `src/components/{MaintenanceGuard,ConditionalAppShell}.tsx`, `src/app/profile/settings/page.tsx`
+**Files**: `src/lib/auth.ts`, `src/lib/password-version.ts`, `src/proxy.ts`, `src/components/{MaintenanceGuard,ConditionalAppShell}.tsx`, `src/app/profile/settings/page.tsx`
 
 ---
 
@@ -803,4 +807,26 @@ NEXTAUTH_SECRET=<openssl rand -base64 32 ile üret>
 
 ---
 
-*Last updated: 2026-10-21*
+## ERR-TW4-001: Spacing, tilt or shadows change after the Tailwind v4 upgrade
+
+**First seen**: 2026-10-26
+**Symptom**: After moving to Tailwind v4, pixel comparison against the v3 build showed: the register submit button 8 px lower; the hero blurb 6 px taller (26 px lines instead of 24 px on desktop); the landing hero posters and the empty-state index cards tilted/re-centred; a large drop shadow under the landing app mock and on 25 other surfaces.
+**Root cause**: Four v4 semantic changes. (1) `space-y-*` is now `:where(.space-y-4 > :not(:last-child)) { margin-bottom }` with zero specificity, so a child's own `mt-2` (overridden in v3) now applies, and inline-block margins don't collapse. (2) A named size (`sm:text-base`) only sets line-height through `var(--tw-leading, …)`, so an unprefixed `leading-relaxed` now wins at every breakpoint; in v3 the later responsive size reset it. (3) `rotate-*`/`translate-*`/`scale-*` use the separate `rotate`/`translate`/`scale` properties; in v3 they lived in `transform`, which motion's inline `transform` (any `x`/`y`/`rotate` style or animation) silently cancelled. (4) v3 parsed `shadow-[var(--x)]` as a shadow *colour* (no shadow drawn); v4 parses it as a box-shadow.
+**Fix**: (1) removed the dead child margin; (2) re-added the v3 line-height next to each responsive size (`sm:text-base sm:leading-6`, 17 places); (3) removed the never-visible `rotate-*` classes from the hero floaters (`EmptyState` keeps its fan: there v4 now shows the documented design, which v3 only showed with reduced motion); (4) removed the 26 dead `shadow-[var(--shadow-*)]` classes (tokens kept).
+**Prevention**: When a class sits on a motion element, put transforms into motion values, not classes. Don't give `space-*` children their own margins. Check new Tailwind work against CLAUDE.md → Platform rules. Verify a styling migration by pixel diff against the previous build, in both themes, at 390 and 1280, with and without reduced motion.
+**Files**: `src/app/globals.css`, `src/app/register/page.tsx`, `src/components/landing/Hero.tsx`, `src/components/ui/EmptyState.tsx`, files with `sm:leading-*` added in the migration commit
+
+---
+
+## ERR-LINT-001: `npm run lint` fails with ~70 `react-hooks/set-state-in-effect` errors after the Next 16 upgrade
+
+**First seen**: 2026-10-26
+**Symptom**: `eslint` reports `Calling setState synchronously within an effect`, `Cannot access refs during render` and `Cannot call impure function during render` in code that passed before; ESLint 9 also flags unused `eslint-disable` comments.
+**Root cause**: `eslint-config-next` 16 ships `eslint-plugin-react-hooks` 7, whose React Compiler rules are on by default. The codebase syncs props into state and reads localStorage in effects on purpose, and the compiler is not enabled.
+**Fix**: The three rules are off in `eslint.config.mjs` with the reason; the other react-hooks 7 rules stay on. Unused disable comments were removed.
+**Prevention**: Turn the rules back on (and fix the effects) only together with adopting the React Compiler.
+**Files**: `eslint.config.mjs`
+
+---
+
+*Last updated: 2026-10-26*

@@ -27,5 +27,7 @@ Design tokens, type, copy and owner rules: CLAUDE.md → Design System. This fil
 
 ## Specific Components
 - External images: `ResilientImage` (passthrough loader + fallback) or `next/image` with `unoptimized` (ERR-006).
-- react-quill: `dynamic(() => import("react-quill"), { ssr: false })` plus `react-quill/dist/quill.snow.css` (ERR-003).
+- Editor: `dynamic(() => import("react-quill-new"), { ssr: false })` plus `react-quill-new/dist/quill.snow.css` (ERR-003). `react-quill` itself does not run on React 19 (no `findDOMNode`).
+- Motion: import from `motion/react` (package `motion`), never `framer-motion`.
+- Tailwind v4: see CLAUDE.md → Platform rules (`space-*` vs child margins, `leading-*` vs responsive `text-*`, transform classes on motion elements, `shadow-[var()]`).
 - `MediaSearch` (`onSelect` callback): after a selection set `skipNextSearchRef.current = true` and `setResults([])`, or the dropdown reopens (ERR-004).

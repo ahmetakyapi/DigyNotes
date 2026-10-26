@@ -24,7 +24,7 @@ If not in ERRORS.md, check these first:
 | Hydration mismatch | Missing `"use client"` | ERR-007 |
 | Image not loading | Missing `unoptimized` | ERR-006 |
 | `session.user.id` undefined | Session cast missing | ERR-012 |
-| 401 on valid session | Auth not in middleware | `src/middleware.ts` |
+| 401 on valid session | Auth not in proxy matcher | `src/proxy.ts` |
 | Tag not saved | PostTag join missing | ERR-010 |
 
 ## Step 3: Systematic Investigation
@@ -34,7 +34,7 @@ Only if Steps 1-2 don't resolve it:
 3. Check the Prisma schema for model structure
 4. Check `src/lib/prisma.ts` if DB-related
 5. Check `src/lib/auth.ts` if auth-related
-6. Check `src/middleware.ts` if route protection issues
+6. Check `src/proxy.ts` if route protection issues
 
 ## Step 4: After Fixing — MANDATORY
 If this was a NEW error not in ERRORS.md:
