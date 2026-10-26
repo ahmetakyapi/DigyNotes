@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { KeyboardIcon, XIcon } from "@phosphor-icons/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { modalBackdrop, modalPanel } from "@/lib/variants";

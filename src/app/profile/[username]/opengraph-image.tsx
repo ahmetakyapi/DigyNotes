@@ -20,7 +20,12 @@ const FAN = [
   { x: 330, y: 90, r: 10 },
 ] as const;
 
-export default async function ProfileOpenGraphImage({ params }: { params: { username: string } }) {
+export default async function ProfileOpenGraphImage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const params = await paramsPromise;
   const user = await prisma.user.findUnique({
     where: { username: params.username },
     select: {
@@ -87,7 +92,6 @@ export default async function ProfileOpenGraphImage({ params }: { params: { user
 
         <div style={{ display: "flex", flexDirection: "column", width: 560 }}>
           {avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={avatar}
               alt=""
@@ -168,7 +172,6 @@ export default async function ProfileOpenGraphImage({ params }: { params: { user
 
         <div style={{ display: "flex", position: "relative", flex: 1, marginLeft: 20 }}>
           {posters.map((src, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               key={i}
               src={src}

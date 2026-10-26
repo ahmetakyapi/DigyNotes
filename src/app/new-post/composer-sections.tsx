@@ -16,7 +16,7 @@ import type { PostComposerGuidance } from "@/lib/post-config";
 import type { PostCategoryFormConfig } from "@/lib/post-form";
 import { OptionalHint } from "./composer-utils";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const inputBase =
   "w-full rounded-xl border border-[var(--border)] bg-[var(--bg-raised)] px-3.5 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-[var(--text-primary)] focus:bg-[var(--bg-card)]";

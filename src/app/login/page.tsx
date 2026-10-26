@@ -62,7 +62,7 @@ export default function LoginPage() {
       }
       queueWelcome(session.user.name);
       setRedirecting(true);
-      // Back to the page the middleware bounced here (?callbackUrl=), validated same-origin.
+      // Back to the page the proxy bounced here (?callbackUrl=), validated same-origin.
       const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
       router.push(getSafeCallbackPath(callbackUrl, window.location.origin));
       router.refresh();

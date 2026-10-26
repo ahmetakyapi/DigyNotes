@@ -8,7 +8,7 @@
 */
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Wordmark } from "@/components/Wordmark";
 import { MEDIA } from "./data";
 import { FadeUp, MaskLine, useHydratedReducedMotion } from "./Motion";

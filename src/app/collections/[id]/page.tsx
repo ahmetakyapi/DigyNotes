@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeftIcon,
   LinkSimpleIcon,
@@ -42,7 +42,13 @@ function formatDate(value: string) {
   });
 }
 
-export default function CollectionDetailPage({ params }: { params: { id: string } }) {
+export default function CollectionDetailPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 16: a page's params arrive as a Promise; client pages unwrap it with `use`.
+  const params = use(paramsPromise);
   const router = useRouter();
   const { status } = useSession();
   const reduceMotion = useReducedMotion();

@@ -73,7 +73,7 @@ function getPayloadMessage(payload: unknown) {
   return null;
 }
 
-/* Without a session the middleware answers a protected API call with a 307 to /login;
+/* Without a session the proxy answers a protected API call with a 307 to /login;
    fetch follows it and gets the login page (200 HTML) instead of JSON (ERR-RT-002). */
 function isLoginRedirect(response: Response) {
   if (!response.redirected || !response.url) return false;

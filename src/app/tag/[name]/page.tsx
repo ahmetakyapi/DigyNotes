@@ -48,10 +48,11 @@ function tagPath(tagName: string) {
 }
 
 export async function generateMetadata({
-  params,
+  params: paramsPromise,
 }: {
-  params: { name: string };
+  params: Promise<{ name: string }>;
 }): Promise<Metadata> {
+  const params = await paramsPromise;
   const tagName = readTagName(params.name);
   const posts = await loadTagPosts(tagName);
   const metadata = buildPageMetadata({
@@ -63,7 +64,12 @@ export async function generateMetadata({
   return posts && posts.length === 0 ? { ...metadata, robots: NO_INDEX } : metadata;
 }
 
-export default async function TagPage({ params }: { params: { name: string } }) {
+export default async function TagPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ name: string }>;
+}) {
+  const params = await paramsPromise;
   const tagName = readTagName(params.name);
   const [posts, total] = await Promise.all([loadTagPosts(tagName), loadTagTotal(tagName)]);
   return (

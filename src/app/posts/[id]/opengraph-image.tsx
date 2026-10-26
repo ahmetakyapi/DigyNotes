@@ -20,7 +20,12 @@ const COVER = { width: 330, height: 495 } as const;
    So nothing on it is smaller than ~26 px, there are at most five things to read
    (category, title, rating, two lines of note, author), and none of it is uppercase. */
 
-export default async function PostOpenGraphImage({ params }: { params: { id: string } }) {
+export default async function PostOpenGraphImage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await paramsPromise;
   // One query for visibility and content (this route is latency-bound: chat apps give
   // up on slow previews). Same rule as getPostReadAccess for an anonymous viewer.
   const timer = ogTimer();
@@ -112,7 +117,6 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
                   background: "rgba(0,0,0,0.5)",
                 }}
               />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={cover}
                 alt=""
@@ -231,7 +235,6 @@ export default async function PostOpenGraphImage({ params }: { params: { id: str
           >
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               {avatar ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={avatar}
                   alt=""

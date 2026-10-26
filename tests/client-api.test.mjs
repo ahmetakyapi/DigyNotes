@@ -47,7 +47,7 @@ test("requestJson returns the JSON payload", async () => {
   assert.deepEqual(await requestJson("/api/posts/1/likes"), { count: 2, liked: true });
 });
 
-test("requestJson treats the middleware's login redirect as an expired session", async () => {
+test("requestJson treats the proxy's login redirect as an expired session", async () => {
   mockFetch({
     body: "<!DOCTYPE html><html></html>",
     contentType: "text/html; charset=utf-8",

@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useSession } from "next-auth/react";
 import { BellIcon, SunIcon, MoonIcon, PlusIcon } from "@phosphor-icons/react";
 import { SearchBar } from "@/components/SearchBar";

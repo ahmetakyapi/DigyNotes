@@ -25,7 +25,7 @@ export interface CommentThreadContext {
   isSubmittingReply: boolean;
   deletingId: string | null;
   commentsById: Map<string, CommentData>;
-  replyInputRef: RefObject<HTMLTextAreaElement>;
+  replyInputRef: RefObject<HTMLTextAreaElement | null>;
   onReplyTextChange: (value: string) => void;
   onToggleReply: (comment: CommentData) => void;
   onSubmitReply: (parentId: string) => void;

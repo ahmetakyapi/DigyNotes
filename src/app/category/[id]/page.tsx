@@ -2,7 +2,12 @@ import { Metadata } from "next";
 import { getCategoryLabel, normalizeCategory } from "@/lib/categories";
 import CategoryPageClient from "./CategoryPageClient";
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
+export async function generateMetadata({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const params = await paramsPromise;
   const categoryName = normalizeCategory(decodeURIComponent(params.id));
   const categoryLabel = getCategoryLabel(categoryName);
   return {
@@ -15,6 +20,11 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
   };
 }
 
-export default function CategoryPage({ params }: { params: { id: string } }) {
+export default async function CategoryPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await paramsPromise;
   return <CategoryPageClient params={params} />;
 }

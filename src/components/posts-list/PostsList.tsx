@@ -13,7 +13,7 @@ import type { PostsListProps, PostsViewMode, PostsTab } from "./posts-list-types
 import { POSTS_VIEW_STORAGE_KEY } from "./posts-list-types";
 import { matchesQuery, postMatchesTags } from "./posts-list-utils";
 import { getCategoryVariants } from "@/lib/categories";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { FeaturedCard, PostGridCard, PostListCard } from "./PostCards";
 import {
   PostsTabSwitcher,

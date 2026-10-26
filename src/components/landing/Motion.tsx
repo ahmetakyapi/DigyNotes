@@ -10,7 +10,7 @@ import {
   useReducedMotion,
   useSpring,
   type MotionValue,
-} from "framer-motion";
+} from "motion/react";
 import { EASE_OUT_EXPO } from "@/lib/variants";
 import { useHydratedReducedMotion } from "@/hooks/useReducedMotion";
 

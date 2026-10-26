@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { getStatusOptions } from "@/components/StatusBadge";
 import { FormStatusMessage } from "@/components/FormStatusMessage";
 import { PageHeader, Em } from "@/components/ui/PageHeader";

@@ -9,7 +9,7 @@
 */
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "motion/react";
 import { formatRatingFixed } from "@/lib/number-format";
 import { MEDIA } from "./data";
 import { EASE_OUT_EXPO, FadeUp, MaskLine, useHydratedReducedMotion } from "./Motion";

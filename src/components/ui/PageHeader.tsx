@@ -8,7 +8,7 @@
   ROW 3: short description, then a hairline that draws itself left → right.
 */
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useIsHydrating } from "@/hooks/useIsHydrating";
 
 const EASE = [0.16, 1, 0.3, 1] as const;

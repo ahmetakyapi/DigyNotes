@@ -14,7 +14,7 @@ import {
   matchesAdvancedFilters,
 } from "@/components/SortFilterBar";
 import toast from "react-hot-toast";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeftIcon,
   FolderOpenIcon,

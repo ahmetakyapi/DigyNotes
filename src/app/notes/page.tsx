@@ -15,16 +15,17 @@ function firstParam(value?: string | string[]) {
   return (Array.isArray(value) ? value[0] : value) ?? "";
 }
 
-export default function NotesPage({
-  searchParams,
+export default async function NotesPage({
+  searchParams: searchParamsPromise,
 }: {
-  searchParams?: {
+  searchParams: Promise<{
     q?: string | string[];
     category?: string | string[];
     tags?: string | string[];
     tab?: string | string[];
-  };
+  }>;
 }) {
+  const searchParams = await searchParamsPromise;
   const tagsParam = firstParam(searchParams?.tags);
   const initialTags = tagsParam
     ? tagsParam

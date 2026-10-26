@@ -19,7 +19,11 @@ export const revalidate = 0;
 
 /* Root comments newest first with all their replies; `?cursor=` pages older roots.
    Returns `{ items, nextCursor, total }` (items flat, with parentId). */
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const { id: postId } = params;
     const userId = await getSessionUserId();
@@ -45,7 +49,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const [userId, authError] = await requireAuth();
     if (authError) return authError;

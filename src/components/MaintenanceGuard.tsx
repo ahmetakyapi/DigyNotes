@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 export async function MaintenanceGuard({ children }: { children: React.ReactNode }) {
-  // x-pathname is injected by middleware only for matched (protected) routes.
+  // x-pathname is injected by the proxy only for matched (protected) routes.
   // If absent, we're on a public page or /maintenance itself — skip check to avoid redirect loops.
   const headersList = await headers();
   const pathname = headersList.get("x-pathname");
@@ -13,7 +13,7 @@ export async function MaintenanceGuard({ children }: { children: React.ReactNode
     return <>{children}</>;
   }
 
-  /* The middleware only checks that a token exists. A token can outlive its session —
+  /* The proxy only checks that a token exists. A token can outlive its session —
      signed in before a password change or reset (pwv mismatch), banned or deleted
      account — and would otherwise get an empty shell where every API answers 401. A DB
      error in the session lookup still yields a session (src/lib/auth.ts), so null here

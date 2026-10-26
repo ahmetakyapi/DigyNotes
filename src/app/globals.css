@@ -1,16 +1,47 @@
 /* ═══════════════════════════════════════════
    DigyNotes — Global Styles
-   Core Tailwind directives, @layer helpers,
+   Tailwind v4 entry, @layer helpers,
    base element styles, and partials.
 ═══════════════════════════════════════════ */
 
-@import "../styles/theme-variables.css";
+/* Tailwind v4 uses native cascade layers (theme → base → components → utilities), and
+   any rule outside a layer beats every layered rule, whatever its specificity. The
+   layers below keep the v3 order: the partials sit under the utilities, element styles
+   in `base`, and the `.dn-*` helpers that came after `@tailwind utilities` at the end of
+   the utilities layer (so they still win ties with a utility, and lose to a more
+   specific one such as `hover:`). */
+@import "tailwindcss";
+@import "../styles/theme-variables.css" layer(base);
+/* Unlayered on purpose: it overrides Quill's own unlayered snow theme (imported by the
+   composer pages), as it did in v3; Tailwind never styles Quill's generated markup. */
 @import "../styles/editor.css";
-@import "../styles/auth.css";
+@import "../styles/auth.css" layer(components);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* The v3 JS config (colours, fonts, opacity steps, radii, typography plugin) is loaded
+   as-is; see tailwind.config.mts. */
+@config "../../tailwind.config.mts";
+
+/* ─────────────── v3 compatibility (Tailwind v4 upgrade guide) ───────────────
+   v4 changed three preflight defaults; these keep the v3 look. The colours are v3's
+   gray-200 / gray-400 (v4's palette is OKLCH and slightly different). Every themed
+   border and placeholder sets its own token colour; this only covers bare `border`. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 /* ─────────────── @layer components ─────────────── */
 
@@ -88,277 +119,283 @@
 
 /* ─────────────── Base element styles ─────────────── */
 
-html {
-  background-color: var(--bg-base);
-  color: var(--text-primary);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
+@layer base {
+  html {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
 
-body {
-  background-color: var(--bg-base);
-  color: var(--text-primary);
-  font-family: var(--font-sans), "Segoe UI", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans), "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
 
-/* No lone word on a headline's last line, no one-word widow under a paragraph
-   (owner's request, 2026-10-10). Utilities like [text-wrap:wrap] still override. */
-h1,
-h2,
-h3,
-h4 {
-  text-wrap: balance;
-}
-p,
-li,
-blockquote {
-  text-wrap: pretty;
-}
+  /* No lone word on a headline's last line, no one-word widow under a paragraph
+     (owner's request, 2026-10-10). Utilities like [text-wrap:wrap] still override. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
 
-.dn-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-}
+  ::selection {
+    background: var(--gold);
+    color: var(--text-on-accent);
+  }
 
-.dn-mono {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  letter-spacing: 0.02em;
-}
+  /* ─────────────── Form select ─────────────── */
 
-::selection {
-  background: var(--gold);
-  color: var(--text-on-accent);
-}
+  select option {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+  }
 
-/* Film grain — fixed, GPU-cheap, sits above content but ignores input */
-/* Film grain: a pre-rendered noise tile (public/grain-*.webp), static and
-   exactly viewport-sized on its own compositor layer. The old version was an
-   SVG feTurbulence filter on a 200% layer animated forever (plus
-   mix-blend-mode in light theme): it repainted the whole screen every frame
-   and halved scroll FPS. Looks the same at this opacity. */
-.dn-grain {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  opacity: 0.06;
-  background-image: url("/grain-dark.webp");
-  background-size: 180px 180px;
-  transform: translateZ(0);
-  contain: strict;
-}
-html.light .dn-grain,
-html[data-theme="light"] .dn-grain {
-  opacity: 0.075;
-  background-image: url("/grain-light.webp");
-}
+  /* ─────────────── Scrollbar ─────────────── */
 
-/* Section eyebrow: "(03) Neleri Not Alabilirsin?" — readable sans label,
-   index number in the accent colour (replaced 10.5px uppercase mono). */
-.dn-eyebrow {
-  font-size: 14px;
-  line-height: 1.4;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-@media (min-width: 640px) {
-  .dn-eyebrow {
-    font-size: 15px;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
   }
 }
 
-/* Landing marquee: compositor-only loop over one of four copies. */
-.dn-marquee-track {
-  animation: dn-marquee 11.4s linear infinite;
-  will-change: transform;
-}
-.dn-marquee-reverse {
-  animation-direction: reverse;
-}
-@keyframes dn-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
+/* ─────────────── Helpers (after the utilities, as in v3) ─────────────── */
+
+@layer utilities {
+  .dn-display {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
-  to {
-    transform: translate3d(-25%, 0, 0);
+
+  .dn-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    letter-spacing: 0.02em;
   }
-}
-/* Hero reel progress bar: scaleX instead of width (no layout per frame). */
-.dn-reel-bar {
-  transform-origin: left;
-  animation: dn-reel-bar 2s linear forwards;
-}
-@keyframes dn-reel-bar {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
 
-/* Lenis smooth scroll */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-/* ─────────────── Mobile search scroll lock ─────────────── */
-
-html.dn-scroll-locked {
-  overflow: hidden !important;
-}
-html.dn-scroll-locked body {
-  overflow: hidden !important;
-  position: fixed;
-  top: var(--scroll-lock-top, 0);
-  left: 0;
-  right: 0;
-  width: 100%;
-}
-
-/* ─────────────── New note button glow ─────────────── */
-
-.dn-new-note-soft-glow {
-  box-shadow: var(--new-note-glow);
-}
-
-@keyframes dn-new-note-aura {
-  0%,
-  100% {
-    box-shadow: var(--new-note-glow);
-  }
-  50% {
-    box-shadow: var(--new-note-glow-breathe);
-  }
-}
-
-.dn-new-note-animate {
-  box-shadow: var(--new-note-glow);
-}
-
-@media (hover: hover) {
-  .dn-new-note-soft-glow:hover {
-    box-shadow: var(--new-note-glow-strong);
-  }
-}
-
-/* ─────────────── Form select ─────────────── */
-
-select option {
-  background-color: var(--bg-card);
-  color: var(--text-primary);
-}
-
-/* ─────────────── Reduced motion ─────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-  .dn-new-note-animate,
-  .dn-marquee-track {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-  /* The grain is static and keeps its own 6–7.5% opacity: in the list above,
-     `opacity: 1` turned it into a full-strength noise layer over every page. */
+  /* Film grain — fixed, GPU-cheap, sits above content but ignores input */
+  /* Film grain: a pre-rendered noise tile (public/grain-*.webp), static and
+     exactly viewport-sized on its own compositor layer. The old version was an
+     SVG feTurbulence filter on a 200% layer animated forever (plus
+     mix-blend-mode in light theme): it repainted the whole screen every frame
+     and halved scroll FPS. Looks the same at this opacity. */
   .dn-grain {
-    animation: none !important;
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    opacity: 0.06;
+    background-image: url("/grain-dark.webp");
+    background-size: 180px 180px;
+    transform: translateZ(0);
+    contain: strict;
   }
-}
-
-/* ─────────────── Scrollbar ─────────────── */
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold);
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* ─────────────── Loader sweep ─────────────── */
-
-@keyframes dn-loader-sweep {
-  0% {
-    transform: translateX(-110%);
+  html.light .dn-grain,
+  html[data-theme="light"] .dn-grain {
+    opacity: 0.075;
+    background-image: url("/grain-light.webp");
   }
-  100% {
-    transform: translateX(330%);
+
+  /* Section eyebrow: "(03) Neleri Not Alabilirsin?" — readable sans label,
+     index number in the accent colour (replaced 10.5px uppercase mono). */
+  .dn-eyebrow {
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
   }
-}
-.dn-loader-sweep {
-  animation: dn-loader-sweep 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .dn-loader-sweep {
-    animation: none;
+  @media (min-width: 640px) {
+    .dn-eyebrow {
+      font-size: 15px;
+    }
+  }
+
+  /* Landing marquee: compositor-only loop over one of four copies. */
+  .dn-marquee-track {
+    animation: dn-marquee 11.4s linear infinite;
+    will-change: transform;
+  }
+  .dn-marquee-reverse {
+    animation-direction: reverse;
+  }
+  @keyframes dn-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-25%, 0, 0);
+    }
+  }
+  /* Hero reel progress bar: scaleX instead of width (no layout per frame). */
+  .dn-reel-bar {
+    transform-origin: left;
+    animation: dn-reel-bar 2s linear forwards;
+  }
+  @keyframes dn-reel-bar {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Lenis smooth scroll */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  /* ─────────────── Mobile search scroll lock ─────────────── */
+
+  html.dn-scroll-locked {
+    overflow: hidden !important;
+  }
+  html.dn-scroll-locked body {
+    overflow: hidden !important;
+    position: fixed;
+    top: var(--scroll-lock-top, 0);
+    left: 0;
+    right: 0;
     width: 100%;
   }
-}
 
-/* ─────────────── Skeleton shimmer ───────────────
-   Skeleton blocks (animate-pulse on a surface colour) get a soft light sweep instead of
-   a flat blink. Small pulsing dots/cursors keep Tailwind's default pulse. */
-.animate-pulse[class*="bg-[var(--bg-"],
-.animate-pulse[class*="bg-[var(--surface"] {
-  position: relative;
-  overflow: hidden;
-  animation: none;
-}
-.animate-pulse[class*="bg-[var(--bg-"]::after,
-.animate-pulse[class*="bg-[var(--surface"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(
-    100deg,
-    transparent 20%,
-    rgb(var(--gold-rgb) / 0.06) 45%,
-    rgba(255, 255, 255, 0.05) 50%,
-    transparent 80%
-  );
-  animation: dn-shimmer 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-@keyframes dn-shimmer {
-  100% {
-    transform: translateX(100%);
+  /* ─────────────── New note button glow ─────────────── */
+
+  .dn-new-note-soft-glow {
+    box-shadow: var(--new-note-glow);
   }
-}
-@media (prefers-reduced-motion: reduce) {
+
+  @keyframes dn-new-note-aura {
+    0%,
+    100% {
+      box-shadow: var(--new-note-glow);
+    }
+    50% {
+      box-shadow: var(--new-note-glow-breathe);
+    }
+  }
+
+  .dn-new-note-animate {
+    box-shadow: var(--new-note-glow);
+  }
+
+  @media (hover: hover) {
+    .dn-new-note-soft-glow:hover {
+      box-shadow: var(--new-note-glow-strong);
+    }
+  }
+
+  /* ─────────────── Reduced motion ─────────────── */
+
+  @media (prefers-reduced-motion: reduce) {
+    .dn-new-note-animate,
+    .dn-marquee-track {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    /* The grain is static and keeps its own 6–7.5% opacity: in the list above,
+       `opacity: 1` turned it into a full-strength noise layer over every page. */
+    .dn-grain {
+      animation: none !important;
+    }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─────────────── Loader sweep ─────────────── */
+
+  @keyframes dn-loader-sweep {
+    0% {
+      transform: translateX(-110%);
+    }
+    100% {
+      transform: translateX(330%);
+    }
+  }
+  .dn-loader-sweep {
+    animation: dn-loader-sweep 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dn-loader-sweep {
+      animation: none;
+      width: 100%;
+    }
+  }
+
+  /* ─────────────── Skeleton shimmer ───────────────
+     Skeleton blocks (animate-pulse on a surface colour) get a soft light sweep instead of
+     a flat blink. Small pulsing dots/cursors keep Tailwind's default pulse. */
+  .animate-pulse[class*="bg-[var(--bg-"],
+  .animate-pulse[class*="bg-[var(--surface"] {
+    position: relative;
+    overflow: hidden;
+    animation: none;
+  }
   .animate-pulse[class*="bg-[var(--bg-"]::after,
   .animate-pulse[class*="bg-[var(--surface"]::after {
-    animation: none;
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(var(--gold-rgb) / 0.06) 45%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 80%
+    );
+    animation: dn-shimmer 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @keyframes dn-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-pulse[class*="bg-[var(--bg-"]::after,
+    .animate-pulse[class*="bg-[var(--surface"]::after {
+      animation: none;
+    }
   }
 }

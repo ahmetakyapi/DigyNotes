@@ -8,7 +8,11 @@ export const dynamic = "force-dynamic";
 /* FollowListModal has no paging; the cap keeps a popular profile from loading everyone. */
 const FOLLOW_LIST_LIMIT = 200;
 
-export async function GET(_req: NextRequest, { params }: { params: { username: string } }) {
+export async function GET(
+  _req: NextRequest,
+  { params: paramsPromise }: { params: Promise<{ username: string }> }
+) {
+  const params = await paramsPromise;
   try {
     const currentUserId = await getSessionUserId();
     /* Same rule as the profile page: a private profile's lists open for its owner and admins. */

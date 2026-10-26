@@ -16,7 +16,7 @@
 */
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { setSmoothScrollPaused } from "@/components/landing/Motion";
 
 const M = "/landing/media";

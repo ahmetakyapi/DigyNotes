@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Post } from "@/types";
 import { normalizeCategory } from "@/lib/categories";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";

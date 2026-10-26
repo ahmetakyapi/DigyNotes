@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import toast from "react-hot-toast";
 import {
   ArrowDownIcon,
@@ -95,7 +95,7 @@ export default function FeedPageClient() {
     if (tab === "following") params.set("own", own ? "1" : "0");
 
     const response = await fetch(`/api/feed?${params.toString()}`);
-    // An expired session comes back as the middleware's redirect to /login (ERR-RT-002).
+    // An expired session comes back as the proxy's redirect to /login (ERR-RT-002).
     const loginRedirect = response.redirected && new URL(response.url).pathname === "/login";
     if (response.status === 401 || loginRedirect) throw new FeedUnauthorizedError();
     if (!response.ok) throw new Error("Feed fetch failed");

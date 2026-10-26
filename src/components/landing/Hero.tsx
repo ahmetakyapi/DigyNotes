@@ -25,7 +25,7 @@ import {
   useSpring,
   useTransform,
   type MotionValue,
-} from "framer-motion";
+} from "motion/react";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { EASE_OUT_EXPO, Magnetic, MaskLine, useHydratedReducedMotion } from "./Motion";
 import { IntroFilm } from "@/components/intro/IntroFilm";

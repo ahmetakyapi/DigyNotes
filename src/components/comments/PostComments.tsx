@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "motion/react";
 import toast from "react-hot-toast";
 import { ChatCircleIcon, CircleNotchIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
 import { AvatarImage } from "@/components/AvatarImage";

@@ -1,9 +1,9 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { Post } from "@/types";
 import {
   FIXED_CATEGORIES,
@@ -44,7 +44,7 @@ const FIELD_ELEMENT_IDS: Record<RequiredPostField, string> = {
   content: "ep-content",
 };
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const inputBase =
   "w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-raised)] px-4 py-2.5 text-[16px] sm:text-sm text-[var(--text-primary)] placeholder:text-[var(--text-faint)] transition-colors duration-200 ease-out-expo focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/15 focus:bg-[var(--bg-card)]";
@@ -74,7 +74,13 @@ function createEditSnapshot(input: {
   return JSON.stringify(input);
 }
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
+export default function EditPostPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 16: a page's params arrive as a Promise; client pages unwrap it with `use`.
+  const params = use(paramsPromise);
   const router = useRouter();
   const formRef = useRef<HTMLFormElement | null>(null);
   const initialSnapshotRef = useRef("");

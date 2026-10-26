@@ -6,7 +6,7 @@
   Words wrapped in *…* render in serif italic, _…_ in the accent colour.
 */
 import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useHydratedReducedMotion } from "./Motion";
 
 const TEXT =

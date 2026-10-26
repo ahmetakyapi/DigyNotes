@@ -7,7 +7,7 @@
 */
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { Wordmark } from "@/components/Wordmark";
 import { LandingThemeToggle } from "@/components/LandingThemeToggle";
 

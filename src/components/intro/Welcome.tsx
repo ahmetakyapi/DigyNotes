@@ -10,7 +10,7 @@
 */
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const KEY = "dn_welcome_name";
 const FIRST_KEY = "dn_welcome_first";

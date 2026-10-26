@@ -1,9 +1,9 @@
 /**
- * The page entries of the middleware matcher (src/middleware.ts), for client code.
+ * The page entries of the proxy matcher (src/proxy.ts), for client code.
  *
- * Next needs the matcher as a literal inside the middleware file, so the page entries are
+ * Next needs the matcher as a literal inside the proxy file, so the page entries are
  * repeated here; tests/protected-routes.test.mjs fails when the two lists drift apart.
- * The middleware only lets a request onto these pages with a token, so when the client
+ * The proxy only lets a request onto these pages with a token, so when the client
  * finds no session there, the token was revoked (password changed or reset, user banned
  * or deleted) and ConditionalAppShell sends the device to /login. Pure, unit-tested.
  */

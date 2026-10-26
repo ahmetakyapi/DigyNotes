@@ -8,7 +8,7 @@
   ROW 4: 2×2 chart grid in hairline cards; lavender primary, apricot secondary.
   (A third row of category / month / rated-share cards repeated the insights word for
   word and was dropped; so was the "(i) Kısaca" kicker above the statement.)
-  MOTION: sections fade/rise in sequence (framer-motion), disabled with reduced motion.
+  MOTION: sections fade/rise in sequence (motion), disabled with reduced motion.
 */
 import Link from "next/link";
 import dynamic from "next/dynamic";

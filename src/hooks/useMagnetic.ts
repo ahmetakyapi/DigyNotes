@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { useMotionValue, useSpring } from 'framer-motion'
+import { useMotionValue, useSpring } from 'motion/react'
 
 /**
  * Magnetic buton efekti — imleç yaklaştığında element çekilir.

@@ -10,7 +10,7 @@
      - Right: time info card, action breakdown, quick actions
 */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -199,7 +199,13 @@ const DarkTooltip = ({
 const CARD = "rounded-[24px] border border-[var(--border)] bg-[var(--bg-card)] p-5 sm:p-6";
 
 /* ─── main ─── */
-export default function UserDetailPage({ params }: { params: { id: string } }) {
+export default function UserDetailPage({
+  params: paramsPromise,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  // Next 16: a page's params arrive as a Promise; client pages unwrap it with `use`.
+  const params = use(paramsPromise);
   const router = useRouter();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);

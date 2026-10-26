@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { modalBackdrop, modalPanel } from "@/lib/variants";
 
